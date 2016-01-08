@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">OneSpace</string>
+
+    <string name="title_back">返回</string>
+
+    <!-- Login Activity -->
+    <string name="title_login">OneSpace登录</string>
+    <string name="login">登录</string>
+    <string name="hint_enter_user">用户名</string>
+    <string name="hint_enter_pwd">密码</string>
+    <string name="hint_select_ip">IP地址</string>
+    <string name="hint_enter_port">端口号</string>
+    <string name="tip_invaild_port">请输入有效端口号</string>
+</resources>

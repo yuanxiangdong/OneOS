@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Primary color-->
+    <color name="primary">#FF03A9F4</color>
+    <color name="primary_dark">#FF0095d8</color>
+
+    <!-- Base color -->
+    <color name="white">@android:color/white</color>
+    <color name="transparent">@android:color/transparent</color>
+    <color name="light_gray">#C0C0C0</color>
+    <color name="gray">#D0D0D0</color>
+    <color name="darker_gray">@android:color/darker_gray</color>
+
+    <!-- Blue selector -->
+    <color name="blue">@color/primary</color>
+    <color name="blue_pressed">@color/primary_dark</color>
+
+    <!-- Gray selector -->
+    <color name="gray_normal">@color/gray</color>
+    <color name="gray_pressed">@color/darker_gray</color>
+    <color name="gray_disabled">@color/light_gray</color>
+
+    <!-- EditText border selector-->
+    <color name="edittext_border_normal">@color/darker_gray</color>
+    <color name="edittext_border_pressed">@color/blue</color>
+    <color name="edittext_border_disabled">@color/gray_disabled</color>
+
+    <!-- System Status Bar color-->
+    <color name="status_bar">@color/primary</color>
+    <color name="bg_page">@color/white</color>
+    <color name="bg_title">@color/status_bar</color>
+
+
+</resources>

@@ -1,0 +1,13 @@
+<resources>
+    <dimen name="layout_title_height">46dp</dimen>
+    <dimen name="layout_login_padding_left">40dp</dimen>
+    <dimen name="layout_login_padding_right">40dp</dimen>
+    <dimen name="layout_login_padding_top">60dp</dimen>
+    <dimen name="layout_login_padding_bottom">20dp</dimen>
+
+    <dimen name="layout_common_button_height">40dp</dimen>
+
+    <dimen name="common_size_radius">3dp</dimen>
+    <dimen name="common_size_stroke">2px</dimen>
+    <dimen name="common_size_stroke_shrink">-2px</dimen>
+</resources>
