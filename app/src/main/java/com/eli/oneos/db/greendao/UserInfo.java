@@ -6,7 +6,6 @@ package com.eli.oneos.db.greendao;
  */
 public class UserInfo {
 
-    private Long id;
     /** Not-null value. */
     private String name;
     /** Not-null value. */
@@ -19,26 +18,17 @@ public class UserInfo {
     public UserInfo() {
     }
 
-    public UserInfo(Long id) {
-        this.id = id;
+    public UserInfo(String name) {
+        this.name = name;
     }
 
-    public UserInfo(Long id, String name, String pwd, Long time, Integer uid, Integer gid, Integer admin) {
-        this.id = id;
+    public UserInfo(String name, String pwd, Long time, Integer uid, Integer gid, Integer admin) {
         this.name = name;
         this.pwd = pwd;
         this.time = time;
         this.uid = uid;
         this.gid = gid;
         this.admin = admin;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     /** Not-null value. */

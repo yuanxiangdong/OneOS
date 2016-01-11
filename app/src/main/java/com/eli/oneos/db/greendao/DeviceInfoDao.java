@@ -14,7 +14,7 @@ import com.eli.oneos.db.greendao.DeviceInfo;
 /** 
  * DAO for table DEVICE_INFO.
 */
-public class DeviceInfoDao extends AbstractDao<DeviceInfo, Long> {
+public class DeviceInfoDao extends AbstractDao<DeviceInfo, String> {
 
     public static final String TABLENAME = "DEVICE_INFO";
 
@@ -23,9 +23,9 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, Long> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property Ip = new Property(0, String.class, "ip", true, "IP");
         public final static Property Mac = new Property(1, String.class, "mac", false, "MAC");
-        public final static Property Ip = new Property(2, String.class, "ip", false, "IP");
+        public final static Property Time = new Property(2, Long.class, "time", false, "TIME");
         public final static Property Port = new Property(3, String.class, "port", false, "PORT");
         public final static Property Model = new Property(4, String.class, "model", false, "MODEL");
         public final static Property Version = new Property(5, String.class, "version", false, "VERSION");
@@ -45,9 +45,9 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, Long> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'DEVICE_INFO' (" + //
-                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                "'IP' TEXT PRIMARY KEY NOT NULL ," + // 0: ip
                 "'MAC' TEXT NOT NULL ," + // 1: mac
-                "'IP' TEXT NOT NULL ," + // 2: ip
+                "'TIME' INTEGER," + // 2: time
                 "'PORT' TEXT NOT NULL ," + // 3: port
                 "'MODEL' TEXT NOT NULL ," + // 4: model
                 "'VERSION' TEXT NOT NULL ," + // 5: version
@@ -64,13 +64,13 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, Long> {
     @Override
     protected void bindValues(SQLiteStatement stmt, DeviceInfo entity) {
         stmt.clearBindings();
- 
-        Long id = entity.getId();
-        if (id != null) {
-            stmt.bindLong(1, id);
-        }
+        stmt.bindString(1, entity.getIp());
         stmt.bindString(2, entity.getMac());
-        stmt.bindString(3, entity.getIp());
+ 
+        Long time = entity.getTime();
+        if (time != null) {
+            stmt.bindLong(3, time);
+        }
         stmt.bindString(4, entity.getPort());
         stmt.bindString(5, entity.getModel());
         stmt.bindString(6, entity.getVersion());
@@ -83,17 +83,17 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, Long> {
 
     /** @inheritdoc */
     @Override
-    public Long readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
+    public String readKey(Cursor cursor, int offset) {
+        return cursor.getString(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
     public DeviceInfo readEntity(Cursor cursor, int offset) {
         DeviceInfo entity = new DeviceInfo( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.getString(offset + 0), // ip
             cursor.getString(offset + 1), // mac
-            cursor.getString(offset + 2), // ip
+            cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2), // time
             cursor.getString(offset + 3), // port
             cursor.getString(offset + 4), // model
             cursor.getString(offset + 5), // version
@@ -105,9 +105,9 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, Long> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, DeviceInfo entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setIp(cursor.getString(offset + 0));
         entity.setMac(cursor.getString(offset + 1));
-        entity.setIp(cursor.getString(offset + 2));
+        entity.setTime(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
         entity.setPort(cursor.getString(offset + 3));
         entity.setModel(cursor.getString(offset + 4));
         entity.setVersion(cursor.getString(offset + 5));
@@ -116,16 +116,15 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, Long> {
     
     /** @inheritdoc */
     @Override
-    protected Long updateKeyAfterInsert(DeviceInfo entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
+    protected String updateKeyAfterInsert(DeviceInfo entity, long rowId) {
+        return entity.getIp();
     }
     
     /** @inheritdoc */
     @Override
-    public Long getKey(DeviceInfo entity) {
+    public String getKey(DeviceInfo entity) {
         if(entity != null) {
-            return entity.getId();
+            return entity.getIp();
         } else {
             return null;
         }

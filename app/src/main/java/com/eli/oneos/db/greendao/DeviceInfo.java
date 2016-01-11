@@ -6,11 +6,11 @@ package com.eli.oneos.db.greendao;
  */
 public class DeviceInfo {
 
-    private Long id;
-    /** Not-null value. */
-    private String mac;
     /** Not-null value. */
     private String ip;
+    /** Not-null value. */
+    private String mac;
+    private Long time;
     /** Not-null value. */
     private String port;
     /** Not-null value. */
@@ -22,26 +22,28 @@ public class DeviceInfo {
     public DeviceInfo() {
     }
 
-    public DeviceInfo(Long id) {
-        this.id = id;
+    public DeviceInfo(String ip) {
+        this.ip = ip;
     }
 
-    public DeviceInfo(Long id, String mac, String ip, String port, String model, String version, Boolean isLAN) {
-        this.id = id;
-        this.mac = mac;
+    public DeviceInfo(String ip, String mac, Long time, String port, String model, String version, Boolean isLAN) {
         this.ip = ip;
+        this.mac = mac;
+        this.time = time;
         this.port = port;
         this.model = model;
         this.version = version;
         this.isLAN = isLAN;
     }
 
-    public Long getId() {
-        return id;
+    /** Not-null value. */
+    public String getIp() {
+        return ip;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     /** Not-null value. */
@@ -54,14 +56,12 @@ public class DeviceInfo {
         this.mac = mac;
     }
 
-    /** Not-null value. */
-    public String getIp() {
-        return ip;
+    public Long getTime() {
+        return time;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setTime(Long time) {
+        this.time = time;
     }
 
     /** Not-null value. */

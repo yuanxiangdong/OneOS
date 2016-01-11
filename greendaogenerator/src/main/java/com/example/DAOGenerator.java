@@ -21,24 +21,19 @@ public class DAOGenerator {
     }
 
     private static void addUserInfo(Schema schema) {
-        Entity note = schema.addEntity("UserInfo");
-        note.addIdProperty().primaryKey().autoincrement();
-        note.addStringProperty("name").notNull();
+        Entity note = schema.addEntity("UserHistory");
+        note.addStringProperty("name").notNull().primaryKey();
         note.addStringProperty("pwd").notNull();
+        note.addStringProperty("mac").notNull();
         note.addLongProperty("time");
-        note.addIntProperty("uid");
-        note.addIntProperty("gid");
-        note.addIntProperty("admin");
     }
 
     private static void addDeviceInfo(Schema schema) {
-        Entity note = schema.addEntity("DeviceInfo");
-        note.addIdProperty().primaryKey().autoincrement();
+        Entity note = schema.addEntity("DeviceHistory");
+        note.addStringProperty("ip").notNull().primaryKey();
         note.addStringProperty("mac").notNull();
-        note.addStringProperty("ip").notNull();
         note.addStringProperty("port").notNull();
-        note.addStringProperty("model").notNull();
-        note.addStringProperty("version").notNull();
+        note.addLongProperty("time");
         note.addBooleanProperty("isLAN");
     }
 

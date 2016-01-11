@@ -4,15 +4,17 @@ import android.util.Log;
 
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.db.DeviceHistoryKeeper;
+import com.eli.oneos.db.UserHistoryKeeper;
+import com.eli.oneos.db.greendao.DeviceHistory;
 import com.eli.oneos.db.greendao.DeviceInfo;
+import com.eli.oneos.db.greendao.UserHistory;
 import com.eli.oneos.db.greendao.UserInfo;
-import com.eli.oneos.model.user.LoginInfo;
+import com.eli.oneos.model.user.LoginSession;
 
-import net.tsz.afinal.FinalHttp;
 import net.tsz.afinal.http.AjaxCallBack;
 import net.tsz.afinal.http.AjaxParams;
 
-import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,15 +23,10 @@ import org.json.JSONObject;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/8.
  */
-public class OneOSLoginAPI {
+public class OneOSLoginAPI extends OneOSAPI {
     private static final String TAG = OneOSLoginAPI.class.getSimpleName();
-    private static final int TIMEOUT = 20 * 1000;
 
     private OnLoginListener listener;
-    private FinalHttp finalHttp = null;
-    private String url = null;
-    private String ip = null;
-    private String port = OneOSAPIs.ONE_API_DEFAULT_PORT;
     private String user = null;
     private String pwd = null;
     private String mac = null;
@@ -43,19 +40,12 @@ public class OneOSLoginAPI {
         initHttp();
     }
 
-    private void initHttp() {
-        finalHttp = new FinalHttp();
-        finalHttp = new FinalHttp();
-        finalHttp.configCookieStore(new BasicCookieStore());
-        finalHttp.configTimeout(TIMEOUT);
-    }
-
     public void setOnLoginListener(OnLoginListener listener) {
         this.listener = listener;
     }
 
     public void login() {
-        url = OneOSAPIs.genOneOSAPIUrl(ip, port, OneOSAPIs.LOGIN);
+        url = genOneOSAPIUrl(OneOSAPIs.LOGIN);
         Log.d(TAG, "Login: " + url);
         AjaxParams params = new AjaxParams();
         params.put("username", user);
@@ -87,10 +77,18 @@ public class OneOSLoginAPI {
                             int admin = json.getInt("admin");
                             String session = json.getString("session");
                             long time = System.currentTimeMillis();
+                            boolean isLAN = (mac != null) ? true : false;
 
-                            UserInfo userInfo = new UserInfo(0L, user, pwd, time, uid, gid, admin);
-                            DeviceInfo deviceInfo = new DeviceInfo(0L, mac, ip, port, "", "", (mac != null) ? true : false);
-                            LoginInfo loginInfo = new LoginInfo(userInfo, deviceInfo, session, time);
+                            UserHistory userHistory = new UserHistory(user, pwd, mac, time);
+                            UserHistoryKeeper.insertOrReplace(userHistory);
+                            if (!isLAN) {
+                                DeviceHistory deviceHistory = new DeviceHistory(ip, mac, port, time, false);
+                                DeviceHistoryKeeper.insertOrReplace(deviceHistory);
+                            }
+
+                            UserInfo userInfo = new UserInfo(user, pwd, time, uid, gid, admin);
+                            DeviceInfo deviceInfo = new DeviceInfo(mac, ip, time, port, "", "", isLAN);
+                            LoginSession loginInfo = new LoginSession(userInfo, deviceInfo, session, time);
 
                             listener.onSuccess(url, loginInfo);
                         } else {
@@ -115,7 +113,7 @@ public class OneOSLoginAPI {
     public interface OnLoginListener {
         void onStart(String url);
 
-        void onSuccess(String url, LoginInfo loginInfo);
+        void onSuccess(String url, LoginSession loginSession);
 
         void onFailure(String url, int errorNo, String errorMsg);
     }

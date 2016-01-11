@@ -30,5 +30,12 @@
     <color name="bg_page">@color/white</color>
     <color name="bg_title">@color/status_bar</color>
 
+    <!-- Transparent PopupWindows background color -->
+    <color name="translucent_black">#80000000</color>
+    <color name="bg_pop_loading">@color/translucent_black</color>
+    <color name="bg_pop_spinner">@color/translucent_black</color>
 
+    <!-- List selector color -->
+    <color name="bg_list_transparent">@color/transparent</color>
+    <color name="bg_list_pressed_gray">@color/gray</color>
 </resources>

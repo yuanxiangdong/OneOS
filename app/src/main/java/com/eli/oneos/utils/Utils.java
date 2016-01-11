@@ -4,10 +4,24 @@ package com.eli.oneos.utils;
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
 public class Utils {
-    public static final int DB_VERSION = 1;
+
+    /** check if ip is valid */
+    public static boolean isAvaliableIp(String IP) {
+        boolean b = false;
+        if (IP.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {
+            String s[] = IP.split("\\.");
+            if (Integer.parseInt(s[0]) < 255)
+                if (Integer.parseInt(s[1]) < 255)
+                    if (Integer.parseInt(s[2]) < 255)
+                        if (Integer.parseInt(s[3]) < 255)
+                            b = true;
+        }
+
+        return b;
+    }
 
     /**
-     * check if port avaliable
+     * check if port is valid
      *
      * @param port
      * @return result

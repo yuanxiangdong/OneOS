@@ -1,10 +1,12 @@
 package com.eli.oneos.ui;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import com.eli.oneos.R;
 import com.eli.oneos.utils.SystemBarTintManager;
+import com.eli.oneos.widget.LoadingView;
 
 /**
  * Base Activity for OneSpace
@@ -35,5 +37,20 @@ public class BaseActivity extends FragmentActivity {
         mTintManager.setStatusBarTintEnabled(true);
         mTintManager.setNavigationBarTintEnabled(true);
         mTintManager.setStatusBarTintResource(colorId);
+    }
+
+    protected void showLoading(int msgId) {
+        showLoading(msgId, false);
+    }
+
+    protected void showLoading(int msgId, boolean isCancellable) {
+        LoadingView.show(msgId, isCancellable, this);
+    }
+    protected void showLoading(int msgId, boolean isCancellable, DialogInterface.OnDismissListener listener) {
+        LoadingView.show(msgId, isCancellable, this, listener);
+    }
+
+    protected void dismissLoading() {
+        LoadingView.dismiss();
     }
 }

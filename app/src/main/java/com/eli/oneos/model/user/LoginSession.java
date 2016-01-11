@@ -8,14 +8,17 @@ import com.eli.oneos.db.greendao.UserInfo;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
-public class LoginInfo {
+public class LoginSession {
 
     private long time = 0;
     private UserInfo userInfo = null;
     private DeviceInfo deviceInfo = null;
     private String session = null;
 
-    public LoginInfo(UserInfo userInfo, DeviceInfo deviceInfo, String session, long time) {
+    public LoginSession() {
+    }
+
+    public LoginSession(UserInfo userInfo, DeviceInfo deviceInfo, String session, long time) {
         this.userInfo = userInfo;
         this.deviceInfo = deviceInfo;
         this.session = session;

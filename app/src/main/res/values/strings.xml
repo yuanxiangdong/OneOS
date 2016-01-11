@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">OneSpace</string>
 
+    <!-- Common String-->
     <string name="title_back">返回</string>
+    <string name="loading">正在加载&#8230;</string>
 
     <!-- Login Activity -->
     <string name="title_login">OneSpace登录</string>
@@ -11,4 +13,6 @@
     <string name="hint_select_ip">IP地址</string>
     <string name="hint_enter_port">端口号</string>
     <string name="tip_invaild_port">请输入有效端口号</string>
+    <string name="loginning">正在登录&#8230;</string>
+    <string name="scanning_device">搜索OneSpace&#8230;</string>
 </resources>

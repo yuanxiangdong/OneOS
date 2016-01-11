@@ -14,7 +14,7 @@ import com.eli.oneos.db.greendao.UserInfo;
 /** 
  * DAO for table USER_INFO.
 */
-public class UserInfoDao extends AbstractDao<UserInfo, Long> {
+public class UserInfoDao extends AbstractDao<UserInfo, String> {
 
     public static final String TABLENAME = "USER_INFO";
 
@@ -23,13 +23,12 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
-        public final static Property Pwd = new Property(2, String.class, "pwd", false, "PWD");
-        public final static Property Time = new Property(3, Long.class, "time", false, "TIME");
-        public final static Property Uid = new Property(4, Integer.class, "uid", false, "UID");
-        public final static Property Gid = new Property(5, Integer.class, "gid", false, "GID");
-        public final static Property Admin = new Property(6, Integer.class, "admin", false, "ADMIN");
+        public final static Property Name = new Property(0, String.class, "name", true, "NAME");
+        public final static Property Pwd = new Property(1, String.class, "pwd", false, "PWD");
+        public final static Property Time = new Property(2, Long.class, "time", false, "TIME");
+        public final static Property Uid = new Property(3, Integer.class, "uid", false, "UID");
+        public final static Property Gid = new Property(4, Integer.class, "gid", false, "GID");
+        public final static Property Admin = new Property(5, Integer.class, "admin", false, "ADMIN");
     };
 
 
@@ -45,13 +44,12 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'USER_INFO' (" + //
-                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "'NAME' TEXT NOT NULL ," + // 1: name
-                "'PWD' TEXT NOT NULL ," + // 2: pwd
-                "'TIME' INTEGER," + // 3: time
-                "'UID' INTEGER," + // 4: uid
-                "'GID' INTEGER," + // 5: gid
-                "'ADMIN' INTEGER);"); // 6: admin
+                "'NAME' TEXT PRIMARY KEY NOT NULL ," + // 0: name
+                "'PWD' TEXT NOT NULL ," + // 1: pwd
+                "'TIME' INTEGER," + // 2: time
+                "'UID' INTEGER," + // 3: uid
+                "'GID' INTEGER," + // 4: gid
+                "'ADMIN' INTEGER);"); // 5: admin
     }
 
     /** Drops the underlying database table. */
@@ -64,52 +62,46 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
     @Override
     protected void bindValues(SQLiteStatement stmt, UserInfo entity) {
         stmt.clearBindings();
- 
-        Long id = entity.getId();
-        if (id != null) {
-            stmt.bindLong(1, id);
-        }
-        stmt.bindString(2, entity.getName());
-        stmt.bindString(3, entity.getPwd());
+        stmt.bindString(1, entity.getName());
+        stmt.bindString(2, entity.getPwd());
  
         Long time = entity.getTime();
         if (time != null) {
-            stmt.bindLong(4, time);
+            stmt.bindLong(3, time);
         }
  
         Integer uid = entity.getUid();
         if (uid != null) {
-            stmt.bindLong(5, uid);
+            stmt.bindLong(4, uid);
         }
  
         Integer gid = entity.getGid();
         if (gid != null) {
-            stmt.bindLong(6, gid);
+            stmt.bindLong(5, gid);
         }
  
         Integer admin = entity.getAdmin();
         if (admin != null) {
-            stmt.bindLong(7, admin);
+            stmt.bindLong(6, admin);
         }
     }
 
     /** @inheritdoc */
     @Override
-    public Long readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
+    public String readKey(Cursor cursor, int offset) {
+        return cursor.getString(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
     public UserInfo readEntity(Cursor cursor, int offset) {
         UserInfo entity = new UserInfo( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.getString(offset + 1), // name
-            cursor.getString(offset + 2), // pwd
-            cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // time
-            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // uid
-            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // gid
-            cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6) // admin
+            cursor.getString(offset + 0), // name
+            cursor.getString(offset + 1), // pwd
+            cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2), // time
+            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // uid
+            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // gid
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5) // admin
         );
         return entity;
     }
@@ -117,27 +109,25 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, UserInfo entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setName(cursor.getString(offset + 1));
-        entity.setPwd(cursor.getString(offset + 2));
-        entity.setTime(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
-        entity.setUid(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
-        entity.setGid(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
-        entity.setAdmin(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
+        entity.setName(cursor.getString(offset + 0));
+        entity.setPwd(cursor.getString(offset + 1));
+        entity.setTime(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
+        entity.setUid(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setGid(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
+        entity.setAdmin(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
      }
     
     /** @inheritdoc */
     @Override
-    protected Long updateKeyAfterInsert(UserInfo entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
+    protected String updateKeyAfterInsert(UserInfo entity, long rowId) {
+        return entity.getName();
     }
     
     /** @inheritdoc */
     @Override
-    public Long getKey(UserInfo entity) {
+    public String getKey(UserInfo entity) {
         if(entity != null) {
-            return entity.getId();
+            return entity.getName();
         } else {
             return null;
         }

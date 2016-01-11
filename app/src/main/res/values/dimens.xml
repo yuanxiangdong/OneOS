@@ -10,4 +10,6 @@
     <dimen name="common_size_radius">3dp</dimen>
     <dimen name="common_size_stroke">2px</dimen>
     <dimen name="common_size_stroke_shrink">-2px</dimen>
+
+    <dimen name="layout_spinner_line_height">53dp</dimen>
 </resources>

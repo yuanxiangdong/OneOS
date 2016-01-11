@@ -29,19 +29,37 @@
             android:paddingRight="@dimen/layout_login_padding_right"
             android:paddingTop="@dimen/layout_login_padding_top">
 
-            <com.eli.oneos.widget.ClearEditText
-                android:id="@+id/editext_user"
+            <RelativeLayout
+                android:id="@+id/layout_user"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/selector_square_top_stroke"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:hint="@string/hint_enter_user"
-                android:imeOptions="actionNext"
-                android:inputType="textPersonName"
-                android:padding="13dp"
-                android:singleLine="true"
-                android:textSize="@dimen/text_size_mid" />
+                android:padding="13dp">
+
+                <com.eli.oneos.widget.ClearEditText
+                    android:id="@+id/editext_user"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:hint="@string/hint_enter_user"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPersonName"
+                    android:singleLine="true"
+                    android:textSize="@dimen/text_size_mid" />
+
+                <Button
+                    android:id="@+id/btn_more_user"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/selector_button_more"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:scaleType="centerCrop" />
+            </RelativeLayout>
 
             <com.eli.oneos.widget.ClearEditText
                 android:id="@+id/editext_pwd"
@@ -83,7 +101,7 @@
                     android:textSize="@dimen/text_size_mid" />
 
                 <Button
-                    android:id="@+id/btn_more"
+                    android:id="@+id/btn_more_ip"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentRight="true"

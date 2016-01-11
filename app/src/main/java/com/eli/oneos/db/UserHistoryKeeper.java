@@ -1,7 +1,7 @@
 package com.eli.oneos.db;
 
-import com.eli.oneos.db.greendao.UserInfo;
-import com.eli.oneos.db.greendao.UserInfoDao;
+import com.eli.oneos.db.greendao.UserHistory;
+import com.eli.oneos.db.greendao.UserHistoryDao;
 import com.eli.oneos.utils.EmptyUtils;
 
 import java.util.List;
@@ -11,17 +11,17 @@ import de.greenrobot.dao.query.QueryBuilder;
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
-public class UserInfoKeeper {
+public class UserHistoryKeeper {
 
     /**
      * List all Users by ID Desc
      *
      * @return user list
      */
-    public static List<UserInfo> all() {
-        UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
+    public static List<UserHistory> all() {
+        UserHistoryDao dao = DBHelper.getDaoSession().getUserHistoryDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
-        queryBuilder.orderDesc(UserInfoDao.Properties.Time);
+        queryBuilder.orderDesc(UserHistoryDao.Properties.Time);
 
         return queryBuilder.list();
     }
@@ -31,12 +31,12 @@ public class UserInfoKeeper {
      *
      * @return last login user
      */
-    public static UserInfo top() {
-        UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
+    public static UserHistory top() {
+        UserHistoryDao dao = DBHelper.getDaoSession().getUserHistoryDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
-        queryBuilder.orderDesc(UserInfoDao.Properties.Time);
+        queryBuilder.orderDesc(UserHistoryDao.Properties.Time);
         queryBuilder.limit(1);
-        List<UserInfo> list = queryBuilder.list();
+        List<UserHistory> list = queryBuilder.list();
         if (!EmptyUtils.isEmpty(list)) {
             return list.get(0);
         }
@@ -45,15 +45,15 @@ public class UserInfoKeeper {
     }
 
     /**
-     * Insert a user to Database
+     * Insert a user into Database if it does not exist or replace it.
      *
      * @param info
-     * @return insert result
+     * @return insertOrReplace result
      */
-    public static boolean insert(UserInfo info) {
+    public static boolean insertOrReplace(UserHistory info) {
         if (info != null) {
-            UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
-            return dao.insert(info) > 0;
+            UserHistoryDao dao = DBHelper.getDaoSession().getUserHistoryDao();
+            return dao.insertOrReplace(info) > 0;
         }
 
         return false;
@@ -65,9 +65,9 @@ public class UserInfoKeeper {
      * @param info
      * @return delete result
      */
-    public static boolean delete(UserInfo info) {
+    public static boolean delete(UserHistory info) {
         if (info != null) {
-            UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
+            UserHistoryDao dao = DBHelper.getDaoSession().getUserHistoryDao();
             dao.delete(info);
 
             return true;
