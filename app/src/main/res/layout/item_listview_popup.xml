@@ -4,6 +4,7 @@
     android:layout_height="@dimen/layout_spinner_line_height"
     android:background="@drawable/selector_list_trans_to_gray"
     android:baselineAligned="false"
+    android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal"
     android:padding="10dp">
 

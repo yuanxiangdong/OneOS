@@ -11,6 +11,7 @@ import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserHistory;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.utils.EmptyUtils;
 
 import net.tsz.afinal.http.AjaxCallBack;
 import net.tsz.afinal.http.AjaxParams;
@@ -77,9 +78,9 @@ public class OneOSLoginAPI extends OneOSAPI {
                             int admin = json.getInt("admin");
                             String session = json.getString("session");
                             long time = System.currentTimeMillis();
-                            boolean isLAN = (mac != null) ? true : false;
+                            boolean isLAN = (!EmptyUtils.isEmpty(mac)) ? true : false;
 
-                            UserHistory userHistory = new UserHistory(user, pwd, mac, time);
+                            UserHistory userHistory = new UserHistory(user, pwd, EmptyUtils.isEmpty(mac) ? "" : mac, time);
                             UserHistoryKeeper.insertOrReplace(userHistory);
                             if (!isLAN) {
                                 DeviceHistory deviceHistory = new DeviceHistory(ip, mac, port, time, false);
@@ -87,7 +88,7 @@ public class OneOSLoginAPI extends OneOSAPI {
                             }
 
                             UserInfo userInfo = new UserInfo(user, pwd, time, uid, gid, admin);
-                            DeviceInfo deviceInfo = new DeviceInfo(mac, ip, time, port, "", "", isLAN);
+                            DeviceInfo deviceInfo = new DeviceInfo(ip, mac, time, port, "", "", isLAN);
                             LoginSession loginInfo = new LoginSession(userInfo, deviceInfo, session, time);
 
                             listener.onSuccess(url, loginInfo);

@@ -1,16 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:clipToPadding="false"
-    android:fitsSystemWindows="true"
-    tools:context=".ui.MainActivity">
+    android:fitsSystemWindows="true" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:textSize="@dimen/text_size_max"
-        android:text="@string/app_name" />
+    <RelativeLayout
+        android:id="@+id/content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:background="@color/bg_page" >
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/radiogroup_line"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/line_radiogroup_height"
+        android:layout_above="@+id/radiogroup"
+        android:background="@color/line_main_tab" />
+
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/layout_tab_height"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@color/bg_main_tab"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="visible" >
+
+        <RadioButton
+            android:id="@+id/radio_local"
+            style="@style/MainTabRadioButtonTheme"
+            android:drawableTop="@drawable/tab_local_button"
+            android:gravity="center"
+            android:text="@string/tab_local" />
+
+        <RadioButton
+            android:id="@+id/radio_cloud"
+            style="@style/MainTabRadioButtonTheme"
+            android:drawableTop="@drawable/tab_cloud_button"
+            android:gravity="center"
+            android:text="@string/tab_cloud" />
+
+        <RadioButton
+            android:id="@+id/radio_transfer"
+            style="@style/MainTabRadioButtonTheme"
+            android:drawableTop="@drawable/tab_transfer_button"
+            android:gravity="center"
+            android:text="@string/tab_transfer" />
+
+        <RadioButton
+            android:id="@+id/radio_tool"
+            style="@style/MainTabRadioButtonTheme"
+            android:drawableTop="@drawable/tab_tools_button"
+            android:gravity="center"
+            android:text="@string/tab_tool" />
+    </RadioGroup>
+
+    <ImageView
+        android:id="@+id/line_title"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/line_main_weight"
+        android:layout_below="@+id/content"
+        android:background="@color/bg_line" />
+
 </RelativeLayout>

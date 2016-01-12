@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import com.eli.oneos.R;
+import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.SystemBarTintManager;
 import com.eli.oneos.widget.LoadingView;
 
@@ -15,9 +16,19 @@ import com.eli.oneos.widget.LoadingView;
  */
 public class BaseActivity extends FragmentActivity {
 
+    private LoadingView mLoadingView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLoadingView = LoadingView.getInstance();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DialogUtils.dismiss();
+        dismissLoading();
     }
 
     /**
@@ -39,18 +50,23 @@ public class BaseActivity extends FragmentActivity {
         mTintManager.setStatusBarTintResource(colorId);
     }
 
+    protected void showLoading() {
+        mLoadingView.show(this);
+    }
+
     protected void showLoading(int msgId) {
-        showLoading(msgId, false);
+        mLoadingView.show(this, msgId);
     }
 
     protected void showLoading(int msgId, boolean isCancellable) {
-        LoadingView.show(msgId, isCancellable, this);
+        mLoadingView.show(this, msgId, isCancellable);
     }
+
     protected void showLoading(int msgId, boolean isCancellable, DialogInterface.OnDismissListener listener) {
-        LoadingView.show(msgId, isCancellable, this, listener);
+        mLoadingView.show(this, msgId, isCancellable, listener);
     }
 
     protected void dismissLoading() {
-        LoadingView.dismiss();
+        mLoadingView.dismiss();
     }
 }

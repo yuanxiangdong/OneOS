@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -15,37 +16,33 @@ public class LoadingView {
 
     private static final String TAG = LoadingView.class.getSimpleName();
 
-    private static LoadingProgressDialog mProgressDialog;
+    private static final int NO_RESOURCES_ID = 0;
+    private static final boolean DEFAULT_CANCELABLE = false;
 
-    public static void show(int msgId, Context context) {
-        if (msgId <= 0 || context == null) {
-            return;
-        }
-        dismiss();
+    private static LoadingView INSTANCE = new LoadingView();
+    private LoadingProgressDialog mProgressDialog;
 
-        mProgressDialog = new LoadingProgressDialog(context, msgId);
-        try {
-            mProgressDialog.show();
-        } catch (Exception e) {
-            Log.e(TAG, "LoadingProgressDialog Exception: ", e);
-        }
+    private LoadingView() {
     }
 
-    public static void show(int msgId, boolean cancelable, Context context) {
-        if (msgId <= 0 || context == null) {
-            return;
-        }
-        dismiss();
-
-        mProgressDialog = new LoadingProgressDialog(context, msgId, cancelable);
-        try {
-            mProgressDialog.show();
-        } catch (Exception e) {
-            Log.e(TAG, "LoadingProgressDialog Exception: ", e);
-        }
+    public static LoadingView getInstance() {
+        return LoadingView.INSTANCE;
     }
-    public static void show(int msgId, boolean cancelable, Context context, DialogInterface.OnDismissListener listener) {
-        if (msgId <= 0 || context == null) {
+
+    public void show(Context context) {
+        show(context, NO_RESOURCES_ID);
+    }
+
+    public void show(Context context, int msgId) {
+        show(context, msgId, DEFAULT_CANCELABLE);
+    }
+
+    public void show(Context context, int msgId, boolean cancelable) {
+        show(context, msgId, cancelable, null);
+    }
+
+    public void show(Context context, int msgId, boolean cancelable, DialogInterface.OnDismissListener listener) {
+        if (context == null) {
             return;
         }
         dismiss();
@@ -59,24 +56,20 @@ public class LoadingView {
         }
     }
 
-    public static void dismiss() {
+    public void dismiss() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
     }
 
-    private static class LoadingProgressDialog extends ProgressDialog {
-        private Context context = null;
-        private int msgId = R.string.loading;
-        private boolean isCancelable = true;
-        private TextView mTipsTxt;
+    public boolean isShown() {
+        return mProgressDialog != null && mProgressDialog.isShowing();
+    }
 
-        public LoadingProgressDialog(Context context, int msgId) {
-            super(context);
-            this.context = context;
-            this.msgId = msgId;
-            this.isCancelable = true;
-        }
+    private class LoadingProgressDialog extends ProgressDialog {
+        private Context context = null;
+        private int msgId = 0;
+        private boolean isCancelable = DEFAULT_CANCELABLE;
 
         public LoadingProgressDialog(Context context, int msgId, boolean isCancelable) {
             super(context);
@@ -89,26 +82,15 @@ public class LoadingView {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.layout_dialog_progress_loading);
+            if (msgId > 0) {
+                TextView mTipsTxt = (TextView) findViewById(R.id.txt_tips);
+                mTipsTxt.setText(context.getResources().getString(msgId));
+                mTipsTxt.setVisibility(View.VISIBLE);
+            }
             setScreenBrightness();
-            this.setOnShowListener(new OnShowListener() {
-
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    mTipsTxt = (TextView) LoadingProgressDialog.this.findViewById(R.id.txt_tips);
-                    mTipsTxt.setText(context.getResources().getString(msgId));
-                }
-            });
 
             this.setCancelable(isCancelable);
         }
-
-        // public int getMsgId() {
-        // return msgId;
-        // }
-        //
-        // public void setMsgId(int msgId) {
-        // this.msgId = msgId;
-        // }
 
         private void setScreenBrightness() {
             Window window = getWindow();

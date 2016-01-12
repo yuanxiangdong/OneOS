@@ -12,4 +12,10 @@
     <dimen name="common_size_stroke_shrink">-2px</dimen>
 
     <dimen name="layout_spinner_line_height">53dp</dimen>
+    <dimen name="line_dialog_weight">0.6dp</dimen>
+    <dimen name="layout_dialog_bottom_height">42dp</dimen>
+    <dimen name="layout_dialog_margin">15dp</dimen>
+    <dimen name="line_radiogroup_height">1.0dp</dimen>
+    <dimen name="layout_tab_height">53dp</dimen>
+
 </resources>

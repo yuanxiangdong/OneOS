@@ -3,6 +3,9 @@
 
     <!-- Common String-->
     <string name="title_back">返回</string>
+    <string name="ok">OK</string>
+    <string name="cancel">取消</string>
+    <string name="tip">提示</string>
     <string name="loading">正在加载&#8230;</string>
 
     <!-- Login Activity -->
@@ -15,4 +18,9 @@
     <string name="tip_invaild_port">请输入有效端口号</string>
     <string name="loginning">正在登录&#8230;</string>
     <string name="scanning_device">搜索OneSpace&#8230;</string>
+    <string name="tip_title_research">搜索设备</string>
+    <string name="tip_search_again">未搜索到可用OneSpace，重新搜索？</string>
+    <string name="research_now">重新搜索</string>
+    <string name="getting_device_mac">获取Mac&#8230;</string>
+
 </resources>

@@ -158,8 +158,6 @@ public class CircleProgressBar extends ImageView {
         a.recycle();
         mProgressDrawable = new MaterialProgressDrawable(getContext(), this);
         super.setImageDrawable(mProgressDrawable);
-
-        Log.e("xxxx", "xxxxxxxxxxxxxxxxxxx");
     }
 
 

@@ -17,8 +17,8 @@ public class LoginManager {
      *
      * @return LoginManager Instance
      */
-    public LoginManager getInstance() {
-        return this.INSTANCE;
+    public static LoginManager getInstance() {
+        return LoginManager.INSTANCE;
     }
 
     /**

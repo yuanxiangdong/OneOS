@@ -75,4 +75,20 @@ public class UserHistoryKeeper {
 
         return false;
     }
+
+    /**
+     * Update user information
+     *
+     * @param user
+     * @return
+     */
+    public static boolean update(UserHistory user) {
+        if (null == user) {
+            return false;
+        }
+
+        UserHistoryDao dao = DBHelper.getDaoSession().getUserHistoryDao();
+        dao.update(user);
+        return true;
+    }
 }

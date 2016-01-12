@@ -31,11 +31,15 @@
     <color name="bg_title">@color/status_bar</color>
 
     <!-- Transparent PopupWindows background color -->
-    <color name="translucent_black">#80000000</color>
+    <color name="translucent_black">#70000000</color>
     <color name="bg_pop_loading">@color/translucent_black</color>
     <color name="bg_pop_spinner">@color/translucent_black</color>
 
     <!-- List selector color -->
     <color name="bg_list_transparent">@color/transparent</color>
     <color name="bg_list_pressed_gray">@color/gray</color>
+
+    <color name="line_dialog">#99B2B2B2</color>
+    <color name="line_main_tab">#66B2B2B2</color>
+    <color name="bg_main_tab">#FFF9F9F9</color>
 </resources>

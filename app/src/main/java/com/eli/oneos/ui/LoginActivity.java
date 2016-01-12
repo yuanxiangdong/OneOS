@@ -1,13 +1,16 @@
 package com.eli.oneos.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
@@ -15,15 +18,18 @@ import com.eli.oneos.db.DeviceHistoryKeeper;
 import com.eli.oneos.db.UserHistoryKeeper;
 import com.eli.oneos.db.greendao.DeviceHistory;
 import com.eli.oneos.db.greendao.UserHistory;
+import com.eli.oneos.model.api.OneOSGetMacAPI;
 import com.eli.oneos.model.api.OneOSLoginAPI;
 import com.eli.oneos.model.scan.OnScanDeviceListener;
 import com.eli.oneos.model.scan.ScanDeviceManager;
+import com.eli.oneos.model.user.LoginManager;
 import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.utils.AnimUtils;
+import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
+import com.eli.oneos.utils.InputMethodUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.utils.Utils;
-import com.eli.oneos.widget.ClearEditText;
 import com.eli.oneos.widget.SpinnerView;
 import com.eli.oneos.widget.TitleBackLayout;
 
@@ -39,14 +45,16 @@ import java.util.Map;
  */
 public class LoginActivity extends BaseActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
-    private ClearEditText mUserTxt, mPwdTxt, mPortTxt;
+    private EditText mUserTxt, mPwdTxt, mPortTxt;
     private Button mLoginBtn, mMoreUserBtn, mMoreIpBtn;
     private RelativeLayout mUserLayout, mIPLayout;
     private EditText mIPTxt;
 
-    private DeviceHistory mLastLoginDevice;
-    private List<UserHistory> mUserHistoryList = new ArrayList<UserHistory>();
-    private List<DeviceHistory> mDeviceList = new ArrayList<DeviceHistory>();
+    private LoginSession mLoginSession;
+    private UserHistory mLastLoginUser;
+    private List<UserHistory> mHistoryUserList = new ArrayList<UserHistory>();
+    private List<DeviceHistory> mHistoryDeviceList = new ArrayList<DeviceHistory>();
+    private List<DeviceHistory> mLANDeviceList = new ArrayList<DeviceHistory>();
     private SpinnerView mUserSpinnerView, mDeviceSpinnerView;
     private ScanDeviceManager mScanManager = new ScanDeviceManager(this, new OnScanDeviceListener() {
         @Override
@@ -63,12 +71,13 @@ public class LoginActivity extends BaseActivity {
         public void onScanOver(Map<String, String> mDeviceMap, boolean isInterrupt, boolean isUdp) {
             dismissLoading();
 
-            Iterator<String> iter = mDeviceMap.keySet().iterator();
-            while (iter.hasNext()) {
-                String key = iter.next();
+            mLANDeviceList.clear();
+            Iterator<String> iterator = mDeviceMap.keySet().iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
                 String value = mDeviceMap.get(key);
                 DeviceHistory deviceHistory = new DeviceHistory(value, key, OneOSAPIs.ONE_API_DEFAULT_PORT, System.currentTimeMillis(), true);
-                mDeviceList.add(deviceHistory);
+                mLANDeviceList.add(deviceHistory);
             }
         }
     });
@@ -87,7 +96,22 @@ public class LoginActivity extends BaseActivity {
                     showUserSpinnerView(mUserLayout);
                     break;
                 case R.id.btn_more_ip:
-                    showDeviceSpinnerView(mIPLayout);
+                    if (EmptyUtils.isEmpty(mLANDeviceList)) {
+                        DialogUtils.showConfirmDialog(LoginActivity.this, R.string.tip_title_research, R.string.tip_search_again,
+                                R.string.research_now, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                                    @Override
+                                    public void onClick(boolean isPositiveBtn) {
+                                        if (isPositiveBtn) {
+                                            mScanManager.start();
+                                        } else {
+                                            showDeviceSpinnerView(mIPLayout);
+                                        }
+                                    }
+                                });
+                        return;
+                    } else {
+                        showDeviceSpinnerView(mIPLayout);
+                    }
                     break;
             }
         }
@@ -111,6 +135,13 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        LoginManager loginManager = LoginManager.getInstance();
+        loginManager.setLoginSession(mLoginSession);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mScanManager.stop();
@@ -123,11 +154,23 @@ public class LoginActivity extends BaseActivity {
         mTitleLayout.setTitle(R.string.title_login);
 
         mUserLayout = (RelativeLayout) findViewById(R.id.layout_user);
-        mUserTxt = (ClearEditText) findViewById(R.id.editext_user);
+        mUserTxt = (EditText) findViewById(R.id.editext_user);
         mMoreUserBtn = (Button) findViewById(R.id.btn_more_user);
         mMoreUserBtn.setOnClickListener(onMoreClickListener);
-        mPwdTxt = (ClearEditText) findViewById(R.id.editext_pwd);
-        mPortTxt = (ClearEditText) findViewById(R.id.editext_port);
+        mPwdTxt = (EditText) findViewById(R.id.editext_pwd);
+        mPortTxt = (EditText) findViewById(R.id.editext_port);
+        mPortTxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (attempLogin()) {
+                        InputMethodUtils.hideKeyboard(LoginActivity.this, mPortTxt);
+                    }
+                }
+
+                return true;
+            }
+        });
         mIPLayout = (RelativeLayout) findViewById(R.id.layout_server);
         mIPTxt = (EditText) findViewById(R.id.editext_ip);
         mMoreIpBtn = (Button) findViewById(R.id.btn_more_ip);
@@ -140,11 +183,11 @@ public class LoginActivity extends BaseActivity {
         if (mUserSpinnerView != null && mUserSpinnerView.isShown()) {
             mUserSpinnerView.dismiss();
         } else {
-            if (!EmptyUtils.isEmpty(mUserHistoryList)) {
+            if (!EmptyUtils.isEmpty(mHistoryUserList)) {
                 mUserSpinnerView = new SpinnerView(this, view.getWidth());
                 ArrayList<String> users = new ArrayList<String>();
                 ArrayList<Integer> icons = new ArrayList<Integer>();
-                for (UserHistory info : mUserHistoryList) {
+                for (UserHistory info : mHistoryUserList) {
                     users.add(info.getName());
                     icons.add(R.drawable.ic_btn_clear);
                 }
@@ -153,8 +196,8 @@ public class LoginActivity extends BaseActivity {
                 mUserSpinnerView.setOnSpinnerButtonClickListener(new SpinnerView.OnSpinnerButtonClickListener() {
                     @Override
                     public void onClick(View view, int index) {
-                        UserHistory UserHistory = mUserHistoryList.get(index);
-                        mUserHistoryList.remove(UserHistory);
+                        UserHistory UserHistory = mHistoryUserList.get(index);
+                        mHistoryUserList.remove(UserHistory);
                         UserHistoryKeeper.delete(UserHistory);
                         mUserSpinnerView.dismiss();
                     }
@@ -162,7 +205,7 @@ public class LoginActivity extends BaseActivity {
                 mUserSpinnerView.setOnSpinnerItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        UserHistory UserHistory = mUserHistoryList.get(position);
+                        UserHistory UserHistory = mHistoryUserList.get(position);
                         mUserTxt.setText(UserHistory.getName());
                         mPwdTxt.setText(UserHistory.getPwd());
                         mUserSpinnerView.dismiss();
@@ -172,33 +215,45 @@ public class LoginActivity extends BaseActivity {
             }
         }
     }
+
     private void showDeviceSpinnerView(View view) {
         if (mDeviceSpinnerView != null && mDeviceSpinnerView.isShown()) {
             mDeviceSpinnerView.dismiss();
         } else {
-            if (!EmptyUtils.isEmpty(mDeviceList)) {
+            if (!EmptyUtils.isEmpty(mLANDeviceList) || !EmptyUtils.isEmpty(mHistoryDeviceList)) {
                 mDeviceSpinnerView = new SpinnerView(this, view.getWidth());
+                final ArrayList<DeviceHistory> mDeviceList = new ArrayList<>();
                 ArrayList<String> users = new ArrayList<String>();
                 ArrayList<Integer> icons = new ArrayList<Integer>();
-                for (DeviceHistory info : mDeviceList) {
+                for (DeviceHistory info : mLANDeviceList) {
+                    mDeviceList.add(info);
                     users.add(info.getIp());
                     icons.add(R.drawable.ic_btn_clear);
                 }
-
+                for (DeviceHistory info : mHistoryDeviceList) {
+                    mDeviceList.add(info);
+                    users.add(info.getIp());
+                    icons.add(R.drawable.ic_btn_clear);
+                }
                 mDeviceSpinnerView.addSpinnerItems(users, icons);
                 mDeviceSpinnerView.setOnSpinnerButtonClickListener(new SpinnerView.OnSpinnerButtonClickListener() {
                     @Override
                     public void onClick(View view, int index) {
-                        DeviceHistory deviceHistory = mDeviceList.get(index);
-//                        mUserHistoryList.remove(deviceHistory);
-//                        DeviceHistoryKeeper.delete(deviceHistory);
+                        DeviceHistory device = mDeviceList.get(index);
+                        if (device.getIsLAN()) {
+                            mLANDeviceList.remove(device);
+                        } else {
+                            mHistoryUserList.remove(device);
+                            DeviceHistoryKeeper.delete(device);
+                        }
+
                         mDeviceSpinnerView.dismiss();
                     }
                 });
                 mDeviceSpinnerView.setOnSpinnerItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        DeviceHistory deviceHistory = mDeviceList.get(position);
+                        DeviceHistory deviceHistory = mLANDeviceList.get(position);
                         mIPTxt.setText(deviceHistory.getIp());
                         mPortTxt.setText(deviceHistory.getPort());
                         mDeviceSpinnerView.dismiss();
@@ -212,39 +267,38 @@ public class LoginActivity extends BaseActivity {
     private void initLoginHistory() {
         List<UserHistory> userList = UserHistoryKeeper.all();
         if (!EmptyUtils.isEmpty(userList)) {
-            mUserHistoryList.addAll(userList);
-            UserHistory UserHistory = userList.get(0);
-            mUserTxt.setText(UserHistory.getName());
-            mPwdTxt.setText(UserHistory.getPwd());
+            mHistoryUserList.addAll(userList);
+            mLastLoginUser = userList.get(0);
+            mUserTxt.setText(mLastLoginUser.getName());
+            mPwdTxt.setText(mLastLoginUser.getPwd());
         }
 
         List<DeviceHistory> deviceList = DeviceHistoryKeeper.all();
         if (!EmptyUtils.isEmpty(deviceList)) {
-            mDeviceList.addAll(deviceList);
-            mLastLoginDevice = mDeviceList.get(0);
+            mHistoryDeviceList.addAll(deviceList);
         }
     }
 
-    private void attempLogin() {
+    private boolean attempLogin() {
         String user = mUserTxt.getText().toString();
         if (EmptyUtils.isEmpty(user)) {
             AnimUtils.sharkEditText(LoginActivity.this, mUserTxt);
-            mUserTxt.requestFocus();
-            return;
+            AnimUtils.focusToEnd(mUserTxt);
+            return false;
         }
 
         String pwd = mPwdTxt.getText().toString();
         if (EmptyUtils.isEmpty(pwd)) {
             AnimUtils.sharkEditText(LoginActivity.this, mPwdTxt);
-            mPwdTxt.requestFocus();
-            return;
+            AnimUtils.focusToEnd(mPwdTxt);
+            return false;
         }
 
         String ip = mIPTxt.getText().toString();
         if (EmptyUtils.isEmpty(ip)) {
             AnimUtils.sharkEditText(LoginActivity.this, mIPTxt);
-            mIPTxt.requestFocus();
-            return;
+            AnimUtils.focusToEnd(mIPTxt);
+            return false;
         }
 
         String port = mPortTxt.getText().toString();
@@ -253,13 +307,14 @@ public class LoginActivity extends BaseActivity {
             mPortTxt.setText(port);
         } else if (!Utils.checkPort(port)) {
             AnimUtils.sharkEditText(LoginActivity.this, mPortTxt);
-            mPortTxt.requestFocus();
+            AnimUtils.focusToEnd(mPortTxt);
             ToastHelper.showToast(R.string.tip_invaild_port);
-            return;
+            return false;
         }
 
         String mac = getLANDeviceMacByIP(ip);
         doLogin(user, pwd, ip, port, mac);
+        return true;
     }
 
     private void doLogin(String user, String pwd, String ip, String port, String mac) {
@@ -273,7 +328,12 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess(String url, LoginSession loginSession) {
                 dismissLoading();
-                ToastHelper.showToast("Login Success!");
+                mLoginSession = loginSession;
+                if (!loginSession.getDeviceInfo().getIsLAN()) {
+                    getDeviceMacAddress();
+                } else {
+                    gotoMainActivity();
+                }
             }
 
             @Override
@@ -285,8 +345,38 @@ public class LoginActivity extends BaseActivity {
         loginAPI.login();
     }
 
+    public void getDeviceMacAddress() {
+        OneOSGetMacAPI getMacAPI = new OneOSGetMacAPI(mLoginSession.getDeviceInfo().getIp(), mLoginSession.getDeviceInfo().getPort());
+        getMacAPI.setOnGetMacListener(new OneOSGetMacAPI.OnGetMacListener() {
+            @Override
+            public void onStart(String url) {
+                showLoading(R.string.getting_device_mac, false);
+            }
+
+            @Override
+            public void onSuccess(String url, String mac) {
+                dismissLoading();
+                mLoginSession.getDeviceInfo().setMac(mac);
+                gotoMainActivity();
+            }
+
+            @Override
+            public void onFailure(String url, int errorNo, String errorMsg) {
+                dismissLoading();
+                ToastHelper.showToast(errorMsg);
+            }
+        });
+        getMacAPI.getMac();
+    }
+
+    private void gotoMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private String getLANDeviceMacByIP(String ip) {
-        for (DeviceHistory info : mDeviceList) {
+        for (DeviceHistory info : mLANDeviceList) {
             if (info.getIp().equals(ip)) {
                 return info.getMac();
             }
@@ -296,13 +386,13 @@ public class LoginActivity extends BaseActivity {
     }
 
     private boolean checkIfLastLoginDevice(String mac, String ip) {
-        if (mLastLoginDevice == null) {
+        if (mLastLoginUser == null) {
             return false;
         }
 
         boolean isLast = false;
-        String perferMac = mLastLoginDevice.getMac();
-        if (!TextUtils.isEmpty(perferMac)) {
+        String perferMac = mLastLoginUser.getMac();
+        if (!EmptyUtils.isEmpty(perferMac)) {
             if (perferMac.equalsIgnoreCase(mac)) {
                 mIPTxt.setText(ip);
                 mPortTxt.setText(OneOSAPIs.ONE_API_DEFAULT_PORT);

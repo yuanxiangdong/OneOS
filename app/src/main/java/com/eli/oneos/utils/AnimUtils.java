@@ -40,4 +40,11 @@ public class AnimUtils {
 
         vibrator.vibrate(VIBRATOR_SHORT);
     }
+
+    public static void focusToEnd(EditText mEditText) {
+        if (null != mEditText) {
+            mEditText.requestFocus();
+            mEditText.setSelection(mEditText.getText().length());
+        }
+    }
 }

@@ -5,7 +5,9 @@ package com.eli.oneos.utils;
  */
 public class Utils {
 
-    /** check if ip is valid */
+    /**
+     * check if ip is valid
+     */
     public static boolean isAvaliableIp(String IP) {
         boolean b = false;
         if (IP.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {
@@ -41,4 +43,5 @@ public class Utils {
 
         return i >= 0 && i <= 65535;
     }
+
 }

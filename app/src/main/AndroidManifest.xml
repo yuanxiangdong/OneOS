@@ -23,18 +23,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.eli.oneos.ui.MainActivity"
+            android:name="com.eli.oneos.ui.LauncherActivity"
             android:label="@string/app_name"
-            android:theme="@style/FullBleedTheme"></activity>
-        <activity
-            android:name="com.eli.oneos.ui.LoginActivity"
-            android:label="@string/app_name"
-            android:theme="@style/FullBleedTheme">
+            android:theme="@style/FullScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.eli.oneos.ui.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme">
+        </activity>
+        <activity
+            android:name="com.eli.oneos.ui.LoginActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme">
         </activity>
     </application>
 

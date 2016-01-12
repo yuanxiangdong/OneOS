@@ -13,6 +13,7 @@ public class OneOSAPIs {
     private static final String ONE_API = "/oneapi";
 
     public static final String LOGIN = ONE_API + "/user/login";
+    public static final String GET_MAC = ONE_API + "/net/infowire";
 
 
 
