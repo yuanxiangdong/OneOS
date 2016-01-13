@@ -27,8 +27,8 @@
 
     <!-- System Status Bar color-->
     <color name="status_bar">@color/primary</color>
-    <color name="bg_page">@color/white</color>
     <color name="bg_title">@color/status_bar</color>
+    <color name="bg_page">@color/white</color>
 
     <!-- Transparent PopupWindows background color -->
     <color name="translucent_black">#70000000</color>
@@ -42,4 +42,5 @@
     <color name="line_dialog">#99B2B2B2</color>
     <color name="line_main_tab">#66B2B2B2</color>
     <color name="bg_main_tab">#FFF9F9F9</color>
+    <color name="txt_nav_normal">#FF7B7B7B</color>
 </resources>

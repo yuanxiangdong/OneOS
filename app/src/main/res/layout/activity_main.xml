@@ -32,40 +32,40 @@
         android:orientation="horizontal"
         android:visibility="visible" >
 
-        <RadioButton
+        <!--<RadioButton
             android:id="@+id/radio_local"
             style="@style/MainTabRadioButtonTheme"
-            android:drawableTop="@drawable/tab_local_button"
+            android:drawableTop="@drawable/selector_nav_button_local"
             android:gravity="center"
-            android:text="@string/tab_local" />
+            android:text="@string/nav_title_local" />-->
 
         <RadioButton
             android:id="@+id/radio_cloud"
             style="@style/MainTabRadioButtonTheme"
-            android:drawableTop="@drawable/tab_cloud_button"
+            android:drawableTop="@drawable/selector_nav_button_cloud"
             android:gravity="center"
-            android:text="@string/tab_cloud" />
+            android:text="@string/nav_title_cloud" />
 
         <RadioButton
             android:id="@+id/radio_transfer"
             style="@style/MainTabRadioButtonTheme"
-            android:drawableTop="@drawable/tab_transfer_button"
+            android:drawableTop="@drawable/selector_nav_button_transfer"
             android:gravity="center"
-            android:text="@string/tab_transfer" />
+            android:text="@string/nav_title_transfer" />
 
         <RadioButton
             android:id="@+id/radio_tool"
             style="@style/MainTabRadioButtonTheme"
-            android:drawableTop="@drawable/tab_tools_button"
+            android:drawableTop="@drawable/selector_nav_button_tool"
             android:gravity="center"
-            android:text="@string/tab_tool" />
+            android:text="@string/nav_title_tool" />
     </RadioGroup>
 
     <ImageView
         android:id="@+id/line_title"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/line_main_weight"
+        android:layout_height="@dimen/line_nav_weight"
         android:layout_below="@+id/content"
-        android:background="@color/bg_line" />
+        android:background="@color/line_main_tab" />
 
 </RelativeLayout>

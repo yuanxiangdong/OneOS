@@ -7,6 +7,14 @@
     <string name="cancel">取消</string>
     <string name="tip">提示</string>
     <string name="loading">正在加载&#8230;</string>
+    <string name="network_not_available">当前网络不可用，请检查网络连接！</string>
+    <string name="wifi_not_available">当前WiFi不可用，请检查WiFi连接！</string>
+
+    <!-- Navigation Bar Title -->
+    <string name="nav_title_local">本地</string>
+    <string name="nav_title_cloud">云盘</string>
+    <string name="nav_title_transfer">传输</string>
+    <string name="nav_title_tool">工具包</string>
 
     <!-- Login Activity -->
     <string name="title_login">OneSpace登录</string>

@@ -56,6 +56,14 @@ public class LoginManager {
         return false;
     }
 
+    public boolean isLANDevice() {
+        if (isLogin()) {
+            return loginSession.getDeviceInfo().getIsLAN();
+        }
+
+        return false;
+    }
+
     public void setLoginSession(LoginSession loginSession) {
         LoginManager.loginSession = loginSession;
     }

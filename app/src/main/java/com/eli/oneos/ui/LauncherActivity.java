@@ -70,7 +70,7 @@ public class LauncherActivity extends BaseActivity {
 
     private void initLastLoginInfo() {
         lastUserHistory = UserHistoryKeeper.top();
-        lastUserHistory = null; // TODO.. test code
+//        lastUserHistory = null; // TODO.. test code
     }
 
     private void showAlphaAnim() {
