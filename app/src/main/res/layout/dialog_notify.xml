@@ -44,7 +44,7 @@
         android:layout_height="@dimen/layout_dialog_bottom_height"
         android:layout_below="@+id/iv_line"
         android:layout_weight="1.0"
-        android:background="@drawable/selector_square_bottom_radius_white_gray"
+        android:background="@drawable/selector_square_bottom_radius_white_light_gray"
         android:gravity="center"
         android:text="@string/ok"
         android:textColor="@color/blue"

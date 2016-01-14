@@ -24,6 +24,7 @@ import com.eli.oneos.model.scan.OnScanDeviceListener;
 import com.eli.oneos.model.scan.ScanDeviceManager;
 import com.eli.oneos.model.user.LoginManager;
 import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.receiver.NetworkStateManager;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
@@ -81,6 +82,16 @@ public class LoginActivity extends BaseActivity {
             }
         }
     });
+    private boolean isWifiAvailable = true;
+    private NetworkStateManager.OnNetworkStateChangedListener mNetworkListener = new NetworkStateManager.OnNetworkStateChangedListener() {
+        @Override
+        public void onChanged(boolean isAvailable, boolean isWifiAvailable) {
+            LoginActivity.this.isWifiAvailable = isWifiAvailable;
+            if (!isWifiAvailable) {
+                ToastHelper.showToast(R.string.wifi_not_available);
+            }
+        }
+    };
 
     private View.OnClickListener onLoginClickListener = new View.OnClickListener() {
         @Override
@@ -97,17 +108,21 @@ public class LoginActivity extends BaseActivity {
                     break;
                 case R.id.btn_more_ip:
                     if (EmptyUtils.isEmpty(mLANDeviceList)) {
-                        DialogUtils.showConfirmDialog(LoginActivity.this, R.string.tip_title_research, R.string.tip_search_again,
-                                R.string.research_now, R.string.cancel, new DialogUtils.OnDialogClickListener() {
-                                    @Override
-                                    public void onClick(boolean isPositiveBtn) {
-                                        if (isPositiveBtn) {
-                                            mScanManager.start();
-                                        } else {
-                                            showDeviceSpinnerView(mIPLayout);
+                        if (isWifiAvailable) {
+                            DialogUtils.showConfirmDialog(LoginActivity.this, R.string.tip_title_research, R.string.tip_search_again,
+                                    R.string.research_now, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                                        @Override
+                                        public void onClick(boolean isPositiveBtn) {
+                                            if (isPositiveBtn) {
+                                                mScanManager.start();
+                                            } else {
+                                                showDeviceSpinnerView(mIPLayout);
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                        } else {
+                            DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.wifi_not_available, R.string.ok, null);
+                        }
                         return;
                     } else {
                         showDeviceSpinnerView(mIPLayout);
@@ -131,6 +146,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        NetworkStateManager.getInstance().setOnNetworkStateChangedListener(mNetworkListener);
         mScanManager.start();
     }
 
@@ -144,6 +160,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        NetworkStateManager.getInstance().removeOnNetworkStateChangedListener(mNetworkListener);
         mScanManager.stop();
     }
 
