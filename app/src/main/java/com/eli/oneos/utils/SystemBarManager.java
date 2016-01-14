@@ -41,7 +41,7 @@ import java.lang.reflect.Method;
  * Class to manage status and navigation bar tint effects when using KitKat translucent system UI
  * modes.
  */
-public class SystemBarTintManager {
+public class SystemBarManager {
 
     static {
         // Android allows a system property to override the presence of the
@@ -83,7 +83,7 @@ public class SystemBarTintManager {
      * @param activity The host activity.
      */
     @TargetApi(19)
-    public SystemBarTintManager(Activity activity) {
+    public SystemBarManager(Activity activity) {
 
         Window win = activity.getWindow();
         ViewGroup decorViewGroup = (ViewGroup) win.getDecorView();

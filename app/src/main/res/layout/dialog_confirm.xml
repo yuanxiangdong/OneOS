@@ -51,7 +51,7 @@
             android:layout_weight="1.0"
             android:background="@drawable/selector_square_left_bottom_radius_white_light_gray"
             android:gravity="center"
-            android:textColor="@color/blue"
+            android:textColor="@color/primary"
             android:textSize="@dimen/text_size_mid"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -70,7 +70,7 @@
             android:layout_weight="1.0"
             android:background="@drawable/selector_square_right_bottom_radius_white_light_gray"
             android:gravity="center"
-            android:textColor="@color/blue"
+            android:textColor="@color/primary"
             android:textSize="@dimen/text_size_mid"
             android:visibility="gone" />
     </LinearLayout>

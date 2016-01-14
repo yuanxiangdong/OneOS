@@ -2,6 +2,7 @@ package com.eli.oneos.model.api;
 
 import android.util.Log;
 
+import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.UserHistoryKeeper;
@@ -25,9 +26,7 @@ public class OneOSGetMacAPI extends OneOSAPI {
     private OnGetMacListener listener;
 
     public OneOSGetMacAPI(String ip, String port) {
-        this.ip = ip;
-        this.port = port;
-        initHttp();
+        super(ip, port);
     }
 
     public void setOnGetMacListener(OnGetMacListener listener) {
@@ -82,7 +81,7 @@ public class OneOSGetMacAPI extends OneOSAPI {
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        listener.onFailure(url, HttpErrorNo.ERR_JSON_EXCEPTION, "JSONException");
+                        listener.onFailure(url, HttpErrorNo.ERR_JSON_EXCEPTION, context.getResources().getString(R.string.error_json_exception));
                     }
                 }
             }

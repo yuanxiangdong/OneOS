@@ -1,9 +1,20 @@
 package com.eli.oneos.utils;
 
+import com.eli.oneos.MyApplication;
+
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
 public class Utils {
+
+
+    /**
+     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
+     */
+    public static int dipToPx(float dpValue) {
+        final float scale = MyApplication.getAppContext().getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
 
     /**
      * check if ip is valid

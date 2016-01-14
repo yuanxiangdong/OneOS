@@ -206,7 +206,7 @@ public class LoginActivity extends BaseActivity {
                 ArrayList<Integer> icons = new ArrayList<Integer>();
                 for (UserHistory info : mHistoryUserList) {
                     users.add(info.getName());
-                    icons.add(R.drawable.ic_btn_clear);
+                    icons.add(R.drawable.btn_clear);
                 }
 
                 mUserSpinnerView.addSpinnerItems(users, icons);
@@ -245,12 +245,12 @@ public class LoginActivity extends BaseActivity {
                 for (DeviceHistory info : mLANDeviceList) {
                     mDeviceList.add(info);
                     users.add(info.getIp());
-                    icons.add(R.drawable.ic_btn_clear);
+                    icons.add(R.drawable.btn_clear);
                 }
                 for (DeviceHistory info : mHistoryDeviceList) {
                     mDeviceList.add(info);
                     users.add(info.getIp());
-                    icons.add(R.drawable.ic_btn_clear);
+                    icons.add(R.drawable.btn_clear);
                 }
                 mDeviceSpinnerView.addSpinnerItems(users, icons);
                 mDeviceSpinnerView.setOnSpinnerButtonClickListener(new SpinnerView.OnSpinnerButtonClickListener() {
@@ -325,7 +325,7 @@ public class LoginActivity extends BaseActivity {
         } else if (!Utils.checkPort(port)) {
             AnimUtils.sharkEditText(LoginActivity.this, mPortTxt);
             AnimUtils.focusToEnd(mPortTxt);
-            ToastHelper.showToast(R.string.tip_invaild_port);
+            ToastHelper.showToast(R.string.tip_invalid_port);
             return false;
         }
 

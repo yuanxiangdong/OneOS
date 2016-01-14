@@ -7,13 +7,9 @@
     <!-- Base color -->
     <color name="white">@android:color/white</color>
     <color name="transparent">@android:color/transparent</color>
-    <color name="light_gray">#C0C0C0</color>
-    <color name="gray">#D0D0D0</color>
+    <color name="light_gray">#D0D0D0</color>
+    <color name="gray">#C0C0C0</color>
     <color name="darker_gray">@android:color/darker_gray</color>
-
-    <!-- Blue selector -->
-    <color name="blue">@color/primary</color>
-    <color name="blue_pressed">@color/primary_dark</color>
 
     <!-- Gray selector -->
     <color name="gray_normal">@color/gray</color>
@@ -22,7 +18,7 @@
 
     <!-- EditText border selector-->
     <color name="edittext_border_normal">@color/darker_gray</color>
-    <color name="edittext_border_pressed">@color/blue</color>
+    <color name="edittext_border_pressed">@color/primary</color>
     <color name="edittext_border_disabled">@color/gray_disabled</color>
 
     <!-- System Status Bar color-->
@@ -42,5 +38,6 @@
     <color name="line_dialog">#99B2B2B2</color>
     <color name="line_main_tab">#66B2B2B2</color>
     <color name="bg_main_tab">#FFF9F9F9</color>
+    <color name="bg_layout_order">#EEEEEE</color>
     <color name="txt_nav_normal">#FF7B7B7B</color>
 </resources>

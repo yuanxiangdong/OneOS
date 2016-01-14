@@ -2,6 +2,7 @@ package com.eli.oneos.model.api;
 
 import android.util.Log;
 
+import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.DeviceHistoryKeeper;
@@ -33,12 +34,10 @@ public class OneOSLoginAPI extends OneOSAPI {
     private String mac = null;
 
     public OneOSLoginAPI(String ip, String port, String user, String pwd, String mac) {
-        this.ip = ip;
-        this.port = port;
+        super(ip, port);
         this.user = user;
         this.pwd = pwd;
         this.mac = mac;
-        initHttp();
     }
 
     public void setOnLoginListener(OnLoginListener listener) {
@@ -95,12 +94,12 @@ public class OneOSLoginAPI extends OneOSAPI {
                         } else {
                             // {"errno":-1,"msg":"login error","result":false}
                             int errorNo = json.getInt("errno");
-                            String msg = json.getString("msg");
+                            String msg = context.getResources().getString(R.string.error_login_user_or_pwd);
                             listener.onFailure(url, errorNo, msg);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        listener.onFailure(url, HttpErrorNo.ERR_JSON_EXCEPTION, "JSONException");
+                        listener.onFailure(url, HttpErrorNo.ERR_JSON_EXCEPTION, context.getResources().getString(R.string.error_json_exception));
                     }
                 }
             }

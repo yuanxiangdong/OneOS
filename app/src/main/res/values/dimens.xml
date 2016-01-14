@@ -1,5 +1,5 @@
 <resources>
-    <dimen name="layout_title_height">46dp</dimen>
+    <dimen name="layout_title_height">44dp</dimen>
     <dimen name="layout_login_padding_left">40dp</dimen>
     <dimen name="layout_login_padding_right">40dp</dimen>
     <dimen name="layout_login_padding_top">60dp</dimen>
@@ -7,16 +7,22 @@
 
     <dimen name="layout_common_button_height">40dp</dimen>
 
-    <dimen name="common_size_radius">3dp</dimen>
+    <dimen name="common_size_radius">5dp</dimen>
     <dimen name="common_size_stroke">2px</dimen>
     <dimen name="common_size_stroke_shrink">-2px</dimen>
 
-    <dimen name="layout_spinner_line_height">53dp</dimen>
+    <dimen name="line_common_weight">0.6dp</dimen>
     <dimen name="line_dialog_weight">0.6dp</dimen>
     <dimen name="line_nav_weight">1.0dp</dimen>
+    <dimen name="list_divider_height">0.5dp</dimen>
+
+    <dimen name="layout_spinner_line_height">53dp</dimen>
     <dimen name="layout_dialog_bottom_height">42dp</dimen>
     <dimen name="layout_dialog_margin">15dp</dimen>
-    <dimen name="line_radiogroup_height">1.0dp</dimen>
-    <dimen name="layout_tab_height">53dp</dimen>
+    <dimen name="line_radio_group_height">1.0dp</dimen>
+    <dimen name="layout_tab_height">50dp</dimen>
+    <dimen name="layout_path_height">36dp</dimen>
+    <dimen name="layout_operate_height">36dp</dimen>
+    <dimen name="layout_select_title_height">@dimen/layout_title_height</dimen>
 
 </resources>

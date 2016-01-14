@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentActivity;
 
 import com.eli.oneos.R;
 import com.eli.oneos.utils.DialogUtils;
-import com.eli.oneos.utils.SystemBarTintManager;
+import com.eli.oneos.utils.SystemBarManager;
 import com.eli.oneos.widget.LoadingView;
 
 /**
@@ -44,7 +44,7 @@ public class BaseActivity extends FragmentActivity {
      * @param colorId Status Bar background color resource id
      */
     protected void initStatusBarStyle(int colorId) {
-        SystemBarTintManager mTintManager = new SystemBarTintManager(this);
+        SystemBarManager mTintManager = new SystemBarManager(this);
         mTintManager.setStatusBarTintEnabled(true);
         mTintManager.setNavigationBarTintEnabled(true);
         mTintManager.setStatusBarTintResource(colorId);

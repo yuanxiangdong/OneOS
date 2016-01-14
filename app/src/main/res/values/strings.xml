@@ -9,6 +9,7 @@
     <string name="loading">正在加载&#8230;</string>
     <string name="network_not_available">当前网络不可用，请检查网络连接！</string>
     <string name="wifi_not_available">当前WiFi不可用，请检查WiFi连接！</string>
+    <string name="error_json_exception">解析协议出错</string>
 
     <!-- Navigation Bar Title -->
     <string name="nav_title_local">本地</string>
@@ -23,12 +24,30 @@
     <string name="hint_enter_pwd">密码</string>
     <string name="hint_select_ip">IP地址</string>
     <string name="hint_enter_port">端口号</string>
-    <string name="tip_invaild_port">请输入有效端口号</string>
+    <string name="tip_invalid_port">请输入有效端口号</string>
     <string name="loginning">正在登录&#8230;</string>
     <string name="scanning_device">搜索OneSpace&#8230;</string>
     <string name="tip_title_research">搜索设备</string>
     <string name="tip_search_again">未搜索到可用OneSpace，重新搜索？</string>
     <string name="research_now">重新搜索</string>
     <string name="getting_device_mac">获取Mac&#8230;</string>
+    <string name="error_login_user_or_pwd">登录失败，用户名或密码错误！</string>
+
+    <!-- Cloud Fragment -->
+    <string name="root_dir_name_private">我的目录</string>
+    <string name="root_dir_name_public">公共目录</string>
+    <string name="file_type_cloud_all">全部</string>
+
+    <string name="file_order_time">时间</string>
+    <string name="file_order_name">文件名</string>
+
+    <string name="hint_search">请输入要搜索的文件名</string>
+    <string name="hint_select_file">请选择文件</string>
+    <string name="select_all">全选</string>
+    <string name="select_none">全不选</string>
+    <string name="selected_item">已选择%s项</string>
+    <string name="empty_file_list">该目录没有文件</string>
+    <string name="error_access_dir_perm_deny">没有权限访问此目录</string>
+    <string name="error_get_file_list">获取文件列表失败</string>
 
 </resources>

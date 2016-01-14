@@ -134,7 +134,7 @@
                 android:layout_height="@dimen/layout_common_button_height"
                 android:layout_marginBottom="@dimen/layout_login_padding_bottom"
                 android:layout_marginTop="@dimen/layout_login_padding_top"
-                android:background="@drawable/selector_button_bg_blue"
+                android:background="@drawable/selector_button_bg_primary"
                 android:gravity="center"
                 android:text="@string/login"
                 android:textColor="@color/white"

@@ -30,4 +30,5 @@ dependencies {
     compile files('libs/httpmime-4.5.1.jar')
     //    compile('com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE')
     compile project(':materialloadingprogressbar')
+    compile files('libs/gson-2.2.4.jar')
 }

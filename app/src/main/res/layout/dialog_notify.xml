@@ -47,7 +47,7 @@
         android:background="@drawable/selector_square_bottom_radius_white_light_gray"
         android:gravity="center"
         android:text="@string/ok"
-        android:textColor="@color/blue"
+        android:textColor="@color/primary"
         android:textSize="@dimen/text_size_mid"
         android:textStyle="bold" />
 

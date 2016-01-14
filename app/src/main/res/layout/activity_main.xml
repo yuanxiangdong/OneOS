@@ -3,21 +3,20 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:clipToPadding="false"
-    android:fitsSystemWindows="true" >
+    android:fitsSystemWindows="true">
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/content"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_gravity="center"
-        android:background="@color/bg_page" >
-    </RelativeLayout>
+        android:background="@color/bg_page" />
 
     <ImageView
         android:id="@+id/radiogroup_line"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/line_radiogroup_height"
+        android:layout_height="@dimen/line_radio_group_height"
         android:layout_above="@+id/radiogroup"
         android:background="@color/line_main_tab" />
 
@@ -30,18 +29,19 @@
         android:background="@color/bg_main_tab"
         android:gravity="center"
         android:orientation="horizontal"
-        android:visibility="visible" >
+        android:visibility="visible">
 
-        <!--<RadioButton
+        <RadioButton
             android:id="@+id/radio_local"
             style="@style/MainTabRadioButtonTheme"
             android:drawableTop="@drawable/selector_nav_button_local"
             android:gravity="center"
-            android:text="@string/nav_title_local" />-->
+            android:text="@string/nav_title_local" />
 
         <RadioButton
             android:id="@+id/radio_cloud"
             style="@style/MainTabRadioButtonTheme"
+            android:checked="true"
             android:drawableTop="@drawable/selector_nav_button_cloud"
             android:gravity="center"
             android:text="@string/nav_title_cloud" />
@@ -60,12 +60,5 @@
             android:gravity="center"
             android:text="@string/nav_title_tool" />
     </RadioGroup>
-
-    <ImageView
-        android:id="@+id/line_title"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/line_nav_weight"
-        android:layout_below="@+id/content"
-        android:background="@color/line_main_tab" />
 
 </RelativeLayout>

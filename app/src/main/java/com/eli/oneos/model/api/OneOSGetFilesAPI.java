@@ -1,0 +1,110 @@
+package com.eli.oneos.model.api;
+
+import android.util.Log;
+
+import com.eli.oneos.R;
+import com.eli.oneos.constant.HttpErrorNo;
+import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.utils.GsonUtils;
+import com.google.gson.reflect.TypeToken;
+
+import net.tsz.afinal.http.AjaxCallBack;
+import net.tsz.afinal.http.AjaxParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * OneSpace OS Get File List API
+ * <p/>
+ * Created by gaoyun@eli-tech.com on 2016/1/14.
+ */
+public class OneOSGetFilesAPI extends OneOSAPI {
+    private static final String TAG = OneOSGetFilesAPI.class.getSimpleName();
+
+    private OnFileListListener listener;
+    private String path = null;
+    private String type = "all";
+
+    public OneOSGetFilesAPI(String ip, String port, String session, String path) {
+        super(ip, port);
+        this.session = session;
+        this.path = path;
+    }
+
+    public void setOnFileListListener(OnFileListListener listener) {
+        this.listener = listener;
+    }
+
+    public void login() {
+        url = genOneOSAPIUrl(OneOSAPIs.GET_FILE_LIST);
+        Log.d(TAG, "Login: " + url);
+        AjaxParams params = new AjaxParams();
+        params.put("session", session);
+        params.put("path", path);
+        params.put("ftype", type);
+
+        finalHttp.post(url, params, new AjaxCallBack<String>() {
+
+            @Override
+            public void onFailure(Throwable t, int errorNo, String strMsg) {
+                super.onFailure(t, errorNo, strMsg);
+                Log.e(TAG, "Response Data: " + errorNo + " : " + strMsg);
+                if (listener != null) {
+                    listener.onFailure(url, errorNo, strMsg);
+                }
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                super.onSuccess(result);
+                Log.d(TAG, "Response Data:" + result);
+                if (listener != null) {
+                    try {
+                        JSONObject json = new JSONObject(result);
+                        boolean ret = json.getBoolean("result");
+                        if (ret) {
+                            ArrayList<OneOSFile> files = null;
+                            if (json.has("files")) {
+                                Type type = new TypeToken<List<OneOSFile>>() {
+                                }.getType();
+                                files = GsonUtils.decodeJSON(json.getString("files"), type);
+                            }
+                            listener.onSuccess(url, path, files);
+                        } else {
+                            // {"errno":-1,"msg":"login error","result":false}
+                            // -1=permission deny, -2=argument error, -3=other error
+                            int errorNo = json.getInt("errno");
+                            String msg = null;
+                            if (errorNo == -1) {
+                                msg = context.getResources().getString(R.string.error_access_dir_perm_deny);
+                            } else {
+                                msg = context.getResources().getString(R.string.error_get_file_list);
+                            }
+                            listener.onFailure(url, errorNo, msg);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        listener.onFailure(url, HttpErrorNo.ERR_JSON_EXCEPTION, context.getResources().getString(R.string.error_json_exception));
+                    }
+                }
+            }
+        });
+
+        if (listener != null) {
+            listener.onStart(url);
+        }
+    }
+
+    public interface OnFileListListener {
+        void onStart(String url);
+
+        void onSuccess(String url, String path, ArrayList<OneOSFile> files);
+
+        void onFailure(String url, int errorNo, String errorMsg);
+    }
+}
