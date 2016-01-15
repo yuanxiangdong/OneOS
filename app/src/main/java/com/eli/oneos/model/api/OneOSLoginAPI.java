@@ -92,7 +92,7 @@ public class OneOSLoginAPI extends OneOSAPI {
 
                             listener.onSuccess(url, loginInfo);
                         } else {
-                            // {"errno":-1,"msg":"login error","result":false}
+                            // {"errno":-1,"msg":"list error","result":false}
                             int errorNo = json.getInt("errno");
                             String msg = context.getResources().getString(R.string.error_login_user_or_pwd);
                             listener.onFailure(url, errorNo, msg);

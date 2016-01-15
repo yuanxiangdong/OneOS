@@ -1,7 +1,7 @@
 package com.eli.oneos.model.user;
 
 /**
- * Singleton Class for manage login information.
+ * Singleton Class for manage list information.
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/11.
  */
@@ -22,9 +22,9 @@ public class LoginManager {
     }
 
     /**
-     * Whether is login OneSpace
+     * Whether is list OneSpace
      *
-     * @return if login
+     * @return if list
      */
     public boolean isLogin() {
         if (loginSession == null) {

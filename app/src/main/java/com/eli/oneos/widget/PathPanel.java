@@ -33,7 +33,7 @@ public class PathPanel extends RelativeLayout {
     private String path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
     private String mPrivateRootDirName = null;
     private String mPublicRootDirName = null;
-    private int pathMaxWidth = 0, pathMinWidth = 0;
+    private int pathMaxWidth = 0, pathMinWidth = 0, pathBtnPadding = 0;
 
     public PathPanel(Context context) {
         super(context);
@@ -49,6 +49,7 @@ public class PathPanel extends RelativeLayout {
         mPublicRootDirName = getResources().getString(R.string.root_dir_name_public);
         pathMaxWidth = Utils.dipToPx(120);
         pathMinWidth = Utils.dipToPx(30);
+        pathBtnPadding = Utils.dipToPx(5);
 
         mPathLayout = (LinearLayout) view.findViewById(R.id.layout_file_path);
         mLineView = (View) findViewById(R.id.view_path_mid_line);
@@ -86,12 +87,13 @@ public class PathPanel extends RelativeLayout {
         Log.i(TAG, "Add path button:" + path);
         mPathLayout.removeAllViews();
 
-        boolean isPublicDir = path.startsWith(File.separator);
+        boolean isPrivateDir = path.startsWith(File.separator);
 
         try {
-            final String rootStr = isPublicDir ? OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR : OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
-            String rootName = isPublicDir ? mPublicRootDirName : mPrivateRootDirName;
-            String setPath = path.replaceFirst(rootName, rootStr);
+            final String rootStr = isPrivateDir ? OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR : OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
+            String rootName = isPrivateDir ? (mPrivateRootDirName + File.separator) : mPublicRootDirName;
+            String setPath = path.replaceFirst(rootStr, rootName);
+            Log.d(TAG, "Add path button:" + setPath);
             final String[] pathItems = setPath.split(File.separator);
             Button[] pathBtn = new Button[pathItems.length];
             Resources resource = getResources();
@@ -104,6 +106,7 @@ public class PathPanel extends RelativeLayout {
                 pathBtn[i].setTextSize(13);
                 pathBtn[i].setMaxWidth(pathMaxWidth);
                 pathBtn[i].setMinWidth(pathMinWidth);
+                pathBtn[i].setPadding(pathBtnPadding, 0, pathBtnPadding, 0);
                 pathBtn[i].setSingleLine(true);
                 pathBtn[i].setEllipsize(TextUtils.TruncateAt.END);
                 pathBtn[i].setTextColor(csl);

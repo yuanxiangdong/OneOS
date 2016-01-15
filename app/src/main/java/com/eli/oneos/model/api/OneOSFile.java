@@ -1,5 +1,7 @@
 package com.eli.oneos.model.api;
 
+import com.eli.oneos.R;
+
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/14.
  */
@@ -8,12 +10,25 @@ public class OneOSFile {
 
     private String path = null;
     private String perm = null;
+    /**
+     * File Type, Server Type Table:
+     * directory="dir",jpg="pic",gif="pic",png="pic",jpeg="pic",bmp="pic",mp3="audio",ogg="audio",wav="audio",flac="audio",
+     * wma="audio",m4a="audio",avi="video",mp4="video",flv="video",rmvb="video",mkv="video",mov="video",wmv="video",
+     * mpg="video",doc="doc",xls="doc",ppt="doc",docx="doc",xlsx="doc",pptx="doc",pdf="doc",txt="doc",csv="doc",tea="enc"
+     */
     private String type = null;
     private String name = null;
     private int gid = 0;
     private int uid = 0;
     private long time = 0;
     private long size = 0;
+
+    // file shown icon
+    private int icon = R.drawable.icon_file_default;
+    // format file time
+    private String fmtTime = null;
+    // format file size
+    private String fmtSize = null;
 
     public String getPath() {
         return path;
@@ -77,5 +92,41 @@ public class OneOSFile {
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    public int getIcon() {
+        return icon;
+    }
+
+    public void setIcon(int icon) {
+        this.icon = icon;
+    }
+
+    public String getFmtSize() {
+        return fmtSize;
+    }
+
+    public void setFmtSize(String fmtSize) {
+        this.fmtSize = fmtSize;
+    }
+
+    public String getFmtTime() {
+        return fmtTime;
+    }
+
+    public void setFmtTime(String fmtTime) {
+        this.fmtTime = fmtTime;
+    }
+
+    public boolean isPicture() {
+        return null != this.type && this.type.equalsIgnoreCase("pic");
+    }
+
+    public boolean isEncrypt() {
+        return null != this.type && this.type.equalsIgnoreCase("enc");
+    }
+
+    public boolean isDirectory() {
+        return null != this.type && this.type.equalsIgnoreCase("dir");
     }
 }

@@ -29,7 +29,7 @@ public class UserHistoryKeeper {
     /**
      * Query top user (Last Login user)
      *
-     * @return last login user
+     * @return last list user
      */
     public static UserHistory top() {
         UserHistoryDao dao = DBHelper.getDaoSession().getUserHistoryDao();

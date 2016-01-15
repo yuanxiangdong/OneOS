@@ -30,16 +30,16 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/rbtn_order_time"
+                android:id="@+id/rbtn_order_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:background="@color/transparent"
+                android:background="@android:color/transparent"
                 android:button="@null"
                 android:checked="true"
                 android:gravity="center"
                 android:padding="5dp"
-                android:text="@string/file_order_time"
+                android:text="@string/file_order_name"
                 android:textColor="@color/selector_dark_primary"
                 android:textSize="@dimen/text_size_min" />
 
@@ -51,15 +51,15 @@
                 android:background="@color/line_main_tab" />
 
             <RadioButton
-                android:id="@+id/rbtn_order_name"
+                android:id="@+id/rbtn_order_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:background="@android:color/transparent"
+                android:background="@color/transparent"
                 android:button="@null"
                 android:gravity="center"
                 android:padding="5dp"
-                android:text="@string/file_order_name"
+                android:text="@string/file_order_time"
                 android:textColor="@color/selector_dark_primary"
                 android:textSize="@dimen/text_size_min" />
         </RadioGroup>

@@ -7,9 +7,11 @@
     <!-- Base color -->
     <color name="white">@android:color/white</color>
     <color name="transparent">@android:color/transparent</color>
+    <color name="tans_gray">#66D0D0D0</color>
     <color name="light_gray">#D0D0D0</color>
     <color name="gray">#C0C0C0</color>
     <color name="darker_gray">@android:color/darker_gray</color>
+    <color name="darker">#4B4B4B</color>
 
     <!-- Gray selector -->
     <color name="gray_normal">@color/gray</color>
@@ -33,10 +35,11 @@
 
     <!-- List selector color -->
     <color name="bg_list_transparent">@color/transparent</color>
-    <color name="bg_list_pressed_gray">@color/gray</color>
+    <color name="bg_list_pressed_gray">@color/tans_gray</color>
 
     <color name="line_dialog">#99B2B2B2</color>
     <color name="line_main_tab">#66B2B2B2</color>
+    <color name="line_list_view">@color/tans_gray</color>
     <color name="bg_main_tab">#FFF9F9F9</color>
     <color name="bg_layout_order">#EEEEEE</color>
     <color name="txt_nav_normal">#FF7B7B7B</color>

@@ -1,5 +1,6 @@
 package com.eli.oneos.model.user;
 
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 
@@ -42,7 +43,6 @@ public class LoginSession {
     }
 
     public DeviceInfo getDeviceInfo() {
-
         return deviceInfo;
     }
 
@@ -57,5 +57,13 @@ public class LoginSession {
 
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
+    }
+
+    public String getBaseUrl() {
+        if (null != deviceInfo) {
+            return OneOSAPIs.PREFIX_HTTP + deviceInfo.getIp() + ":" + deviceInfo.getPort();
+        }
+
+        return null;
     }
 }

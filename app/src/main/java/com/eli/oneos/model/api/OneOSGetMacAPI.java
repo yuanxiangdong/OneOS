@@ -74,7 +74,7 @@ public class OneOSGetMacAPI extends OneOSAPI {
                                 listener.onSuccess(url, mac);
                             }
                         } else {
-                            // {"errno":-1,"msg":"login error","result":false}
+                            // {"errno":-1,"msg":"list error","result":false}
                             int errorNo = json.getInt("errno");
                             String msg = json.getString("msg");
                             listener.onFailure(url, errorNo, msg);

@@ -5,6 +5,8 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.utils.EmptyUtils;
+import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 
@@ -40,7 +42,7 @@ public class OneOSGetFilesAPI extends OneOSAPI {
         this.listener = listener;
     }
 
-    public void login() {
+    public void list() {
         url = genOneOSAPIUrl(OneOSAPIs.GET_FILE_LIST);
         Log.d(TAG, "Login: " + url);
         AjaxParams params = new AjaxParams();
@@ -53,7 +55,7 @@ public class OneOSGetFilesAPI extends OneOSAPI {
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
                 super.onFailure(t, errorNo, strMsg);
-                Log.e(TAG, "Response Data: " + errorNo + " : " + strMsg);
+                Log.e(TAG, "Response Data: ErrorNo=" + errorNo + " ; ErrorMsg=" + strMsg);
                 if (listener != null) {
                     listener.onFailure(url, errorNo, strMsg);
                 }
@@ -73,10 +75,22 @@ public class OneOSGetFilesAPI extends OneOSAPI {
                                 Type type = new TypeToken<List<OneOSFile>>() {
                                 }.getType();
                                 files = GsonUtils.decodeJSON(json.getString("files"), type);
+                                if (!EmptyUtils.isEmpty(files)) {
+                                    for (OneOSFile file : files) {
+                                        if (file.isDirectory()) {
+                                            file.setIcon(R.drawable.icon_file_folder);
+                                            file.setFmtSize("");
+                                        } else {
+                                            file.setIcon(FileUtils.fmtFileIcon(file.getName()));
+                                            file.setFmtSize(FileUtils.fmtFileSize(file.getSize()));
+                                        }
+                                        file.setFmtTime(FileUtils.fmtTimeByZone(file.getTime()));
+                                    }
+                                }
                             }
                             listener.onSuccess(url, path, files);
                         } else {
-                            // {"errno":-1,"msg":"login error","result":false}
+                            // {"errno":-1,"msg":"list error","result":false}
                             // -1=permission deny, -2=argument error, -3=other error
                             int errorNo = json.getInt("errno");
                             String msg = null;
