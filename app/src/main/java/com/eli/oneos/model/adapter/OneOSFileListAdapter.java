@@ -13,12 +13,13 @@ import com.eli.oneos.R;
 import com.eli.oneos.model.api.OneOSFile;
 import com.eli.oneos.model.user.LoginSession;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class OneOSFileListAdapter extends OneOSFileBaseAdapter {
 
-    public OneOSFileListAdapter(Context context, List<OneOSFile> fileList, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
-        super(context, fileList, listener, mLoginSession);
+    public OneOSFileListAdapter(Context context, List<OneOSFile> fileList, HashMap<Integer, Boolean> selectedMap, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
+        super(context, fileList, selectedMap, listener, mLoginSession);
     }
 
     @Override
@@ -71,8 +72,7 @@ public class OneOSFileListAdapter extends OneOSFileBaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
-        holder.mSelectIBtn.setTag(position);
+        holder.mSelectIBtn.setTag(position); // for get Select Button Index
 
         OneOSFile file = mFileList.get(position);
         holder.mNameTxt.setText(file.getName());
@@ -94,7 +94,7 @@ public class OneOSFileListAdapter extends OneOSFileBaseAdapter {
         if (isMultiChooseModel()) {
             holder.mSelectIBtn.setVisibility(View.GONE);
             holder.mSelectCb.setVisibility(View.VISIBLE);
-            holder.mSelectCb.setChecked(getIsSelected().get(position));
+            holder.mSelectCb.setChecked(getSelectedMap().get(position));
         } else {
             holder.mSelectCb.setVisibility(View.GONE);
             holder.mSelectIBtn.setVisibility(View.VISIBLE);

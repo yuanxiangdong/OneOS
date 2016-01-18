@@ -11,12 +11,13 @@ import com.eli.oneos.R;
 import com.eli.oneos.model.api.OneOSFile;
 import com.eli.oneos.model.user.LoginSession;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class OneOSFileGridAdapter extends OneOSFileBaseAdapter {
 
-    public OneOSFileGridAdapter(Context context, List<OneOSFile> fileList, LoginSession mLoginSession) {
-        super(context, fileList, null, mLoginSession);
+    public OneOSFileGridAdapter(Context context, List<OneOSFile> fileList, HashMap<Integer, Boolean> selectedMap, LoginSession mLoginSession) {
+        super(context, fileList, selectedMap, null, mLoginSession);
     }
 
     @Override
@@ -71,9 +72,9 @@ public class OneOSFileGridAdapter extends OneOSFileBaseAdapter {
             }
         }
 
-        if (isMultiChoose) {
+        if (isMultiChooseModel()) {
             holder.mSelectCb.setVisibility(View.VISIBLE);
-            holder.mSelectCb.setChecked(getIsSelected().get(position));
+            holder.mSelectCb.setChecked(getSelectedMap().get(position));
         } else {
             holder.mSelectCb.setVisibility(View.GONE);
         }

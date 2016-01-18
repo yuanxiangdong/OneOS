@@ -1,6 +1,7 @@
 package com.eli.oneos.model.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,18 +15,21 @@ import java.util.HashMap;
 import java.util.List;
 
 public class OneOSFileBaseAdapter extends BaseAdapter {
+    private static final String TAG = OneOSFileBaseAdapter.class.getSimpleName();
+
     public LayoutInflater mInflater;
-    public List<OneOSFile> mFileList = new ArrayList<OneOSFile>();
-    public HashMap<Integer, Boolean> mSelectedMap = new HashMap<Integer, Boolean>();
-    public boolean isMultiChoose = false;
+    public List<OneOSFile> mFileList = null;
+    public HashMap<Integer, Boolean> mSelectedMap = null;
+    private boolean isMultiChoose = false;
     public String mBasicUrl = null;
     public String mSession = null;
     public OnMultiChooseClickListener mListener = null;
 
-    public OneOSFileBaseAdapter(Context context, List<OneOSFile> fileList, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
+    public OneOSFileBaseAdapter(Context context, List<OneOSFile> fileList, HashMap<Integer, Boolean> selectedMap, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
         this.mInflater = LayoutInflater.from(context);
         this.mListener = listener;
         this.mFileList = fileList;
+        this.mSelectedMap = selectedMap;
         mBasicUrl = mLoginSession.getBaseUrl();
         mSession = mLoginSession.getSession();
 
@@ -36,6 +40,10 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
      * init Selected Map
      */
     private void initSelectedMap() {
+        if (mSelectedMap == null) {
+            Log.e(TAG, "Select Map is NULL");
+            return;
+        }
         mSelectedMap.clear();
         for (int i = 0; i < mFileList.size(); i++) {
             mSelectedMap.put(i, false);
@@ -84,7 +92,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
         return this.isMultiChoose;
     }
 
-    public HashMap<Integer, Boolean> getIsSelected() {
+    public HashMap<Integer, Boolean> getSelectedMap() {
         return mSelectedMap;
     }
 

@@ -25,14 +25,14 @@ import java.util.List;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/14.
  */
-public class OneOSGetFilesAPI extends OneOSAPI {
-    private static final String TAG = OneOSGetFilesAPI.class.getSimpleName();
+public class OneOSListDirAPI extends OneOSAPI {
+    private static final String TAG = OneOSListDirAPI.class.getSimpleName();
 
     private OnFileListListener listener;
     private String path = null;
     private String type = "all";
 
-    public OneOSGetFilesAPI(String ip, String port, String session, String path) {
+    public OneOSListDirAPI(String ip, String port, String session, String path) {
         super(ip, port);
         this.session = session;
         this.path = path;

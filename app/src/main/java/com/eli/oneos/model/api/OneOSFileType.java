@@ -1,10 +1,10 @@
 package com.eli.oneos.model.api;
 
-public enum ServerFileType {
+public enum OneOSFileType {
     /**
      * 文件目录
      */
-    ALL,
+    PRIVATE,
     /**
      * 公共目录
      */

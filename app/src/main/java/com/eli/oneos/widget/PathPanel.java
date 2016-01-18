@@ -31,8 +31,8 @@ public class PathPanel extends RelativeLayout {
     private OnPathPanelClickListener mListener;
 
     private String path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
-    private String mPrivateRootDirName = null;
-    private String mPublicRootDirName = null;
+    private String mPrivateRootDirShownName = null;
+    private String mPublicRootDirShownName = null;
     private int pathMaxWidth = 0, pathMinWidth = 0, pathBtnPadding = 0;
 
     public PathPanel(Context context) {
@@ -45,8 +45,8 @@ public class PathPanel extends RelativeLayout {
 
         View view = LayoutInflater.from(context).inflate(R.layout.layout_path_panel, this, true);
 
-        mPrivateRootDirName = getResources().getString(R.string.root_dir_name_private);
-        mPublicRootDirName = getResources().getString(R.string.root_dir_name_public);
+        mPrivateRootDirShownName = getResources().getString(R.string.root_dir_name_private);
+        mPublicRootDirShownName = getResources().getString(R.string.root_dir_name_public);
         pathMaxWidth = Utils.dipToPx(120);
         pathMinWidth = Utils.dipToPx(30);
         pathBtnPadding = Utils.dipToPx(5);
@@ -91,8 +91,8 @@ public class PathPanel extends RelativeLayout {
 
         try {
             final String rootStr = isPrivateDir ? OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR : OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
-            String rootName = isPrivateDir ? (mPrivateRootDirName + File.separator) : mPublicRootDirName;
-            String setPath = path.replaceFirst(rootStr, rootName);
+            String rootShownName = isPrivateDir ? mPrivateRootDirShownName : mPublicRootDirShownName;
+            String setPath = path.replaceFirst(rootStr, rootShownName + File.separator);
             Log.d(TAG, "Add path button:" + setPath);
             final String[] pathItems = setPath.split(File.separator);
             Button[] pathBtn = new Button[pathItems.length];
@@ -119,7 +119,7 @@ public class PathPanel extends RelativeLayout {
                         int i = (Integer) v.getTag();
                         String tarPath = rootStr;
                         for (int j = 1; j <= i; j++) {
-                            tarPath += File.separator + pathItems[j];
+                            tarPath += pathItems[j] + File.separator;
                         }
                         Log.d(TAG, "Click target path is " + tarPath);
                         if (null != mListener) {

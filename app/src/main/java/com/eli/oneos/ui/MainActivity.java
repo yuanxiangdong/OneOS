@@ -11,7 +11,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.model.user.LoginManager;
 import com.eli.oneos.receiver.NetworkStateManager;
 import com.eli.oneos.ui.nav.BaseNavFragment;
-import com.eli.oneos.ui.nav.CloudFragment;
+import com.eli.oneos.ui.nav.cloud.CloudFragment;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
 
@@ -75,6 +75,15 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
         Log.i(TAG, "on destroy.");
         NetworkStateManager.getInstance().removeOnNetworkStateChangedListener(mNetworkListener);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mCurNavFragment != null && mCurNavFragment.onBackPressed()) {
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     /**

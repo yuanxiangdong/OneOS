@@ -1,4 +1,4 @@
-package com.eli.oneos.ui.nav;
+package com.eli.oneos.ui.nav.cloud;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,7 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.api.ServerFileType;
+import com.eli.oneos.model.api.OneOSFileType;
+import com.eli.oneos.ui.nav.BaseNavFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,8 @@ import java.util.List;
 public class CloudFragment extends BaseNavFragment {
     private static final String TAG = CloudFragment.class.getSimpleName();
 
-    private CloudDirectoryFragment mDirFragment;
-    private Fragment mCurFragment;
+    private CloudDirFragment mDirFragment;
+    private BaseFileListFragment mCurFragment;
     private List<Fragment> mFragmentList = new ArrayList<>();
 
     @Override
@@ -32,7 +33,7 @@ public class CloudFragment extends BaseNavFragment {
 
 //        mHandler = getCurApplication().getHandler();
 //
-//        getCurApplication().setCloudFileType(ServerFileType.ALL);
+//        getCurApplication().setCloudFileType(OneOSFileType.PRIVATE);
 //
 //        registerBroadcastReceiver();
 //
@@ -46,15 +47,15 @@ public class CloudFragment extends BaseNavFragment {
     }
 
     private void initFragment() {
-        mDirFragment = new CloudDirectoryFragment();
+        mDirFragment = new CloudDirFragment();
 
-        changeFragmentByType(ServerFileType.ALL);
+        changeFragmentByType(OneOSFileType.PRIVATE);
     }
 
-    private void changeFragmentByType(ServerFileType type) {
-        Fragment fragment;
+    private void changeFragmentByType(OneOSFileType type) {
+        BaseFileListFragment fragment;
 
-        if (type == ServerFileType.ALL) {
+        if (type == OneOSFileType.PRIVATE) {
             fragment = mDirFragment;
         } else {
             fragment = mDirFragment;
@@ -83,6 +84,10 @@ public class CloudFragment extends BaseNavFragment {
      */
     @Override
     public boolean onBackPressed() {
+        if (null != mCurFragment) {
+            return mCurFragment.onBackPressed();
+        }
+
         return false;
     }
 

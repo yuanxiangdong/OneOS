@@ -24,6 +24,10 @@ public class GsonUtils {
     }
 
     public static <T> T decodeJSON(String jsonString, Type typeOfT) throws JsonSyntaxException {
+        if (jsonString.equals("{}")) {
+            return null;
+        }
+
         Gson gson = new Gson();
         return gson.fromJson(jsonString, typeOfT);
     }
