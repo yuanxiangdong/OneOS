@@ -137,7 +137,7 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
-        initStatusBarStyle();
+        initSystemBarStyle();
 
         initView();
         initLoginHistory();
@@ -153,6 +153,12 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if (null != mUserSpinnerView) {
+            mUserSpinnerView.dismiss();
+        }
+        if (null != mDeviceSpinnerView) {
+            mDeviceSpinnerView.dismiss();
+        }
         LoginManager loginManager = LoginManager.getInstance();
         loginManager.setLoginSession(mLoginSession);
     }

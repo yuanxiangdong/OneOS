@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
 import com.eli.oneos.model.api.OneOSFileType;
@@ -23,6 +24,9 @@ public class CloudFragment extends BaseNavFragment {
 
     private CloudDirFragment mDirFragment;
     private BaseFileListFragment mCurFragment;
+
+    private RelativeLayout mTitleLayout;
+
     private List<Fragment> mFragmentList = new ArrayList<>();
 
     @Override
@@ -39,11 +43,15 @@ public class CloudFragment extends BaseNavFragment {
 //
 //        initAnimActions();
 //
-//        initView(view);
-//
+        initView(view);
+
         initFragment();
 
         return view;
+    }
+
+    private void initView(View view) {
+        mTitleLayout = (RelativeLayout) view.findViewById(R.id.include_title);
     }
 
     private void initFragment() {
@@ -98,7 +106,11 @@ public class CloudFragment extends BaseNavFragment {
      */
     @Override
     public void showTitleBar(boolean isShown) {
-
+        if (isShown) {
+            mTitleLayout.setVisibility(View.VISIBLE);
+        } else {
+            mTitleLayout.setVisibility(View.GONE);
+        }
     }
 
     /**

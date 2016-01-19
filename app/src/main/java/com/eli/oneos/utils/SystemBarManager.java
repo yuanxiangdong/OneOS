@@ -61,6 +61,7 @@ public class SystemBarManager {
         }
     }
 
+
     /**
      * The default system bar tint color value.
      */

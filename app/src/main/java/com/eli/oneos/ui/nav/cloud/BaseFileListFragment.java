@@ -24,9 +24,12 @@ import com.eli.oneos.model.comp.OneOSFileNameComparator;
 import com.eli.oneos.model.comp.OneOSFileTimeComparator;
 import com.eli.oneos.model.user.LoginManager;
 import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.ui.nav.BaseNavFragment;
+import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.PathPanel;
+import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshBase;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshGridView;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshListView;
@@ -41,7 +44,9 @@ import java.util.HashMap;
 public abstract class BaseFileListFragment extends Fragment {
     private static final String TAG = BaseFileListFragment.class.getSimpleName();
 
+    protected BaseNavFragment mParentFragment;
     private PathPanel mPathPanel;
+    private FileSelectPanel mSelectPanel;
     private PullToRefreshListView mPullRefreshListView;
     private PullToRefreshGridView mPullRefreshGridView;
     private OneOSFileListAdapter mListAdapter;
@@ -58,7 +63,7 @@ public abstract class BaseFileListFragment extends Fragment {
     private AdapterView.OnItemClickListener mFileItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (isListShown) {
+            if (parent instanceof ListView) {
                 position -= 1; // for PullToRefreshView header
             }
 
@@ -69,12 +74,21 @@ public abstract class BaseFileListFragment extends Fragment {
                 mClickedCheckBox.toggle();
                 mSelectedMap.put(position, mClickedCheckBox.isChecked());
                 mAdapter.notifyDataSetChanged();
-
-                // TODO.. update select title
-                ToastHelper.showToast("You needs to update select title!");
+                mSelectPanel.updateCount(mFileList.size(), getCurFileAdapter().getSelectedCount());
             } else {
                 attemptOpenOneOSFile(mFileList.get(position));
             }
+        }
+    };
+    private AdapterView.OnItemLongClickListener mFileItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            if (parent instanceof ListView) {
+                position -= 1; // for PullToRefreshView header
+            }
+            setMultiModel(true, position);
+
+            return true;
         }
     };
 
@@ -139,16 +153,35 @@ public abstract class BaseFileListFragment extends Fragment {
             }
         });
         mPathPanel.showNewFolderButton(mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC);
+        mSelectPanel = (FileSelectPanel) view.findViewById(R.id.layout_select_top_panel);
+        mSelectPanel.setOnSelectListener(new FileSelectPanel.OnSelectListener() {
+            @Override
+            public void onSelect(boolean isSelectAll) {
+                getCurFileAdapter().selectAllItem(isSelectAll);
+                getCurFileAdapter().notifyDataSetChanged();
+                mSelectPanel.updateCount(mFileList.size(), isSelectAll ? mFileList.size() : 0);
+            }
+
+            @Override
+            public void onShown(boolean isVisible) {
+                mParentFragment.showTitleBar(!isVisible);
+                if (!isVisible) {
+                    mListAdapter.setIsMultiModel(false);
+                    mGridAdapter.setIsMultiModel(false);
+                    getCurFileAdapter().notifyDataSetChanged();
+                }
+            }
+        });
 
         mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.listview);
-        View mEmptyView = view.findViewById(R.id.layout_empty);
+        View mEmptyView = view.findViewById(R.id.layout_empty_list);
         mPullRefreshListView.setEmptyView(mEmptyView);
         mPullRefreshListView.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
         mPullRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2() {
 
             @Override
             public void onPullDownToRefresh(@SuppressWarnings("rawtypes") PullToRefreshBase refreshView) {
-                cancelMultiModel();
+                setMultiModel(false, 0);
                 getOneOSFileList(curPath);
             }
 
@@ -161,15 +194,15 @@ public abstract class BaseFileListFragment extends Fragment {
         mListAdapter = new OneOSFileListAdapter(getContext(), mFileList, mSelectedMap, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
             @Override
             public void onClick(View view) {
-                mListAdapter.setIsMultiModel(true);
-                mGridAdapter.setIsMultiModel(true);
-                mSelectedMap.put((Integer) view.getTag(), true);
-                mListAdapter.notifyDataSetChanged();
+                AnimUtils.shortVibrator();
+                setMultiModel(true, (Integer) view.getTag());
             }
         }, mLoginSession);
         mListView.setOnItemClickListener(mFileItemClickListener);
+        mListView.setOnItemLongClickListener(mFileItemLongClickListener);
         mListView.setAdapter(mListAdapter);
 
+        mEmptyView = view.findViewById(R.id.layout_empty_grid);
         mPullRefreshGridView = (PullToRefreshGridView) view.findViewById(R.id.gridview);
         mPullRefreshGridView.setEmptyView(mEmptyView);
         mPullRefreshGridView.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
@@ -177,7 +210,7 @@ public abstract class BaseFileListFragment extends Fragment {
 
             @Override
             public void onPullDownToRefresh(@SuppressWarnings("rawtypes") PullToRefreshBase refreshView) {
-                cancelMultiModel();
+                setMultiModel(false, 0);
                 getOneOSFileList(curPath);
             }
 
@@ -189,9 +222,9 @@ public abstract class BaseFileListFragment extends Fragment {
         registerForContextMenu(mListView);
         mGridAdapter = new OneOSFileGridAdapter(getContext(), mFileList, mSelectedMap, mLoginSession);
         mGridView.setOnItemClickListener(mFileItemClickListener);
+        mGridView.setOnItemLongClickListener(mFileItemLongClickListener);
         mGridView.setAdapter(mGridAdapter);
     }
-
 
     /**
      * Use to handle parent Activity back action
@@ -199,7 +232,7 @@ public abstract class BaseFileListFragment extends Fragment {
      * @return If consumed returns true, otherwise returns false.
      */
     public boolean onBackPressed() {
-        return cancelMultiModel();
+        return setMultiModel(false, 0);
     }
 
     protected void autoPullToRefresh() {
@@ -233,16 +266,29 @@ public abstract class BaseFileListFragment extends Fragment {
         }
     }
 
-    private boolean cancelMultiModel() {
-        if (getCurFileAdapter().isMultiChooseModel()) {
-            mListAdapter.setIsMultiModel(false);
-            mGridAdapter.setIsMultiModel(false);
-            mListAdapter.notifyDataSetChanged();
-            mGridAdapter.notifyDataSetChanged();
-            return true;
+    private boolean setMultiModel(boolean isSetMultiModel, int position) {
+        boolean curIsMultiModel = getCurFileAdapter().isMultiChooseModel();
+        if (curIsMultiModel == isSetMultiModel) {
+            return false;
         }
 
-        return false;
+        if (isSetMultiModel) {
+            mSelectPanel.showPanel(true);
+
+            mListAdapter.setIsMultiModel(true);
+            mGridAdapter.setIsMultiModel(true);
+            mSelectedMap.put(position, true);
+            getCurFileAdapter().notifyDataSetChanged();
+            mSelectPanel.updateCount(mFileList.size(), getCurFileAdapter().getSelectedCount());
+            return true;
+        } else {
+            mSelectPanel.hidePanel(true);
+
+            mListAdapter.setIsMultiModel(false);
+            mGridAdapter.setIsMultiModel(false);
+            getCurFileAdapter().notifyDataSetChanged();
+            return true;
+        }
     }
 
     private void attemptOpenOneOSFile(OneOSFile file) {

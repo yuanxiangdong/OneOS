@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.eli.oneos.R;
 
-public class SelectTopPanel extends RelativeLayout {
+public class FileSelectPanel extends RelativeLayout {
 
     private Context mContext;
     private Button mCancelBtn, mSelectBtn;
@@ -24,15 +24,15 @@ public class SelectTopPanel extends RelativeLayout {
 
     private int totalCount, selectCount;
 
-    public SelectTopPanel(Context context) {
+    public FileSelectPanel(Context context) {
         super(context);
     }
 
-    public SelectTopPanel(Context context, AttributeSet attrs) {
+    public FileSelectPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
 
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_file_select_top, this, true);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_file_select, this, true);
 
         mShowAnim = AnimationUtils.loadAnimation(context, R.anim.push_top_in);
         mHidemAnim = AnimationUtils.loadAnimation(context, R.anim.push_top_out);

@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        initStatusBarStyle();
+        initSystemBarStyle();
 
         initViews();
     }

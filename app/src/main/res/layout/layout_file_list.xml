@@ -37,7 +37,7 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/layout_empty"
+        android:id="@+id/layout_empty_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
@@ -52,7 +52,33 @@
             android:src="@drawable/ic_content_empty" />
 
         <TextView
-            android:id="@+id/txt_empty"
+            android:id="@+id/txt_empty_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/empty_file_list"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_size_mid" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_empty_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_content_empty" />
+
+        <TextView
+            android:id="@+id/txt_empty_grid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

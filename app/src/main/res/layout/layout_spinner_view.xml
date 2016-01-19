@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="2dp"
-        android:background="@drawable/bg_stroke_full_radius_primary"
+        android:background="@drawable/bg_stroke_bottom_radius_primary"
         android:gravity="center"
         android:visibility="gone" />
 

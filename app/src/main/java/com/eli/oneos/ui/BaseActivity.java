@@ -16,6 +16,7 @@ import com.eli.oneos.widget.LoadingView;
  */
 public class BaseActivity extends FragmentActivity {
 
+    private SystemBarManager mTintManager;
     private LoadingView mLoadingView;
 
     @Override
@@ -34,8 +35,8 @@ public class BaseActivity extends FragmentActivity {
     /**
      * Modify System Status Bar Style
      */
-    protected void initStatusBarStyle() {
-        initStatusBarStyle(R.color.status_bar);
+    protected void initSystemBarStyle() {
+        initSystemBarStyle(R.color.status_bar);
     }
 
     /**
@@ -43,8 +44,10 @@ public class BaseActivity extends FragmentActivity {
      *
      * @param colorId Status Bar background color resource id
      */
-    protected void initStatusBarStyle(int colorId) {
-        SystemBarManager mTintManager = new SystemBarManager(this);
+    protected void initSystemBarStyle(int colorId) {
+        if (null == mTintManager) {
+            mTintManager = new SystemBarManager(this);
+        }
         mTintManager.setStatusBarTintEnabled(true);
         mTintManager.setNavigationBarTintEnabled(true);
         mTintManager.setStatusBarTintResource(colorId);

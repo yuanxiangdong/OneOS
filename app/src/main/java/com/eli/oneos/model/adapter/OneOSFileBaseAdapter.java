@@ -98,7 +98,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
 
     public ArrayList<OneOSFile> getSelectFileList() {
         ArrayList<OneOSFile> mList = new ArrayList<>();
-        if (isMultiChoose) {
+        if (isMultiChoose && null != mSelectedMap) {
             for (HashMap.Entry<Integer, Boolean> entry : mSelectedMap.entrySet()) {
                 if (entry.getValue()) {
                     mList.add(mFileList.get(entry.getKey()));
@@ -107,6 +107,27 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
         }
 
         return mList;
+    }
+
+    public int getSelectedCount() {
+        int count = 0;
+        if (isMultiChoose && null != mSelectedMap) {
+            for (HashMap.Entry<Integer, Boolean> entry : mSelectedMap.entrySet()) {
+                if (entry.getValue()) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public void selectAllItem(boolean isSelect) {
+        if (isMultiChoose && null != mSelectedMap) {
+            for (HashMap.Entry<Integer, Boolean> entry : mSelectedMap.entrySet()) {
+                entry.setValue(isSelect);
+            }
+        }
     }
 
     public interface OnMultiChooseClickListener {
