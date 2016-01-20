@@ -13,13 +13,13 @@ import com.eli.oneos.R;
 import com.eli.oneos.model.api.OneOSFile;
 import com.eli.oneos.model.user.LoginSession;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OneOSFileListAdapter extends OneOSFileBaseAdapter {
 
-    public OneOSFileListAdapter(Context context, List<OneOSFile> fileList, HashMap<Integer, Boolean> selectedMap, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
-        super(context, fileList, selectedMap, listener, mLoginSession);
+    public OneOSFileListAdapter(Context context, List<OneOSFile> fileList, ArrayList<OneOSFile> selectedList, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
+        super(context, fileList, selectedList, listener, mLoginSession);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class OneOSFileListAdapter extends OneOSFileBaseAdapter {
         if (isMultiChooseModel()) {
             holder.mSelectIBtn.setVisibility(View.GONE);
             holder.mSelectCb.setVisibility(View.VISIBLE);
-            holder.mSelectCb.setChecked(getSelectedMap().get(position));
+            holder.mSelectCb.setChecked(getSelectedList().contains(file));
         } else {
             holder.mSelectCb.setVisibility(View.GONE);
             holder.mSelectIBtn.setVisibility(View.VISIBLE);

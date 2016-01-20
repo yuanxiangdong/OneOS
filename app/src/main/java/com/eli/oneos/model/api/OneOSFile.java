@@ -129,4 +129,24 @@ public class OneOSFile {
     public boolean isDirectory() {
         return null != this.type && this.type.equalsIgnoreCase("dir");
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other instanceof OneOSFile) {
+            OneOSFile file = (OneOSFile) other;
+            return this.path.equals(file.path);
+        }
+
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "OneOSFile:{name:\"" + name + "\", path:\"" + path + "\", uid:\"" + uid + "\", type:\"" + type
+                + "\", size:\"" + fmtSize + "\", time:\"" + fmtSize + "\", perm:\"" + perm + "\", gid:\"" + gid + "\"}";
+    }
 }

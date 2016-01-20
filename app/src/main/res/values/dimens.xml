@@ -20,9 +20,9 @@
     <dimen name="layout_dialog_bottom_height">42dp</dimen>
     <dimen name="layout_dialog_margin">15dp</dimen>
     <dimen name="line_radio_group_height">1.0dp</dimen>
-    <dimen name="layout_tab_height">50dp</dimen>
+    <dimen name="layout_nav_bar_height">50dp</dimen>
     <dimen name="layout_path_height">36dp</dimen>
-    <dimen name="layout_operate_height">36dp</dimen>
-    <dimen name="layout_select_title_height">@dimen/layout_title_height</dimen>
+    <dimen name="layout_operate_height">@dimen/layout_nav_bar_height</dimen>
+    <dimen name="layout_select_height">@dimen/layout_title_height</dimen>
 
 </resources>

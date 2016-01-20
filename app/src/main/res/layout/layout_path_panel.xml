@@ -27,7 +27,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:layout_toLeftOf="@+id/ibtn_new_folder"
-        android:background="@color/line_main_tab" />
+        android:background="@color/line_nav_bar" />
 
     <ImageButton
         android:id="@+id/ibtn_new_folder"
@@ -45,5 +45,5 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/line_common_weight"
         android:layout_alignParentBottom="true"
-        android:background="@color/line_main_tab" />
+        android:background="@color/line_nav_bar" />
 </RelativeLayout>

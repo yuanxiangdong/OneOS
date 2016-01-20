@@ -11,7 +11,6 @@ import com.eli.oneos.model.api.OneOSFile;
 import com.eli.oneos.model.user.LoginSession;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class OneOSFileBaseAdapter extends BaseAdapter {
@@ -19,35 +18,32 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
 
     public LayoutInflater mInflater;
     public List<OneOSFile> mFileList = null;
-    public HashMap<Integer, Boolean> mSelectedMap = null;
+    public ArrayList<OneOSFile> mSelectedList = null;
     private boolean isMultiChoose = false;
     public String mBasicUrl = null;
     public String mSession = null;
     public OnMultiChooseClickListener mListener = null;
 
-    public OneOSFileBaseAdapter(Context context, List<OneOSFile> fileList, HashMap<Integer, Boolean> selectedMap, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
+    public OneOSFileBaseAdapter(Context context, List<OneOSFile> fileList, ArrayList<OneOSFile> selectedList, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
         this.mInflater = LayoutInflater.from(context);
         this.mListener = listener;
         this.mFileList = fileList;
-        this.mSelectedMap = selectedMap;
+        this.mSelectedList = selectedList;
         mBasicUrl = mLoginSession.getBaseUrl();
         mSession = mLoginSession.getSession();
 
-        initSelectedMap();
+        clearSelectedList();
     }
 
     /**
      * init Selected Map
      */
-    private void initSelectedMap() {
-        if (mSelectedMap == null) {
-            Log.e(TAG, "Select Map is NULL");
+    private void clearSelectedList() {
+        if (mSelectedList == null) {
+            Log.e(TAG, "Selected List is NULL");
             return;
         }
-        mSelectedMap.clear();
-        for (int i = 0; i < mFileList.size(); i++) {
-            mSelectedMap.put(i, false);
-        }
+        mSelectedList.clear();
     }
 
     @Override
@@ -72,7 +68,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
 
     public void notifyDataSetChanged(boolean addItem) {
         if (addItem) {
-            initSelectedMap();
+            clearSelectedList();
         }
 
         notifyDataSetChanged();
@@ -82,7 +78,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
         if (this.isMultiChoose != isMulti) {
             this.isMultiChoose = isMulti;
             if (isMulti) {
-                initSelectedMap();
+                clearSelectedList();
             }
             notifyDataSetChanged();
         }
@@ -92,40 +88,28 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
         return this.isMultiChoose;
     }
 
-    public HashMap<Integer, Boolean> getSelectedMap() {
-        return mSelectedMap;
-    }
-
-    public ArrayList<OneOSFile> getSelectFileList() {
-        ArrayList<OneOSFile> mList = new ArrayList<>();
-        if (isMultiChoose && null != mSelectedMap) {
-            for (HashMap.Entry<Integer, Boolean> entry : mSelectedMap.entrySet()) {
-                if (entry.getValue()) {
-                    mList.add(mFileList.get(entry.getKey()));
-                }
-            }
+    public ArrayList<OneOSFile> getSelectedList() {
+        if (isMultiChooseModel()) {
+            return mSelectedList;
         }
 
-        return mList;
+        return null;
     }
 
     public int getSelectedCount() {
         int count = 0;
-        if (isMultiChoose && null != mSelectedMap) {
-            for (HashMap.Entry<Integer, Boolean> entry : mSelectedMap.entrySet()) {
-                if (entry.getValue()) {
-                    count++;
-                }
-            }
+        if (isMultiChoose && null != mSelectedList) {
+            count = mSelectedList.size();
         }
 
         return count;
     }
 
-    public void selectAllItem(boolean isSelect) {
-        if (isMultiChoose && null != mSelectedMap) {
-            for (HashMap.Entry<Integer, Boolean> entry : mSelectedMap.entrySet()) {
-                entry.setValue(isSelect);
+    public void selectAllItem(boolean isSelectAll) {
+        if (isMultiChoose && null != mSelectedList) {
+            mSelectedList.clear();
+            if (isSelectAll) {
+                mSelectedList.addAll(mFileList);
             }
         }
     }

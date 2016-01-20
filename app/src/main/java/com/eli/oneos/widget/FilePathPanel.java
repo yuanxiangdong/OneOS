@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,8 @@ import com.eli.oneos.utils.Utils;
 
 import java.io.File;
 
-public class PathPanel extends RelativeLayout {
-    private static final String TAG = PathPanel.class.getSimpleName();
+public class FilePathPanel extends RelativeLayout {
+    private static final String TAG = FilePathPanel.class.getSimpleName();
 
     private Context mContext;
     private LinearLayout mPathLayout;
@@ -35,11 +36,11 @@ public class PathPanel extends RelativeLayout {
     private String mPublicRootDirShownName = null;
     private int pathMaxWidth = 0, pathMinWidth = 0, pathBtnPadding = 0;
 
-    public PathPanel(Context context) {
+    public FilePathPanel(Context context) {
         super(context);
     }
 
-    public PathPanel(Context context, AttributeSet attrs) {
+    public FilePathPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
 
@@ -103,7 +104,7 @@ public class PathPanel extends RelativeLayout {
                 pathBtn[i] = new Button(getContext());
                 pathBtn[i].setTag(i);
                 pathBtn[i].setText(pathItems[i]);
-                pathBtn[i].setTextSize(13);
+                pathBtn[i].setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.text_size_sm));
                 pathBtn[i].setMaxWidth(pathMaxWidth);
                 pathBtn[i].setMinWidth(pathMinWidth);
                 pathBtn[i].setPadding(pathBtnPadding, 0, pathBtnPadding, 0);

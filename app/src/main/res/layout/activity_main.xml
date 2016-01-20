@@ -5,42 +5,27 @@
     android:clipToPadding="false"
     android:fitsSystemWindows="true">
 
-    <FrameLayout
-        android:id="@+id/content"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center"
-        android:background="@color/bg_page" />
-
-    <ImageView
-        android:id="@+id/radiogroup_line"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/line_radio_group_height"
-        android:layout_above="@+id/radiogroup"
-        android:background="@color/line_main_tab" />
-
     <RadioGroup
         android:id="@+id/radiogroup"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/layout_tab_height"
+        android:layout_height="@dimen/layout_nav_bar_height"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:background="@color/bg_main_tab"
+        android:background="@color/bg_nav_bar"
         android:gravity="center"
         android:orientation="horizontal"
         android:visibility="visible">
 
         <RadioButton
             android:id="@+id/radio_local"
-            style="@style/MainTabRadioButtonTheme"
+            style="@style/NavBarRadioButtonTheme"
             android:drawableTop="@drawable/selector_nav_button_local"
             android:gravity="center"
             android:text="@string/nav_title_local" />
 
         <RadioButton
             android:id="@+id/radio_cloud"
-            style="@style/MainTabRadioButtonTheme"
+            style="@style/NavBarRadioButtonTheme"
             android:checked="true"
             android:drawableTop="@drawable/selector_nav_button_cloud"
             android:gravity="center"
@@ -48,17 +33,23 @@
 
         <RadioButton
             android:id="@+id/radio_transfer"
-            style="@style/MainTabRadioButtonTheme"
+            style="@style/NavBarRadioButtonTheme"
             android:drawableTop="@drawable/selector_nav_button_transfer"
             android:gravity="center"
             android:text="@string/nav_title_transfer" />
 
         <RadioButton
             android:id="@+id/radio_tool"
-            style="@style/MainTabRadioButtonTheme"
+            style="@style/NavBarRadioButtonTheme"
             android:drawableTop="@drawable/selector_nav_button_tool"
             android:gravity="center"
             android:text="@string/nav_title_tool" />
     </RadioGroup>
 
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center" />
 </RelativeLayout>

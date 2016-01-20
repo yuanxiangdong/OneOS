@@ -18,16 +18,16 @@
         <item name="android:layout_margin">@dimen/layout_dialog_margin</item>
     </style>
 
-    <style name="MainTabRadioButtonTheme">
+    <style name="NavBarRadioButtonTheme">
         <item name="android:textSize">@dimen/text_size_min</item>
-        <item name="android:textColor">@color/selector_txt_main_tab</item>
+        <item name="android:textColor">@color/selector_txt_nav_bar</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_weight">1.0</item>
-        <item name="android:layout_height">@dimen/layout_tab_height</item>
+        <item name="android:layout_height">@dimen/layout_nav_bar_height</item>
         <item name="android:layout_marginTop">0dp</item>
         <item name="android:layout_marginBottom">0dp</item>
         <item name="android:button">@null</item>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.widget.RadioGroup;
 
@@ -11,7 +12,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.model.user.LoginManager;
 import com.eli.oneos.receiver.NetworkStateManager;
 import com.eli.oneos.ui.nav.BaseNavFragment;
-import com.eli.oneos.ui.nav.cloud.CloudFragment;
+import com.eli.oneos.ui.nav.cloud.CloudNavFragment;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
 
@@ -92,7 +93,7 @@ public class MainActivity extends BaseActivity {
     private void initViews() {
         fragmentManager = getSupportFragmentManager();
 
-        CloudFragment cloudFragment = new CloudFragment();
+        CloudNavFragment cloudFragment = new CloudNavFragment();
         mFragmentList.add(cloudFragment);
         mFragmentList.add(cloudFragment);
         mFragmentList.add(cloudFragment);
@@ -158,5 +159,9 @@ public class MainActivity extends BaseActivity {
         BaseNavFragment fragment = mFragmentList.get(index);
         Log.d(TAG, "Get Fragment By Index: " + index);
         return fragment;
+    }
+
+    public void showNavBar(boolean isShown) {
+        radioGroup.setVisibility(isShown ? View.VISIBLE : View.INVISIBLE);
     }
 }

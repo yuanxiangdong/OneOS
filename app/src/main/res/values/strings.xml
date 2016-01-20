@@ -11,6 +11,19 @@
     <string name="wifi_not_available">当前WiFi不可用，请检查WiFi连接！</string>
     <string name="error_json_exception">解析协议出错</string>
 
+    <!-- File Operation -->
+    <string name="details_file">详情</string>
+    <string name="open_file">打开</string>
+    <string name="copy_file">复制</string>
+    <string name="move_file">移动</string>
+    <string name="delete_file">删除</string>
+    <string name="rename_file">重命名</string>
+    <string name="download_file">下载</string>
+    <string name="upload_file">上传</string>
+    <string name="encrypt_file">加密</string>
+    <string name="decrypt_file">解密</string>
+    <string name="chmod_file">权限</string>
+
     <!-- Navigation Bar Title -->
     <string name="nav_title_local">本地</string>
     <string name="nav_title_cloud">云盘</string>

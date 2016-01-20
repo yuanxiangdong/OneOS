@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
+import com.eli.oneos.model.FileOptAction;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.adapter.OneOSFileBaseAdapter;
 import com.eli.oneos.model.adapter.OneOSFileGridAdapter;
@@ -28,7 +29,8 @@ import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;
-import com.eli.oneos.widget.PathPanel;
+import com.eli.oneos.widget.FileOperatePanel;
+import com.eli.oneos.widget.FilePathPanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshBase;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshGridView;
@@ -36,7 +38,6 @@ import com.eli.oneos.widget.pullrefresh.PullToRefreshListView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/13.
@@ -45,8 +46,7 @@ public abstract class BaseFileListFragment extends Fragment {
     private static final String TAG = BaseFileListFragment.class.getSimpleName();
 
     protected BaseNavFragment mParentFragment;
-    private PathPanel mPathPanel;
-    private FileSelectPanel mSelectPanel;
+    private FilePathPanel mPathPanel;
     private PullToRefreshListView mPullRefreshListView;
     private PullToRefreshGridView mPullRefreshGridView;
     private OneOSFileListAdapter mListAdapter;
@@ -57,7 +57,7 @@ public abstract class BaseFileListFragment extends Fragment {
 
     private LoginSession mLoginSession = null;
     private ArrayList<OneOSFile> mFileList = new ArrayList<>();
-    private HashMap<Integer, Boolean> mSelectedMap = new HashMap<>();
+    private ArrayList<OneOSFile> mSelectedList = new ArrayList<>();
     protected String curPath = null;
 
     private AdapterView.OnItemClickListener mFileItemClickListener = new AdapterView.OnItemClickListener() {
@@ -71,10 +71,17 @@ public abstract class BaseFileListFragment extends Fragment {
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (isMultiMode) {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
+                OneOSFile file = mFileList.get(position);
+                boolean isSelected = mClickedCheckBox.isChecked();
+                if (isSelected) {
+                    mSelectedList.remove(file);
+                } else {
+                    mSelectedList.add(file);
+                }
                 mClickedCheckBox.toggle();
-                mSelectedMap.put(position, mClickedCheckBox.isChecked());
+
                 mAdapter.notifyDataSetChanged();
-                mSelectPanel.updateCount(mFileList.size(), getCurFileAdapter().getSelectedCount());
+                updateSelectAndOperatePanel(true);
             } else {
                 attemptOpenOneOSFile(mFileList.get(position));
             }
@@ -89,6 +96,30 @@ public abstract class BaseFileListFragment extends Fragment {
             setMultiModel(true, position);
 
             return true;
+        }
+    };
+    private FileSelectPanel.OnFileSelectListener mFileSelectListener = new FileSelectPanel.OnFileSelectListener() {
+        @Override
+        public void onSelect(boolean isSelectAll) {
+            getCurFileAdapter().selectAllItem(isSelectAll);
+            getCurFileAdapter().notifyDataSetChanged();
+            updateSelectAndOperatePanel(true);
+        }
+
+        @Override
+        public void onDismiss() {
+            setMultiModel(false, 0);
+        }
+    };
+    private FileOperatePanel.OnFileOperateListener mFileOptListener = new FileOperatePanel.OnFileOperateListener() {
+        @Override
+        public void onClick(View view, FileOptAction action) {
+
+        }
+
+        @Override
+        public void onDismiss() {
+
         }
     };
 
@@ -117,7 +148,7 @@ public abstract class BaseFileListFragment extends Fragment {
                 FileOrderType orderType = (checkedId == R.id.rbtn_order_name) ? FileOrderType.NAME : FileOrderType.TIME;
                 if (mOrderType != orderType) {
                     mOrderType = orderType;
-                    notifyRefreshComplete();
+                    notifyRefreshComplete(false);
                 }
             }
         });
@@ -139,8 +170,8 @@ public abstract class BaseFileListFragment extends Fragment {
                 }
             }
         });
-        mPathPanel = (PathPanel) view.findViewById(R.id.layout_path_panel);
-        mPathPanel.setOnPathPanelClickListener(new PathPanel.OnPathPanelClickListener() {
+        mPathPanel = (FilePathPanel) view.findViewById(R.id.layout_path_panel);
+        mPathPanel.setOnPathPanelClickListener(new FilePathPanel.OnPathPanelClickListener() {
             @Override
             public void onClick(View view, String path) {
                 if (null == path) { // New Folder Button Clicked
@@ -153,25 +184,6 @@ public abstract class BaseFileListFragment extends Fragment {
             }
         });
         mPathPanel.showNewFolderButton(mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC);
-        mSelectPanel = (FileSelectPanel) view.findViewById(R.id.layout_select_top_panel);
-        mSelectPanel.setOnSelectListener(new FileSelectPanel.OnSelectListener() {
-            @Override
-            public void onSelect(boolean isSelectAll) {
-                getCurFileAdapter().selectAllItem(isSelectAll);
-                getCurFileAdapter().notifyDataSetChanged();
-                mSelectPanel.updateCount(mFileList.size(), isSelectAll ? mFileList.size() : 0);
-            }
-
-            @Override
-            public void onShown(boolean isVisible) {
-                mParentFragment.showTitleBar(!isVisible);
-                if (!isVisible) {
-                    mListAdapter.setIsMultiModel(false);
-                    mGridAdapter.setIsMultiModel(false);
-                    getCurFileAdapter().notifyDataSetChanged();
-                }
-            }
-        });
 
         mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.listview);
         View mEmptyView = view.findViewById(R.id.layout_empty_list);
@@ -191,7 +203,7 @@ public abstract class BaseFileListFragment extends Fragment {
         });
         ListView mListView = mPullRefreshListView.getRefreshableView();
         registerForContextMenu(mListView);
-        mListAdapter = new OneOSFileListAdapter(getContext(), mFileList, mSelectedMap, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
+        mListAdapter = new OneOSFileListAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
             @Override
             public void onClick(View view) {
                 AnimUtils.shortVibrator();
@@ -220,7 +232,7 @@ public abstract class BaseFileListFragment extends Fragment {
         });
         GridView mGridView = mPullRefreshGridView.getRefreshableView();
         registerForContextMenu(mListView);
-        mGridAdapter = new OneOSFileGridAdapter(getContext(), mFileList, mSelectedMap, mLoginSession);
+        mGridAdapter = new OneOSFileGridAdapter(getContext(), mFileList, mSelectedList, mLoginSession);
         mGridView.setOnItemClickListener(mFileItemClickListener);
         mGridView.setOnItemLongClickListener(mFileItemLongClickListener);
         mGridView.setAdapter(mGridAdapter);
@@ -232,7 +244,12 @@ public abstract class BaseFileListFragment extends Fragment {
      * @return If consumed returns true, otherwise returns false.
      */
     public boolean onBackPressed() {
-        return setMultiModel(false, 0);
+        if (getCurFileAdapter().isMultiChooseModel()) {
+            updateSelectAndOperatePanel(false);
+            return true;
+        }
+
+        return false;
     }
 
     protected void autoPullToRefresh() {
@@ -249,7 +266,7 @@ public abstract class BaseFileListFragment extends Fragment {
         }, Constants.DELAY_TIME_AUTO_REFRESH);
     }
 
-    private void notifyRefreshComplete() {
+    private void notifyRefreshComplete(boolean isItemChanged) {
         if (mOrderType == FileOrderType.NAME) {
             Collections.sort(mFileList, new OneOSFileNameComparator());
         } else {
@@ -258,12 +275,17 @@ public abstract class BaseFileListFragment extends Fragment {
 
         mPathPanel.updatePath(curPath);
         if (isListShown) {
-            mListAdapter.notifyDataSetChanged(true);
+            mListAdapter.notifyDataSetChanged(isItemChanged);
             mPullRefreshListView.onRefreshComplete();
         } else {
-            mGridAdapter.notifyDataSetChanged(true);
+            mGridAdapter.notifyDataSetChanged(isItemChanged);
             mPullRefreshGridView.onRefreshComplete();
         }
+    }
+
+    private void updateSelectAndOperatePanel(boolean isShown) {
+        mParentFragment.showSelectBar(isShown, mFileList.size(), mSelectedList.size(), mFileSelectListener);
+        mParentFragment.showOperateBar(isShown, mFileType, mSelectedList, mFileOptListener);
     }
 
     private boolean setMultiModel(boolean isSetMultiModel, int position) {
@@ -273,17 +295,14 @@ public abstract class BaseFileListFragment extends Fragment {
         }
 
         if (isSetMultiModel) {
-            mSelectPanel.showPanel(true);
-
+            updateSelectAndOperatePanel(true);
             mListAdapter.setIsMultiModel(true);
             mGridAdapter.setIsMultiModel(true);
-            mSelectedMap.put(position, true);
+            mSelectedList.add(mFileList.get(position));
             getCurFileAdapter().notifyDataSetChanged();
-            mSelectPanel.updateCount(mFileList.size(), getCurFileAdapter().getSelectedCount());
             return true;
         } else {
-            mSelectPanel.hidePanel(true);
-
+            updateSelectAndOperatePanel(false);
             mListAdapter.setIsMultiModel(false);
             mGridAdapter.setIsMultiModel(false);
             getCurFileAdapter().notifyDataSetChanged();
@@ -322,20 +341,20 @@ public abstract class BaseFileListFragment extends Fragment {
                         mFileList.addAll(files);
                     }
 
-                    notifyRefreshComplete();
+                    notifyRefreshComplete(true);
                 }
 
                 @Override
                 public void onFailure(String url, int errorNo, String errorMsg) {
                     ToastHelper.showToast(errorMsg);
-                    notifyRefreshComplete();
+                    notifyRefreshComplete(true);
                 }
             });
             listDirAPI.list();
         } else {
             // TODO... list db file
             ToastHelper.showToast("List DB files is coming soon!");
-            notifyRefreshComplete();
+            notifyRefreshComplete(true);
         }
     }
 }

@@ -3,7 +3,13 @@ package com.eli.oneos.ui.nav;
 
 import android.support.v4.app.Fragment;
 
+import com.eli.oneos.model.api.OneOSFile;
+import com.eli.oneos.model.api.OneOSFileType;
 import com.eli.oneos.ui.MainActivity;
+import com.eli.oneos.widget.FileOperatePanel;
+import com.eli.oneos.widget.FileSelectPanel;
+
+import java.util.ArrayList;
 
 /**
  * Navigation Base Abstract Class
@@ -12,7 +18,7 @@ import com.eli.oneos.ui.MainActivity;
  */
 public abstract class BaseNavFragment extends Fragment {
 
-    private MainActivity mMainActivity;
+    protected MainActivity mMainActivity;
 
     /**
      * Use to handle parent Activity back action
@@ -22,18 +28,24 @@ public abstract class BaseNavFragment extends Fragment {
     public abstract boolean onBackPressed();
 
     /**
-     * Show/Hide Top Title Bar
+     * Show/Hide Top Select Bar
      *
-     * @param isShown whether show
+     * @param isShown       Whether show
+     * @param totalCount    Total select count
+     * @param selectedCount Selected count
+     * @param mListener     On file select listener
      */
-    public abstract void showTitleBar(boolean isShown);
+    public abstract void showSelectBar(boolean isShown, int totalCount, int selectedCount, FileSelectPanel.OnFileSelectListener mListener);
 
     /**
-     * Show/Hide Bottom Navigation Bar
+     * Show/Hide Bottom Operate Bar
      *
-     * @param isShown whether show
+     * @param isShown      Whether show
+     * @param fileType     OneOS file type
+     * @param selectedList Selected file list
+     * @param mListener    On file operate listener
      */
-    public abstract void showNavBar(boolean isShown);
+    public abstract void showOperateBar(boolean isShown, OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileOperatePanel.OnFileOperateListener mListener);
 
     /**
      * Network State Changed

@@ -19,7 +19,7 @@ public class FileSelectPanel extends RelativeLayout {
     private Button mCancelBtn, mSelectBtn;
     private TextView mTitleTxt;
 
-    private OnSelectListener mListener;
+    private OnFileSelectListener mListener;
     private Animation mShowAnim, mHidemAnim;
 
     private int totalCount, selectCount;
@@ -57,7 +57,7 @@ public class FileSelectPanel extends RelativeLayout {
         });
     }
 
-    public void updateCount(int totalCount, int selectCount) {
+    private void updateCount(int totalCount, int selectCount) {
         this.totalCount = totalCount;
         this.selectCount = selectCount;
 
@@ -74,44 +74,41 @@ public class FileSelectPanel extends RelativeLayout {
         }
     }
 
-    public void setOnSelectListener(OnSelectListener mListener) {
+    public void setOnSelectListener(OnFileSelectListener mListener) {
         this.mListener = mListener;
     }
 
     /**
      * show select panel if is invisible
      *
-     * @param isAnim if show with animation
+     * @param isAnim
+     * @param totalCount
+     * @param selectCount
      */
-    public void showPanel(boolean isAnim) {
-        if (this.isShown()) {
-            return;
-        }
+    public void showPanel(boolean isAnim, final int totalCount, final int selectCount) {
+        if (!this.isShown()) {
+            this.setVisibility(View.VISIBLE);
+            if (isAnim) {
+                this.startAnimation(mShowAnim);
+                mShowAnim.setAnimationListener(new AnimationListener() {
 
-        this.setVisibility(View.VISIBLE);
-        if (isAnim) {
-            this.startAnimation(mShowAnim);
-            mShowAnim.setAnimationListener(new AnimationListener() {
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (mListener != null) {
-                        mListener.onShown(true);
+                    @Override
+                    public void onAnimationStart(Animation animation) {
                     }
-                }
-            });
-        } else {
-            if (mListener != null) {
-                mListener.onShown(true);
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        updateCount(totalCount, selectCount);
+                    }
+                });
             }
+
+        } else {
+            updateCount(totalCount, selectCount);
         }
     }
 
@@ -120,20 +117,19 @@ public class FileSelectPanel extends RelativeLayout {
             return;
         }
 
-        mTitleTxt.setText(R.string.hint_select_file);
         this.setVisibility(View.GONE);
         if (isAnim) {
             this.startAnimation(mHidemAnim);
         }
 
         if (mListener != null) {
-            mListener.onShown(false);
+            mListener.onDismiss();
         }
     }
 
-    public interface OnSelectListener {
+    public interface OnFileSelectListener {
         void onSelect(boolean isSelectAll);
 
-        void onShown(boolean isVisible);
+        void onDismiss();
     }
 }
