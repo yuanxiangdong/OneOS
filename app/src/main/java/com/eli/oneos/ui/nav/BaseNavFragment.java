@@ -48,7 +48,7 @@ public abstract class BaseNavFragment extends Fragment {
      *
      * @param isShown Whether show
      */
-    public abstract void showOperateBar(boolean isShown);
+    public abstract void showManageBar(boolean isShown);
 
     /**
      * Update Bottom Operate Bar

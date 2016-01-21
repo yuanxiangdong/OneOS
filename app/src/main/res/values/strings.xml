@@ -4,6 +4,7 @@
     <!-- Common String-->
     <string name="title_back">返回</string>
     <string name="ok">OK</string>
+    <string name="confirm">确定</string>
     <string name="cancel">取消</string>
     <string name="tip">提示</string>
     <string name="loading">正在加载&#8230;</string>
@@ -24,6 +25,7 @@
     <string name="encrypt_file">加密</string>
     <string name="decrypt_file">解密</string>
     <string name="chmod_file">权限</string>
+    <string name="tip_delete_file">确定删除所选文件？</string>
     <string name="deleting_file">正在删除&#8230;</string>
     <string name="delete_file_success">删除成功</string>
     <string name="delete_file_failed">删除失败</string>

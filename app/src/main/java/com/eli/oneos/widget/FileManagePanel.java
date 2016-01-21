@@ -93,7 +93,6 @@ public class FileManagePanel extends RelativeLayout {
             this.setVisibility(View.VISIBLE);
             if (isAnim) {
                 this.startAnimation(mShowAnim);
-//                mShowAnim.
             }
         }
     }

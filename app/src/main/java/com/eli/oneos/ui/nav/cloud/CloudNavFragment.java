@@ -29,7 +29,7 @@ public class CloudNavFragment extends BaseNavFragment {
     private CloudDirFragment mDirFragment;
     private BaseFileListFragment mCurFragment;
     private FileSelectPanel mSelectPanel;
-    private FileManagePanel mOperatePanel;
+    private FileManagePanel mManagePanel;
 
     private RelativeLayout mTitleLayout;
 
@@ -60,7 +60,7 @@ public class CloudNavFragment extends BaseNavFragment {
     private void initView(View view) {
         mTitleLayout = (RelativeLayout) view.findViewById(R.id.include_title);
         mSelectPanel = (FileSelectPanel) view.findViewById(R.id.layout_select_top_panel);
-        mOperatePanel = (FileManagePanel) view.findViewById(R.id.layout_operate_bottom_panel);
+        mManagePanel = (FileManagePanel) view.findViewById(R.id.layout_operate_bottom_panel);
     }
 
     private void initFragment() {
@@ -141,11 +141,11 @@ public class CloudNavFragment extends BaseNavFragment {
      * @param isShown Whether show
      */
     @Override
-    public void showOperateBar(boolean isShown) {
+    public void showManageBar(boolean isShown) {
         if (isShown) {
-            mOperatePanel.showPanel(true);
+            mManagePanel.showPanel(true);
         } else {
-            mOperatePanel.hidePanel(false, true);
+            mManagePanel.hidePanel(false, true);
         }
     }
 
@@ -158,8 +158,8 @@ public class CloudNavFragment extends BaseNavFragment {
      */
     @Override
     public void updateOperateBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener) {
-        mOperatePanel.setOnOperateListener(mListener);
-        mOperatePanel.updatePanelItems(fileType, selectedList);
+        mManagePanel.setOnOperateListener(mListener);
+        mManagePanel.updatePanelItems(fileType, selectedList);
     }
 
     /**

@@ -293,7 +293,7 @@ public abstract class BaseFileListFragment extends Fragment {
 
     private void showSelectAndOperatePanel(boolean isShown) {
         mParentFragment.showSelectBar(isShown);
-        mParentFragment.showOperateBar(isShown);
+        mParentFragment.showManageBar(isShown);
     }
 
     private void updateSelectAndOperatePanel() {

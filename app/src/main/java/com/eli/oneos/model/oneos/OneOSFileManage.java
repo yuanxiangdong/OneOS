@@ -5,6 +5,7 @@ import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.api.OneOSFileManageAPI;
 import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.ui.MainActivity;
+import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class OneOSFileManage {
             if (action == FileManageAction.DELETE) {
                 mActivity.showTipView(R.string.delete_file_success, true);
             }
-            
+
             if (null != callback) {
                 callback.onComplete(true);
             }
@@ -74,7 +75,14 @@ public class OneOSFileManage {
         }
 
         if (action == FileManageAction.DELETE) {
-            fileManageAPI.delete(fileList, false);
+            DialogUtils.showConfirmDialog(mActivity, R.string.tip, R.string.tip_delete_file, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                @Override
+                public void onClick(boolean isPositiveBtn) {
+                    if (isPositiveBtn) {
+                        fileManageAPI.delete(fileList, false);
+                    }
+                }
+            });
         }
 
 

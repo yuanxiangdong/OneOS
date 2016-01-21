@@ -42,6 +42,6 @@
     <color name="line_list_view">@color/tans_gray</color>
     <color name="bg_nav_bar">#FFF9F9F9</color>
     <color name="bg_operate_bar">@color/bg_nav_bar</color>
-    <color name="bg_layout_order">#EEEEEE</color>
+    <color name="bg_layout_order">@color/bg_nav_bar</color>
     <color name="txt_nav_normal">#FF7B7B7B</color>
 </resources>
