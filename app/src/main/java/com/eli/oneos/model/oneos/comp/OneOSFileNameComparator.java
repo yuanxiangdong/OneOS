@@ -1,6 +1,6 @@
-package com.eli.oneos.model.comp;
+package com.eli.oneos.model.oneos.comp;
 
-import com.eli.oneos.model.api.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFile;
 
 import java.util.Comparator;
 

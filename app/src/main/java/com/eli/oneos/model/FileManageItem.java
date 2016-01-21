@@ -3,15 +3,15 @@ package com.eli.oneos.model;
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/19.
  */
-public class FileOptItem {
+public class FileManageItem {
 
     private int id = 0;
     private int normalIcon = 0;
     private int pressedIcon = 0;
     private int txtId = 0;
-    private FileOptAction action = null;
+    private FileManageAction action = null;
 
-    public FileOptItem(int id, int normalIcon, int pressedIcon, int txtId, FileOptAction action) {
+    public FileManageItem(int id, int normalIcon, int pressedIcon, int txtId, FileManageAction action) {
         this.id = id;
         this.normalIcon = normalIcon;
         this.pressedIcon = pressedIcon;
@@ -51,11 +51,11 @@ public class FileOptItem {
         this.txtId = txtId;
     }
 
-    public FileOptAction getAction() {
+    public FileManageAction getAction() {
         return action;
     }
 
-    public void setAction(FileOptAction action) {
+    public void setAction(FileManageAction action) {
         this.action = action;
     }
 }

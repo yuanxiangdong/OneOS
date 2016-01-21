@@ -22,7 +22,7 @@ public class FileSelectPanel extends RelativeLayout {
     private OnFileSelectListener mListener;
     private Animation mShowAnim, mHidemAnim;
 
-    private int totalCount, selectCount;
+    private int totalCount = 0, selectCount = -1;
 
     public FileSelectPanel(Context context) {
         super(context);
@@ -57,7 +57,7 @@ public class FileSelectPanel extends RelativeLayout {
         });
     }
 
-    private void updateCount(int totalCount, int selectCount) {
+    public void updateCount(int totalCount, int selectCount) {
         this.totalCount = totalCount;
         this.selectCount = selectCount;
 
@@ -82,10 +82,8 @@ public class FileSelectPanel extends RelativeLayout {
      * show select panel if is invisible
      *
      * @param isAnim
-     * @param totalCount
-     * @param selectCount
      */
-    public void showPanel(boolean isAnim, final int totalCount, final int selectCount) {
+    public void showPanel(boolean isAnim) {
         if (!this.isShown()) {
             this.setVisibility(View.VISIBLE);
             if (isAnim) {
@@ -117,6 +115,8 @@ public class FileSelectPanel extends RelativeLayout {
             return;
         }
 
+        totalCount = 0;
+        selectCount = -1;
         this.setVisibility(View.GONE);
         if (isAnim) {
             this.startAnimation(mHidemAnim);

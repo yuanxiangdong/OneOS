@@ -3,10 +3,10 @@ package com.eli.oneos.ui.nav;
 
 import android.support.v4.app.Fragment;
 
-import com.eli.oneos.model.api.OneOSFile;
-import com.eli.oneos.model.api.OneOSFileType;
+import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.ui.MainActivity;
-import com.eli.oneos.widget.FileOperatePanel;
+import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 
 import java.util.ArrayList;
@@ -30,22 +30,34 @@ public abstract class BaseNavFragment extends Fragment {
     /**
      * Show/Hide Top Select Bar
      *
-     * @param isShown       Whether show
+     * @param isShown Whether show
+     */
+    public abstract void showSelectBar(boolean isShown);
+
+    /**
+     * Update Top Select Bar
+     *
      * @param totalCount    Total select count
      * @param selectedCount Selected count
      * @param mListener     On file select listener
      */
-    public abstract void showSelectBar(boolean isShown, int totalCount, int selectedCount, FileSelectPanel.OnFileSelectListener mListener);
+    public abstract void updateSelectBar(int totalCount, int selectedCount, FileSelectPanel.OnFileSelectListener mListener);
 
     /**
      * Show/Hide Bottom Operate Bar
      *
-     * @param isShown      Whether show
+     * @param isShown Whether show
+     */
+    public abstract void showOperateBar(boolean isShown);
+
+    /**
+     * Update Bottom Operate Bar
+     *
      * @param fileType     OneOS file type
      * @param selectedList Selected file list
      * @param mListener    On file operate listener
      */
-    public abstract void showOperateBar(boolean isShown, OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileOperatePanel.OnFileOperateListener mListener);
+    public abstract void updateOperateBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener);
 
     /**
      * Network State Changed

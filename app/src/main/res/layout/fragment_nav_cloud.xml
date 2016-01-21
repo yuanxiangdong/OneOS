@@ -33,7 +33,7 @@
         android:layout_below="@+id/include_title"
         android:background="@color/bg_page" />
 
-    <com.eli.oneos.widget.FileOperatePanel
+    <com.eli.oneos.widget.FileManagePanel
         android:id="@+id/layout_operate_bottom_panel"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/layout_operate_height"

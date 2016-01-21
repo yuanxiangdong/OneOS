@@ -1,4 +1,4 @@
-package com.eli.oneos.model.api;
+package com.eli.oneos.model.oneos;
 
 public enum OneOSFileType {
     /**

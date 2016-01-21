@@ -10,6 +10,7 @@
     <string name="network_not_available">当前网络不可用，请检查网络连接！</string>
     <string name="wifi_not_available">当前WiFi不可用，请检查WiFi连接！</string>
     <string name="error_json_exception">解析协议出错</string>
+    <string name="operate_failed">操作失败</string>
 
     <!-- File Operation -->
     <string name="details_file">详情</string>
@@ -23,6 +24,9 @@
     <string name="encrypt_file">加密</string>
     <string name="decrypt_file">解密</string>
     <string name="chmod_file">权限</string>
+    <string name="deleting_file">正在删除&#8230;</string>
+    <string name="delete_file_success">删除成功</string>
+    <string name="delete_file_failed">删除失败</string>
 
     <!-- Navigation Bar Title -->
     <string name="nav_title_local">本地</string>
@@ -38,7 +42,7 @@
     <string name="hint_select_ip">IP地址</string>
     <string name="hint_enter_port">端口号</string>
     <string name="tip_invalid_port">请输入有效端口号</string>
-    <string name="loginning">正在登录&#8230;</string>
+    <string name="logining">正在登录&#8230;</string>
     <string name="scanning_device">搜索OneSpace&#8230;</string>
     <string name="tip_title_research">搜索设备</string>
     <string name="tip_search_again">未搜索到可用OneSpace，重新搜索？</string>

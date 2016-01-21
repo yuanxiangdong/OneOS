@@ -14,41 +14,43 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.FileOptAction;
-import com.eli.oneos.model.FileOptItem;
+import com.eli.oneos.model.FileManageAction;
+import com.eli.oneos.model.FileManageItem;
+import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFileManageGenerate;
+import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.Utils;
 
 import java.util.ArrayList;
 
-public class FileOperatePanel extends RelativeLayout {
+public class FileManagePanel extends RelativeLayout {
 
-    private Context mContext;
     private LinearLayout mContainerLayout;
-    private OnFileOperateListener mListener;
+    private OnFileManageListener mListener;
 
     private Animation mShowAnim, mHideAnim;
 
-    public FileOperatePanel(Context context) {
+    public FileManagePanel(Context context) {
         super(context);
     }
 
-    public FileOperatePanel(Context context, AttributeSet attrs) {
+    public FileManagePanel(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.mContext = context;
 
         mShowAnim = AnimationUtils.loadAnimation(context, R.anim.push_bottom_in);
         mHideAnim = AnimationUtils.loadAnimation(context, R.anim.push_bottom_out);
 
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_file_operate, this, true);
-        mContainerLayout = (LinearLayout) view.findViewById(R.id.layout_root_operate);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_file_manage, this, true);
+        mContainerLayout = (LinearLayout) view.findViewById(R.id.layout_root_manage);
     }
 
-    public void setOnOperateListener(OnFileOperateListener mListener) {
+    public void setOnOperateListener(OnFileManageListener mListener) {
         this.mListener = mListener;
     }
 
-    private void updatePanelItems(ArrayList<FileOptItem> mList) {
+    public void updatePanelItems(OneOSFileType fileType, final ArrayList<OneOSFile> selectedList) {
+        ArrayList<FileManageItem> mList = OneOSFileManageGenerate.generate(fileType, selectedList);
         this.mContainerLayout.removeAllViews();
         if (EmptyUtils.isEmpty(mList)) {
             return;
@@ -58,7 +60,7 @@ public class FileOperatePanel extends RelativeLayout {
         int txtSize = getResources().getDimensionPixelSize(R.dimen.text_size_min);
         ColorStateList txtColors = (ColorStateList) getResources().getColorStateList(R.color.selector_gray_to_primary);
         LinearLayout.LayoutParams mLayoutParams = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1.0f);
-        for (FileOptItem item : mList) {
+        for (FileManageItem item : mList) {
             Button mButton = new Button(getContext());
             mButton.setId(item.getId());
             mButton.setTag(item.getAction());
@@ -78,7 +80,7 @@ public class FileOperatePanel extends RelativeLayout {
                 @Override
                 public void onClick(View v) {
                     if (null != mListener) {
-                        mListener.onClick(v, (FileOptAction) v.getTag());
+                        mListener.onClick(v, selectedList, (FileManageAction) v.getTag());
                     }
                 }
             });
@@ -86,23 +88,19 @@ public class FileOperatePanel extends RelativeLayout {
         }
     }
 
-    public void showPanel(ArrayList<FileOptItem> mList, boolean isAnim) {
-        if (EmptyUtils.isEmpty(mList)) {
-            return;
-        }
-
+    public void showPanel(boolean isAnim) {
         if (!this.isShown()) {
             this.setVisibility(View.VISIBLE);
             if (isAnim) {
                 this.startAnimation(mShowAnim);
+//                mShowAnim.
             }
         }
-        updatePanelItems(mList);
     }
 
-    public void hidePanel(boolean isAnim) {
+    public void hidePanel(boolean isGone, boolean isAnim) {
         if (this.isShown()) {
-            this.setVisibility(View.INVISIBLE);
+            this.setVisibility(isGone ? View.GONE : View.INVISIBLE);
             if (isAnim) {
                 this.startAnimation(mHideAnim);
             }
@@ -113,8 +111,8 @@ public class FileOperatePanel extends RelativeLayout {
         }
     }
 
-    public interface OnFileOperateListener {
-        void onClick(View view, FileOptAction action);
+    public interface OnFileManageListener {
+        void onClick(View view, ArrayList<OneOSFile> selectedList, FileManageAction action);
 
         void onDismiss();
     }

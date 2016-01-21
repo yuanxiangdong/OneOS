@@ -1,4 +1,4 @@
-package com.eli.oneos.model.api;
+package com.eli.oneos.model.oneos.api;
 
 import android.util.Log;
 
@@ -25,7 +25,7 @@ import org.json.JSONObject;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/8.
  */
-public class OneOSLoginAPI extends OneOSAPI {
+public class OneOSLoginAPI extends OneOSBaseAPI {
     private static final String TAG = OneOSLoginAPI.class.getSimpleName();
 
     private OnLoginListener listener;

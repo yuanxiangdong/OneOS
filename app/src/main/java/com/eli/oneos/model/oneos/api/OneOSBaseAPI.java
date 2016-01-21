@@ -1,4 +1,4 @@
-package com.eli.oneos.model.api;
+package com.eli.oneos.model.oneos.api;
 
 import android.content.Context;
 
@@ -12,7 +12,7 @@ import org.apache.http.impl.client.BasicCookieStore;
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/8.
  */
-public abstract class OneOSAPI {
+public abstract class OneOSBaseAPI {
     private static final int TIMEOUT = 20 * 1000;
 
     protected Context context = null;
@@ -22,9 +22,16 @@ public abstract class OneOSAPI {
     protected String session = null;
     protected String port = OneOSAPIs.ONE_API_DEFAULT_PORT;
 
-    protected OneOSAPI(String ip, String port) {
+    protected OneOSBaseAPI(String ip, String port) {
         this.ip = ip;
         this.port = port;
+        initHttp();
+    }
+
+    protected OneOSBaseAPI(String ip, String port, String session) {
+        this.ip = ip;
+        this.port = port;
+        this.session = session;
         initHttp();
     }
 

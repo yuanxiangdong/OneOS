@@ -1,4 +1,4 @@
-package com.eli.oneos.model.adapter;
+package com.eli.oneos.model.oneos.adapter;
 
 import android.content.Context;
 import android.view.View;
@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.api.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.user.LoginSession;
 
 import java.util.ArrayList;

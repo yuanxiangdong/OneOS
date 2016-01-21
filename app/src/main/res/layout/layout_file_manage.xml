@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_root_operate"
+    android:id="@+id/layout_root_manage"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/layout_operate_height"
     android:background="@color/bg_operate_bar"

@@ -1,4 +1,4 @@
-package com.eli.oneos.model.adapter;
+package com.eli.oneos.model.oneos.adapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.eli.oneos.model.api.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.user.LoginSession;
 
 import java.util.ArrayList;

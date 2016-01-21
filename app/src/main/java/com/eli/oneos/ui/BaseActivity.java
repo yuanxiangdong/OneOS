@@ -3,11 +3,13 @@ package com.eli.oneos.ui;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 
 import com.eli.oneos.R;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.SystemBarManager;
 import com.eli.oneos.widget.LoadingView;
+import com.eli.oneos.widget.TipView;
 
 /**
  * Base Activity for OneSpace
@@ -16,13 +18,16 @@ import com.eli.oneos.widget.LoadingView;
  */
 public class BaseActivity extends FragmentActivity {
 
+    protected View mRootView;
     private SystemBarManager mTintManager;
     private LoadingView mLoadingView;
+    private TipView mTipView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLoadingView = LoadingView.getInstance();
+        mTipView = TipView.getInstance();
     }
 
     @Override
@@ -53,23 +58,33 @@ public class BaseActivity extends FragmentActivity {
         mTintManager.setStatusBarTintResource(colorId);
     }
 
-    protected void showLoading() {
+    public void showLoading() {
         mLoadingView.show(this);
     }
 
-    protected void showLoading(int msgId) {
+    public void showLoading(int msgId) {
         mLoadingView.show(this, msgId);
     }
 
-    protected void showLoading(int msgId, boolean isCancellable) {
+    public void showLoading(int msgId, boolean isCancellable) {
         mLoadingView.show(this, msgId, isCancellable);
     }
 
-    protected void showLoading(int msgId, boolean isCancellable, DialogInterface.OnDismissListener listener) {
+    public void showLoading(int msgId, boolean isCancellable, DialogInterface.OnDismissListener listener) {
         mLoadingView.show(this, msgId, isCancellable, listener);
     }
 
-    protected void dismissLoading() {
+    public void dismissLoading() {
         mLoadingView.dismiss();
+    }
+
+    public void showTipView(int msgId, boolean isPositive) {
+        dismissLoading();
+        mTipView.show(this, mRootView, msgId, isPositive);
+    }
+
+    public void showTipView(String msg, boolean isPositive) {
+        dismissLoading();
+        mTipView.show(this, mRootView, msg, isPositive);
     }
 }

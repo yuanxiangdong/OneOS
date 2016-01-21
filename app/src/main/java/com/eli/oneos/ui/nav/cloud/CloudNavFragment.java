@@ -10,12 +10,11 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.api.OneOSFile;
-import com.eli.oneos.model.api.OneOSFileOptGenerate;
-import com.eli.oneos.model.api.OneOSFileType;
+import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
-import com.eli.oneos.widget.FileOperatePanel;
+import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class CloudNavFragment extends BaseNavFragment {
     private CloudDirFragment mDirFragment;
     private BaseFileListFragment mCurFragment;
     private FileSelectPanel mSelectPanel;
-    private FileOperatePanel mOperatePanel;
+    private FileManagePanel mOperatePanel;
 
     private RelativeLayout mTitleLayout;
 
@@ -61,7 +60,7 @@ public class CloudNavFragment extends BaseNavFragment {
     private void initView(View view) {
         mTitleLayout = (RelativeLayout) view.findViewById(R.id.include_title);
         mSelectPanel = (FileSelectPanel) view.findViewById(R.id.layout_select_top_panel);
-        mOperatePanel = (FileOperatePanel) view.findViewById(R.id.layout_operate_bottom_panel);
+        mOperatePanel = (FileManagePanel) view.findViewById(R.id.layout_operate_bottom_panel);
     }
 
     private void initFragment() {
@@ -112,39 +111,55 @@ public class CloudNavFragment extends BaseNavFragment {
     /**
      * Show/Hide Top Select Bar
      *
-     * @param isShown       Whether show
-     * @param totalCount    Total select count
-     * @param selectedCount Selected count
-     * @param mListener     On file select listener
+     * @param isShown Whether show
      */
     @Override
-    public void showSelectBar(boolean isShown, int totalCount, int selectedCount, FileSelectPanel.OnFileSelectListener mListener) {
+    public void showSelectBar(boolean isShown) {
         if (isShown) {
-            mSelectPanel.setOnSelectListener(mListener);
-            mSelectPanel.showPanel(true, totalCount, selectedCount);
+            mSelectPanel.showPanel(true);
         } else {
             mSelectPanel.hidePanel(true);
         }
     }
 
     /**
+     * Update Top Select Bar
+     *
+     * @param totalCount    Total select count
+     * @param selectedCount Selected count
+     * @param mListener     On file select listener
+     */
+    @Override
+    public void updateSelectBar(int totalCount, int selectedCount, FileSelectPanel.OnFileSelectListener mListener) {
+        mSelectPanel.setOnSelectListener(mListener);
+        mSelectPanel.updateCount(totalCount, selectedCount);
+    }
+
+    /**
      * Show/Hide Bottom Operate Bar
      *
-     * @param isShown      Whether show
+     * @param isShown Whether show
+     */
+    @Override
+    public void showOperateBar(boolean isShown) {
+        if (isShown) {
+            mOperatePanel.showPanel(true);
+        } else {
+            mOperatePanel.hidePanel(false, true);
+        }
+    }
+
+    /**
+     * Update Bottom Operate Bar
+     *
      * @param fileType     OneOS file type
      * @param selectedList Selected file list
      * @param mListener    On file operate listener
      */
     @Override
-    public void showOperateBar(boolean isShown, OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileOperatePanel.OnFileOperateListener mListener) {
-        if (isShown) {
-            mOperatePanel.setOnOperateListener(mListener);
-            mOperatePanel.showPanel(OneOSFileOptGenerate.generate(fileType, selectedList), true);
-            mMainActivity.showNavBar(false);
-        } else {
-            mMainActivity.showNavBar(true);
-            mOperatePanel.hidePanel(true);
-        }
+    public void updateOperateBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener) {
+        mOperatePanel.setOnOperateListener(mListener);
+        mOperatePanel.updatePanelItems(fileType, selectedList);
     }
 
     /**

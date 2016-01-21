@@ -36,4 +36,9 @@
         <item name="android:drawablePadding">0dp</item>
         <item name="android:animationDuration">400</item>
     </style>
+
+    <style name="AnimAlphaEnterAndExit">
+        <item name="android:windowEnterAnimation">@anim/alpha_in_tip</item>
+        <item name="android:windowExitAnimation">@anim/alpha_out_tip</item>
+    </style>
 </resources>

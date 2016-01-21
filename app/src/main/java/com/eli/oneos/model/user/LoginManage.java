@@ -5,20 +5,20 @@ package com.eli.oneos.model.user;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/11.
  */
-public class LoginManager {
+public class LoginManage {
     private static LoginSession loginSession = null;
-    private static LoginManager INSTANCE = new LoginManager();
+    private static LoginManage INSTANCE = new LoginManage();
 
-    private LoginManager() {
+    private LoginManage() {
     }
 
     /**
      * Get Singleton Class instance.
      *
-     * @return LoginManager Instance
+     * @return LoginManage Instance
      */
-    public static LoginManager getInstance() {
-        return LoginManager.INSTANCE;
+    public static LoginManage getInstance() {
+        return LoginManage.INSTANCE;
     }
 
     /**
@@ -65,10 +65,10 @@ public class LoginManager {
     }
 
     public void setLoginSession(LoginSession loginSession) {
-        LoginManager.loginSession = loginSession;
+        LoginManage.loginSession = loginSession;
     }
 
     public LoginSession getLoginSession() {
-        return LoginManager.loginSession;
+        return LoginManage.loginSession;
     }
 }

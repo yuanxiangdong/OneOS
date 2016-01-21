@@ -1,4 +1,4 @@
-package com.eli.oneos.model.api;
+package com.eli.oneos.model.oneos.api;
 
 import android.util.Log;
 
@@ -20,7 +20,7 @@ import org.json.JSONObject;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/8.
  */
-public class OneOSGetMacAPI extends OneOSAPI {
+public class OneOSGetMacAPI extends OneOSBaseAPI {
     private static final String TAG = OneOSGetMacAPI.class.getSimpleName();
 
     private OnGetMacListener listener;

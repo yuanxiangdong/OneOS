@@ -13,10 +13,10 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.UserHistoryKeeper;
 import com.eli.oneos.db.greendao.UserHistory;
-import com.eli.oneos.model.api.OneOSLoginAPI;
+import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
 import com.eli.oneos.model.scan.OnScanDeviceListener;
 import com.eli.oneos.model.scan.ScanDeviceManager;
-import com.eli.oneos.model.user.LoginManager;
+import com.eli.oneos.model.user.LoginManage;
 import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.utils.AppVersionUtils;
 import com.eli.oneos.utils.EmptyUtils;
@@ -44,7 +44,7 @@ public class LauncherActivity extends BaseActivity {
             mSendIntent = intent;
         }
         if (mSendIntent != null) {
-            LoginManager loginManager = LoginManager.getInstance();
+            LoginManage loginManager = LoginManage.getInstance();
             if (loginManager.isLogin()) {
                 gotoMainActivity();
                 return;
@@ -199,7 +199,7 @@ public class LauncherActivity extends BaseActivity {
 
             @Override
             public void onSuccess(String url, LoginSession loginSession) {
-                LoginManager.getInstance().setLoginSession(loginSession);
+                LoginManage.getInstance().setLoginSession(loginSession);
                 gotoMainActivity();
             }
 

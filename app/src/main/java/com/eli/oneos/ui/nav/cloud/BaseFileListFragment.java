@@ -13,23 +13,25 @@ import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
-import com.eli.oneos.model.FileOptAction;
+import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
-import com.eli.oneos.model.adapter.OneOSFileBaseAdapter;
-import com.eli.oneos.model.adapter.OneOSFileGridAdapter;
-import com.eli.oneos.model.adapter.OneOSFileListAdapter;
-import com.eli.oneos.model.api.OneOSFile;
-import com.eli.oneos.model.api.OneOSFileType;
-import com.eli.oneos.model.api.OneOSListDirAPI;
-import com.eli.oneos.model.comp.OneOSFileNameComparator;
-import com.eli.oneos.model.comp.OneOSFileTimeComparator;
-import com.eli.oneos.model.user.LoginManager;
+import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFileManage;
+import com.eli.oneos.model.oneos.OneOSFileType;
+import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
+import com.eli.oneos.model.oneos.adapter.OneOSFileGridAdapter;
+import com.eli.oneos.model.oneos.adapter.OneOSFileListAdapter;
+import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
+import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
+import com.eli.oneos.model.oneos.comp.OneOSFileTimeComparator;
+import com.eli.oneos.model.user.LoginManage;
 import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;
-import com.eli.oneos.widget.FileOperatePanel;
+import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FilePathPanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshBase;
@@ -45,6 +47,7 @@ import java.util.Collections;
 public abstract class BaseFileListFragment extends Fragment {
     private static final String TAG = BaseFileListFragment.class.getSimpleName();
 
+    protected MainActivity mMainActivity;
     protected BaseNavFragment mParentFragment;
     private FilePathPanel mPathPanel;
     private PullToRefreshListView mPullRefreshListView;
@@ -81,7 +84,7 @@ public abstract class BaseFileListFragment extends Fragment {
                 mClickedCheckBox.toggle();
 
                 mAdapter.notifyDataSetChanged();
-                updateSelectAndOperatePanel(true);
+                updateSelectAndOperatePanel();
             } else {
                 attemptOpenOneOSFile(mFileList.get(position));
             }
@@ -103,7 +106,7 @@ public abstract class BaseFileListFragment extends Fragment {
         public void onSelect(boolean isSelectAll) {
             getCurFileAdapter().selectAllItem(isSelectAll);
             getCurFileAdapter().notifyDataSetChanged();
-            updateSelectAndOperatePanel(true);
+            updateSelectAndOperatePanel();
         }
 
         @Override
@@ -111,15 +114,20 @@ public abstract class BaseFileListFragment extends Fragment {
             setMultiModel(false, 0);
         }
     };
-    private FileOperatePanel.OnFileOperateListener mFileOptListener = new FileOperatePanel.OnFileOperateListener() {
+    private FileManagePanel.OnFileManageListener mFileManageListener = new FileManagePanel.OnFileManageListener() {
         @Override
-        public void onClick(View view, FileOptAction action) {
-
+        public void onClick(View view, ArrayList<OneOSFile> selectedList, FileManageAction action) {
+            OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, new OneOSFileManage.OnManageCallback() {
+                @Override
+                public void onComplete(boolean isSuccess) {
+                    autoPullToRefresh();
+                }
+            });
+            fileManage.manage(action, selectedList);
         }
 
         @Override
         public void onDismiss() {
-
         }
     };
 
@@ -137,7 +145,7 @@ public abstract class BaseFileListFragment extends Fragment {
     }
 
     private void initLoginSession() {
-        mLoginSession = LoginManager.getInstance().getLoginSession();
+        mLoginSession = LoginManage.getInstance().getLoginSession();
     }
 
     private void initView(View view) {
@@ -245,7 +253,7 @@ public abstract class BaseFileListFragment extends Fragment {
      */
     public boolean onBackPressed() {
         if (getCurFileAdapter().isMultiChooseModel()) {
-            updateSelectAndOperatePanel(false);
+            showSelectAndOperatePanel(false);
             return true;
         }
 
@@ -283,9 +291,14 @@ public abstract class BaseFileListFragment extends Fragment {
         }
     }
 
-    private void updateSelectAndOperatePanel(boolean isShown) {
-        mParentFragment.showSelectBar(isShown, mFileList.size(), mSelectedList.size(), mFileSelectListener);
-        mParentFragment.showOperateBar(isShown, mFileType, mSelectedList, mFileOptListener);
+    private void showSelectAndOperatePanel(boolean isShown) {
+        mParentFragment.showSelectBar(isShown);
+        mParentFragment.showOperateBar(isShown);
+    }
+
+    private void updateSelectAndOperatePanel() {
+        mParentFragment.updateSelectBar(mFileList.size(), mSelectedList.size(), mFileSelectListener);
+        mParentFragment.updateOperateBar(mFileType, mSelectedList, mFileManageListener);
     }
 
     private boolean setMultiModel(boolean isSetMultiModel, int position) {
@@ -295,14 +308,15 @@ public abstract class BaseFileListFragment extends Fragment {
         }
 
         if (isSetMultiModel) {
-            updateSelectAndOperatePanel(true);
+            updateSelectAndOperatePanel();
+            showSelectAndOperatePanel(true);
             mListAdapter.setIsMultiModel(true);
             mGridAdapter.setIsMultiModel(true);
             mSelectedList.add(mFileList.get(position));
             getCurFileAdapter().notifyDataSetChanged();
             return true;
         } else {
-            updateSelectAndOperatePanel(false);
+            showSelectAndOperatePanel(false);
             mListAdapter.setIsMultiModel(false);
             mGridAdapter.setIsMultiModel(false);
             getCurFileAdapter().notifyDataSetChanged();

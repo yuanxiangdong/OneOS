@@ -52,7 +52,7 @@ public class LoadingView {
         try {
             mProgressDialog.show();
         } catch (Exception e) {
-            Log.e(TAG, "LoadingProgressDialog Exception: ", e);
+            Log.e(TAG, "TipDialog Exception: ", e);
         }
     }
 
@@ -81,7 +81,7 @@ public class LoadingView {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.layout_dialog_progress_loading);
+            setContentView(R.layout.layout_dialog_loading);
             if (msgId > 0) {
                 TextView mTipsTxt = (TextView) findViewById(R.id.txt_tips);
                 mTipsTxt.setText(context.getResources().getString(msgId));

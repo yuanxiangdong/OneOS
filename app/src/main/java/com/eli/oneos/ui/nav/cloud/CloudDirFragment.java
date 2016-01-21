@@ -8,7 +8,8 @@ import android.view.ViewGroup;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.model.api.OneOSFileType;
+import com.eli.oneos.model.oneos.OneOSFileType;
+import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 
 /**
@@ -23,6 +24,7 @@ public class CloudDirFragment extends BaseFileListFragment {
 
         View view = inflater.inflate(R.layout.fragment_nav_cloud_directory, container, false);
 
+        mMainActivity = (MainActivity) getActivity();
         mParentFragment = (BaseNavFragment) getParentFragment();
         curPath = OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
         mFileType = OneOSFileType.PUBLIC;

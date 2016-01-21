@@ -1,10 +1,11 @@
-package com.eli.oneos.model.api;
+package com.eli.oneos.model.oneos.api;
 
 import android.util.Log;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.GsonUtils;
@@ -25,7 +26,7 @@ import java.util.List;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/14.
  */
-public class OneOSListDirAPI extends OneOSAPI {
+public class OneOSListDirAPI extends OneOSBaseAPI {
     private static final String TAG = OneOSListDirAPI.class.getSimpleName();
 
     private OnFileListListener listener;

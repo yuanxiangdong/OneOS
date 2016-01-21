@@ -9,7 +9,7 @@ import android.view.Window;
 import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.user.LoginManager;
+import com.eli.oneos.model.user.LoginManage;
 import com.eli.oneos.receiver.NetworkStateManager;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.ui.nav.cloud.CloudNavFragment;
@@ -31,7 +31,7 @@ public class MainActivity extends BaseActivity {
     private NetworkStateManager.OnNetworkStateChangedListener mNetworkListener = new NetworkStateManager.OnNetworkStateChangedListener() {
         @Override
         public void onChanged(boolean isAvailable, boolean isWifiAvailable) {
-            LoginManager mLoginManager = LoginManager.getInstance();
+            LoginManage mLoginManager = LoginManage.getInstance();
             if (mLoginManager.isLogin()) {
                 boolean isLANDevice = mLoginManager.isLANDevice();
                 if (isLANDevice) {
@@ -91,14 +91,7 @@ public class MainActivity extends BaseActivity {
      * Init Views
      */
     private void initViews() {
-        fragmentManager = getSupportFragmentManager();
-
-        CloudNavFragment cloudFragment = new CloudNavFragment();
-        mFragmentList.add(cloudFragment);
-        mFragmentList.add(cloudFragment);
-        mFragmentList.add(cloudFragment);
-        mFragmentList.add(cloudFragment);
-
+        mRootView = (View) findViewById(R.id.layout_root);
         radioGroup = (RadioGroup) findViewById(R.id.radiogroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -124,6 +117,14 @@ public class MainActivity extends BaseActivity {
                 changFragmentByIndex(mCurPageIndex);
             }
         });
+
+        fragmentManager = getSupportFragmentManager();
+
+        CloudNavFragment cloudFragment = new CloudNavFragment();
+        mFragmentList.add(cloudFragment);
+        mFragmentList.add(cloudFragment);
+        mFragmentList.add(cloudFragment);
+        mFragmentList.add(cloudFragment);
         changFragmentByIndex(mCurPageIndex);
     }
 
@@ -161,7 +162,11 @@ public class MainActivity extends BaseActivity {
         return fragment;
     }
 
-    public void showNavBar(boolean isShown) {
-        radioGroup.setVisibility(isShown ? View.VISIBLE : View.INVISIBLE);
+    public void showNavBar() {
+        radioGroup.setVisibility(View.VISIBLE);
+    }
+
+    public void hideNavBar(boolean isGone) {
+        radioGroup.setVisibility(isGone ? View.GONE : View.INVISIBLE);
     }
 }

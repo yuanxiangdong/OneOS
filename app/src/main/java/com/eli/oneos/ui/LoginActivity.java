@@ -18,11 +18,11 @@ import com.eli.oneos.db.DeviceHistoryKeeper;
 import com.eli.oneos.db.UserHistoryKeeper;
 import com.eli.oneos.db.greendao.DeviceHistory;
 import com.eli.oneos.db.greendao.UserHistory;
-import com.eli.oneos.model.api.OneOSGetMacAPI;
-import com.eli.oneos.model.api.OneOSLoginAPI;
+import com.eli.oneos.model.oneos.api.OneOSGetMacAPI;
+import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
 import com.eli.oneos.model.scan.OnScanDeviceListener;
 import com.eli.oneos.model.scan.ScanDeviceManager;
-import com.eli.oneos.model.user.LoginManager;
+import com.eli.oneos.model.user.LoginManage;
 import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.receiver.NetworkStateManager;
 import com.eli.oneos.utils.AnimUtils;
@@ -159,7 +159,7 @@ public class LoginActivity extends BaseActivity {
         if (null != mDeviceSpinnerView) {
             mDeviceSpinnerView.dismiss();
         }
-        LoginManager loginManager = LoginManager.getInstance();
+        LoginManage loginManager = LoginManage.getInstance();
         loginManager.setLoginSession(mLoginSession);
     }
 
@@ -345,7 +345,7 @@ public class LoginActivity extends BaseActivity {
         loginAPI.setOnLoginListener(new OneOSLoginAPI.OnLoginListener() {
             @Override
             public void onStart(String url) {
-                showLoading(R.string.loginning, false);
+                showLoading(R.string.logining, false);
             }
 
             @Override
