@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 
@@ -57,6 +58,7 @@ public abstract class BaseFileListFragment extends Fragment {
     private boolean isListShown = true;
     private FileOrderType mOrderType = FileOrderType.NAME;
     public OneOSFileType mFileType = OneOSFileType.PRIVATE;
+    private LinearLayout mOrderLayout;
 
     private LoginSession mLoginSession = null;
     private ArrayList<OneOSFile> mFileList = new ArrayList<>();
@@ -117,13 +119,17 @@ public abstract class BaseFileListFragment extends Fragment {
     private FileManagePanel.OnFileManageListener mFileManageListener = new FileManagePanel.OnFileManageListener() {
         @Override
         public void onClick(View view, ArrayList<OneOSFile> selectedList, FileManageAction action) {
-            OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, new OneOSFileManage.OnManageCallback() {
-                @Override
-                public void onComplete(boolean isSuccess) {
-                    autoPullToRefresh();
-                }
-            });
-            fileManage.manage(action, selectedList);
+            if (EmptyUtils.isEmpty(selectedList)) {
+                ToastHelper.showToast(R.string.tip_select_file);
+            } else {
+                OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, new OneOSFileManage.OnManageCallback() {
+                    @Override
+                    public void onComplete(boolean isSuccess) {
+                        autoPullToRefresh();
+                    }
+                });
+                fileManage.manage(action, selectedList);
+            }
         }
 
         @Override
@@ -149,6 +155,9 @@ public abstract class BaseFileListFragment extends Fragment {
     }
 
     private void initView(View view) {
+        mOrderLayout = (LinearLayout) view.findViewById(R.id.layout_order_view);
+        
+
         RadioGroup mOrderGroup = (RadioGroup) view.findViewById(R.id.rg_order);
         mOrderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

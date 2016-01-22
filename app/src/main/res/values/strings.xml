@@ -25,10 +25,15 @@
     <string name="encrypt_file">加密</string>
     <string name="decrypt_file">解密</string>
     <string name="chmod_file">权限</string>
+    <string name="tip_select_file">请先选择需要操作的文件</string>
     <string name="tip_delete_file">确定删除所选文件？</string>
     <string name="deleting_file">正在删除&#8230;</string>
     <string name="delete_file_success">删除成功</string>
     <string name="delete_file_failed">删除失败</string>
+    <string name="tip_rename_file">重命名文件</string>
+    <string name="hint_rename_file">请输入新的文件名</string>
+    <string name="rename_file_success">重命名成功</string>
+    <string name="rename_file_failed">重命名失败</string>
 
     <!-- Navigation Bar Title -->
     <string name="nav_title_local">本地</string>

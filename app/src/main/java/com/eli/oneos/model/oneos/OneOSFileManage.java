@@ -1,10 +1,13 @@
 package com.eli.oneos.model.oneos;
 
+import android.widget.EditText;
+
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.api.OneOSFileManageAPI;
 import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.ui.MainActivity;
+import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
 
@@ -36,6 +39,8 @@ public class OneOSFileManage {
         public void onSuccess(String url, ArrayList<OneOSFile> fileList, FileManageAction action) {
             if (action == FileManageAction.DELETE) {
                 mActivity.showTipView(R.string.delete_file_success, true);
+            } else if (action == FileManageAction.RENAME) {
+                mActivity.showTipView(R.string.rename_file_success, true);
             }
 
             if (null != callback) {
@@ -45,9 +50,9 @@ public class OneOSFileManage {
 
         @Override
         public void onFailure(String url, ArrayList<OneOSFile> fileList, FileManageAction action, int errorNo, String errorMsg) {
-            if (action == FileManageAction.DELETE) {
-                mActivity.showTipView(errorMsg, false);
-            }
+//            if (action == FileManageAction.DELETE) {
+            mActivity.showTipView(errorMsg, false);
+//            }
 
             if (null != callback) {
                 callback.onComplete(false);
@@ -83,8 +88,26 @@ public class OneOSFileManage {
                     }
                 }
             });
-        }
+        } else if (action == FileManageAction.RENAME) {
+            final OneOSFile file = selectedList.get(0);
+            DialogUtils.showEditDialog(mActivity, R.string.tip_rename_file, R.string.hint_rename_file, file.getName(),
+                    R.string.confirm, R.string.cancel, new DialogUtils.OnEditDialogClickListener() {
+                        @Override
+                        public void onClick(boolean isPositiveBtn, EditText mContentEditText) {
+                            if (isPositiveBtn) {
+                                String newName = mContentEditText.getText().toString();
+                                if (EmptyUtils.isEmpty(newName)) {
+                                    AnimUtils.sharkEditText(mActivity, mContentEditText);
+                                } else {
+                                    fileManageAPI.rename(file, newName);
+                                    DialogUtils.dismiss();
+                                }
+                            }
+                        }
+                    });
+        } else if (action == FileManageAction.ENCRYPT) {
 
+        }
 
     }
 
