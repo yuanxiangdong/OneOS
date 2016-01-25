@@ -62,8 +62,7 @@ public class DialogUtils {
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.txt_title);
         TextView contentTextView = (TextView) dialogView.findViewById(R.id.txt_content);
 
-        boolean hasTitle = (titleTxt != null);
-        if (hasTitle) {
+        if (titleTxt != null) {
             titleTextView.setText(titleTxt);
             titleTextView.setVisibility(View.VISIBLE);
         }
@@ -141,8 +140,7 @@ public class DialogUtils {
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.txt_title);
         TextView contentTextView = (TextView) dialogView.findViewById(R.id.txt_content);
 
-        boolean hasTitle = (titleTxt != null);
-        if (hasTitle) {
+        if (titleTxt != null) {
             titleTextView.setText(titleTxt);
             titleTextView.setVisibility(View.VISIBLE);
         }
@@ -190,15 +188,16 @@ public class DialogUtils {
         mDialog.show();
     }
 
-    public static void showEditDialog(Activity activity, int titleId, int hintId,
+    public static void showEditDialog(Activity activity, int titleId, int hintId, int defContentId,
                                       int posId, int negId, final OnEditDialogClickListener mListener) {
         try {
             Resources resources = activity.getResources();
             String title = titleId > 0 ? resources.getString(titleId) : null;
             String hint = hintId > 0 ? resources.getString(hintId) : null;
+            String defContent = defContentId > 0 ? resources.getString(defContentId) : null;
             String positive = posId > 0 ? resources.getString(posId) : null;
             String negative = negId > 0 ? resources.getString(negId) : null;
-            showEditDialog(activity, title, hint, null, positive, negative, mListener);
+            showEditDialog(activity, title, hint, defContent, positive, negative, mListener);
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
@@ -245,8 +244,7 @@ public class DialogUtils {
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.txt_title);
         final EditText contentEditText = (EditText) dialogView.findViewById(R.id.et_content);
 
-        boolean hasTitle = (titleTxt != null);
-        if (hasTitle) {
+        if (titleTxt != null) {
             titleTextView.setText(titleTxt);
         }
 
@@ -255,7 +253,7 @@ public class DialogUtils {
         }
         if (defaultContent != null) {
             contentEditText.setText(defaultContent);
-            contentEditText.setSelection(defaultContent.length());
+            contentEditText.setSelection(0, defaultContent.length());
         }
         InputMethodUtils.showKeyboard(activity, contentEditText);
 
@@ -284,6 +282,69 @@ public class DialogUtils {
                 }
             });
         }
+
+        mDialog.setContentView(dialogView);
+        mDialog.setCancelable(false);
+        mDialog.show();
+    }
+
+    public static void showEditPwdDialog(final Activity activity, int titleId, int hintId, int confirmHintId, final int posId,
+                                         int negId, final OnEditDialogClickListener mListener) {
+        if (activity == null) {
+            Log.e(TAG, "activity or dialog content is null");
+            return;
+        }
+
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_edit_pwd, null);
+        mDialog = new Dialog(activity, R.style.DialogTheme);
+        TextView titleTextView = (TextView) dialogView.findViewById(R.id.txt_title);
+        final EditText pwdEditText = (EditText) dialogView.findViewById(R.id.et_pwd);
+        final EditText confirmPwdEditText = (EditText) dialogView.findViewById(R.id.et_pwd_confirm);
+
+        titleTextView.setText(titleId);
+        pwdEditText.setHint(hintId);
+        InputMethodUtils.showKeyboard(activity, pwdEditText);
+        confirmPwdEditText.setHint(confirmHintId);
+
+        Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
+        positiveBtn.setText(posId);
+        positiveBtn.setVisibility(View.VISIBLE);
+        positiveBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                String pwd = pwdEditText.getText().toString();
+                if (EmptyUtils.isEmpty(pwd)) {
+                    AnimUtils.sharkEditText(activity, pwdEditText);
+                    pwdEditText.requestFocus();
+                    return;
+                }
+                String cfPwd = confirmPwdEditText.getText().toString();
+                if (EmptyUtils.isEmpty(cfPwd)) {
+                    AnimUtils.sharkEditText(activity, confirmPwdEditText);
+                    confirmPwdEditText.requestFocus();
+                    return;
+                }
+                if (!pwd.equals(cfPwd)) {
+                    ToastHelper.showToast(R.string.error_confirm_pwd);
+                    return;
+                }
+
+                if (mListener != null) {
+                    mListener.onClick(true, pwdEditText);
+                }
+            }
+        });
+
+        Button negativeBtn = (Button) dialogView.findViewById(R.id.negative);
+        negativeBtn.setText(negId);
+        negativeBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onClick(false, pwdEditText);
+                }
+                mDialog.dismiss();
+            }
+        });
 
         mDialog.setContentView(dialogView);
         mDialog.setCancelable(false);

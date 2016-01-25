@@ -27,8 +27,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     private static final String TAG = OneOSFileManageAPI.class.getSimpleName();
 
     private FileManageAction action;
-    private ArrayList<OneOSFile> fileList;
-
     private OnFileManageListener listener;
 
     public OneOSFileManageAPI(String ip, String port, String session) {
@@ -45,7 +43,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
                 super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: ErrorNo=" + errorNo + " ; ErrorMsg=" + strMsg);
                 if (listener != null) {
-                    listener.onFailure(url, fileList, action, errorNo, strMsg);
+                    listener.onFailure(url, action, errorNo, strMsg);
                 }
             }
 
@@ -58,7 +56,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
                         JSONObject json = new JSONObject(result);
                         boolean ret = json.getBoolean("result");
                         if (ret) {
-                            listener.onSuccess(url, fileList, action);
+                            listener.onSuccess(url, action);
                         } else {
                             // {"errno":-1,"msg":"list error","result":false}
                             int errorNo = json.getInt("errno");
@@ -66,23 +64,22 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
                             if (json.has("msg")) {
                                 msg = json.getString("msg");
                             }
-                            listener.onFailure(url, fileList, action, errorNo, msg);
+                            listener.onFailure(url, action, errorNo, msg);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        listener.onFailure(url, fileList, action, HttpErrorNo.ERR_JSON_EXCEPTION, context.getResources().getString(R.string.error_json_exception));
+                        listener.onFailure(url, action, HttpErrorNo.ERR_JSON_EXCEPTION, context.getResources().getString(R.string.error_json_exception));
                     }
                 }
             }
         });
 
         if (listener != null) {
-            listener.onStart(url, fileList, action);
+            listener.onStart(url, action);
         }
     }
 
     public void delete(ArrayList<OneOSFile> delList, boolean isDelShift) {
-        this.fileList = delList;
         this.action = isDelShift ? FileManageAction.DELETE_SHIFT : FileManageAction.DELETE;
 
         Log.d(TAG, "url = " + url);
@@ -98,7 +95,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     }
 
     public void move(ArrayList<OneOSFile> delList, String toDir) {
-        this.fileList = delList;
         this.action = FileManageAction.MOVE;
 
         url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
@@ -113,7 +109,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     }
 
     public void copy(ArrayList<OneOSFile> delList, String toDir) {
-        this.fileList = delList;
         this.action = FileManageAction.COPY;
 
         url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
@@ -128,8 +123,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     }
 
     public void rename(OneOSFile file, String newName) {
-        this.fileList = new ArrayList<>();
-        this.fileList.add(file);
         this.action = FileManageAction.RENAME;
 
         url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
@@ -143,13 +136,10 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         doManageFiles(params);
     }
 
-    public void mkdir(OneOSFile file, String newName) {
-        this.fileList = new ArrayList<>();
-        this.fileList.add(file);
+    public void mkdir(String path, String newName) {
         this.action = FileManageAction.MKDIR;
 
         url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
-        String path = file.getPath();
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "mkdir");
@@ -160,8 +150,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     }
 
     public void crypt(OneOSFile file, String pwd, boolean isEncrypt) {
-        this.fileList = new ArrayList<>();
-        this.fileList.add(file);
         this.action = isEncrypt ? FileManageAction.ENCRYPT : FileManageAction.DECRYPT;
 
         url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
@@ -205,10 +193,10 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     }
 
     public interface OnFileManageListener {
-        void onStart(String url, ArrayList<OneOSFile> fileList, FileManageAction action);
+        void onStart(String url, FileManageAction action);
 
-        void onSuccess(String url, ArrayList<OneOSFile> fileList, FileManageAction action);
+        void onSuccess(String url, FileManageAction action);
 
-        void onFailure(String url, ArrayList<OneOSFile> fileList, FileManageAction action, int errorNo, String errorMsg);
+        void onFailure(String url, FileManageAction action, int errorNo, String errorMsg);
     }
 }

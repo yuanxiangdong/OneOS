@@ -7,15 +7,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
+import com.eli.oneos.model.FileTypeItem;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
+import com.eli.oneos.widget.TypePopupView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +31,16 @@ public class CloudNavFragment extends BaseNavFragment {
     private static final String TAG = CloudNavFragment.class.getSimpleName();
 
     private CloudDirFragment mDirFragment;
+    private CloudTypeFragment mTypeFragment;
     private BaseFileListFragment mCurFragment;
     private FileSelectPanel mSelectPanel;
     private FileManagePanel mManagePanel;
 
     private RelativeLayout mTitleLayout;
+    private Button mTypeBtn;
+    private TypePopupView mTypePopView;
 
+    private ArrayList<FileTypeItem> mFileTypeList = new ArrayList<>();
     private List<Fragment> mFragmentList = new ArrayList<>();
 
     @Override
@@ -51,7 +59,7 @@ public class CloudNavFragment extends BaseNavFragment {
 //        initAnimActions();
 
         initView(view);
-
+        initTypeView();
         initFragment();
 
         return view;
@@ -61,10 +69,44 @@ public class CloudNavFragment extends BaseNavFragment {
         mTitleLayout = (RelativeLayout) view.findViewById(R.id.include_title);
         mSelectPanel = (FileSelectPanel) view.findViewById(R.id.layout_select_top_panel);
         mManagePanel = (FileManagePanel) view.findViewById(R.id.layout_operate_bottom_panel);
+        mTypeBtn = (Button) view.findViewById(R.id.btn_sort);
+        mTypeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTypePopView.showPopupTop(mTitleLayout);
+            }
+        });
+    }
+
+    private void initTypeView() {
+        FileTypeItem privateItem = new FileTypeItem(R.string.file_type_private, R.drawable.btn_file_type_private, R.drawable.btn_file_type_private_pressed, OneOSFileType.PRIVATE);
+        mFileTypeList.add(privateItem);
+        FileTypeItem publicItem = new FileTypeItem(R.string.file_type_public, R.drawable.btn_file_type_public, R.drawable.btn_file_type_public_pressed, OneOSFileType.PUBLIC);
+        mFileTypeList.add(publicItem);
+        FileTypeItem docItem = new FileTypeItem(R.string.file_type_doc, R.drawable.btn_file_type_doc, R.drawable.btn_file_type_doc_pressed, OneOSFileType.DOC);
+        mFileTypeList.add(docItem);
+        FileTypeItem picItem = new FileTypeItem(R.string.file_type_pic, R.drawable.btn_file_type_pic, R.drawable.btn_file_type_pic_pressed, OneOSFileType.PICTURE);
+        mFileTypeList.add(picItem);
+        FileTypeItem audioItem = new FileTypeItem(R.string.file_type_audio, R.drawable.btn_file_type_audio, R.drawable.btn_file_type_audio_pressed, OneOSFileType.AUDIO);
+        mFileTypeList.add(audioItem);
+        FileTypeItem videoItem = new FileTypeItem(R.string.file_type_video, R.drawable.btn_file_type_video, R.drawable.btn_file_type_video_pressed, OneOSFileType.VIDEO);
+        mFileTypeList.add(videoItem);
+        FileTypeItem recycleItem = new FileTypeItem(R.string.file_type_cycle, R.drawable.btn_file_type_recycle, R.drawable.btn_file_type_recycle_pressed, OneOSFileType.VIDEO);
+        mFileTypeList.add(recycleItem);
+        mTypePopView = new TypePopupView(mMainActivity, mFileTypeList);
+        mTypePopView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FileTypeItem item = mFileTypeList.get(position);
+                changeFragmentByType((OneOSFileType) item.getFlag());
+                mTypePopView.dismiss();
+            }
+        });
     }
 
     private void initFragment() {
         mDirFragment = new CloudDirFragment();
+        mTypeFragment = new CloudTypeFragment();
 
         changeFragmentByType(OneOSFileType.PRIVATE);
     }
@@ -75,7 +117,7 @@ public class CloudNavFragment extends BaseNavFragment {
         if (type == OneOSFileType.PRIVATE) {
             fragment = mDirFragment;
         } else {
-            fragment = mDirFragment;
+            fragment = mTypeFragment;
         }
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();

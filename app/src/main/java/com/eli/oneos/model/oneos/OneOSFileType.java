@@ -28,5 +28,17 @@ public enum OneOSFileType {
     /**
      * 音频
      */
-    AUDIO
+    AUDIO;
+
+    public static String getTypeName(OneOSFileType type) {
+        if (type == DOC) {
+            return "doc";
+        } else if (type == VIDEO) {
+            return "video";
+        } else if (type == AUDIO) {
+            return "audio";
+        } else {
+            return "pic";
+        }
+    }
 }

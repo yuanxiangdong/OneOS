@@ -68,7 +68,7 @@ public class FileManagePanel extends RelativeLayout {
             mButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, txtSize);
             mButton.setTextColor(txtColors);
             mButton.setLayoutParams(mLayoutParams);
-            // Button icon with different state
+            // Button mIconImageView with different state
             StateListDrawable drawable = new StateListDrawable();
             drawable.addState(new int[]{android.R.attr.state_selected}, getResources().getDrawable(item.getPressedIcon()));
             drawable.addState(new int[]{android.R.attr.state_pressed}, getResources().getDrawable(item.getPressedIcon()));

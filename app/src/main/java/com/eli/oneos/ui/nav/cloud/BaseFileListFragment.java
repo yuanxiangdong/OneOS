@@ -22,6 +22,7 @@ import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSFileGridAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSFileListAdapter;
+import com.eli.oneos.model.oneos.api.OneOSListDBAPI;
 import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
 import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
 import com.eli.oneos.model.oneos.comp.OneOSFileTimeComparator;
@@ -145,6 +146,12 @@ public abstract class BaseFileListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        setMultiModel(false, 0);
+    }
+
     public void initBaseParams(View view) {
         initLoginSession();
         initView(view);
@@ -156,7 +163,6 @@ public abstract class BaseFileListFragment extends Fragment {
 
     private void initView(View view) {
         mOrderLayout = (LinearLayout) view.findViewById(R.id.layout_order_view);
-        
 
         RadioGroup mOrderGroup = (RadioGroup) view.findViewById(R.id.rg_order);
         mOrderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -192,8 +198,13 @@ public abstract class BaseFileListFragment extends Fragment {
             @Override
             public void onClick(View view, String path) {
                 if (null == path) { // New Folder Button Clicked
-                    // TODO... Do new folder
-                    ToastHelper.showToast("New Folder is coming soon!");
+                    OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, new OneOSFileManage.OnManageCallback() {
+                        @Override
+                        public void onComplete(boolean isSuccess) {
+                            autoPullToRefresh();
+                        }
+                    });
+                    fileManage.manage(FileManageAction.MKDIR, curPath);
                 } else {
                     curPath = path;
                     autoPullToRefresh();
@@ -344,12 +355,14 @@ public abstract class BaseFileListFragment extends Fragment {
     }
 
     private void getOneOSFileList(String path) {
-        if (EmptyUtils.isEmpty(path)) {
-            Log.e(TAG, "Get list path is NULL");
-            return;
-        }
 
         if (mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC || mFileType == OneOSFileType.RECYCLE) {
+            if (EmptyUtils.isEmpty(path)) {
+                Log.e(TAG, "Get list path is NULL");
+                notifyRefreshComplete(true);
+                return;
+            }
+
             OneOSListDirAPI listDirAPI = new OneOSListDirAPI(mLoginSession.getDeviceInfo().getIp(), mLoginSession.getDeviceInfo().getPort(), mLoginSession.getSession(), path);
             listDirAPI.setOnFileListListener(new OneOSListDirAPI.OnFileListListener() {
                 @Override
@@ -375,9 +388,29 @@ public abstract class BaseFileListFragment extends Fragment {
             });
             listDirAPI.list();
         } else {
-            // TODO... list db file
-            ToastHelper.showToast("List DB files is coming soon!");
-            notifyRefreshComplete(true);
+            OneOSListDBAPI listDirAPI = new OneOSListDBAPI(mLoginSession.getDeviceInfo().getIp(), mLoginSession.getDeviceInfo().getPort(), mLoginSession.getSession(), mFileType);
+            listDirAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
+                @Override
+                public void onStart(String url) {
+                }
+
+                @Override
+                public void onSuccess(String url, OneOSFileType type, ArrayList<OneOSFile> files) {
+                    mFileList.clear();
+                    if (!EmptyUtils.isEmpty(files)) {
+                        mFileList.addAll(files);
+                    }
+
+                    notifyRefreshComplete(true);
+                }
+
+                @Override
+                public void onFailure(String url, int errorNo, String errorMsg) {
+                    ToastHelper.showToast(errorMsg);
+                    notifyRefreshComplete(true);
+                }
+            });
+            listDirAPI.list();
         }
     }
 }

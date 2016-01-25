@@ -14,6 +14,14 @@
     <string name="operate_failed">操作失败</string>
 
     <!-- File Operation -->
+    <string name="file_type_private">我的文件</string>
+    <string name="file_type_public">公共目录</string>
+    <string name="file_type_doc">文档</string>
+    <string name="file_type_pic">图片</string>
+    <string name="file_type_audio">音乐</string>
+    <string name="file_type_video">视频</string>
+    <string name="file_type_cycle">回收站</string>
+
     <string name="details_file">详情</string>
     <string name="open_file">打开</string>
     <string name="copy_file">复制</string>
@@ -30,10 +38,29 @@
     <string name="deleting_file">正在删除&#8230;</string>
     <string name="delete_file_success">删除成功</string>
     <string name="delete_file_failed">删除失败</string>
+    <string name="renaming_file">正在重命名&#8230;</string>
     <string name="tip_rename_file">重命名文件</string>
     <string name="hint_rename_file">请输入新的文件名</string>
     <string name="rename_file_success">重命名成功</string>
     <string name="rename_file_failed">重命名失败</string>
+    <string name="making_folder">正在新建&#8230;</string>
+    <string name="tip_new_folder">新建文件夹</string>
+    <string name="hint_new_folder">请输入文件夹名</string>
+    <string name="default_new_folder">新建文件夹</string>
+    <string name="new_folder_success">新建文件夹成功</string>
+    <string name="new_folder_failed">新建文件夹失败</string>
+    <string name="encrypting_file">正在加密&#8230;</string>
+    <string name="tip_encrypt_file">文件加密</string>
+    <string name="hint_encrypt_pwd">请输入加密密码</string>
+    <string name="hint_confirm_encrypt_pwd">请确认加密密码</string>
+    <string name="error_confirm_pwd">两次输入密码不一致</string>
+    <string name="encrypt_file_success">文件加密成功</string>
+    <string name="encrypt_file_failed">文件加密失败</string>
+    <string name="decrypting_file">正在解密&#8230;</string>
+    <string name="tip_decrypt_file">文件解密</string>
+    <string name="hint_decrypt_pwd">请输入解密密码</string>
+    <string name="decrypt_file_success">文件解密成功</string>
+    <string name="decrypt_file_failed">文件解密失败</string>
 
     <!-- Navigation Bar Title -->
     <string name="nav_title_local">本地</string>

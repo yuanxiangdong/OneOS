@@ -22,25 +22,37 @@ public class OneOSFileManage {
 
     private MainActivity mActivity;
     private LoginSession loginSession;
-    private ArrayList<OneOSFile> fileList;
     private FileManageAction action;
     private OnManageCallback callback;
     private OneOSFileManageAPI fileManageAPI;
     private OneOSFileManageAPI.OnFileManageListener mListener = new OneOSFileManageAPI.OnFileManageListener() {
         @Override
-        public void onStart(String url, ArrayList<OneOSFile> fileList, FileManageAction action) {
+        public void onStart(String url, FileManageAction action) {
             if (action == FileManageAction.DELETE) {
                 mActivity.showLoading(R.string.deleting_file);
+            } else if (action == FileManageAction.RENAME) {
+                mActivity.showLoading(R.string.renaming_file);
+            } else if (action == FileManageAction.MKDIR) {
+                mActivity.showLoading(R.string.making_folder);
+            } else if (action == FileManageAction.ENCRYPT) {
+                mActivity.showLoading(R.string.encrypting_file);
+            } else if (action == FileManageAction.DECRYPT) {
+                mActivity.showLoading(R.string.decrypting_file);
             }
-
         }
 
         @Override
-        public void onSuccess(String url, ArrayList<OneOSFile> fileList, FileManageAction action) {
+        public void onSuccess(String url, FileManageAction action) {
             if (action == FileManageAction.DELETE) {
                 mActivity.showTipView(R.string.delete_file_success, true);
             } else if (action == FileManageAction.RENAME) {
                 mActivity.showTipView(R.string.rename_file_success, true);
+            } else if (action == FileManageAction.MKDIR) {
+                mActivity.showTipView(R.string.new_folder_success, true);
+            } else if (action == FileManageAction.ENCRYPT) {
+                mActivity.showTipView(R.string.encrypt_file_success, true);
+            } else if (action == FileManageAction.DECRYPT) {
+                mActivity.showTipView(R.string.decrypt_file_success, true);
             }
 
             if (null != callback) {
@@ -49,7 +61,7 @@ public class OneOSFileManage {
         }
 
         @Override
-        public void onFailure(String url, ArrayList<OneOSFile> fileList, FileManageAction action, int errorNo, String errorMsg) {
+        public void onFailure(String url, FileManageAction action, int errorNo, String errorMsg) {
 //            if (action == FileManageAction.DELETE) {
             mActivity.showTipView(errorMsg, false);
 //            }
@@ -68,11 +80,10 @@ public class OneOSFileManage {
         fileManageAPI.setOnFileManageListener(mListener);
     }
 
-    public void manage(FileManageAction action, ArrayList<OneOSFile> selectedList) {
-        this.fileList = selectedList;
+    public void manage(FileManageAction action, final ArrayList<OneOSFile> selectedList) {
         this.action = action;
 
-        if (EmptyUtils.isEmpty(fileList) || action == null) {
+        if (EmptyUtils.isEmpty(selectedList) || action == null) {
             if (null != callback) {
                 callback.onComplete(true);
             }
@@ -84,7 +95,7 @@ public class OneOSFileManage {
                 @Override
                 public void onClick(boolean isPositiveBtn) {
                     if (isPositiveBtn) {
-                        fileManageAPI.delete(fileList, false);
+                        fileManageAPI.delete(selectedList, false);
                     }
                 }
             });
@@ -98,6 +109,7 @@ public class OneOSFileManage {
                                 String newName = mContentEditText.getText().toString();
                                 if (EmptyUtils.isEmpty(newName)) {
                                     AnimUtils.sharkEditText(mActivity, mContentEditText);
+                                    mContentEditText.requestFocus();
                                 } else {
                                     fileManageAPI.rename(file, newName);
                                     DialogUtils.dismiss();
@@ -106,7 +118,66 @@ public class OneOSFileManage {
                         }
                     });
         } else if (action == FileManageAction.ENCRYPT) {
+            final OneOSFile file = selectedList.get(0);
+            DialogUtils.showEditPwdDialog(mActivity, R.string.tip_encrypt_file, R.string.hint_encrypt_pwd, R.string.hint_confirm_encrypt_pwd,
+                    R.string.confirm, R.string.cancel, new DialogUtils.OnEditDialogClickListener() {
+                        @Override
+                        public void onClick(boolean isPositiveBtn, EditText mContentEditText) {
+                            if (isPositiveBtn) {
+                                String pwd = mContentEditText.getText().toString();
+                                fileManageAPI.crypt(file, pwd, true);
+                                DialogUtils.dismiss();
+                            }
+                        }
+                    });
+        } else if (action == FileManageAction.DECRYPT) {
+            final OneOSFile file = selectedList.get(0);
+            DialogUtils.showEditDialog(mActivity, R.string.tip_decrypt_file, R.string.hint_decrypt_pwd, null,
+                    R.string.confirm, R.string.cancel, new DialogUtils.OnEditDialogClickListener() {
+                        @Override
+                        public void onClick(boolean isPositiveBtn, EditText mContentEditText) {
+                            if (isPositiveBtn) {
+                                String pwd = mContentEditText.getText().toString();
+                                if (EmptyUtils.isEmpty(pwd)) {
+                                    AnimUtils.sharkEditText(mActivity, mContentEditText);
+                                    mContentEditText.requestFocus();
+                                } else {
+                                    fileManageAPI.crypt(file, pwd, false);
+                                    DialogUtils.dismiss();
+                                }
+                            }
+                        }
+                    });
+        }
 
+    }
+
+    public void manage(FileManageAction action, final String path) {
+        this.action = action;
+
+        if (EmptyUtils.isEmpty(path) || action == null) {
+            if (null != callback) {
+                callback.onComplete(true);
+            }
+            return;
+        }
+
+        if (action == FileManageAction.MKDIR) {
+            DialogUtils.showEditDialog(mActivity, R.string.tip_new_folder, R.string.hint_new_folder, R.string.default_new_folder,
+                    R.string.confirm, R.string.cancel, new DialogUtils.OnEditDialogClickListener() {
+                        @Override
+                        public void onClick(boolean isPositiveBtn, EditText mContentEditText) {
+                            if (isPositiveBtn) {
+                                String newName = mContentEditText.getText().toString();
+                                if (EmptyUtils.isEmpty(newName)) {
+                                    AnimUtils.sharkEditText(mActivity, mContentEditText);
+                                } else {
+                                    fileManageAPI.mkdir(path, newName);
+                                    DialogUtils.dismiss();
+                                }
+                            }
+                        }
+                    });
         }
 
     }

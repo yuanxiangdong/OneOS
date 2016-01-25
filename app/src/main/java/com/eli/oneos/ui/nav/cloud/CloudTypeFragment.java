@@ -7,16 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eli.oneos.R;
-import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 
 /**
- * Created by gaoyun@eli-tech.com on 2016/1/13.
+ * Created by gaoyun@eli-tech.com on 2016/1/25.
  */
-public class CloudDirFragment extends BaseFileListFragment {
-    private static final String TAG = CloudDirFragment.class.getSimpleName();
+public class CloudTypeFragment extends BaseFileListFragment {
+    private static final String TAG = CloudTypeFragment.class.getSimpleName();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -26,8 +25,7 @@ public class CloudDirFragment extends BaseFileListFragment {
 
         mMainActivity = (MainActivity) getActivity();
         mParentFragment = (BaseNavFragment) getParentFragment();
-        curPath = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
-        mFileType = OneOSFileType.PRIVATE;
+        mFileType = OneOSFileType.PICTURE;
 
         initBaseParams(view);
 

@@ -6,7 +6,7 @@
 
     <include
         android:id="@+id/include_title"
-        layout="@layout/layout_title_nav"
+        layout="@layout/layout_title_nav_file"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/layout_title_height"
         android:layout_alignParentTop="true" />

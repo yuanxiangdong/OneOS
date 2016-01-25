@@ -32,6 +32,7 @@
     <color name="translucent_black">#70000000</color>
     <color name="bg_pop_loading">@color/translucent_black</color>
     <color name="bg_pop_spinner">@color/translucent_black</color>
+    <color name="bg_pop_type">@color/translucent_black</color>
 
     <!-- List selector color -->
     <color name="bg_list_transparent">@color/transparent</color>
