@@ -33,6 +33,7 @@
     <color name="bg_pop_loading">@color/translucent_black</color>
     <color name="bg_pop_spinner">@color/translucent_black</color>
     <color name="bg_pop_type">@color/translucent_black</color>
+    <color name="bg_pop_tree_view">@color/translucent_black</color>
 
     <!-- List selector color -->
     <color name="bg_list_transparent">@color/transparent</color>
@@ -41,6 +42,7 @@
     <color name="line_dialog">#99B2B2B2</color>
     <color name="line_nav_bar">#66B2B2B2</color>
     <color name="line_list_view">@color/tans_gray</color>
+    <color name="line_tree_view">@color/tans_gray</color>
     <color name="bg_nav_bar">#FFF9F9F9</color>
     <color name="bg_operate_bar">@color/bg_nav_bar</color>
     <color name="bg_layout_order">@color/bg_nav_bar</color>

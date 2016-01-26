@@ -10,6 +10,7 @@ public class OneOSAPIs {
 
     public static final String ONE_OS_PRIVATE_ROOT_DIR = "/";
     public static final String ONE_OS_PUBLIC_ROOT_DIR = "public/";
+    public static final String ONE_OS_RECYCLE_ROOT_DIR = "/.recycle/";
 
     public static final String ONE_API_DEFAULT_PORT = "80";
     public static final String PREFIX_HTTP = "http://";

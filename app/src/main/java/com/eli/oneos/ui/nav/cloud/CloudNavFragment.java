@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileTypeItem;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
@@ -30,9 +31,7 @@ import java.util.List;
 public class CloudNavFragment extends BaseNavFragment {
     private static final String TAG = CloudNavFragment.class.getSimpleName();
 
-    private CloudDirFragment mDirFragment;
-    private CloudTypeFragment mTypeFragment;
-    private BaseFileListFragment mCurFragment;
+    private CloudFileFragment mCurFragment;
     private FileSelectPanel mSelectPanel;
     private FileManagePanel mManagePanel;
 
@@ -91,48 +90,43 @@ public class CloudNavFragment extends BaseNavFragment {
         mFileTypeList.add(audioItem);
         FileTypeItem videoItem = new FileTypeItem(R.string.file_type_video, R.drawable.btn_file_type_video, R.drawable.btn_file_type_video_pressed, OneOSFileType.VIDEO);
         mFileTypeList.add(videoItem);
-        FileTypeItem recycleItem = new FileTypeItem(R.string.file_type_cycle, R.drawable.btn_file_type_recycle, R.drawable.btn_file_type_recycle_pressed, OneOSFileType.VIDEO);
+        FileTypeItem recycleItem = new FileTypeItem(R.string.file_type_cycle, R.drawable.btn_file_type_recycle, R.drawable.btn_file_type_recycle_pressed, OneOSFileType.RECYCLE);
         mFileTypeList.add(recycleItem);
         mTypePopView = new TypePopupView(mMainActivity, mFileTypeList);
         mTypePopView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FileTypeItem item = mFileTypeList.get(position);
-                changeFragmentByType((OneOSFileType) item.getFlag());
+                OneOSFileType type = (OneOSFileType) item.getFlag();
+                mTypeBtn.setText(OneOSFileType.getTypeName(type));
+                changeFragmentByType(type);
                 mTypePopView.dismiss();
             }
         });
     }
 
     private void initFragment() {
-        mDirFragment = new CloudDirFragment();
-        mTypeFragment = new CloudTypeFragment();
-
+        mCurFragment = new CloudFileFragment();
         changeFragmentByType(OneOSFileType.PRIVATE);
     }
 
     private void changeFragmentByType(OneOSFileType type) {
-        BaseFileListFragment fragment;
-
-        if (type == OneOSFileType.PRIVATE) {
-            fragment = mDirFragment;
-        } else {
-            fragment = mTypeFragment;
-        }
-
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        if (mCurFragment != null) {
-            mCurFragment.onPause();
-            transaction.hide(mCurFragment);
-        }
 
-        if (!fragment.isAdded()) {
-            transaction.add(R.id.fragment_content, fragment);
-        } else {
-            fragment.onResume();
+        String path = null;
+        if (type == OneOSFileType.PRIVATE) {
+            path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
+        } else if (type == OneOSFileType.PUBLIC) {
+            path = OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
+        } else if (type == OneOSFileType.RECYCLE) {
+            path = OneOSAPIs.ONE_OS_RECYCLE_ROOT_DIR;
         }
-        mCurFragment = fragment;
+        if (!mCurFragment.isAdded()) {
+            transaction.add(R.id.fragment_content, mCurFragment);
+        }
         transaction.show(mCurFragment);
+        mCurFragment.setFileType(type, path);
+        mCurFragment.onResume();
         transaction.commitAllowingStateLoss();
     }
 

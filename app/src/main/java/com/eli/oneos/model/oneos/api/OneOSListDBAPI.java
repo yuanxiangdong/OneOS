@@ -49,7 +49,7 @@ public class OneOSListDBAPI extends OneOSBaseAPI {
 
         AjaxParams params = new AjaxParams();
         params.put("session", session);
-        params.put("ftype", OneOSFileType.getTypeName(type));
+        params.put("ftype", OneOSFileType.getServerTypeName(type));
 
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 

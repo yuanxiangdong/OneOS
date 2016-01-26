@@ -1,5 +1,6 @@
 package com.eli.oneos.model.oneos;
 
+import android.view.View;
 import android.widget.EditText;
 
 import com.eli.oneos.R;
@@ -10,6 +11,7 @@ import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
+import com.eli.oneos.widget.ServerFileTreeView;
 
 import java.util.ArrayList;
 
@@ -23,6 +25,7 @@ public class OneOSFileManage {
     private MainActivity mActivity;
     private LoginSession loginSession;
     private FileManageAction action;
+    private View mRootView;
     private OnManageCallback callback;
     private OneOSFileManageAPI fileManageAPI;
     private OneOSFileManageAPI.OnFileManageListener mListener = new OneOSFileManageAPI.OnFileManageListener() {
@@ -38,6 +41,8 @@ public class OneOSFileManage {
                 mActivity.showLoading(R.string.encrypting_file);
             } else if (action == FileManageAction.DECRYPT) {
                 mActivity.showLoading(R.string.decrypting_file);
+            } else if (action == FileManageAction.MOVE) {
+                mActivity.showLoading(R.string.moving_file);
             }
         }
 
@@ -53,6 +58,8 @@ public class OneOSFileManage {
                 mActivity.showTipView(R.string.encrypt_file_success, true);
             } else if (action == FileManageAction.DECRYPT) {
                 mActivity.showTipView(R.string.decrypt_file_success, true);
+            } else if (action == FileManageAction.MOVE) {
+                mActivity.showTipView(R.string.move_file_success, true);
             }
 
             if (null != callback) {
@@ -72,15 +79,16 @@ public class OneOSFileManage {
         }
     };
 
-    public OneOSFileManage(MainActivity activity, LoginSession loginSession, OnManageCallback callback) {
+    public OneOSFileManage(MainActivity activity, LoginSession loginSession, View rootView, OnManageCallback callback) {
         this.mActivity = activity;
         this.loginSession = loginSession;
+        this.mRootView = rootView;
         this.callback = callback;
         fileManageAPI = new OneOSFileManageAPI(this.loginSession.getDeviceInfo().getIp(), this.loginSession.getDeviceInfo().getPort(), this.loginSession.getSession());
         fileManageAPI.setOnFileManageListener(mListener);
     }
 
-    public void manage(FileManageAction action, final ArrayList<OneOSFile> selectedList) {
+    public void manage(final OneOSFileType type, FileManageAction action, final ArrayList<OneOSFile> selectedList) {
         this.action = action;
 
         if (EmptyUtils.isEmpty(selectedList) || action == null) {
@@ -95,7 +103,7 @@ public class OneOSFileManage {
                 @Override
                 public void onClick(boolean isPositiveBtn) {
                     if (isPositiveBtn) {
-                        fileManageAPI.delete(selectedList, false);
+                        fileManageAPI.delete(selectedList, type == OneOSFileType.RECYCLE);
                     }
                 }
             });
@@ -148,6 +156,9 @@ public class OneOSFileManage {
                             }
                         }
                     });
+        } else if (action == FileManageAction.MOVE) {
+            ServerFileTreeView fileTreeView = new ServerFileTreeView(mActivity, loginSession, R.string.tip_move_file, R.string.paste);
+            fileTreeView.showPopupCenter(mRootView);
         }
 
     }

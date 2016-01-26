@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.Utils;
 
@@ -34,6 +35,8 @@ public class FilePathPanel extends RelativeLayout {
     private String path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
     private String mPrivateRootDirShownName = null;
     private String mPublicRootDirShownName = null;
+    private String mRecycleRootDirShownName = null;
+    private String mPrefixName = null;
     private int pathMaxWidth = 0, pathMinWidth = 0, pathBtnPadding = 0;
 
     public FilePathPanel(Context context) {
@@ -48,6 +51,7 @@ public class FilePathPanel extends RelativeLayout {
 
         mPrivateRootDirShownName = getResources().getString(R.string.root_dir_name_private);
         mPublicRootDirShownName = getResources().getString(R.string.root_dir_name_public);
+        mRecycleRootDirShownName = getResources().getString(R.string.root_dir_name_recycle);
         pathMaxWidth = Utils.dipToPx(120);
         pathMinWidth = Utils.dipToPx(30);
         pathBtnPadding = Utils.dipToPx(5);
@@ -65,13 +69,24 @@ public class FilePathPanel extends RelativeLayout {
         });
     }
 
-    public void updatePath(String path) {
+    public void updatePath(OneOSFileType type, String path) {
         this.path = path;
         if (EmptyUtils.isEmpty(this.path)) {
             setVisibility(View.GONE);
         } else {
             setVisibility(View.VISIBLE);
-            genFilePathLayout();
+            genFilePathLayout(type);
+        }
+    }
+
+    public void updatePath(OneOSFileType type, String path, String prefixName) {
+        this.path = path;
+        this.mPrefixName = prefixName;
+        if (EmptyUtils.isEmpty(this.path) && EmptyUtils.isEmpty(this.mPrefixName)) {
+            setVisibility(View.GONE);
+        } else {
+            setVisibility(View.VISIBLE);
+            genFilePathLayout(type);
         }
     }
 
@@ -84,18 +99,38 @@ public class FilePathPanel extends RelativeLayout {
         this.mListener = listener;
     }
 
-    private void genFilePathLayout() {
-        Log.i(TAG, "Add path button:" + path);
+    private void genFilePathLayout(OneOSFileType type) {
+        Log.i(TAG, "Original Path:" + path);
         mPathLayout.removeAllViews();
 
-        boolean isPrivateDir = path.startsWith(File.separator);
+        final String rootStr;
+        String rootShownName;
+        if (type == OneOSFileType.PUBLIC) {
+            rootStr = OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
+            rootShownName = mPublicRootDirShownName;
+        } else if (type == OneOSFileType.RECYCLE) {
+            rootStr = OneOSAPIs.ONE_OS_RECYCLE_ROOT_DIR;
+            rootShownName = mRecycleRootDirShownName;
+        } else {
+            rootStr = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
+            rootShownName = mPrivateRootDirShownName;
+        }
 
         try {
-            final String rootStr = isPrivateDir ? OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR : OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
-            String rootShownName = isPrivateDir ? mPrivateRootDirShownName : mPublicRootDirShownName;
-            String setPath = path.replaceFirst(rootStr, rootShownName + File.separator);
-            Log.d(TAG, "Add path button:" + setPath);
-            final String[] pathItems = setPath.split(File.separator);
+            final boolean hasPrefix = !EmptyUtils.isEmpty(mPrefixName);
+            String shownPath;
+            if (null != path) {
+                if (hasPrefix) {
+                    rootShownName = mPrefixName + File.separator + rootShownName;
+                }
+                shownPath = path.replaceFirst(rootStr, rootShownName + File.separator);
+            } else {
+                shownPath = mPrefixName + File.separator;
+            }
+
+            Log.d(TAG, "Add path button:" + shownPath);
+
+            final String[] pathItems = shownPath.split(File.separator);
             Button[] pathBtn = new Button[pathItems.length];
             Resources resource = getResources();
             ColorStateList csl = (ColorStateList) resource.getColorStateList(R.color.selector_gray_to_primary);
@@ -118,10 +153,21 @@ public class FilePathPanel extends RelativeLayout {
                     @Override
                     public void onClick(View v) {
                         int i = (Integer) v.getTag();
+                        int j = 1;
+                        if (hasPrefix) {
+                            j++;
+                            if (i == 0) {
+                                if (null != mListener) {
+                                    mListener.onClick(v, null);
+                                }
+                                return;
+                            }
+                        }
                         String tarPath = rootStr;
-                        for (int j = 1; j <= i; j++) {
+                        for (; j <= i; j++) {
                             tarPath += pathItems[j] + File.separator;
                         }
+
                         Log.d(TAG, "Click target path is " + tarPath);
                         if (null != mListener) {
                             mListener.onClick(v, tarPath);

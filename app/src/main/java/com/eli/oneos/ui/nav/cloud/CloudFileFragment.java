@@ -1,9 +1,12 @@
 package com.eli.oneos.ui.nav.cloud;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -14,6 +17,7 @@ import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.oneos.OneOSFile;
@@ -46,8 +50,8 @@ import java.util.Collections;
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/13.
  */
-public abstract class BaseFileListFragment extends Fragment {
-    private static final String TAG = BaseFileListFragment.class.getSimpleName();
+public class CloudFileFragment extends Fragment {
+    private static final String TAG = CloudFileFragment.class.getSimpleName();
 
     protected MainActivity mMainActivity;
     protected BaseNavFragment mParentFragment;
@@ -123,13 +127,13 @@ public abstract class BaseFileListFragment extends Fragment {
             if (EmptyUtils.isEmpty(selectedList)) {
                 ToastHelper.showToast(R.string.tip_select_file);
             } else {
-                OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, new OneOSFileManage.OnManageCallback() {
+                OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, mPathPanel, new OneOSFileManage.OnManageCallback() {
                     @Override
                     public void onComplete(boolean isSuccess) {
                         autoPullToRefresh();
                     }
                 });
-                fileManage.manage(action, selectedList);
+                fileManage.manage(mFileType, action, selectedList);
             }
         }
 
@@ -138,23 +142,34 @@ public abstract class BaseFileListFragment extends Fragment {
         }
     };
 
-    public OneOSFileBaseAdapter getCurFileAdapter() {
-        if (isListShown) {
-            return mListAdapter;
-        } else {
-            return mGridAdapter;
-        }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i(TAG, "On Create View");
+
+        View view = inflater.inflate(R.layout.fragment_nav_cloud_directory, container, false);
+
+        mMainActivity = (MainActivity) getActivity();
+        mParentFragment = (BaseNavFragment) getParentFragment();
+        curPath = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
+        mFileType = OneOSFileType.PRIVATE;
+
+        initLoginSession();
+        initView(view);
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        autoPullToRefresh();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         setMultiModel(false, 0);
-    }
-
-    public void initBaseParams(View view) {
-        initLoginSession();
-        initView(view);
     }
 
     private void initLoginSession() {
@@ -198,7 +213,7 @@ public abstract class BaseFileListFragment extends Fragment {
             @Override
             public void onClick(View view, String path) {
                 if (null == path) { // New Folder Button Clicked
-                    OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, new OneOSFileManage.OnManageCallback() {
+                    OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, mPathPanel, new OneOSFileManage.OnManageCallback() {
                         @Override
                         public void onComplete(boolean isSuccess) {
                             autoPullToRefresh();
@@ -266,6 +281,21 @@ public abstract class BaseFileListFragment extends Fragment {
         mGridView.setAdapter(mGridAdapter);
     }
 
+    public void setFileType(OneOSFileType type, String path) {
+        if (this.mFileType != type) {
+            this.mFileType = type;
+            this.curPath = path;
+        }
+    }
+
+    private OneOSFileBaseAdapter getCurFileAdapter() {
+        if (isListShown) {
+            return mListAdapter;
+        } else {
+            return mGridAdapter;
+        }
+    }
+
     /**
      * Use to handle parent Activity back action
      *
@@ -301,7 +331,7 @@ public abstract class BaseFileListFragment extends Fragment {
             Collections.sort(mFileList, new OneOSFileTimeComparator());
         }
 
-        mPathPanel.updatePath(curPath);
+        mPathPanel.updatePath(mFileType, curPath);
         if (isListShown) {
             mListAdapter.notifyDataSetChanged(isItemChanged);
             mPullRefreshListView.onRefreshComplete();
@@ -388,8 +418,8 @@ public abstract class BaseFileListFragment extends Fragment {
             });
             listDirAPI.list();
         } else {
-            OneOSListDBAPI listDirAPI = new OneOSListDBAPI(mLoginSession.getDeviceInfo().getIp(), mLoginSession.getDeviceInfo().getPort(), mLoginSession.getSession(), mFileType);
-            listDirAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
+            OneOSListDBAPI listDbAPI = new OneOSListDBAPI(mLoginSession.getDeviceInfo().getIp(), mLoginSession.getDeviceInfo().getPort(), mLoginSession.getSession(), mFileType);
+            listDbAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
                 @Override
                 public void onStart(String url) {
                 }
@@ -410,7 +440,7 @@ public abstract class BaseFileListFragment extends Fragment {
                     notifyRefreshComplete(true);
                 }
             });
-            listDirAPI.list();
+            listDbAPI.list();
         }
     }
 }

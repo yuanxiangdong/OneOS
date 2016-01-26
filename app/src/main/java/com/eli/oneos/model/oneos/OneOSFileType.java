@@ -1,5 +1,7 @@
 package com.eli.oneos.model.oneos;
 
+import com.eli.oneos.R;
+
 public enum OneOSFileType {
     /**
      * 文件目录
@@ -30,7 +32,7 @@ public enum OneOSFileType {
      */
     AUDIO;
 
-    public static String getTypeName(OneOSFileType type) {
+    public static String getServerTypeName(OneOSFileType type) {
         if (type == DOC) {
             return "doc";
         } else if (type == VIDEO) {
@@ -40,5 +42,24 @@ public enum OneOSFileType {
         } else {
             return "pic";
         }
+    }
+
+    public static int getTypeName(OneOSFileType type) {
+        int name = R.string.file_type_private;
+        if (type == PUBLIC) {
+            name = R.string.file_type_public;
+        } else if (type == RECYCLE) {
+            name = R.string.file_type_cycle;
+        } else if (type == DOC) {
+            name = R.string.file_type_doc;
+        } else if (type == VIDEO) {
+            name = R.string.file_type_video;
+        } else if (type == AUDIO) {
+            name = R.string.file_type_audio;
+        } else if (type == PICTURE) {
+            name = R.string.file_type_pic;
+        }
+
+        return name;
     }
 }

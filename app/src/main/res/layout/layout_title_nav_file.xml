@@ -23,8 +23,8 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:background="@android:color/transparent"
-        android:drawableRight="@drawable/selector_icon_nav_arrow"
-        android:text="@string/file_type_cloud_all"
+        android:drawableRight="@drawable/ic_nav_title_arrow_down"
+        android:text="@string/root_dir_name_private"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_title" />
 
