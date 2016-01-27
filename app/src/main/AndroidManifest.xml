@@ -42,7 +42,7 @@
             android:name="com.eli.oneos.ui.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden|stateVisible|adjustPan">
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
         </activity>
     </application>
 

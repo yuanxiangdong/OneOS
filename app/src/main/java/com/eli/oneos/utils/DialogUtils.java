@@ -2,18 +2,25 @@ package com.eli.oneos.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+
+import java.util.List;
 
 public class DialogUtils {
     private static final String TAG = DialogUtils.class.getSimpleName();
@@ -255,7 +262,7 @@ public class DialogUtils {
             contentEditText.setText(defaultContent);
             contentEditText.setSelection(0, defaultContent.length());
         }
-        InputMethodUtils.showKeyboard(activity, contentEditText);
+        InputMethodUtils.showKeyboard(activity, contentEditText, 200);
 
         if (positiveTxt != null) {
             Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
@@ -304,7 +311,7 @@ public class DialogUtils {
 
         titleTextView.setText(titleId);
         pwdEditText.setHint(hintId);
-        InputMethodUtils.showKeyboard(activity, pwdEditText);
+        InputMethodUtils.showKeyboard(activity, pwdEditText, 200);
         confirmPwdEditText.setHint(confirmHintId);
 
         Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
@@ -362,79 +369,65 @@ public class DialogUtils {
     // }
     // }
     //
-    // /**
-    // * show customized list dailog
-    // *
-    // * @param activity
-    // * @param titleTxt
-    // * @param itemList
-    // * @param positiveTxt
-    // * @param mListener
-    // */
-    // public static void showListDialog(Activity activity, String titleTxt, List<String> itemList,
-    // String positiveTxt, final OnDialogClickListener mListener) {
-    // if (activity == null || itemList == null || positiveTxt == null) {
-    // Log.e(TAG, "activity or dialog content is null");
-    // return;
-    // }
-    //
-    // LayoutInflater inflater = activity.getLayoutInflater();
-    // View dialogView = inflater.inflate(R.layout.dialog_list, null);
-    // final Dialog mDialog = new Dialog(activity, R.style.DialogTheme);
-    //
-    // if (titleTxt != null) {
-    // TextView titleTextView = (TextView) dialogView.findViewById(R.id.layout_top_title);
-    // titleTextView.setText(titleTxt);
-    // titleTextView.setVisibility(View.VISIBLE);
-    // }
-    //
-    // ListView mListView = (ListView) dialogView.findViewById(R.id.listview);
-    // ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(activity,
-    // R.layout.item_listview_dialog, R.id.txt_content, itemList);
-    // mListView.setAdapter(mAdapter);
-    // mAdapter.notifyDataSetChanged();
-    // setListViewVisibleLines(activity, mListView, 4);
-    //
-    // if (positiveTxt != null) {
-    // Button positiveBtn = (Button) dialogView.findViewById(R.id.btn_positive);
-    // positiveBtn.setText(positiveTxt);
-    // positiveBtn.setVisibility(View.VISIBLE);
-    // positiveBtn.setOnClickListener(new OnClickListener() {
-    // public void onClick(View v) {
-    // if (mListener != null) {
-    // mListener.onClick(true);
-    // }
-    // mDialog.dismiss();
-    // }
-    // });
-    // }
-    //
-    // mDialog.setContentView(dialogView);
-    // mDialog.setCancelable(false);
-    // mDialog.show();
-    // }
-    //
-    // private static void setListViewVisibleLines(Activity activity, ListView listView, int lines)
-    // {
-    // ListAdapter listAdapter = listView.getAdapter();
-    // if (listAdapter == null) {
-    // return;
-    // }
-    // int itemCount = listAdapter.getCount();
-    //
-    // int totalHeight = 0;
-    // if (itemCount > 0) {
-    // View listItem = listAdapter.getView(0, null, listView);
-    // listItem.measure(0, 0);
-    // totalHeight = listItem.getMeasuredHeight() * lines;
-    // } else {
-    // totalHeight = Utils.dipToPx(200);
-    // }
-    //
-    // ViewGroup.LayoutParams params = listView.getLayoutParams();
-    // params.height = totalHeight + (listView.getDividerHeight() * (lines - 1));
-    // listView.setLayoutParams(params);
-    // }
+
+    public static void showListDialog(Activity activity, List<String> titleList, List<String> contentList, int titleId,
+                                      int posId, final OnDialogClickListener mListener) {
+        if (activity == null || titleList == null) {
+            Log.e(TAG, "activity or dialog content is null");
+            return;
+        }
+
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_list, null);
+        final Dialog mDialog = new Dialog(activity, R.style.DialogTheme);
+
+        TextView titleTextView = (TextView) dialogView.findViewById(R.id.txt_title);
+        titleTextView.setText(titleId);
+        titleTextView.setVisibility(View.VISIBLE);
+
+        ListView mListView = (ListView) dialogView.findViewById(R.id.listview);
+        DialogListAdapter mAdapter = new DialogListAdapter(activity, titleList, contentList);
+        mListView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+        // setListViewVisibleLines(activity, mListView, 6);
+
+        Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
+        positiveBtn.setText(posId);
+        positiveBtn.setVisibility(View.VISIBLE);
+        positiveBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onClick(true);
+                }
+                mDialog.dismiss();
+            }
+        });
+
+        mDialog.setContentView(dialogView);
+        mDialog.setCancelable(false);
+        mDialog.show();
+    }
+
+    private static void setListViewVisibleLines(Activity activity, ListView listView, int lines) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            return;
+        }
+        int itemCount = listAdapter.getCount();
+
+        int totalHeight = 0;
+        if (itemCount > 0) {
+            View listItem = listAdapter.getView(0, null, listView);
+            listItem.measure(0, 0);
+            totalHeight = listItem.getMeasuredHeight() * lines;
+        } else {
+            totalHeight = Utils.dipToPx(200);
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (lines - 1));
+        listView.setLayoutParams(params);
+    }
 
     public static void dismiss() {
         if (null != mDialog && mDialog.isShowing()) {
@@ -458,5 +451,57 @@ public class DialogUtils {
 
     public interface OnEditDialogClickListener {
         void onClick(boolean isPositiveBtn, EditText mContentEditText);
+    }
+
+    private static class DialogListAdapter extends BaseAdapter {
+        public LayoutInflater mInflater;
+        private List<String> mTitleList;
+        private List<String> mContentList;
+
+        public DialogListAdapter(Context context, List<String> titleList, List<String> contentList) {
+            this.mTitleList = titleList;
+            this.mContentList = contentList;
+            this.mInflater = LayoutInflater.from(context);
+        }
+
+        @Override
+        public int getCount() {
+            return mTitleList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        class ViewHolder {
+            TextView mTitleTxt;
+            TextView mContentTxt;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.item_listview_dialog, null);
+
+                holder = new ViewHolder();
+                holder.mTitleTxt = (TextView) convertView.findViewById(R.id.txt_title);
+                holder.mContentTxt = (TextView) convertView.findViewById(R.id.txt_content);
+
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.mTitleTxt.setText(mTitleList.get(position));
+            holder.mContentTxt.setText(mContentList.get(position));
+
+            return convertView;
+        }
     }
 }

@@ -34,15 +34,14 @@
 
         <CheckBox
             android:id="@+id/file_select"
-            android:layout_width="wrap_content"
+            android:layout_width="25dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
-            android:button="@null"
-            android:drawableRight="@drawable/selector_check_box_file_list"
+            android:button="@drawable/selector_check_box_tree_view"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:padding="15dp" />
+            android:padding="10dp" />
     </RelativeLayout>
 
 </LinearLayout>

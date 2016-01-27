@@ -1,6 +1,5 @@
 package com.eli.oneos.widget;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
@@ -21,11 +20,14 @@ import android.widget.TextView;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFileManage;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
 import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
 import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.utils.Utils;
@@ -41,7 +43,7 @@ public class ServerFileTreeView {
     private PopupWindow mPopupMenu;
     private ListView mListView;
     private ArrayList<OneOSFile> mFileList = new ArrayList<>();
-    private Activity mActivity;
+    private BaseActivity mActivity;
     private Button mPasteBtn;
     public PopupListAdapter mAdapter;
     private FilePathPanel mPathPanel;
@@ -50,8 +52,9 @@ public class ServerFileTreeView {
     private int pathMaxWidth = 0, pathMinWidth = 0;
     private String mPrivateRootDirShownName = null;
     private String mPublicRootDirShownName = null;
+    private String mPrefixShownName = null;
 
-    public ServerFileTreeView(Activity context, LoginSession loginSession, int mTitleID, int mPositiveID) {
+    public ServerFileTreeView(BaseActivity context, final LoginSession loginSession, int mTitleID, int mPositiveID) {
         this.mActivity = context;
         this.mLoginSession = loginSession;
 
@@ -61,6 +64,7 @@ public class ServerFileTreeView {
         pathMinWidth = Utils.dipToPx(40);
         mPrivateRootDirShownName = context.getResources().getString(R.string.root_dir_name_private);
         mPublicRootDirShownName = context.getResources().getString(R.string.root_dir_name_public);
+        mPrefixShownName = context.getResources().getString(R.string.root_dir_all);
 
         TextView mTitleTxt = (TextView) view.findViewById(R.id.txt_title);
         mTitleTxt.setText(context.getResources().getString(mTitleID));
@@ -73,7 +77,7 @@ public class ServerFileTreeView {
             @Override
             public void onClick(View v) {
                 OneOSFile mSelectFile = mAdapter.getSelectFile();
-                String selPath = null;
+                String selPath;
                 if (mSelectFile == null) {
                     selPath = mCurPath;
                 } else {
@@ -98,7 +102,17 @@ public class ServerFileTreeView {
         mPathPanel.setOnPathPanelClickListener(new FilePathPanel.OnPathPanelClickListener() {
             @Override
             public void onClick(View view, String path) {
-                getFileTreeFromServer(path);
+                if (null == path) {
+                    OneOSFileManage fileManage = new OneOSFileManage(mActivity, loginSession, mPathPanel, new OneOSFileManage.OnManageCallback() {
+                        @Override
+                        public void onComplete(boolean isSuccess) {
+                            getFileTreeFromServer(mCurPath);
+                        }
+                    });
+                    fileManage.manage(FileManageAction.MKDIR, mCurPath);
+                } else {
+                    getFileTreeFromServer(path);
+                }
             }
         });
         mPathPanel.showNewFolderButton(false);
@@ -139,8 +153,6 @@ public class ServerFileTreeView {
     }
 
     private void notifyRefreshComplete(boolean isItemChange) {
-        Collections.sort(mFileList, new OneOSFileNameComparator());
-
         OneOSFileType type = OneOSFileType.PRIVATE;
         if (mCurPath != null) {
             if (mCurPath.startsWith(OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR)) {
@@ -152,13 +164,14 @@ public class ServerFileTreeView {
             mPasteBtn.setEnabled(false);
             mPathPanel.showNewFolderButton(false);
         }
-        mPathPanel.updatePath(type, mCurPath, "全部");
+        mPathPanel.updatePath(type, mCurPath, mPrefixShownName);
         mAdapter.notifyDataSetChanged(isItemChange);
     }
 
     private void getFileTreeFromServer(final String path) {
 
         if (EmptyUtils.isEmpty(path)) {
+            mCurPath = path;
             mFileList.clear();
             OneOSFile privateDir = new OneOSFile();
             privateDir.setPath(OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR);
@@ -186,6 +199,7 @@ public class ServerFileTreeView {
                     mFileList.addAll(files);
                 }
 
+                Collections.sort(mFileList, new OneOSFileNameComparator());
                 notifyRefreshComplete(true);
             }
 

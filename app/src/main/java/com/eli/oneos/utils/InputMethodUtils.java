@@ -1,6 +1,7 @@
 package com.eli.oneos.utils;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -10,7 +11,7 @@ import android.widget.EditText;
 public class InputMethodUtils {
 
     /**
-     * Hide always Soft Keyboard
+     * Hide Soft Keyboard
      *
      * @param context is current Activity
      */
@@ -24,7 +25,7 @@ public class InputMethodUtils {
     }
 
     /**
-     * Show always Soft Keyboard
+     * Show Soft Keyboard
      *
      * @param context is current Activity
      */
@@ -32,6 +33,23 @@ public class InputMethodUtils {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (editText != null) {
             imm.showSoftInput(editText, 0);
+        }
+    }
+
+    /**
+     * Show Soft Keyboard
+     *
+     * @param context is current Activity
+     */
+    public static void showKeyboard(final Context context, final EditText editText, int delay) {
+        if (editText != null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(editText, 0);
+                }
+            }, delay);
         }
     }
 }

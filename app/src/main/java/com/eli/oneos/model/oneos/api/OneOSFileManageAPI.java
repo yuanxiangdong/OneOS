@@ -16,6 +16,7 @@ import net.tsz.afinal.http.AjaxParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -56,7 +57,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
                         JSONObject json = new JSONObject(result);
                         boolean ret = json.getBoolean("result");
                         if (ret) {
-                            listener.onSuccess(url, action);
+                            listener.onSuccess(url, action, result);
                         } else {
                             // {"errno":-1,"msg":"list error","result":false}
                             int errorNo = json.getInt("errno");
@@ -79,6 +80,19 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         }
     }
 
+    public void attr(OneOSFile file) {
+        this.action = FileManageAction.ATTR;
+
+        url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
+        String path = file.getPath();
+        AjaxParams params = new AjaxParams();
+        params.put("session", session);
+        params.put("cmd", "attributes");
+        params.put("path", path);
+
+        doManageFiles(params);
+    }
+
     public void delete(ArrayList<OneOSFile> delList, boolean isDelShift) {
         this.action = isDelShift ? FileManageAction.DELETE_SHIFT : FileManageAction.DELETE;
 
@@ -97,6 +111,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     public void move(ArrayList<OneOSFile> delList, String toDir) {
         this.action = FileManageAction.MOVE;
 
+        Log.d(TAG, "Move file to: " + toDir);
         url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         String path = genJsonArray(delList);
         AjaxParams params = new AjaxParams();
@@ -139,6 +154,9 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     public void mkdir(String path, String newName) {
         this.action = FileManageAction.MKDIR;
 
+        if (!path.endsWith(File.separator)) {
+            path += File.separator;
+        }
         url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
@@ -195,7 +213,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     public interface OnFileManageListener {
         void onStart(String url, FileManageAction action);
 
-        void onSuccess(String url, FileManageAction action);
+        void onSuccess(String url, FileManageAction action, String response);
 
         void onFailure(String url, FileManageAction action, int errorNo, String errorMsg);
     }

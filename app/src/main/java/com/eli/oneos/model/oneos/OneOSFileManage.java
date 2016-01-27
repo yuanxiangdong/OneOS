@@ -1,5 +1,7 @@
 package com.eli.oneos.model.oneos;
 
+import android.content.res.Resources;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -7,13 +9,19 @@ import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.api.OneOSFileManageAPI;
 import com.eli.oneos.model.user.LoginSession;
-import com.eli.oneos.ui.MainActivity;
+import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
+import com.eli.oneos.utils.FileUtils;
+import com.eli.oneos.utils.InputMethodUtils;
+import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.ServerFileTreeView;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * OneSpace OS File Manage
@@ -21,8 +29,9 @@ import java.util.ArrayList;
  * Created by gaoyun@eli-tech.com on 2016/1/21.
  */
 public class OneOSFileManage {
+    private static final String TAG = OneOSFileManage.class.getSimpleName();
 
-    private MainActivity mActivity;
+    private BaseActivity mActivity;
     private LoginSession loginSession;
     private FileManageAction action;
     private View mRootView;
@@ -31,7 +40,9 @@ public class OneOSFileManage {
     private OneOSFileManageAPI.OnFileManageListener mListener = new OneOSFileManageAPI.OnFileManageListener() {
         @Override
         public void onStart(String url, FileManageAction action) {
-            if (action == FileManageAction.DELETE) {
+            if (action == FileManageAction.ATTR) {
+                mActivity.showLoading(R.string.getting_file_attr);
+            } else if (action == FileManageAction.DELETE) {
                 mActivity.showLoading(R.string.deleting_file);
             } else if (action == FileManageAction.RENAME) {
                 mActivity.showLoading(R.string.renaming_file);
@@ -41,14 +52,42 @@ public class OneOSFileManage {
                 mActivity.showLoading(R.string.encrypting_file);
             } else if (action == FileManageAction.DECRYPT) {
                 mActivity.showLoading(R.string.decrypting_file);
+            } else if (action == FileManageAction.COPY) {
+                mActivity.showLoading(R.string.copying_file);
             } else if (action == FileManageAction.MOVE) {
                 mActivity.showLoading(R.string.moving_file);
             }
         }
 
         @Override
-        public void onSuccess(String url, FileManageAction action) {
-            if (action == FileManageAction.DELETE) {
+        public void onSuccess(String url, FileManageAction action, String response) {
+            if (action == FileManageAction.ATTR) {
+                mActivity.dismissLoading();
+                // {"result":true, "path":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
+                try {
+                    Resources resources = mActivity.getResources();
+                    List<String> titleList = new ArrayList<>();
+                    List<String> contentList = new ArrayList<>();
+                    JSONObject json = new JSONObject(response);
+                    titleList.add(resources.getString(R.string.file_attr_path));
+                    contentList.add(json.getString("path"));
+                    titleList.add(resources.getString(R.string.file_attr_size));
+                    long size = json.getLong("size");
+                    contentList.add(FileUtils.fmtFileSize(size) + " (" + size + resources.getString(R.string.tail_file_attr_size_bytes) + ")");
+                    titleList.add(resources.getString(R.string.file_attr_folders));
+                    contentList.add(json.getString("dirs") + resources.getString(R.string.tail_file_attr_folders));
+                    titleList.add(resources.getString(R.string.file_attr_files));
+                    contentList.add(json.getString("files") + resources.getString(R.string.tail_file_attr_files));
+                    titleList.add(resources.getString(R.string.file_attr_uid));
+                    contentList.add(json.getString("uid"));
+                    titleList.add(resources.getString(R.string.file_attr_gid));
+                    contentList.add(json.getString("gid"));
+                    DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, R.string.ok, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ToastHelper.showToast(R.string.error_json_exception);
+                }
+            } else if (action == FileManageAction.DELETE) {
                 mActivity.showTipView(R.string.delete_file_success, true);
             } else if (action == FileManageAction.RENAME) {
                 mActivity.showTipView(R.string.rename_file_success, true);
@@ -58,6 +97,8 @@ public class OneOSFileManage {
                 mActivity.showTipView(R.string.encrypt_file_success, true);
             } else if (action == FileManageAction.DECRYPT) {
                 mActivity.showTipView(R.string.decrypt_file_success, true);
+            } else if (action == FileManageAction.COPY) {
+                mActivity.showTipView(R.string.copy_file_success, true);
             } else if (action == FileManageAction.MOVE) {
                 mActivity.showTipView(R.string.move_file_success, true);
             }
@@ -79,7 +120,7 @@ public class OneOSFileManage {
         }
     };
 
-    public OneOSFileManage(MainActivity activity, LoginSession loginSession, View rootView, OnManageCallback callback) {
+    public OneOSFileManage(BaseActivity activity, LoginSession loginSession, View rootView, OnManageCallback callback) {
         this.mActivity = activity;
         this.loginSession = loginSession;
         this.mRootView = rootView;
@@ -103,7 +144,8 @@ public class OneOSFileManage {
                 @Override
                 public void onClick(boolean isPositiveBtn) {
                     if (isPositiveBtn) {
-                        fileManageAPI.delete(selectedList, type == OneOSFileType.RECYCLE);
+//                        fileManageAPI.delete(selectedList, type == OneOSFileType.RECYCLE);
+                        fileManageAPI.attr(selectedList.get(0));
                     }
                 }
             });
@@ -156,9 +198,24 @@ public class OneOSFileManage {
                             }
                         }
                     });
+        } else if (action == FileManageAction.COPY) {
+            ServerFileTreeView fileTreeView = new ServerFileTreeView(mActivity, loginSession, R.string.tip_copy_file, R.string.paste);
+            fileTreeView.showPopupCenter(mRootView);
+            fileTreeView.setOnPasteListener(new ServerFileTreeView.OnPasteFileListener() {
+                @Override
+                public void onPaste(String tarPath) {
+                    fileManageAPI.copy(selectedList, tarPath);
+                }
+            });
         } else if (action == FileManageAction.MOVE) {
             ServerFileTreeView fileTreeView = new ServerFileTreeView(mActivity, loginSession, R.string.tip_move_file, R.string.paste);
             fileTreeView.showPopupCenter(mRootView);
+            fileTreeView.setOnPasteListener(new ServerFileTreeView.OnPasteFileListener() {
+                @Override
+                public void onPaste(String tarPath) {
+                    fileManageAPI.move(selectedList, tarPath);
+                }
+            });
         }
 
     }
@@ -183,7 +240,9 @@ public class OneOSFileManage {
                                 if (EmptyUtils.isEmpty(newName)) {
                                     AnimUtils.sharkEditText(mActivity, mContentEditText);
                                 } else {
+                                    Log.d(TAG, "MkDir: " + path + ", Name: " + newName);
                                     fileManageAPI.mkdir(path, newName);
+                                    InputMethodUtils.hideKeyboard(mActivity, mContentEditText);
                                     DialogUtils.dismiss();
                                 }
                             }
