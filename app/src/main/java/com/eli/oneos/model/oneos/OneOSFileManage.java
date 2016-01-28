@@ -139,13 +139,14 @@ public class OneOSFileManage {
             return;
         }
 
-        if (action == FileManageAction.DELETE) {
+        if (action == FileManageAction.ATTR) {
+            fileManageAPI.attr(selectedList.get(0));
+        } else if (action == FileManageAction.DELETE) {
             DialogUtils.showConfirmDialog(mActivity, R.string.tip, R.string.tip_delete_file, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
                 @Override
                 public void onClick(boolean isPositiveBtn) {
                     if (isPositiveBtn) {
-//                        fileManageAPI.delete(selectedList, type == OneOSFileType.RECYCLE);
-                        fileManageAPI.attr(selectedList.get(0));
+                        fileManageAPI.delete(selectedList, type == OneOSFileType.RECYCLE);
                     }
                 }
             });
@@ -169,7 +170,7 @@ public class OneOSFileManage {
                     });
         } else if (action == FileManageAction.ENCRYPT) {
             final OneOSFile file = selectedList.get(0);
-            DialogUtils.showEditPwdDialog(mActivity, R.string.tip_encrypt_file, R.string.hint_encrypt_pwd, R.string.hint_confirm_encrypt_pwd,
+            DialogUtils.showEditPwdDialog(mActivity, R.string.tip_encrypt_file, R.string.warning_encrypt_file, R.string.hint_encrypt_pwd, R.string.hint_confirm_encrypt_pwd,
                     R.string.confirm, R.string.cancel, new DialogUtils.OnEditDialogClickListener() {
                         @Override
                         public void onClick(boolean isPositiveBtn, EditText mContentEditText) {

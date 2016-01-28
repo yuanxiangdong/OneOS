@@ -19,6 +19,7 @@ public class OneOSFileManageGenerate {
     private static FileManageItem OPT_UPLOAD = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_upload, R.drawable.btn_opt_upload_pressed, R.string.upload_file, FileManageAction.UPLOAD);
     private static FileManageItem OPT_ENCRYPT = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_encrypt, R.drawable.btn_opt_encrypt_pressed, R.string.encrypt_file, FileManageAction.ENCRYPT);
     private static FileManageItem OPT_DECRYPT = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_decrypt, R.drawable.btn_opt_decrypt_pressed, R.string.decrypt_file, FileManageAction.DECRYPT);
+    private static FileManageItem OPT_ATTR = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.attr_file, FileManageAction.ATTR);
 
 
     public static ArrayList<FileManageItem> generate(OneOSFileType fileType, ArrayList<OneOSFile> selectedList) {
@@ -29,6 +30,7 @@ public class OneOSFileManageGenerate {
         mOptItems.add(OPT_RENAME);
         mOptItems.add(OPT_DOWNLOAD);
         mOptItems.add(OPT_ENCRYPT);
+        mOptItems.add(OPT_ATTR);
 
         return mOptItems;
     }

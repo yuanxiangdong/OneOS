@@ -34,6 +34,7 @@
     <string name="encrypt_file">加密</string>
     <string name="decrypt_file">解密</string>
     <string name="chmod_file">权限</string>
+    <string name="attr_file">详情</string>
     <string name="tip_select_file">请先选择需要操作的文件</string>
     <string name="tip_attr_file">属性</string>
     <string name="getting_file_attr">正在获取&#8230;</string>
@@ -63,6 +64,7 @@
     <string name="new_folder_failed">新建文件夹失败</string>
     <string name="encrypting_file">正在加密&#8230;</string>
     <string name="tip_encrypt_file">文件加密</string>
+    <string name="warning_encrypt_file">警告：请牢记加密密码，否则将无法解密文件！</string>
     <string name="hint_encrypt_pwd">请输入加密密码</string>
     <string name="hint_confirm_encrypt_pwd">请确认加密密码</string>
     <string name="error_confirm_pwd">两次输入密码不一致</string>

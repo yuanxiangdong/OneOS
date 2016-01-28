@@ -14,7 +14,7 @@
         android:background="@color/white"
         android:gravity="center"
         android:listSelector="@android:color/transparent"
-        android:numColumns="4"
+        android:numColumns="7"
         android:padding="10dp"
         android:stretchMode="columnWidth"
         android:visibility="gone" />

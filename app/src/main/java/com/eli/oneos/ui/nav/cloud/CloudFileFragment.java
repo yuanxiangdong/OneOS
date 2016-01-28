@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -64,6 +67,7 @@ public class CloudFileFragment extends Fragment {
     private FileOrderType mOrderType = FileOrderType.NAME;
     public OneOSFileType mFileType = OneOSFileType.PRIVATE;
     private LinearLayout mOrderLayout;
+    private Animation mSlideInAnim, mSlideOutAnim;
 
     private LoginSession mLoginSession = null;
     private ArrayList<OneOSFile> mFileList = new ArrayList<>();
@@ -141,6 +145,29 @@ public class CloudFileFragment extends Fragment {
         public void onDismiss() {
         }
     };
+    private int mFirstVisibleItem = 0;
+    private AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            switch (scrollState) {
+                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                    // ToastHelper.showToast("停止...");
+                    showOrderLayout(mFirstVisibleItem == 0);
+                    break;
+                case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                    // ToastHelper.showToast("正在滑动...");
+                    break;
+                case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
+                    // ToastHelper.showToast("开始滚动...");
+                    break;
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            mFirstVisibleItem = firstVisibleItem;
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -175,10 +202,14 @@ public class CloudFileFragment extends Fragment {
         mLoginSession = LoginManage.getInstance().getLoginSession();
     }
 
+    private float mStartY = 0, mLastY = 0, mLastDeltaY;
+
     private void initView(View view) {
+        mSlideInAnim = AnimationUtils.loadAnimation(mMainActivity, R.anim.slide_in_from_top);
+        mSlideOutAnim = AnimationUtils.loadAnimation(mMainActivity, R.anim.slide_out_to_top);
         mOrderLayout = (LinearLayout) view.findViewById(R.id.layout_order_view);
 
-        RadioGroup mOrderGroup = (RadioGroup) view.findViewById(R.id.rg_order);
+        final RadioGroup mOrderGroup = (RadioGroup) view.findViewById(R.id.rg_order);
         mOrderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -243,7 +274,7 @@ public class CloudFileFragment extends Fragment {
             public void onPullUpToRefresh(PullToRefreshBase refreshView) {
             }
         });
-        ListView mListView = mPullRefreshListView.getRefreshableView();
+        final ListView mListView = mPullRefreshListView.getRefreshableView();
         registerForContextMenu(mListView);
         mListAdapter = new OneOSFileListAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
             @Override
@@ -254,6 +285,7 @@ public class CloudFileFragment extends Fragment {
         }, mLoginSession);
         mListView.setOnItemClickListener(mFileItemClickListener);
         mListView.setOnItemLongClickListener(mFileItemLongClickListener);
+        mListView.setOnScrollListener(mScrollListener);
         mListView.setAdapter(mListAdapter);
 
         mEmptyView = view.findViewById(R.id.layout_empty_grid);
@@ -261,22 +293,24 @@ public class CloudFileFragment extends Fragment {
         mPullRefreshGridView.setEmptyView(mEmptyView);
         mPullRefreshGridView.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
         mPullRefreshGridView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2() {
+                                                      @Override
+                                                      public void onPullDownToRefresh(@SuppressWarnings("rawtypes") PullToRefreshBase refreshView) {
+                                                          setMultiModel(false, 0);
+                                                          getOneOSFileList(curPath);
+                                                      }
 
-            @Override
-            public void onPullDownToRefresh(@SuppressWarnings("rawtypes") PullToRefreshBase refreshView) {
-                setMultiModel(false, 0);
-                getOneOSFileList(curPath);
-            }
+                                                      @Override
+                                                      public void onPullUpToRefresh(PullToRefreshBase refreshView) {
+                                                      }
+                                                  }
 
-            @Override
-            public void onPullUpToRefresh(PullToRefreshBase refreshView) {
-            }
-        });
+        );
         GridView mGridView = mPullRefreshGridView.getRefreshableView();
-        registerForContextMenu(mListView);
+        registerForContextMenu(mGridView);
         mGridAdapter = new OneOSFileGridAdapter(getContext(), mFileList, mSelectedList, mLoginSession);
         mGridView.setOnItemClickListener(mFileItemClickListener);
         mGridView.setOnItemLongClickListener(mFileItemLongClickListener);
+        mGridView.setOnScrollListener(mScrollListener);
         mGridView.setAdapter(mGridAdapter);
     }
 
@@ -337,6 +371,35 @@ public class CloudFileFragment extends Fragment {
         } else {
             mGridAdapter.notifyDataSetChanged(isItemChanged);
             mPullRefreshGridView.onRefreshComplete();
+        }
+    }
+
+    private void showOrderLayout(boolean isShown) {
+        if (isShown == mOrderLayout.isShown()) {
+            return;
+        }
+
+        if (isShown) {
+            mOrderLayout.startAnimation(mSlideInAnim);
+            mOrderLayout.setVisibility(View.VISIBLE);
+        } else {
+            mOrderLayout.startAnimation(mSlideOutAnim);
+            mSlideOutAnim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mOrderLayout.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
         }
     }
 

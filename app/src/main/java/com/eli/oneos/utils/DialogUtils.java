@@ -295,8 +295,8 @@ public class DialogUtils {
         mDialog.show();
     }
 
-    public static void showEditPwdDialog(final Activity activity, int titleId, int hintId, int confirmHintId, final int posId,
-                                         int negId, final OnEditDialogClickListener mListener) {
+    public static void showEditPwdDialog(final Activity activity, int titleId, int tipsId, int hintId, int confirmHintId,
+                                         final int posId, int negId, final OnEditDialogClickListener mListener) {
         if (activity == null) {
             Log.e(TAG, "activity or dialog content is null");
             return;
@@ -306,10 +306,12 @@ public class DialogUtils {
         View dialogView = inflater.inflate(R.layout.dialog_edit_pwd, null);
         mDialog = new Dialog(activity, R.style.DialogTheme);
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.txt_title);
+        TextView tipsTextView = (TextView) dialogView.findViewById(R.id.txt_tips);
         final EditText pwdEditText = (EditText) dialogView.findViewById(R.id.et_pwd);
         final EditText confirmPwdEditText = (EditText) dialogView.findViewById(R.id.et_pwd_confirm);
 
         titleTextView.setText(titleId);
+        tipsTextView.setText(tipsId);
         pwdEditText.setHint(hintId);
         InputMethodUtils.showKeyboard(activity, pwdEditText, 200);
         confirmPwdEditText.setHint(confirmHintId);

@@ -19,11 +19,20 @@
             android:textSize="@dimen/text_size_title"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/txt_tips"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/red"
+            android:textSize="@dimen/text_size_sm"
+            android:layout_marginTop="15dp" />
+
         <EditText
             android:id="@+id/et_pwd"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/bg_stroke_top_radius_light_gray"
             android:gravity="center"
             android:inputType="textPassword"
