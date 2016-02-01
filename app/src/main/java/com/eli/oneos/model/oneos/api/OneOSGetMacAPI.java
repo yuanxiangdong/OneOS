@@ -5,8 +5,8 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.db.UserHistoryKeeper;
-import com.eli.oneos.db.greendao.UserHistory;
+import com.eli.oneos.db.UserInfoKeeper;
+import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.utils.EmptyUtils;
 
 import net.tsz.afinal.http.AjaxCallBack;
@@ -64,10 +64,10 @@ public class OneOSGetMacAPI extends OneOSBaseAPI {
                             if (EmptyUtils.isEmpty(mac)) {
                                 listener.onFailure(url, -1, "Response Mac Address is NULL");
                             } else {
-                                UserHistory userHistory = UserHistoryKeeper.top();
+                                UserInfo userHistory = UserInfoKeeper.top();
                                 if (null != userHistory) {
                                     userHistory.setMac(mac);
-                                    UserHistoryKeeper.update(userHistory);
+                                    UserInfoKeeper.update(userHistory);
                                 } else {
                                     Log.e(TAG, "Top User History is NULL");
                                 }

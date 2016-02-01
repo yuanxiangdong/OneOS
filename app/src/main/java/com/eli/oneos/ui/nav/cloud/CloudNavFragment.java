@@ -193,7 +193,7 @@ public class CloudNavFragment extends BaseNavFragment {
      * @param mListener    On file operate listener
      */
     @Override
-    public void updateOperateBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener) {
+    public void updateManageBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener) {
         mManagePanel.setOnOperateListener(mListener);
         mManagePanel.updatePanelItems(fileType, selectedList);
     }

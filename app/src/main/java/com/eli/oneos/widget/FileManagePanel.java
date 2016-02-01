@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
@@ -53,6 +54,11 @@ public class FileManagePanel extends RelativeLayout {
         ArrayList<FileManageItem> mList = OneOSFileManageGenerate.generate(fileType, selectedList);
         this.mContainerLayout.removeAllViews();
         if (EmptyUtils.isEmpty(mList)) {
+            TextView mEmptyTxt = new TextView(getContext());
+            mEmptyTxt.setText(R.string.tip_select_file);
+            mEmptyTxt.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.text_size_sm));
+            mEmptyTxt.setTextColor(getResources().getColor(R.color.gray));
+            mContainerLayout.addView(mEmptyTxt);
             return;
         }
 

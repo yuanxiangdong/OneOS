@@ -15,9 +15,9 @@ import android.widget.TextView;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.DeviceHistoryKeeper;
-import com.eli.oneos.db.UserHistoryKeeper;
+import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceHistory;
-import com.eli.oneos.db.greendao.UserHistory;
+import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.oneos.api.OneOSGetMacAPI;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
 import com.eli.oneos.model.scan.OnScanDeviceListener;
@@ -52,8 +52,8 @@ public class LoginActivity extends BaseActivity {
     private EditText mIPTxt;
 
     private LoginSession mLoginSession;
-    private UserHistory mLastLoginUser;
-    private List<UserHistory> mHistoryUserList = new ArrayList<UserHistory>();
+    private UserInfo mLastLoginUser;
+    private List<UserInfo> mHistoryUserList = new ArrayList<UserInfo>();
     private List<DeviceHistory> mHistoryDeviceList = new ArrayList<DeviceHistory>();
     private List<DeviceHistory> mLANDeviceList = new ArrayList<DeviceHistory>();
     private SpinnerView mUserSpinnerView, mDeviceSpinnerView;
@@ -210,7 +210,7 @@ public class LoginActivity extends BaseActivity {
                 mUserSpinnerView = new SpinnerView(this, view.getWidth());
                 ArrayList<String> users = new ArrayList<String>();
                 ArrayList<Integer> icons = new ArrayList<Integer>();
-                for (UserHistory info : mHistoryUserList) {
+                for (UserInfo info : mHistoryUserList) {
                     users.add(info.getName());
                     icons.add(R.drawable.btn_clear);
                 }
@@ -219,16 +219,16 @@ public class LoginActivity extends BaseActivity {
                 mUserSpinnerView.setOnSpinnerButtonClickListener(new SpinnerView.OnSpinnerButtonClickListener() {
                     @Override
                     public void onClick(View view, int index) {
-                        UserHistory UserHistory = mHistoryUserList.get(index);
+                        UserInfo UserHistory = mHistoryUserList.get(index);
                         mHistoryUserList.remove(UserHistory);
-                        UserHistoryKeeper.delete(UserHistory);
+                        UserInfoKeeper.delete(UserHistory);
                         mUserSpinnerView.dismiss();
                     }
                 });
                 mUserSpinnerView.setOnSpinnerItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        UserHistory UserHistory = mHistoryUserList.get(position);
+                        UserInfo UserHistory = mHistoryUserList.get(position);
                         mUserTxt.setText(UserHistory.getName());
                         mPwdTxt.setText(UserHistory.getPwd());
                         mUserSpinnerView.dismiss();
@@ -288,7 +288,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initLoginHistory() {
-        List<UserHistory> userList = UserHistoryKeeper.all();
+        List<UserInfo> userList = UserInfoKeeper.all();
         if (!EmptyUtils.isEmpty(userList)) {
             mHistoryUserList.addAll(userList);
             mLastLoginUser = userList.get(0);
@@ -379,7 +379,10 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess(String url, String mac) {
                 dismissLoading();
-                mLoginSession.getDeviceInfo().setMac(mac);
+
+                UserInfo userInfo = mLoginSession.getUserInfo();
+                userInfo.setMac(mac);
+                UserInfoKeeper.update(userInfo);
                 gotoMainActivity();
             }
 

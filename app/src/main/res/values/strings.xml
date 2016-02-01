@@ -35,6 +35,7 @@
     <string name="decrypt_file">解密</string>
     <string name="chmod_file">权限</string>
     <string name="attr_file">详情</string>
+    <string name="clean_recycle_file">清空回收站</string>
     <string name="tip_select_file">请先选择需要操作的文件</string>
     <string name="tip_attr_file">属性</string>
     <string name="getting_file_attr">正在获取&#8230;</string>
@@ -45,6 +46,7 @@
     <string name="tail_file_attr_size_bytes">字节</string>
     <string name="tail_file_attr_folders">个文件夹</string>
     <string name="tail_file_attr_files">个文件</string>
+    <string name="file_attr_permission">权限：</string>
     <string name="file_attr_uid">UID：</string>
     <string name="file_attr_gid">GID：</string>
     <string name="tip_delete_file">确定删除所选文件？</string>
@@ -83,6 +85,12 @@
     <string name="copying_file">正在复制&#8230;</string>
     <string name="copy_file_success">文件复制成功</string>
     <string name="copy_file_failed">文件复制失败</string>
+    <string name="title_clean_recycle_file">清空回收站</string>
+    <string name="tip_clean_recycle_file">清空后，回收站所有文件将被永久删除。</string>
+    <string name="cleaning_recycle">正在清空&#8230;</string>
+    <string name="clean_recycle_success">清空回收站成功</string>
+    <string name="clean_recycle_failed">清空回收站失败</string>
+    <string name="clean_now">清空</string>
 
     <!-- Navigation Bar Title -->
     <string name="nav_title_local">本地</string>

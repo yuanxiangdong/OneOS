@@ -57,6 +57,8 @@ public class OneOSFileManage {
                 mActivity.showLoading(R.string.copying_file);
             } else if (action == FileManageAction.MOVE) {
                 mActivity.showLoading(R.string.moving_file);
+            } else if (action == FileManageAction.CLEAN_RECYCLE) {
+                mActivity.showLoading(R.string.cleaning_recycle);
             }
         }
 
@@ -82,6 +84,8 @@ public class OneOSFileManage {
                         titleList.add(resources.getString(R.string.file_attr_files));
                         contentList.add(json.getString("files") + resources.getString(R.string.tail_file_attr_files));
                     }
+                    titleList.add(resources.getString(R.string.file_attr_permission));
+                    contentList.add(file.getPerm());
                     titleList.add(resources.getString(R.string.file_attr_uid));
                     contentList.add(json.getString("uid"));
                     titleList.add(resources.getString(R.string.file_attr_gid));
@@ -105,6 +109,8 @@ public class OneOSFileManage {
                 mActivity.showTipView(R.string.copy_file_success, true);
             } else if (action == FileManageAction.MOVE) {
                 mActivity.showTipView(R.string.move_file_success, true);
+            } else if (action == FileManageAction.CLEAN_RECYCLE) {
+                mActivity.showTipView(R.string.clean_recycle_success, true);
             }
 
             if (null != callback) {
@@ -220,6 +226,15 @@ public class OneOSFileManage {
                 @Override
                 public void onPaste(String tarPath) {
                     fileManageAPI.move(selectedList, tarPath);
+                }
+            });
+        } else if (action == FileManageAction.CLEAN_RECYCLE) {
+            DialogUtils.showConfirmDialog(mActivity, R.string.title_clean_recycle_file, R.string.tip_clean_recycle_file, R.string.clean_now, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                @Override
+                public void onClick(boolean isPositiveBtn) {
+                    if (isPositiveBtn) {
+                        fileManageAPI.cleanRecycle();
+                    }
                 }
             });
         }

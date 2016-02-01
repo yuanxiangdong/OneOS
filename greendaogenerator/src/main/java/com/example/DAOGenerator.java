@@ -21,11 +21,15 @@ public class DAOGenerator {
     }
 
     private static void addUserInfo(Schema schema) {
-        Entity note = schema.addEntity("UserHistory");
+        Entity note = schema.addEntity("UserInfo");
         note.addStringProperty("name").notNull().primaryKey();
         note.addStringProperty("pwd").notNull();
-        note.addStringProperty("mac").notNull();
+        note.addStringProperty("mac").notNull(); //.primaryKey();
         note.addLongProperty("time");
+        note.addIntProperty("uid");
+        note.addIntProperty("gid");
+        note.addIntProperty("admin");
+        note.addStringProperty("downloadPath");
     }
 
     private static void addDeviceInfo(Schema schema) {

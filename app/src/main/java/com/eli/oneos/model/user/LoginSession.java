@@ -2,6 +2,7 @@ package com.eli.oneos.model.user;
 
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.greendao.DeviceInfo;
+import com.eli.oneos.db.greendao.UserInfo;
 
 /**
  * User Login information

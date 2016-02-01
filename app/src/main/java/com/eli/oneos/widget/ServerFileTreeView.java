@@ -102,7 +102,7 @@ public class ServerFileTreeView {
         mPathPanel.setOnPathPanelClickListener(new FilePathPanel.OnPathPanelClickListener() {
             @Override
             public void onClick(View view, String path) {
-                if (null == path) {
+                if (null == path && view.getId() == R.id.ibtn_new_folder) {
                     OneOSFileManage fileManage = new OneOSFileManage(mActivity, loginSession, mPathPanel, new OneOSFileManage.OnManageCallback() {
                         @Override
                         public void onComplete(boolean isSuccess) {

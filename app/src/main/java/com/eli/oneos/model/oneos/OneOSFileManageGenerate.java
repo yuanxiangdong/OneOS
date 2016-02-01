@@ -21,6 +21,7 @@ public class OneOSFileManageGenerate {
     private static FileManageItem OPT_ENCRYPT = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_encrypt, R.drawable.btn_opt_encrypt_pressed, R.string.encrypt_file, FileManageAction.ENCRYPT);
     private static FileManageItem OPT_DECRYPT = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_decrypt, R.drawable.btn_opt_decrypt_pressed, R.string.decrypt_file, FileManageAction.DECRYPT);
     private static FileManageItem OPT_ATTR = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.attr_file, FileManageAction.ATTR);
+    private static FileManageItem OPT_CLEAN = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_delete, R.drawable.btn_opt_delete_pressed, R.string.clean_recycle_file, FileManageAction.CLEAN_RECYCLE);
 
 
     public static ArrayList<FileManageItem> generate(OneOSFileType fileType, ArrayList<OneOSFile> selectedList) {
@@ -29,23 +30,29 @@ public class OneOSFileManageGenerate {
         }
 
         ArrayList<FileManageItem> mOptItems = new ArrayList<>();
-        mOptItems.add(OPT_COPY);
-        mOptItems.add(OPT_MOVE);
-        mOptItems.add(OPT_DELETE);
-        mOptItems.add(OPT_DOWNLOAD);
+        if (fileType == OneOSFileType.RECYCLE) {
+            mOptItems.add(OPT_MOVE);
+            mOptItems.add(OPT_DELETE);
+            mOptItems.add(OPT_CLEAN);
+        } else {
+            mOptItems.add(OPT_COPY);
+            mOptItems.add(OPT_MOVE);
+            mOptItems.add(OPT_DELETE);
+            mOptItems.add(OPT_DOWNLOAD);
 
-        int count = selectedList.size();
-        if (count == 1) {
-            OneOSFile file = selectedList.get(0);
-            if (!file.isDirectory()) {
-                if (file.isEncrypt()) {
-                    mOptItems.add(OPT_DECRYPT);
-                } else {
-                    mOptItems.add(OPT_ENCRYPT);
+            int count = selectedList.size();
+            if (count == 1) {
+                mOptItems.add(OPT_RENAME);
+                OneOSFile file = selectedList.get(0);
+                if (!file.isDirectory()) {
+                    if (file.isEncrypt()) {
+                        mOptItems.add(OPT_DECRYPT);
+                    } else {
+                        mOptItems.add(OPT_ENCRYPT);
+                    }
                 }
+                mOptItems.add(OPT_ATTR);
             }
-            mOptItems.add(OPT_RENAME);
-            mOptItems.add(OPT_ATTR);
         }
 
         return mOptItems;

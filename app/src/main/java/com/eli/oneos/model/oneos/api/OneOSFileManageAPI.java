@@ -188,7 +188,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "cleanrecycle");
-        // params.put("path", "[]");
 
         doManageFiles(params);
     }

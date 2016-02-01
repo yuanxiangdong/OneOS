@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.db.UserHistoryKeeper;
-import com.eli.oneos.db.greendao.UserHistory;
+import com.eli.oneos.db.UserInfoKeeper;
+import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
 import com.eli.oneos.model.scan.OnScanDeviceListener;
 import com.eli.oneos.model.scan.ScanDeviceManager;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class LauncherActivity extends BaseActivity {
 
     private CircleProgressBar mProgressBar;
-    private UserHistory lastUserHistory;
+    private UserInfo lastUserHistory;
     private Intent mSendIntent;
     private ScanDeviceManager mScanManager;
     private boolean isLastDeviceExist = false;
@@ -69,7 +69,7 @@ public class LauncherActivity extends BaseActivity {
     }
 
     private void initLastLoginInfo() {
-        lastUserHistory = UserHistoryKeeper.top();
+        lastUserHistory = UserInfoKeeper.top();
 //        lastUserHistory = null; // TODO.. test code
     }
 

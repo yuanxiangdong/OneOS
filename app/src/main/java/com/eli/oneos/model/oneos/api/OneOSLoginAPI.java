@@ -6,11 +6,10 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.DeviceHistoryKeeper;
-import com.eli.oneos.db.UserHistoryKeeper;
+import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceHistory;
 import com.eli.oneos.db.greendao.DeviceInfo;
-import com.eli.oneos.db.greendao.UserHistory;
-import com.eli.oneos.model.user.UserInfo;
+import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 
@@ -79,14 +78,19 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
                             long time = System.currentTimeMillis();
                             boolean isLAN = (!EmptyUtils.isEmpty(mac)) ? true : false;
 
-                            UserHistory userHistory = new UserHistory(user, pwd, EmptyUtils.isEmpty(mac) ? "" : mac, time);
-                            UserHistoryKeeper.insertOrReplace(userHistory);
+                            UserInfo userInfo = null;
+                            if (!EmptyUtils.isEmpty(mac)) {
+                                userInfo = UserInfoKeeper.insertOrReplace(user, pwd, mac, time, uid, gid, admin);
+                            } else {
+                                // Needs to update database after access to device mac
+                                userInfo = new UserInfo(user, pwd, mac, time, uid, gid, admin, null);
+                            }
+
                             if (!isLAN) {
                                 DeviceHistory deviceHistory = new DeviceHistory(ip, mac, port, time, false);
                                 DeviceHistoryKeeper.insertOrReplace(deviceHistory);
                             }
 
-                            UserInfo userInfo = new UserInfo(user, pwd, time, uid, gid, admin);
                             DeviceInfo deviceInfo = new DeviceInfo(ip, mac, time, port, "", "", isLAN);
                             LoginSession loginInfo = new LoginSession(userInfo, deviceInfo, session, time);
 

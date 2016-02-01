@@ -85,6 +85,8 @@ public class CloudFileFragment extends Fragment {
             if (parent instanceof ListView) {
                 position -= 1; // for PullToRefreshView header
             }
+            mLastClickPosition = position;
+            mLastClickItem2Top = view.getTop();
 
             OneOSFileBaseAdapter mAdapter = getCurFileAdapter();
             boolean isMultiMode = mAdapter.isMultiChooseModel();
@@ -100,12 +102,10 @@ public class CloudFileFragment extends Fragment {
                 mClickedCheckBox.toggle();
 
                 mAdapter.notifyDataSetChanged();
-                updateSelectAndOperatePanel();
+                updateSelectAndManagePanel();
             } else {
                 OneOSFile file = mFileList.get(position);
                 if (file.isDirectory()) {
-                    mLastClickPosition = position;
-                    mLastClickItem2Top = view.getTop();
                     curPath = file.getPath();
                     autoPullToRefresh();
                 } else {
@@ -125,6 +125,7 @@ public class CloudFileFragment extends Fragment {
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (!isMultiMode) {
                 setMultiModel(true, position);
+                updateSelectAndManagePanel();
             } else {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
                 OneOSFile file = mFileList.get(position);
@@ -137,7 +138,7 @@ public class CloudFileFragment extends Fragment {
                 mClickedCheckBox.toggle();
 
                 mAdapter.notifyDataSetChanged();
-                updateSelectAndOperatePanel();
+                updateSelectAndManagePanel();
             }
 
             return true;
@@ -148,7 +149,7 @@ public class CloudFileFragment extends Fragment {
         public void onSelect(boolean isSelectAll) {
             getCurFileAdapter().selectAllItem(isSelectAll);
             getCurFileAdapter().notifyDataSetChanged();
-            updateSelectAndOperatePanel();
+            updateSelectAndManagePanel();
         }
 
         @Override
@@ -162,6 +163,7 @@ public class CloudFileFragment extends Fragment {
             if (EmptyUtils.isEmpty(selectedList)) {
                 ToastHelper.showToast(R.string.tip_select_file);
             } else {
+                isSelectionLastPosition = true;
                 OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, mPathPanel, new OneOSFileManage.OnManageCallback() {
                     @Override
                     public void onComplete(boolean isSuccess) {
@@ -183,7 +185,8 @@ public class CloudFileFragment extends Fragment {
             switch (scrollState) {
                 case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
                     // ToastHelper.showToast("停止...");
-                    showOrderLayout(mFirstVisibleItem == 0);
+//                    showOrderLayout(mFirstVisibleItem == 0);
+                    showOrderLayout(true);
                     break;
                 case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
                     // ToastHelper.showToast("正在滑动...");
@@ -289,6 +292,7 @@ public class CloudFileFragment extends Fragment {
             @Override
             public void onClick(View view, String path) {
                 if (null == path) { // New Folder Button Clicked
+                    isSelectionLastPosition = true;
                     OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, mPathPanel, new OneOSFileManage.OnManageCallback() {
                         @Override
                         public void onComplete(boolean isSuccess) {
@@ -327,6 +331,7 @@ public class CloudFileFragment extends Fragment {
             public void onClick(View view) {
                 AnimUtils.shortVibrator();
                 setMultiModel(true, (Integer) view.getTag());
+                updateSelectAndManagePanel();
             }
         }, mLoginSession);
         mListView.setOnItemClickListener(mFileItemClickListener);
@@ -389,7 +394,6 @@ public class CloudFileFragment extends Fragment {
     }
 
     private boolean tryBackToParentDir() {
-        isSelectionLastPosition = true;
         Log.d(TAG, "=====Current Path: " + curPath + "========");
         if (mFileType == OneOSFileType.PRIVATE) {
             if (!curPath.equals(OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR)) {
@@ -501,9 +505,9 @@ public class CloudFileFragment extends Fragment {
         mParentFragment.showManageBar(isShown);
     }
 
-    private void updateSelectAndOperatePanel() {
+    private void updateSelectAndManagePanel() {
         mParentFragment.updateSelectBar(mFileList.size(), mSelectedList.size(), mFileSelectListener);
-        mParentFragment.updateOperateBar(mFileType, mSelectedList, mFileManageListener);
+        mParentFragment.updateManageBar(mFileType, mSelectedList, mFileManageListener);
     }
 
     private boolean setMultiModel(boolean isSetMultiModel, int position) {
@@ -513,7 +517,7 @@ public class CloudFileFragment extends Fragment {
         }
 
         if (isSetMultiModel) {
-            updateSelectAndOperatePanel();
+            updateSelectAndManagePanel();
             showSelectAndOperatePanel(true);
             mListAdapter.setIsMultiModel(true);
             mGridAdapter.setIsMultiModel(true);

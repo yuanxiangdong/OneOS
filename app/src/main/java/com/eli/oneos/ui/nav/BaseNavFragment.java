@@ -57,7 +57,7 @@ public abstract class BaseNavFragment extends Fragment {
      * @param selectedList Selected file list
      * @param mListener    On file operate listener
      */
-    public abstract void updateOperateBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener);
+    public abstract void updateManageBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener);
 
     /**
      * Network State Changed
