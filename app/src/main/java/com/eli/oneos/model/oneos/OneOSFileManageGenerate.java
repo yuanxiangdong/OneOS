@@ -3,6 +3,7 @@ package com.eli.oneos.model.oneos;
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileManageItem;
+import com.eli.oneos.utils.EmptyUtils;
 
 import java.util.ArrayList;
 
@@ -23,14 +24,29 @@ public class OneOSFileManageGenerate {
 
 
     public static ArrayList<FileManageItem> generate(OneOSFileType fileType, ArrayList<OneOSFile> selectedList) {
+        if (EmptyUtils.isEmpty(selectedList)) {
+            return null;
+        }
+
         ArrayList<FileManageItem> mOptItems = new ArrayList<>();
         mOptItems.add(OPT_COPY);
         mOptItems.add(OPT_MOVE);
         mOptItems.add(OPT_DELETE);
-        mOptItems.add(OPT_RENAME);
         mOptItems.add(OPT_DOWNLOAD);
-        mOptItems.add(OPT_ENCRYPT);
-        mOptItems.add(OPT_ATTR);
+
+        int count = selectedList.size();
+        if (count == 1) {
+            OneOSFile file = selectedList.get(0);
+            if (!file.isDirectory()) {
+                if (file.isEncrypt()) {
+                    mOptItems.add(OPT_DECRYPT);
+                } else {
+                    mOptItems.add(OPT_ENCRYPT);
+                }
+            }
+            mOptItems.add(OPT_RENAME);
+            mOptItems.add(OPT_ATTR);
+        }
 
         return mOptItems;
     }

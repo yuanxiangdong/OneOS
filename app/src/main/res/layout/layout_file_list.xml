@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <com.eli.oneos.widget.pullrefresh.PullToRefreshListView
-        android:id="@+id/listview"
+        android:id="@+id/listview_filelist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:cacheColorHint="@android:color/transparent"
@@ -18,7 +18,7 @@
         android:overScrollMode="never" />
 
     <com.eli.oneos.widget.pullrefresh.PullToRefreshGridView
-        android:id="@+id/gridview"
+        android:id="@+id/gridview_filelist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:cacheColorHint="@android:color/transparent"
@@ -32,6 +32,7 @@
         android:listSelector="@android:color/transparent"
         android:numColumns="4"
         android:overScrollMode="never"
+        android:paddingBottom="10dp"
         android:stretchMode="columnWidth"
         android:verticalSpacing="5dp"
         android:visibility="gone" />

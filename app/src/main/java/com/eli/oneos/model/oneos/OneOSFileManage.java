@@ -36,6 +36,7 @@ public class OneOSFileManage {
     private FileManageAction action;
     private View mRootView;
     private OnManageCallback callback;
+    private List<OneOSFile> fileList;
     private OneOSFileManageAPI fileManageAPI;
     private OneOSFileManageAPI.OnFileManageListener mListener = new OneOSFileManageAPI.OnFileManageListener() {
         @Override
@@ -65,6 +66,7 @@ public class OneOSFileManage {
                 mActivity.dismissLoading();
                 // {"result":true, "path":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
                 try {
+                    OneOSFile file = fileList.get(0);
                     Resources resources = mActivity.getResources();
                     List<String> titleList = new ArrayList<>();
                     List<String> contentList = new ArrayList<>();
@@ -74,10 +76,12 @@ public class OneOSFileManage {
                     titleList.add(resources.getString(R.string.file_attr_size));
                     long size = json.getLong("size");
                     contentList.add(FileUtils.fmtFileSize(size) + " (" + size + resources.getString(R.string.tail_file_attr_size_bytes) + ")");
-                    titleList.add(resources.getString(R.string.file_attr_folders));
-                    contentList.add(json.getString("dirs") + resources.getString(R.string.tail_file_attr_folders));
-                    titleList.add(resources.getString(R.string.file_attr_files));
-                    contentList.add(json.getString("files") + resources.getString(R.string.tail_file_attr_files));
+                    if (file.isDirectory()) {
+                        titleList.add(resources.getString(R.string.file_attr_folders));
+                        contentList.add(json.getString("dirs") + resources.getString(R.string.tail_file_attr_folders));
+                        titleList.add(resources.getString(R.string.file_attr_files));
+                        contentList.add(json.getString("files") + resources.getString(R.string.tail_file_attr_files));
+                    }
                     titleList.add(resources.getString(R.string.file_attr_uid));
                     contentList.add(json.getString("uid"));
                     titleList.add(resources.getString(R.string.file_attr_gid));
@@ -131,6 +135,7 @@ public class OneOSFileManage {
 
     public void manage(final OneOSFileType type, FileManageAction action, final ArrayList<OneOSFile> selectedList) {
         this.action = action;
+        this.fileList = selectedList;
 
         if (EmptyUtils.isEmpty(selectedList) || action == null) {
             if (null != callback) {

@@ -66,7 +66,7 @@ public class FileUtils {
         }
 
         name = name.toLowerCase().trim();
-        int icon = R.drawable.icon_file_default;
+        int icon;
         if (name.endsWith(".mp3") || name.endsWith(".wma") || name.endsWith(".wav")
                 || name.endsWith(".aac") || name.endsWith(".ape") || name.endsWith(".m4a")
                 || name.endsWith(".flac") || name.endsWith(".ogg")) {

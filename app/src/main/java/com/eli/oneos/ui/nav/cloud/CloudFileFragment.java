@@ -47,6 +47,7 @@ import com.eli.oneos.widget.pullrefresh.PullToRefreshBase;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshGridView;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshListView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -59,6 +60,8 @@ public class CloudFileFragment extends Fragment {
     protected MainActivity mMainActivity;
     protected BaseNavFragment mParentFragment;
     private FilePathPanel mPathPanel;
+    private ListView mListView;
+    private GridView mGridView;
     private PullToRefreshListView mPullRefreshListView;
     private PullToRefreshGridView mPullRefreshGridView;
     private OneOSFileListAdapter mListAdapter;
@@ -73,6 +76,8 @@ public class CloudFileFragment extends Fragment {
     private ArrayList<OneOSFile> mFileList = new ArrayList<>();
     private ArrayList<OneOSFile> mSelectedList = new ArrayList<>();
     protected String curPath = null;
+    private int mLastClickPosition = 0, mLastClickItem2Top = 0;
+    private boolean isSelectionLastPosition = false;
 
     private AdapterView.OnItemClickListener mFileItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -97,7 +102,15 @@ public class CloudFileFragment extends Fragment {
                 mAdapter.notifyDataSetChanged();
                 updateSelectAndOperatePanel();
             } else {
-                attemptOpenOneOSFile(mFileList.get(position));
+                OneOSFile file = mFileList.get(position);
+                if (file.isDirectory()) {
+                    mLastClickPosition = position;
+                    mLastClickItem2Top = view.getTop();
+                    curPath = file.getPath();
+                    autoPullToRefresh();
+                } else {
+                    attemptOpenOneOSFile(file);
+                }
             }
         }
     };
@@ -107,7 +120,25 @@ public class CloudFileFragment extends Fragment {
             if (parent instanceof ListView) {
                 position -= 1; // for PullToRefreshView header
             }
-            setMultiModel(true, position);
+
+            OneOSFileBaseAdapter mAdapter = getCurFileAdapter();
+            boolean isMultiMode = mAdapter.isMultiChooseModel();
+            if (!isMultiMode) {
+                setMultiModel(true, position);
+            } else {
+                CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
+                OneOSFile file = mFileList.get(position);
+                boolean isSelected = mClickedCheckBox.isChecked();
+                if (isSelected) {
+                    mSelectedList.remove(file);
+                } else {
+                    mSelectedList.add(file);
+                }
+                mClickedCheckBox.toggle();
+
+                mAdapter.notifyDataSetChanged();
+                updateSelectAndOperatePanel();
+            }
 
             return true;
         }
@@ -186,6 +217,23 @@ public class CloudFileFragment extends Fragment {
         return view;
     }
 
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//        Log.d(TAG, "On Configuration Changed");
+//        int orientation = this.getResources().getConfiguration().orientation;
+//        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//
+//        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+//
+//        }
+//
+//        mListView.setAdapter(mListAdapter);
+//        mGridView.setAdapter(mGridAdapter);
+//        mListAdapter.notifyDataSetChanged();
+//        mGridAdapter.notifyDataSetChanged();
+//    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -201,8 +249,6 @@ public class CloudFileFragment extends Fragment {
     private void initLoginSession() {
         mLoginSession = LoginManage.getInstance().getLoginSession();
     }
-
-    private float mStartY = 0, mLastY = 0, mLastDeltaY;
 
     private void initView(View view) {
         mSlideInAnim = AnimationUtils.loadAnimation(mMainActivity, R.anim.slide_in_from_top);
@@ -258,7 +304,7 @@ public class CloudFileFragment extends Fragment {
         });
         mPathPanel.showNewFolderButton(mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC);
 
-        mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.listview);
+        mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.listview_filelist);
         View mEmptyView = view.findViewById(R.id.layout_empty_list);
         mPullRefreshListView.setEmptyView(mEmptyView);
         mPullRefreshListView.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
@@ -274,7 +320,7 @@ public class CloudFileFragment extends Fragment {
             public void onPullUpToRefresh(PullToRefreshBase refreshView) {
             }
         });
-        final ListView mListView = mPullRefreshListView.getRefreshableView();
+        mListView = mPullRefreshListView.getRefreshableView();
         registerForContextMenu(mListView);
         mListAdapter = new OneOSFileListAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
             @Override
@@ -289,7 +335,7 @@ public class CloudFileFragment extends Fragment {
         mListView.setAdapter(mListAdapter);
 
         mEmptyView = view.findViewById(R.id.layout_empty_grid);
-        mPullRefreshGridView = (PullToRefreshGridView) view.findViewById(R.id.gridview);
+        mPullRefreshGridView = (PullToRefreshGridView) view.findViewById(R.id.gridview_filelist);
         mPullRefreshGridView.setEmptyView(mEmptyView);
         mPullRefreshGridView.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
         mPullRefreshGridView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2() {
@@ -305,7 +351,7 @@ public class CloudFileFragment extends Fragment {
                                                   }
 
         );
-        GridView mGridView = mPullRefreshGridView.getRefreshableView();
+        mGridView = mPullRefreshGridView.getRefreshableView();
         registerForContextMenu(mGridView);
         mGridAdapter = new OneOSFileGridAdapter(getContext(), mFileList, mSelectedList, mLoginSession);
         mGridView.setOnItemClickListener(mFileItemClickListener);
@@ -329,6 +375,44 @@ public class CloudFileFragment extends Fragment {
         }
     }
 
+    private String getParentPath(String path) {
+        int startIndex = path.lastIndexOf(File.separator) + 1;
+        return path.substring(0, startIndex);
+    }
+
+    private void backToParentDir(String path) {
+        String parentPath = getParentPath(path);
+        Log.d(TAG, "----Parent Path: " + parentPath + "------");
+        isSelectionLastPosition = true;
+        curPath = parentPath;
+        autoPullToRefresh();
+    }
+
+    private boolean tryBackToParentDir() {
+        isSelectionLastPosition = true;
+        Log.d(TAG, "=====Current Path: " + curPath + "========");
+        if (mFileType == OneOSFileType.PRIVATE) {
+            if (!curPath.equals(OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR)) {
+                backToParentDir(curPath);
+                return true;
+            }
+        }
+        if (mFileType == OneOSFileType.PUBLIC) {
+            if (!curPath.equals(OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR)) {
+                backToParentDir(curPath);
+                return true;
+            }
+        }
+        if (mFileType == OneOSFileType.RECYCLE) {
+            if (!curPath.equals(OneOSAPIs.ONE_OS_RECYCLE_ROOT_DIR)) {
+                backToParentDir(curPath);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Use to handle parent Activity back action
      *
@@ -340,7 +424,7 @@ public class CloudFileFragment extends Fragment {
             return true;
         }
 
-        return false;
+        return tryBackToParentDir();
     }
 
     protected void autoPullToRefresh() {
@@ -368,9 +452,18 @@ public class CloudFileFragment extends Fragment {
         if (isListShown) {
             mListAdapter.notifyDataSetChanged(isItemChanged);
             mPullRefreshListView.onRefreshComplete();
+            if (isSelectionLastPosition) {
+                mListView.setSelectionFromTop(mLastClickPosition, mLastClickItem2Top);
+                isSelectionLastPosition = false;
+            }
         } else {
             mGridAdapter.notifyDataSetChanged(isItemChanged);
             mPullRefreshGridView.onRefreshComplete();
+            if (isSelectionLastPosition) {
+                mGridView.setSelection(mLastClickPosition);
+                // mGridView.setSelectionFromTop(mLastClickPosition, mLastClickItem2Top);
+                isSelectionLastPosition = false;
+            }
         }
     }
 
@@ -437,21 +530,20 @@ public class CloudFileFragment extends Fragment {
     }
 
     private void attemptOpenOneOSFile(OneOSFile file) {
-        if (file.isDirectory()) {
-            curPath = file.getPath();
-            autoPullToRefresh();
-        } else {
-            // TODO... Open OneOS File
-            ToastHelper.showToast("Open OneOS File is coming soon!");
-        }
+        // TODO... Open OneOS File
+        ToastHelper.showToast("Open OneOS File is coming soon!");
     }
 
     private void getOneOSFileList(String path) {
-
         if (mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC || mFileType == OneOSFileType.RECYCLE) {
             if (EmptyUtils.isEmpty(path)) {
                 Log.e(TAG, "Get list path is NULL");
-                notifyRefreshComplete(true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyRefreshComplete(true);
+                    }
+                }, Constants.DELAY_TIME_AUTO_REFRESH);
                 return;
             }
 

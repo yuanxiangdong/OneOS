@@ -10,7 +10,7 @@ import com.eli.oneos.db.UserHistoryKeeper;
 import com.eli.oneos.db.greendao.DeviceHistory;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserHistory;
-import com.eli.oneos.db.greendao.UserInfo;
+import com.eli.oneos.model.user.UserInfo;
 import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 
