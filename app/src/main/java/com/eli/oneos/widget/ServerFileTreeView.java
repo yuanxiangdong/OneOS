@@ -185,7 +185,7 @@ public class ServerFileTreeView {
             return;
         }
 
-        OneOSListDirAPI listDirAPI = new OneOSListDirAPI(mLoginSession.getDeviceInfo().getIp(), mLoginSession.getDeviceInfo().getPort(), mLoginSession.getSession(), path);
+        OneOSListDirAPI listDirAPI = new OneOSListDirAPI(mLoginSession, path);
         listDirAPI.setOnFileListListener(new OneOSListDirAPI.OnFileListListener() {
             @Override
             public void onStart(String url) {

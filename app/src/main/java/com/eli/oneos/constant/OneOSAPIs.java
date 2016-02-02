@@ -19,6 +19,7 @@ public class OneOSAPIs {
     public static final String LOGIN = ONE_API + "/user/login";
     public static final String GET_MAC = ONE_API + "/net/infowire";
     public static final String GET_FILE_LIST = ONE_API + "/file/list";
+    public static final String GET_SEARCH_FILE = ONE_API + "/file/search";
     public static final String GET_FILE_LIST_DB = ONE_API + "/file/listdb";
     public static final String FILE_MANAGE = ONE_API + "/file/manage";
 

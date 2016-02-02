@@ -1,7 +1,6 @@
 package com.eli.oneos.ui.nav.cloud;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
@@ -20,10 +20,10 @@ import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
+import com.eli.oneos.widget.SearchPanel;
 import com.eli.oneos.widget.TypePopupView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/13.
@@ -33,14 +33,15 @@ public class CloudNavFragment extends BaseNavFragment {
 
     private CloudFileFragment mCurFragment;
     private FileSelectPanel mSelectPanel;
+    private SearchPanel mSearchPanel;
     private FileManagePanel mManagePanel;
+    private ImageButton mSearchBtn;
 
     private RelativeLayout mTitleLayout;
     private Button mTypeBtn;
     private TypePopupView mTypePopView;
 
     private ArrayList<FileTypeItem> mFileTypeList = new ArrayList<>();
-    private List<Fragment> mFragmentList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,12 +68,20 @@ public class CloudNavFragment extends BaseNavFragment {
     private void initView(View view) {
         mTitleLayout = (RelativeLayout) view.findViewById(R.id.include_title);
         mSelectPanel = (FileSelectPanel) view.findViewById(R.id.layout_select_top_panel);
+        mSearchPanel = (SearchPanel) view.findViewById(R.id.layout_search_panel);
         mManagePanel = (FileManagePanel) view.findViewById(R.id.layout_operate_bottom_panel);
         mTypeBtn = (Button) view.findViewById(R.id.btn_sort);
         mTypeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mTypePopView.showPopupTop(mTitleLayout);
+            }
+        });
+        mSearchBtn = (ImageButton) view.findViewById(R.id.ibtn_nav_title_right);
+        mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchPanel.showPanel(true);
             }
         });
     }
@@ -128,6 +137,10 @@ public class CloudNavFragment extends BaseNavFragment {
         mCurFragment.setFileType(type, path);
         mCurFragment.onResume();
         transaction.commitAllowingStateLoss();
+    }
+
+    public void addSearchListener(SearchPanel.OnSearchActionListener listener) {
+        mSearchPanel.setOnSearchListener(listener);
     }
 
     /**

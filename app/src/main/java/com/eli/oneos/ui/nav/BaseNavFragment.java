@@ -8,6 +8,7 @@ import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
+import com.eli.oneos.widget.SearchPanel;
 
 import java.util.ArrayList;
 
@@ -66,4 +67,11 @@ public abstract class BaseNavFragment extends Fragment {
      * @param isWifiAvailable
      */
     public abstract void onNetworkChanged(boolean isAvailable, boolean isWifiAvailable);
+
+    /**
+     * Add search file listener
+     *
+     * @param listener
+     */
+    public abstract void addSearchListener(SearchPanel.OnSearchActionListener listener);
 }

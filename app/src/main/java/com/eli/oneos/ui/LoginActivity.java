@@ -369,7 +369,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     public void getDeviceMacAddress() {
-        OneOSGetMacAPI getMacAPI = new OneOSGetMacAPI(mLoginSession.getDeviceInfo().getIp(), mLoginSession.getDeviceInfo().getPort());
+        OneOSGetMacAPI getMacAPI = new OneOSGetMacAPI(mLoginSession);
         getMacAPI.setOnGetMacListener(new OneOSGetMacAPI.OnGetMacListener() {
             @Override
             public void onStart(String url) {

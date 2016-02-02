@@ -5,7 +5,9 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
@@ -25,37 +27,48 @@ import java.util.List;
 /**
  * OneSpace OS Get File List API
  * <p/>
- * Created by gaoyun@eli-tech.com on 2016/1/14.
+ * Created by gaoyun@eli-tech.com on 2016/02/02.
  */
-public class OneOSListDirAPI extends OneOSBaseAPI {
-    private static final String TAG = OneOSListDirAPI.class.getSimpleName();
+public class OneOSSearchAPI extends OneOSBaseAPI {
+    private static final String TAG = OneOSSearchAPI.class.getSimpleName();
 
-    private OnFileListListener listener;
+    private OnSearchFileListener listener;
+    /**
+     * public or private
+     */
     private String path = null;
-    private String type = "all";
+    /**
+     * order by name or date
+     */
+    private String stype = null;
+    /**
+     * search filter pattern
+     */
+    private String pattern = null;
+    private String pdate1 = null, pdate2 = null;
 
-    public OneOSListDirAPI(LoginSession loginSession, String path) {
-        super(loginSession.getDeviceInfo());
-        this.session = loginSession.getSession();
-        this.path = path;
+    public OneOSSearchAPI(LoginSession mLoginSession) {
+        super(mLoginSession.getDeviceInfo());
+        this.session = mLoginSession.getSession();
     }
 
-    public void setOnFileListListener(OnFileListListener listener) {
+    public void setOnFileListListener(OnSearchFileListener listener) {
         this.listener = listener;
     }
 
-    public void list() {
-        list(type);
-    }
+    private void search() {
+        url = genOneOSAPIUrl(OneOSAPIs.GET_SEARCH_FILE);
+        Log.d(TAG, "Search File: " + url);
 
-    public void list(String ftype) {
-        this.type = ftype;
-        url = genOneOSAPIUrl(OneOSAPIs.GET_FILE_LIST);
-        Log.d(TAG, "Login: " + url);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("path", path);
-        params.put("ftype", type);
+        params.put("stype", stype);
+        params.put("pattern", pattern);
+        if (!EmptyUtils.isEmpty(pdate1) && !EmptyUtils.isEmpty(pdate2)) {
+            params.put("pdate1", pdate1);
+            params.put("pdate2", pdate2);
+        }
 
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 
@@ -95,7 +108,7 @@ public class OneOSListDirAPI extends OneOSBaseAPI {
                                     }
                                 }
                             }
-                            listener.onSuccess(url, path, files);
+                            listener.onSuccess(url, files);
                         } else {
                             // {"errno":-1,"msg":"list error","result":false}
                             // -1=permission deny, -2=argument error, -3=other error
@@ -121,10 +134,24 @@ public class OneOSListDirAPI extends OneOSBaseAPI {
         }
     }
 
-    public interface OnFileListListener {
+    public void search(OneOSFileType fileType, FileOrderType orderType, String pattern) {
+        if (fileType == OneOSFileType.PUBLIC) {
+            this.path = OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
+        } else {
+            this.path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
+        }
+        if (orderType == FileOrderType.NAME) {
+            this.stype = "name";
+        } else {
+            this.stype = "date";
+        }
+        this.pattern = pattern;
+    }
+
+    public interface OnSearchFileListener {
         void onStart(String url);
 
-        void onSuccess(String url, String path, ArrayList<OneOSFile> files);
+        void onSuccess(String url, ArrayList<OneOSFile> files);
 
         void onFailure(String url, int errorNo, String errorMsg);
     }

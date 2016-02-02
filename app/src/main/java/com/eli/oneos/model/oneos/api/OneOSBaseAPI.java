@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.db.greendao.DeviceInfo;
 
 import net.tsz.afinal.FinalHttp;
 
@@ -21,6 +22,12 @@ public abstract class OneOSBaseAPI {
     protected String ip = null;
     protected String session = null;
     protected String port = OneOSAPIs.ONE_API_DEFAULT_PORT;
+
+    protected OneOSBaseAPI(DeviceInfo info) {
+        this.ip = info.getIp();
+        this.port = info.getPort();
+        initHttp();
+    }
 
     protected OneOSBaseAPI(String ip, String port) {
         this.ip = ip;

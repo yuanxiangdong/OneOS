@@ -31,6 +31,7 @@ import com.eli.oneos.model.oneos.adapter.OneOSFileGridAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSFileListAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListDBAPI;
 import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
+import com.eli.oneos.model.oneos.api.OneOSSearchAPI;
 import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
 import com.eli.oneos.model.oneos.comp.OneOSFileTimeComparator;
 import com.eli.oneos.model.user.LoginManage;
@@ -43,6 +44,7 @@ import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FilePathPanel;
 import com.eli.oneos.widget.FileSelectPanel;
+import com.eli.oneos.widget.SearchPanel;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshBase;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshGridView;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshListView;
@@ -202,17 +204,37 @@ public class CloudFileFragment extends Fragment {
             mFirstVisibleItem = firstVisibleItem;
         }
     };
+    private String mSearchFilter = null;
+    private SearchPanel.OnSearchActionListener mSearchListener = new SearchPanel.OnSearchActionListener() {
+        @Override
+        public void onVisible(boolean visible) {
+
+        }
+
+        @Override
+        public void onSearch(String filter) {
+            mSearchFilter = filter;
+            autoPullToRefresh();
+        }
+
+        @Override
+        public void onCancel() {
+            mSearchFilter = null;
+            autoPullToRefresh();
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(TAG, "On Create View");
 
-        View view = inflater.inflate(R.layout.fragment_nav_cloud_directory, container, false);
+        View view = inflater.inflate(R.layout.fragment_nav_cloud_file, container, false);
 
         mMainActivity = (MainActivity) getActivity();
         mParentFragment = (BaseNavFragment) getParentFragment();
         curPath = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
         mFileType = OneOSFileType.PRIVATE;
+        mParentFragment.addSearchListener(mSearchListener);
 
         initLoginSession();
         initView(view);
@@ -240,6 +262,9 @@ public class CloudFileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (null != mParentFragment) {
+            mParentFragment.addSearchListener(mSearchListener);
+        }
         autoPullToRefresh();
     }
 
@@ -539,6 +564,33 @@ public class CloudFileFragment extends Fragment {
     }
 
     private void getOneOSFileList(String path) {
+        if (!EmptyUtils.isEmpty(mSearchFilter)) {
+            OneOSSearchAPI searchAPI = new OneOSSearchAPI(mLoginSession);
+            searchAPI.setOnFileListListener(new OneOSSearchAPI.OnSearchFileListener() {
+                @Override
+                public void onStart(String url) {
+                }
+
+                @Override
+                public void onSuccess(String url, ArrayList<OneOSFile> files) {
+                    mFileList.clear();
+                    if (!EmptyUtils.isEmpty(files)) {
+                        mFileList.addAll(files);
+                    }
+
+                    notifyRefreshComplete(true);
+                }
+
+                @Override
+                public void onFailure(String url, int errorNo, String errorMsg) {
+                    ToastHelper.showToast(errorMsg);
+                    notifyRefreshComplete(true);
+                }
+            });
+            searchAPI.search(mFileType, mOrderType, mSearchFilter);
+            return;
+        }
+
         if (mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC || mFileType == OneOSFileType.RECYCLE) {
             if (EmptyUtils.isEmpty(path)) {
                 Log.e(TAG, "Get list path is NULL");
@@ -551,7 +603,7 @@ public class CloudFileFragment extends Fragment {
                 return;
             }
 
-            OneOSListDirAPI listDirAPI = new OneOSListDirAPI(mLoginSession.getDeviceInfo().getIp(), mLoginSession.getDeviceInfo().getPort(), mLoginSession.getSession(), path);
+            OneOSListDirAPI listDirAPI = new OneOSListDirAPI(mLoginSession, path);
             listDirAPI.setOnFileListListener(new OneOSListDirAPI.OnFileListListener() {
                 @Override
                 public void onStart(String url) {
@@ -576,7 +628,7 @@ public class CloudFileFragment extends Fragment {
             });
             listDirAPI.list();
         } else {
-            OneOSListDBAPI listDbAPI = new OneOSListDBAPI(mLoginSession.getDeviceInfo().getIp(), mLoginSession.getDeviceInfo().getPort(), mLoginSession.getSession(), mFileType);
+            OneOSListDBAPI listDbAPI = new OneOSListDBAPI(mLoginSession, mFileType);
             listDbAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
                 @Override
                 public void onStart(String url) {

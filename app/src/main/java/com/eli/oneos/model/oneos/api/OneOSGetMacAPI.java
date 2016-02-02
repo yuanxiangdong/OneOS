@@ -7,6 +7,7 @@ import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.UserInfo;
+import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 
 import net.tsz.afinal.http.AjaxCallBack;
@@ -25,8 +26,8 @@ public class OneOSGetMacAPI extends OneOSBaseAPI {
 
     private OnGetMacListener listener;
 
-    public OneOSGetMacAPI(String ip, String port) {
-        super(ip, port);
+    public OneOSGetMacAPI(LoginSession loginSession) {
+        super(loginSession.getDeviceInfo());
     }
 
     public void setOnGetMacListener(OnGetMacListener listener) {

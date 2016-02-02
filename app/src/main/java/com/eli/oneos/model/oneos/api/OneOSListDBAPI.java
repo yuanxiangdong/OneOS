@@ -7,6 +7,7 @@ import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
+import com.eli.oneos.model.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.GsonUtils;
@@ -33,9 +34,9 @@ public class OneOSListDBAPI extends OneOSBaseAPI {
     private OnFileDBListListener listener;
     private OneOSFileType type = null;
 
-    public OneOSListDBAPI(String ip, String port, String session, OneOSFileType type) {
-        super(ip, port);
-        this.session = session;
+    public OneOSListDBAPI(LoginSession loginSession, OneOSFileType type) {
+        super(loginSession.getDeviceInfo());
+        this.session = loginSession.getSession();
         this.type = type;
     }
 
