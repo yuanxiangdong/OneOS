@@ -146,6 +146,8 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
             this.stype = "date";
         }
         this.pattern = pattern;
+
+        search();
     }
 
     public interface OnSearchFileListener {

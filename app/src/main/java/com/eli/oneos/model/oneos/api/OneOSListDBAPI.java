@@ -72,6 +72,9 @@ public class OneOSListDBAPI extends OneOSBaseAPI {
                         JSONObject json = new JSONObject(result);
                         boolean ret = json.getBoolean("result");
                         if (ret) {
+                            int total = json.getInt("total");
+                            int page = json.getInt("page");
+                            int pages = json.getInt("pages");
                             ArrayList<OneOSFile> files = null;
                             if (json.has("files")) {
                                 Type type = new TypeToken<List<OneOSFile>>() {
@@ -90,7 +93,7 @@ public class OneOSListDBAPI extends OneOSBaseAPI {
                                     }
                                 }
                             }
-                            listener.onSuccess(url, type, files);
+                            listener.onSuccess(url, type, total, pages, page, files);
                         } else {
                             // {"errno":-1,"msg":"list error","result":false}
                             // -1=permission deny, -2=argument error, -3=other error
@@ -119,7 +122,7 @@ public class OneOSListDBAPI extends OneOSBaseAPI {
     public interface OnFileDBListListener {
         void onStart(String url);
 
-        void onSuccess(String url, OneOSFileType type, ArrayList<OneOSFile> files);
+        void onSuccess(String url, OneOSFileType type, int total, int pages, int page, ArrayList<OneOSFile> files);
 
         void onFailure(String url, int errorNo, String errorMsg);
     }

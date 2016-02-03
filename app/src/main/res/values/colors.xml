@@ -48,4 +48,6 @@
     <color name="bg_operate_bar">@color/bg_nav_bar</color>
     <color name="bg_layout_order">@color/bg_nav_bar</color>
     <color name="txt_nav_normal">#FF7B7B7B</color>
+
+    <color name="bg_timeline_header">#FFEEEEEE</color>
 </resources>

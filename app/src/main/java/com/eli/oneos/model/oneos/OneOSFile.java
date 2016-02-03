@@ -6,8 +6,9 @@ import com.eli.oneos.R;
  * Created by gaoyun@eli-tech.com on 2016/1/14.
  */
 public class OneOSFile {
-//    {"perm":"rwxr-xr-x","type":"audio","name":"haizeiw .mp3","gid":0,"path":"\/haizeiw .mp3","uid":1001,"time":1187168313,"size":6137050}
-
+    // for sticky header
+    private int section = 0;
+    //    {"perm":"rwxr-xr-x","type":"audio","name":"haizeiw .mp3","gid":0,"path":"\/haizeiw .mp3","uid":1001,"time":1187168313,"size":6137050}
     private String path = null;
     private String perm = null;
     /**
@@ -22,6 +23,7 @@ public class OneOSFile {
     private int uid = 0;
     private long time = 0;
     private long size = 0;
+    private long month = 0;
 
     // file shown icon
     private int icon = R.drawable.icon_file_default;
@@ -128,6 +130,22 @@ public class OneOSFile {
 
     public boolean isDirectory() {
         return null != this.type && this.type.equalsIgnoreCase("dir");
+    }
+
+    public int getSection() {
+        return section;
+    }
+
+    public void setSection(int section) {
+        this.section = section;
+    }
+
+    public long getMonth() {
+        return month;
+    }
+
+    public void setMonth(long month) {
+        this.month = month;
     }
 
     @Override

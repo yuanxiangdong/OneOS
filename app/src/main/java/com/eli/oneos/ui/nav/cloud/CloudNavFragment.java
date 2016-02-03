@@ -31,7 +31,9 @@ import java.util.ArrayList;
 public class CloudNavFragment extends BaseNavFragment {
     private static final String TAG = CloudNavFragment.class.getSimpleName();
 
-    private CloudFileFragment mCurFragment;
+    private BaseCloudFragment mCurFragment;
+    private CloudDirFragment mDirFragment;
+    private CloudDbFragment mDbFragment;
     private FileSelectPanel mSelectPanel;
     private SearchPanel mSearchPanel;
     private FileManagePanel mManagePanel;
@@ -115,26 +117,39 @@ public class CloudNavFragment extends BaseNavFragment {
     }
 
     private void initFragment() {
-        mCurFragment = new CloudFileFragment();
+        mDirFragment = new CloudDirFragment();
+        mDbFragment = new CloudDbFragment();
         changeFragmentByType(OneOSFileType.PRIVATE);
     }
 
     private void changeFragmentByType(OneOSFileType type) {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
-        String path = null;
+        if (mCurFragment != null) {
+            transaction.hide(mCurFragment);
+            mCurFragment.onPause();
+        }
+
+        String path;
         if (type == OneOSFileType.PRIVATE) {
+            mCurFragment = mDirFragment;
             path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
         } else if (type == OneOSFileType.PUBLIC) {
+            mCurFragment = mDirFragment;
             path = OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
         } else if (type == OneOSFileType.RECYCLE) {
+            mCurFragment = mDirFragment;
             path = OneOSAPIs.ONE_OS_RECYCLE_ROOT_DIR;
+        } else {
+            mCurFragment = mDbFragment;
+            path = null;
         }
+        mDbFragment.setFileType(type, path);
+
         if (!mCurFragment.isAdded()) {
             transaction.add(R.id.fragment_content, mCurFragment);
         }
         transaction.show(mCurFragment);
-        mCurFragment.setFileType(type, path);
         mCurFragment.onResume();
         transaction.commitAllowingStateLoss();
     }

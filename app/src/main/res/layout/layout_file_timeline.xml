@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_filelist"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--<com.eli.oneos.widget.pullrefresh.PullToRefreshListView
+        android:id="@+id/listview_filelist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@color/line_list_view"
+        android:dividerHeight="@dimen/list_divider_height"
+        android:fadingEdge="none"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:listSelector="@android:color/transparent"
+        android:overScrollMode="never" />-->
+
+    <com.eli.oneos.widget.PullToRefreshView
+        android:id="@+id/layout_pull_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <com.eli.oneos.widget.sticky.listview.StickyListHeadersListView
+            android:id="@+id/listview_timeline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:drawSelectorOnTop="true"
+            android:fastScrollEnabled="true"
+            android:overScrollMode="never"
+            android:padding="0dp"
+            android:scrollbarStyle="outsideOverlay"
+            android:visibility="gone" />
+
+        <com.eli.oneos.widget.sticky.gridview.StickyGridHeadersGridView
+            android:id="@+id/gridview_timeline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:horizontalSpacing="0dp"
+            android:listSelector="@android:color/transparent"
+            android:numColumns="3"
+            android:overScrollMode="never"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="0dp"
+            android:visibility="gone" />
+    </com.eli.oneos.widget.PullToRefreshView>
+
+    <LinearLayout
+        android:id="@+id/layout_empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_content_empty" />
+
+        <TextView
+            android:id="@+id/txt_empty_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/empty_file_list"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_size_mid" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_empty_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_content_empty" />
+
+        <TextView
+            android:id="@+id/txt_empty_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/empty_file_list"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_size_mid" />
+    </LinearLayout>
+
+</RelativeLayout>
