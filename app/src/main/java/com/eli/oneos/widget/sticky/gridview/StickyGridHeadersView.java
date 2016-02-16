@@ -53,7 +53,7 @@ import java.util.List;
  *
  * @author Tonic Artos, Emil Sjölander, caguilar187
  */
-public class StickyGridHeadersGridView extends GridView implements OnScrollListener,
+public class StickyGridHeadersView extends GridView implements OnScrollListener,
         OnItemClickListener, OnItemSelectedListener, OnItemLongClickListener {
     private static boolean ENABLE_FOLD = true;
     private static final String ERROR_PLATFORM = "Error supporting platform "
@@ -73,7 +73,7 @@ public class StickyGridHeadersGridView extends GridView implements OnScrollListe
 
     protected static final int TOUCH_MODE_TAP = 1;
 
-    static final String TAG = StickyGridHeadersGridView.class.getSimpleName();
+    static final String TAG = StickyGridHeadersView.class.getSimpleName();
 
     private static MotionEvent.PointerCoords[] getPointerCoords(MotionEvent e) {
         int n = e.getPointerCount();
@@ -175,15 +175,15 @@ public class StickyGridHeadersGridView extends GridView implements OnScrollListe
 
     boolean mHeaderChildBeingPressed = false;
 
-    public StickyGridHeadersGridView(Context context) {
+    public StickyGridHeadersView(Context context) {
         this(context, null);
     }
 
-    public StickyGridHeadersGridView(Context context, AttributeSet attrs) {
+    public StickyGridHeadersView(Context context, AttributeSet attrs) {
         this(context, attrs, android.R.attr.gridViewStyle);
     }
 
-    public StickyGridHeadersGridView(Context context, AttributeSet attrs, int defStyle) {
+    public StickyGridHeadersView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         super.setOnScrollListener(this);
         setVerticalFadingEdgeEnabled(false);

@@ -74,7 +74,7 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
 
     private final StickyGridHeadersBaseAdapter mDelegate;
 
-    private StickyGridHeadersGridView mGridView;
+    private StickyGridHeadersView mGridView;
 
     private View mLastHeaderViewSeen;
 
@@ -82,7 +82,7 @@ public class StickyGridHeadersBaseAdapterWrapper extends BaseAdapter {
 
     private int mNumColumns = 1;
 
-    public StickyGridHeadersBaseAdapterWrapper(Context context, StickyGridHeadersGridView gridView,
+    public StickyGridHeadersBaseAdapterWrapper(Context context, StickyGridHeadersView gridView,
                                                StickyGridHeadersBaseAdapter delegate) {
         mContext = context;
         mDelegate = delegate;

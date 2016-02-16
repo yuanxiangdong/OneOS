@@ -16,6 +16,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.widget.sticky.listview.StickyListHeadersView;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 public class PullToRefreshView extends LinearLayout {
@@ -172,7 +173,6 @@ public class PullToRefreshView extends LinearLayout {
         params.topMargin = -(mHeaderViewHeight);
         // mHeaderView.setLayoutParams(params1);
         addView(mHeaderView, params);
-
     }
 
     private void addFooterView() {
@@ -214,6 +214,9 @@ public class PullToRefreshView extends LinearLayout {
             if (view instanceof ScrollView) {
                 // finish later
                 mScrollView = (ScrollView) view;
+            }
+            if (view instanceof StickyListHeadersView) {
+                mAdapterView = ((StickyListHeadersView) view).getWrappedList();
             }
         }
         if (mAdapterView == null && mScrollView == null) {

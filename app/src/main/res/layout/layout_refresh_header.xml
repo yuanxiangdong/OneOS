@@ -42,18 +42,15 @@
         android:textColor="@color/darker"
         android:textSize="@dimen/text_size_pull_to_refresh_header" />
 
-    <!--
-         <TextView
+    <TextView
         android:id="@+id/pull_to_refresh_updated_at"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/pull_to_refresh_text"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:text="@string/pull_down_to_refresh"
         android:textColor="@android:color/black"
         android:textSize="@dimen/text_size_min"
         android:visibility="gone" />
-    -->
 
 </RelativeLayout>

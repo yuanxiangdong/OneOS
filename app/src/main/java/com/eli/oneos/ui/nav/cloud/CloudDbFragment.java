@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
-import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
@@ -37,8 +36,8 @@ import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.PullToRefreshView;
-import com.eli.oneos.widget.sticky.gridview.StickyGridHeadersGridView;
-import com.eli.oneos.widget.sticky.listview.StickyListHeadersListView;
+import com.eli.oneos.widget.sticky.gridview.StickyGridHeadersView;
+import com.eli.oneos.widget.sticky.listview.StickyListHeadersView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,9 +48,10 @@ import java.util.Collections;
 public class CloudDbFragment extends BaseCloudFragment {
     private static final String TAG = CloudDbFragment.class.getSimpleName();
 
-    private StickyListHeadersListView mListView;
-    private StickyGridHeadersGridView mGridView;
-    private PullToRefreshView mPullToRefreshView;
+    private StickyListHeadersView mListView;
+    private StickyGridHeadersView mGridView;
+    private PullToRefreshView mListPullToRefreshView;
+    private PullToRefreshView mGridPullToRefreshView;
     private boolean isPullDownRefresh = true;
     private OneOSStickyListAdapter mListAdapter;
     private OneOSFileGridAdapter mGridAdapter;
@@ -151,6 +151,22 @@ public class CloudDbFragment extends BaseCloudFragment {
         public void onDismiss() {
         }
     };
+    private PullToRefreshView.OnHeaderRefreshListener mHeaderRefreshListener = new PullToRefreshView.OnHeaderRefreshListener() {
+        @Override
+        public void onHeaderRefresh(PullToRefreshView view) {
+            isPullDownRefresh = true;
+            setMultiModel(false, 0);
+            getOneOSFileList(curPath);
+        }
+    };
+    private PullToRefreshView.OnFooterRefreshListener mFooterRefreshListener = new PullToRefreshView.OnFooterRefreshListener() {
+        @Override
+        public void onFooterRefresh(PullToRefreshView view) {
+            isPullDownRefresh = false;
+            setMultiModel(false, 0);
+            getOneOSFileList(curPath);
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -189,6 +205,7 @@ public class CloudDbFragment extends BaseCloudFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>");
         autoPullToRefresh();
     }
 
@@ -218,41 +235,31 @@ public class CloudDbFragment extends BaseCloudFragment {
         mSwitcherBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isListShown != isChecked) {
-                    isListShown = isChecked;
-                    if (isListShown) {
-                        mGridView.setVisibility(View.GONE);
-                        mListView.setVisibility(View.VISIBLE);
-                        mListAdapter.notifyDataSetChanged();
-                    } else {
-                        mListView.setVisibility(View.GONE);
-                        mGridView.setVisibility(View.VISIBLE);
-                        mGridAdapter.notifyDataSetChanged();
-                    }
-                }
+//                if (isListShown != isChecked) {
+//                    isListShown = isChecked;
+//                    if (isListShown) {
+//                        mGridPullToRefreshView.setVisibility(View.GONE);
+//                        mListPullToRefreshView.setVisibility(View.VISIBLE);
+//                        mListAdapter.notifyDataSetChanged();
+//                    } else {
+//                        mListPullToRefreshView.setVisibility(View.GONE);
+//                        mGridPullToRefreshView.setVisibility(View.VISIBLE);
+//                        mGridAdapter.notifyDataSetChanged();
+//                    }
+//                }
             }
         });
 
-        mPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh);
-        mPullToRefreshView.setOnHeaderRefreshListener(new PullToRefreshView.OnHeaderRefreshListener() {
-            @Override
-            public void onHeaderRefresh(PullToRefreshView view) {
-                isPullDownRefresh = true;
-                setMultiModel(false, 0);
-                getOneOSFileList(curPath);
-            }
-        });
-        mPullToRefreshView.setOnFooterRefreshListener(new PullToRefreshView.OnFooterRefreshListener() {
-            @Override
-            public void onFooterRefresh(PullToRefreshView view) {
-                isPullDownRefresh = false;
-                setMultiModel(false, 0);
-                getOneOSFileList(curPath);
-            }
-        });
+        isListShown = true;
+
+        mListPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_grid);
+//        mListPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_list);
+        mListPullToRefreshView.setOnHeaderRefreshListener(mHeaderRefreshListener);
+        mListPullToRefreshView.setOnFooterRefreshListener(mFooterRefreshListener);
+        mListPullToRefreshView.setVisibility(View.VISIBLE); // TODO..
 
         View mEmptyView = view.findViewById(R.id.layout_empty_list);
-        mListView = (StickyListHeadersListView) view.findViewById(R.id.listview_timeline);
+        mListView = (StickyListHeadersView) view.findViewById(R.id.listview_timeline);
         mListAdapter = new OneOSStickyListAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
             @Override
             public void onClick(View view) {
@@ -263,12 +270,17 @@ public class CloudDbFragment extends BaseCloudFragment {
         }, mLoginSession);
         mListView.setOnItemClickListener(mFileItemClickListener);
         mListView.setOnItemLongClickListener(mFileItemLongClickListener);
+        mListView.setFastScrollEnabled(false);
         mListView.setEmptyView(mEmptyView);
         mListView.setAdapter(mListAdapter);
-        mListView.setVisibility(View.VISIBLE); // TODO..
+
+        mGridPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_grid);
+        mGridPullToRefreshView.setOnHeaderRefreshListener(mHeaderRefreshListener);
+        mGridPullToRefreshView.setOnFooterRefreshListener(mFooterRefreshListener);
+        mGridPullToRefreshView.setVisibility(View.VISIBLE); // TODO..
 
         mEmptyView = view.findViewById(R.id.layout_empty_grid);
-        mGridView = (StickyGridHeadersGridView) view.findViewById(R.id.gridview_timeline);
+        mGridView = (StickyGridHeadersView) view.findViewById(R.id.gridview_timeline);
         mGridAdapter = new OneOSFileGridAdapter(getContext(), mFileList, mSelectedList, mLoginSession);
         mGridView.setOnItemClickListener(mFileItemClickListener);
         mGridView.setOnItemLongClickListener(mFileItemLongClickListener);
@@ -311,9 +323,13 @@ public class CloudDbFragment extends BaseCloudFragment {
 
             @Override
             public void run() {
-                mPullToRefreshView.headerRefreshing();
+                if (isListShown) {
+                    mListPullToRefreshView.headerRefreshing();
+                } else {
+                    mGridPullToRefreshView.headerRefreshing();
+                }
             }
-        }, Constants.DELAY_TIME_AUTO_REFRESH);
+        }, 1000);
     }
 
     private void notifyRefreshComplete(boolean isItemChanged) {
@@ -352,9 +368,11 @@ public class CloudDbFragment extends BaseCloudFragment {
             }
         }
         if (isPullDownRefresh) {
-            mPullToRefreshView.onHeaderRefreshComplete();
+            mListPullToRefreshView.onHeaderRefreshComplete();
+            mGridPullToRefreshView.onHeaderRefreshComplete();
         } else {
-            mPullToRefreshView.onFooterRefreshComplete();
+            mListPullToRefreshView.onFooterRefreshComplete();
+            mGridPullToRefreshView.onFooterRefreshComplete();
         }
     }
 

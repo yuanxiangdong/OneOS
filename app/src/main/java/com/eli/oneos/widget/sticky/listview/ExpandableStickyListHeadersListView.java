@@ -10,7 +10,7 @@ import java.util.List;
  * add expand/collapse functions like ExpandableListView
  * @author lsjwzh
  */
-public class ExpandableStickyListHeadersListView extends StickyListHeadersListView {
+public class ExpandableStickyListHeadersListView extends StickyListHeadersView {
     public interface IAnimationExecutor{
         public void executeAnim(View target, int animType);
     }
