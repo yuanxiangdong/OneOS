@@ -44,12 +44,14 @@ public class OneOSListDBAPI extends OneOSBaseAPI {
         this.listener = listener;
     }
 
-    public void list() {
+    public void list(int page) {
         url = genOneOSAPIUrl(OneOSAPIs.GET_FILE_LIST_DB);
         Log.d(TAG, "Login: " + url);
 
         AjaxParams params = new AjaxParams();
         params.put("session", session);
+        params.put("sort", "5");
+        params.put("page", String.valueOf(page));
         params.put("ftype", OneOSFileType.getServerTypeName(type));
 
         finalHttp.post(url, params, new AjaxCallBack<String>() {

@@ -1229,7 +1229,7 @@ public class StickyGridHeadersView extends GridView implements OnScrollListener,
 
     public void toggleHeaderState(long position) {
         if (null != mAdapter && ENABLE_FOLD) {
-            Log.e(TAG, "===============On Header Click: " + position);
+            Log.e(TAG, "======On Header Click: " + position);
             mAdapter.toggleHeader(position);
         }
     }

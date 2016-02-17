@@ -28,7 +28,6 @@ import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSFileGridAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSFileListAdapter;
-import com.eli.oneos.model.oneos.api.OneOSListDBAPI;
 import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
 import com.eli.oneos.model.oneos.api.OneOSSearchAPI;
 import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
@@ -606,30 +605,6 @@ public class CloudDirFragment extends BaseCloudFragment {
                 }
             });
             listDirAPI.list();
-        } else {
-            OneOSListDBAPI listDbAPI = new OneOSListDBAPI(mLoginSession, mFileType);
-            listDbAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
-                @Override
-                public void onStart(String url) {
-                }
-
-                @Override
-                public void onSuccess(String url, OneOSFileType type, int total, int pages, int page, ArrayList<OneOSFile> files) {
-                    mFileList.clear();
-                    if (!EmptyUtils.isEmpty(files)) {
-                        mFileList.addAll(files);
-                    }
-
-                    notifyRefreshComplete(true);
-                }
-
-                @Override
-                public void onFailure(String url, int errorNo, String errorMsg) {
-                    ToastHelper.showToast(errorMsg);
-                    notifyRefreshComplete(true);
-                }
-            });
-            listDbAPI.list();
         }
     }
 }

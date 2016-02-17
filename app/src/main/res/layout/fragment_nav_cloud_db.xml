@@ -83,7 +83,14 @@
 
     <include
         android:id="@+id/include_file_list"
-        layout="@layout/layout_file_timeline"
+        layout="@layout/layout_file_timeline_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/view_order_line" />
+
+    <include
+        android:id="@+id/include_file_grid"
+        layout="@layout/layout_file_timeline_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/view_order_line" />

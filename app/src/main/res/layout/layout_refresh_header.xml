@@ -15,7 +15,7 @@
         android:layout_toLeftOf="@+id/pull_to_refresh_text"
         android:visibility="gone"
         app:mlpb_enable_circle_background="false"
-        app:mlpb_progress_color="@color/gray"
+        app:mlpb_progress_color="@color/primary"
         app:mlpb_progress_stoke_width="2dp"
         app:mlpb_progress_text_visibility="invisible"
         app:mlpb_show_arrow="false" />
@@ -39,7 +39,7 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:text="@string/pull_down_to_refresh_pull_label"
-        android:textColor="@color/darker"
+        android:textColor="@color/darker_gray"
         android:textSize="@dimen/text_size_pull_to_refresh_header" />
 
     <TextView
@@ -49,7 +49,7 @@
         android:layout_below="@+id/pull_to_refresh_text"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/darker_gray"
         android:textSize="@dimen/text_size_min"
         android:visibility="gone" />
 

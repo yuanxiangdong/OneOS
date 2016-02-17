@@ -20,6 +20,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
     public List<OneOSFile> mFileList = null;
     public ArrayList<OneOSFile> mSelectedList = null;
     private boolean isMultiChoose = false;
+    public LoginSession mLoginSession = null;
     public String mBasicUrl = null;
     public String mSession = null;
     public OnMultiChooseClickListener mListener = null;
@@ -29,8 +30,9 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
         this.mListener = listener;
         this.mFileList = fileList;
         this.mSelectedList = selectedList;
-        mBasicUrl = mLoginSession.getBaseUrl();
-        mSession = mLoginSession.getSession();
+        this.mLoginSession = mLoginSession;
+        this.mBasicUrl = mLoginSession.getBaseUrl();
+        this.mSession = mLoginSession.getSession();
 
         clearSelectedList();
     }

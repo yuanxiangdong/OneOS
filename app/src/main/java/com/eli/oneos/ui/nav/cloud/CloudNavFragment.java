@@ -148,9 +148,10 @@ public class CloudNavFragment extends BaseNavFragment {
 
         if (!mCurFragment.isAdded()) {
             transaction.add(R.id.fragment_content, mCurFragment);
+        } else {
+            mCurFragment.onResume();
         }
         transaction.show(mCurFragment);
-        mCurFragment.onResume();
         transaction.commitAllowingStateLoss();
     }
 

@@ -1,12 +1,18 @@
 package com.eli.oneos.utils;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.text.format.Formatter;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.ui.PictureViewActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -107,5 +113,16 @@ public class FileUtils {
 
     public static final String fmtFileSize(long len) {
         return Formatter.formatFileSize(MyApplication.getAppContext(), len);
+    }
+
+
+    public static void openServerPicture(Activity activity, int position, final ArrayList<OneOSFile> picList) {
+        Intent intent = new Intent(activity, PictureViewActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("StartIndex", position);
+        bundle.putBoolean("IsLocalPicture", false);
+        bundle.putSerializable("PictureList", picList);
+        intent.putExtras(bundle);
+        activity.startActivity(intent);
     }
 }

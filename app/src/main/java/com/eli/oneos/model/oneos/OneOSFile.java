@@ -2,10 +2,14 @@ package com.eli.oneos.model.oneos;
 
 import com.eli.oneos.R;
 
+import java.io.Serializable;
+
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/14.
  */
-public class OneOSFile {
+public class OneOSFile implements Serializable {
+    private static final long serialVersionUID = 11181567L;
+
     // for sticky header
     private int section = 0;
     //    {"perm":"rwxr-xr-x","type":"audio","name":"haizeiw .mp3","gid":0,"path":"\/haizeiw .mp3","uid":1001,"time":1187168313,"size":6137050}
@@ -31,6 +35,10 @@ public class OneOSFile {
     private String fmtTime = null;
     // format file size
     private String fmtSize = null;
+
+    public String getRealPath(String user) {
+        return "/home/" + user + "/" + path;
+    }
 
     public String getPath() {
         return path;

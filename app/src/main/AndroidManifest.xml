@@ -44,6 +44,12 @@
             android:theme="@style/FullBleedTheme"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
         </activity>
+        <activity
+            android:name="com.eli.oneos.ui.PictureViewActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+        </activity>
     </application>
 
 </manifest>

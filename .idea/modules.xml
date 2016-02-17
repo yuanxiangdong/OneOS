@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/greendaogenerator/greendaogenerator.iml" filepath="$PROJECT_DIR$/greendaogenerator/greendaogenerator.iml" />
       <module fileurl="file://$PROJECT_DIR$/materialloadingprogressbar/materialloadingprogressbar.iml" filepath="$PROJECT_DIR$/materialloadingprogressbar/materialloadingprogressbar.iml" />
       <module fileurl="file://$PROJECT_DIR$/segementgroup/segementgroup.iml" filepath="$PROJECT_DIR$/segementgroup/segementgroup.iml" />
+      <module fileurl="file://$PROJECT_DIR$/websocket/websocket.iml" filepath="$PROJECT_DIR$/websocket/websocket.iml" />
     </modules>
   </component>
 </project>

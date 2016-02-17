@@ -15,7 +15,7 @@
         android:layout_toLeftOf="@+id/pull_to_load_text"
         android:visibility="gone"
         app:mlpb_enable_circle_background="false"
-        app:mlpb_progress_color="@color/gray"
+        app:mlpb_progress_color="@color/primary"
         app:mlpb_progress_stoke_width="2dp"
         app:mlpb_progress_text_visibility="invisible"
         app:mlpb_show_arrow="false" />
@@ -41,7 +41,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/pull_up_to_refresh_pull_label"
-        android:textColor="@color/darker"
+        android:textColor="@color/darker_gray"
         android:textSize="@dimen/text_size_pull_to_refresh_header" />
 
 </RelativeLayout>

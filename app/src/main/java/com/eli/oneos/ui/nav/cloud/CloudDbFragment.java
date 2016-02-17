@@ -14,8 +14,10 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
@@ -23,15 +25,14 @@ import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileManage;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
-import com.eli.oneos.model.oneos.adapter.OneOSFileGridAdapter;
+import com.eli.oneos.model.oneos.adapter.OneOSStickyGridAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSStickyListAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListDBAPI;
-import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
-import com.eli.oneos.model.oneos.comp.OneOSFileTimeComparator;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
+import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
@@ -40,7 +41,6 @@ import com.eli.oneos.widget.sticky.gridview.StickyGridHeadersView;
 import com.eli.oneos.widget.sticky.listview.StickyListHeadersView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Created by gaoyun@eli-tech.com on 2016/02/03.
@@ -48,20 +48,20 @@ import java.util.Collections;
 public class CloudDbFragment extends BaseCloudFragment {
     private static final String TAG = CloudDbFragment.class.getSimpleName();
 
+    private RelativeLayout mListLayout, mGridLayout;
     private StickyListHeadersView mListView;
     private StickyGridHeadersView mGridView;
     private PullToRefreshView mListPullToRefreshView;
     private PullToRefreshView mGridPullToRefreshView;
     private boolean isPullDownRefresh = true;
     private OneOSStickyListAdapter mListAdapter;
-    private OneOSFileGridAdapter mGridAdapter;
+    private OneOSStickyGridAdapter mGridAdapter;
+
+    private int mPage = 0, mPages = 0;
 
     private AdapterView.OnItemClickListener mFileItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (parent instanceof ListView) {
-                position -= 1; // for PullToRefreshView header
-            }
             mLastClickPosition = position;
             mLastClickItem2Top = view.getTop();
 
@@ -81,9 +81,7 @@ public class CloudDbFragment extends BaseCloudFragment {
                 mAdapter.notifyDataSetChanged();
                 updateSelectAndManagePanel();
             } else {
-                OneOSFile file = mFileList.get(position);
-                curPath = file.getPath();
-                autoPullToRefresh();
+                FileUtils.openServerPicture(getActivity(), position, mFileList);
             }
         }
     };
@@ -156,7 +154,7 @@ public class CloudDbFragment extends BaseCloudFragment {
         public void onHeaderRefresh(PullToRefreshView view) {
             isPullDownRefresh = true;
             setMultiModel(false, 0);
-            getOneOSFileList(curPath);
+            getOneOSFileList(0);
         }
     };
     private PullToRefreshView.OnFooterRefreshListener mFooterRefreshListener = new PullToRefreshView.OnFooterRefreshListener() {
@@ -164,7 +162,13 @@ public class CloudDbFragment extends BaseCloudFragment {
         public void onFooterRefresh(PullToRefreshView view) {
             isPullDownRefresh = false;
             setMultiModel(false, 0);
-            getOneOSFileList(curPath);
+            if (mPage < mPages - 1) {
+                getOneOSFileList(++mPage);
+            } else {
+                ToastHelper.showToast(R.string.all_loaded);
+                mListPullToRefreshView.onFooterRefreshComplete();
+                mGridPullToRefreshView.onFooterRefreshComplete();
+            }
         }
     };
 
@@ -216,6 +220,11 @@ public class CloudDbFragment extends BaseCloudFragment {
     }
 
     private void initView(View view) {
+        mListLayout = (RelativeLayout) view.findViewById(R.id.include_file_list);
+        mGridLayout = (RelativeLayout) view.findViewById(R.id.include_file_grid);
+        mListLayout.setVisibility(View.VISIBLE);
+        mGridLayout.setVisibility(View.GONE);
+
         mSlideInAnim = AnimationUtils.loadAnimation(mMainActivity, R.anim.slide_in_from_top);
         mSlideOutAnim = AnimationUtils.loadAnimation(mMainActivity, R.anim.slide_out_to_top);
         mOrderLayout = (LinearLayout) view.findViewById(R.id.layout_order_view);
@@ -235,29 +244,26 @@ public class CloudDbFragment extends BaseCloudFragment {
         mSwitcherBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isListShown != isChecked) {
-//                    isListShown = isChecked;
-//                    if (isListShown) {
-//                        mGridPullToRefreshView.setVisibility(View.GONE);
-//                        mListPullToRefreshView.setVisibility(View.VISIBLE);
-//                        mListAdapter.notifyDataSetChanged();
-//                    } else {
-//                        mListPullToRefreshView.setVisibility(View.GONE);
-//                        mGridPullToRefreshView.setVisibility(View.VISIBLE);
-//                        mGridAdapter.notifyDataSetChanged();
-//                    }
-//                }
+                if (isListShown != isChecked) {
+                    isListShown = isChecked;
+                    if (isListShown) {
+                        mGridLayout.setVisibility(View.GONE);
+                        mListLayout.setVisibility(View.VISIBLE);
+                        mListAdapter.notifyDataSetChanged();
+                    } else {
+                        mListLayout.setVisibility(View.GONE);
+                        mGridLayout.setVisibility(View.VISIBLE);
+                        mGridAdapter.notifyDataSetChanged();
+                    }
+                }
             }
         });
 
         isListShown = true;
 
-        mListPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_grid);
-//        mListPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_list);
+        mListPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_list);
         mListPullToRefreshView.setOnHeaderRefreshListener(mHeaderRefreshListener);
         mListPullToRefreshView.setOnFooterRefreshListener(mFooterRefreshListener);
-        mListPullToRefreshView.setVisibility(View.VISIBLE); // TODO..
-
         View mEmptyView = view.findViewById(R.id.layout_empty_list);
         mListView = (StickyListHeadersView) view.findViewById(R.id.listview_timeline);
         mListAdapter = new OneOSStickyListAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
@@ -277,13 +283,34 @@ public class CloudDbFragment extends BaseCloudFragment {
         mGridPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_grid);
         mGridPullToRefreshView.setOnHeaderRefreshListener(mHeaderRefreshListener);
         mGridPullToRefreshView.setOnFooterRefreshListener(mFooterRefreshListener);
-        mGridPullToRefreshView.setVisibility(View.VISIBLE); // TODO..
-
         mEmptyView = view.findViewById(R.id.layout_empty_grid);
         mGridView = (StickyGridHeadersView) view.findViewById(R.id.gridview_timeline);
-        mGridAdapter = new OneOSFileGridAdapter(getContext(), mFileList, mSelectedList, mLoginSession);
+        mGridAdapter = new OneOSStickyGridAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
+            @Override
+            public void onClick(View view) {
+                AnimUtils.shortVibrator();
+                setMultiModel(true, (Integer) view.getTag());
+                updateSelectAndManagePanel();
+            }
+        }, mLoginSession);
         mGridView.setOnItemClickListener(mFileItemClickListener);
         mGridView.setOnItemLongClickListener(mFileItemLongClickListener);
+        mGridView.setOnHeaderClickListener(new StickyGridHeadersView.OnHeaderClickListener() {
+
+            @Override
+            public void onHeaderClick(AdapterView<?> parent, View view, long id) {
+                mGridView.toggleHeaderState(id);
+                mGridAdapter.notifyDataSetChanged();
+
+                // ImageView mStateView = (ImageView) view.findViewById(R.id.iv_state);
+                // int headCount = mGridView.getCountFromHeader((int) id);
+                // if (headCount == 0) {
+                // mStateView.setImageResource(R.drawable.icon_timeline_open);
+                // } else {
+                // mStateView.setImageResource(R.drawable.icon_timeline_close);
+                // }
+            }
+        });
         mGridView.setEmptyView(mEmptyView);
         mGridView.setAdapter(mGridAdapter);
     }
@@ -329,29 +356,38 @@ public class CloudDbFragment extends BaseCloudFragment {
                     mGridPullToRefreshView.headerRefreshing();
                 }
             }
-        }, 1000);
+        }, Constants.DELAY_TIME_AUTO_REFRESH);
     }
 
     private void notifyRefreshComplete(boolean isItemChanged) {
-        if (mOrderType == FileOrderType.NAME) {
-            Collections.sort(mFileList, new OneOSFileNameComparator());
-        } else {
-            Collections.sort(mFileList, new OneOSFileTimeComparator());
-        }
+//        if (mOrderType == FileOrderType.NAME) {
+//            Collections.sort(mFileList, new OneOSFileNameComparator());
+//        } else {
+//            Collections.sort(mFileList, new OneOSFileTimeComparator());
+//        }
 
-        ArrayList<Integer> mSectionIndices = new ArrayList<>();
         ArrayList<String> mSectionLetters = new ArrayList<>();
         int index = 0;
+        String fmt = getResources().getString(R.string.fmt_time_line);
         for (OneOSFile file : mFileList) {
-            String letter = String.valueOf(file.getMonth());
+            String letter = FileUtils.formatTime(file.getMonth() * 1000, fmt);
             if (!mSectionLetters.contains(letter)) {
                 mSectionLetters.add(letter);
-                mSectionIndices.add(new Integer(index));
                 file.setSection(index);
+                Log.d(TAG, "Add section index = " + index + ", value = " + letter);
                 index++;
+            } else {
+                file.setSection(mSectionLetters.indexOf(letter));
             }
         }
-        mListAdapter.updateSections(mSectionIndices.toArray(new Integer[]{}), mSectionLetters.toArray(new String[]{}));
+
+        int sec = mSectionLetters.size();
+        String[] sections = new String[sec];
+        for (int i = 0; i < sec; i++) {
+            sections[i] = mSectionLetters.get(i);
+        }
+        mListAdapter.updateSections(sections);
+        mGridAdapter.updateSections(sections);
 
         if (isListShown) {
             mListAdapter.notifyDataSetChanged(isItemChanged);
@@ -438,7 +474,7 @@ public class CloudDbFragment extends BaseCloudFragment {
         }
     }
 
-    private void getOneOSFileList(String path) {
+    private void getOneOSFileList(int page) {
         OneOSListDBAPI listDbAPI = new OneOSListDBAPI(mLoginSession, mFileType);
         listDbAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
             @Override
@@ -447,9 +483,13 @@ public class CloudDbFragment extends BaseCloudFragment {
 
             @Override
             public void onSuccess(String url, OneOSFileType type, int total, int pages, int page, ArrayList<OneOSFile> files) {
-                mFileList.clear();
+                if (page == 0) {
+                    mFileList.clear();
+                }
                 if (!EmptyUtils.isEmpty(files)) {
                     mFileList.addAll(files);
+                    mPage = page;
+                    mPages = pages;
                 }
 
                 notifyRefreshComplete(true);
@@ -461,6 +501,6 @@ public class CloudDbFragment extends BaseCloudFragment {
                 notifyRefreshComplete(true);
             }
         });
-        listDbAPI.list();
+        listDbAPI.list(page);
     }
 }

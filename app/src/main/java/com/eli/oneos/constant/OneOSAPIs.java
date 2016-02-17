@@ -1,5 +1,8 @@
 package com.eli.oneos.constant;
 
+import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.user.LoginSession;
+
 /**
  * OneSpace OS 3.x API
  * <p/>
@@ -22,8 +25,19 @@ public class OneOSAPIs {
     public static final String GET_SEARCH_FILE = ONE_API + "/file/search";
     public static final String GET_FILE_LIST_DB = ONE_API + "/file/listdb";
     public static final String FILE_MANAGE = ONE_API + "/file/manage";
+    public static final String FILE_DOWNLOAD = ONE_API + "/file/download";
+    public static final String FILE_THUMBNAIL = ONE_API + "/file/thumbnail";
 
 
+    public static String genDownloadUrl(LoginSession loginSession, OneOSFile file) {
+        // "http://192.168.1.17/oneapi/file/download?path=home%2Fadmin%2Fzxt01%2Fxxxxxxxxxxxx.JPG&session=c5i6qqbe78oj0c1h78o0====";
+        String pathUrl = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getName()));
+        return loginSession.getBaseUrl() + OneOSAPIs.FILE_DOWNLOAD + "?path=" + pathUrl + "&session=" + loginSession.getSession();
+    }
 
-
+    public static String genThumbnailUrl(LoginSession loginSession, OneOSFile file) {
+        // "http://192.168.1.17/oneapi/file/download?path=home%2Fadmin%2Fzxt01%2Fxxxxxxxxxxxx.JPG&session=c5i6qqbe78oj0c1h78o0====";
+        String pathUrl = android.net.Uri.encode(file.getPath());
+        return loginSession.getBaseUrl() + OneOSAPIs.FILE_THUMBNAIL + "?path=" + pathUrl + "&session=" + loginSession.getSession();
+    }
 }
