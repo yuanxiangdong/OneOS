@@ -36,6 +36,7 @@ import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
+import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FilePathPanel;
@@ -92,7 +93,8 @@ public class CloudDirFragment extends BaseCloudFragment {
                     curPath = file.getPath();
                     autoPullToRefresh();
                 } else {
-                    attemptOpenOneOSFile(file);
+                    isSelectionLastPosition = true;
+                    FileUtils.openOneOSFile(mLoginSession, mMainActivity, position, mFileList);
                 }
             }
         }
@@ -536,11 +538,6 @@ public class CloudDirFragment extends BaseCloudFragment {
         }
     }
 
-    private void attemptOpenOneOSFile(OneOSFile file) {
-        // TODO... Open OneOS File
-        ToastHelper.showToast("Open OneOS File is coming soon!");
-    }
-
     private void getOneOSFileList(String path) {
         if (!EmptyUtils.isEmpty(mSearchFilter)) {
             OneOSSearchAPI searchAPI = new OneOSSearchAPI(mLoginSession);
@@ -571,7 +568,7 @@ public class CloudDirFragment extends BaseCloudFragment {
 
         if (mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC || mFileType == OneOSFileType.RECYCLE) {
             if (EmptyUtils.isEmpty(path)) {
-                Log.e(TAG, "Get list path is NULL");
+                Log.e(TAG, "Get list srcPath is NULL");
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

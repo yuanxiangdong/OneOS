@@ -5,7 +5,7 @@ package com.eli.oneos.model;
  */
 public enum FileOrderType {
     /**
-     * order by file name
+     * order by file targetPath
      */
     NAME,
     /**

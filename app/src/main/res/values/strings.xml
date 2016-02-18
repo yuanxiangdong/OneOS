@@ -135,6 +135,8 @@
     <string name="error_get_file_list">获取文件列表失败</string>
     <string name="fmt_time_line">yyyy年MM月</string>
     <string name="error_open_encrypt_pic">很抱歉，无法查看加密图片</string>
-    <string name="gap_symbal">/</string>
+    <string name="error_app_not_found_to_open_file">未找到打开此文件的应用程序</string>
+    <string name="gap_symbol">/</string>
+    <string name="tip_start_download">开始下载: </string>
 
 </resources>

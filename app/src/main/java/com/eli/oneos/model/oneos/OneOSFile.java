@@ -1,6 +1,7 @@
 package com.eli.oneos.model.oneos;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 
 import java.io.Serializable;
 
@@ -12,7 +13,7 @@ public class OneOSFile implements Serializable {
 
     // for sticky header
     private int section = 0;
-    //    {"perm":"rwxr-xr-x","type":"audio","name":"haizeiw .mp3","gid":0,"path":"\/haizeiw .mp3","uid":1001,"time":1187168313,"size":6137050}
+    //    {"perm":"rwxr-xr-x","type":"audio","targetPath":"haizeiw .mp3","gid":0,"srcPath":"\/haizeiw .mp3","uid":1001,"time":1187168313,"size":6137050}
     private String path = null;
     private String perm = null;
     /**
@@ -36,8 +37,18 @@ public class OneOSFile implements Serializable {
     // format file size
     private String fmtSize = null;
 
+    /**
+     * OneOS File real srcPath
+     *
+     * @param user user targetPath
+     * @return private file: [/home/user/srcPath], public file: [srcPath]
+     */
     public String getRealPath(String user) {
-        return "/home/" + user + "/" + path;
+        if (isPublicFile()) {
+            return path;
+        } else {
+            return "home/" + user + "/" + path;
+        }
     }
 
     public String getPath() {
@@ -140,6 +151,10 @@ public class OneOSFile implements Serializable {
         return null != this.type && this.type.equalsIgnoreCase("dir");
     }
 
+    public boolean isPublicFile() {
+        return this.path.startsWith(OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR);
+    }
+
     public int getSection() {
         return section;
     }
@@ -172,7 +187,7 @@ public class OneOSFile implements Serializable {
 
     @Override
     public String toString() {
-        return "OneOSFile:{name:\"" + name + "\", path:\"" + path + "\", uid:\"" + uid + "\", type:\"" + type
+        return "OneOSFile:{targetPath:\"" + name + "\", srcPath:\"" + path + "\", uid:\"" + uid + "\", type:\"" + type
                 + "\", size:\"" + fmtSize + "\", time:\"" + fmtSize + "\", perm:\"" + perm + "\", gid:\"" + gid + "\"}";
     }
 }

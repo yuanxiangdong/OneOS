@@ -1,7 +1,7 @@
 package com.eli.oneos.constant;
 
 import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.model.oneos.user.LoginSession;
 
 /**
  * OneSpace OS 3.x API
@@ -20,6 +20,7 @@ public class OneOSAPIs {
     private static final String ONE_API = "/oneapi";
 
     public static final String LOGIN = ONE_API + "/user/login";
+    public static final String USER_MANAGE = ONE_API + "/user/manage";
     public static final String GET_MAC = ONE_API + "/net/infowire";
     public static final String GET_FILE_LIST = ONE_API + "/file/list";
     public static final String GET_SEARCH_FILE = ONE_API + "/file/search";
@@ -28,16 +29,20 @@ public class OneOSAPIs {
     public static final String FILE_DOWNLOAD = ONE_API + "/file/download";
     public static final String FILE_THUMBNAIL = ONE_API + "/file/thumbnail";
 
+//    public static String genOpenUrl(LoginSession loginSession, OneOSFile file) {
+//        String srcPath = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getTargetPath()));
+//        return loginSession.getBaseUrl() + "/" + srcPath + "&session=" + loginSession.getSession();
+//    }
 
     public static String genDownloadUrl(LoginSession loginSession, OneOSFile file) {
         // "http://192.168.1.17/oneapi/file/download?path=home%2Fadmin%2Fzxt01%2Fxxxxxxxxxxxx.JPG&session=c5i6qqbe78oj0c1h78o0====";
-        String pathUrl = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getName()));
-        return loginSession.getBaseUrl() + OneOSAPIs.FILE_DOWNLOAD + "?path=" + pathUrl + "&session=" + loginSession.getSession();
+        String path = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getName()));
+        return loginSession.getBaseUrl() + OneOSAPIs.FILE_DOWNLOAD + "?srcPath=" + path + "&session=" + loginSession.getSession();
     }
 
     public static String genThumbnailUrl(LoginSession loginSession, OneOSFile file) {
-        // "http://192.168.1.17/oneapi/file/download?path=home%2Fadmin%2Fzxt01%2Fxxxxxxxxxxxx.JPG&session=c5i6qqbe78oj0c1h78o0====";
-        String pathUrl = android.net.Uri.encode(file.getPath());
-        return loginSession.getBaseUrl() + OneOSAPIs.FILE_THUMBNAIL + "?path=" + pathUrl + "&session=" + loginSession.getSession();
+        // "http://192.168.1.17/oneapi/file/thumbnail?path=%2Fzxt01%2Fxxxxxxxxxxxx.JPG&session=c5i6qqbe78oj0c1h78o0====";
+        String path = android.net.Uri.encode(file.getPath());
+        return loginSession.getBaseUrl() + OneOSAPIs.FILE_THUMBNAIL + "?srcPath=" + path + "&session=" + loginSession.getSession();
     }
 }

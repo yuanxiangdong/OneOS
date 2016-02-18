@@ -1,4 +1,4 @@
-package com.eli.oneos.model.scan;
+package com.eli.oneos.model.oneos.scan;
 
 import android.content.Context;
 import android.os.AsyncTask;

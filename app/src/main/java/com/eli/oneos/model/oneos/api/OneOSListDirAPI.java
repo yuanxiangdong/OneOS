@@ -6,7 +6,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.GsonUtils;
@@ -54,7 +54,7 @@ public class OneOSListDirAPI extends OneOSBaseAPI {
         Log.d(TAG, "Login: " + url);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
-        params.put("path", path);
+        params.put("srcPath", path);
         params.put("ftype", type);
 
         finalHttp.post(url, params, new AjaxCallBack<String>() {

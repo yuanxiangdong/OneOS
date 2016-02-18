@@ -1,13 +1,17 @@
 package com.eli.oneos.utils;
 
-import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.Formatter;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.ui.PictureViewActivity;
 
 import java.io.File;
@@ -115,8 +119,33 @@ public class FileUtils {
         return Formatter.formatFileSize(MyApplication.getAppContext(), len);
     }
 
+    public static void openOneOSFile(LoginSession loginSession, BaseActivity activity, int position, final ArrayList<OneOSFile> fileList) {
+        OneOSFile file = fileList.get(position);
+        if (file.isPicture()) {
+            ArrayList<OneOSFile> picList = new ArrayList<>();
+            for (OneOSFile f : fileList) {
+                if (f.isPicture()) {
+                    picList.add(f);
+                }
+            }
+            openOneOSPicture(activity, position, picList);
+        } else {
+            String url = OneOSAPIs.genDownloadUrl(loginSession, file);
+            try {
+                Intent intent = new Intent();
+                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                String type = MIMETypeUtils.getMIMEType(file.getName());
+                intent.setDataAndType(Uri.parse(url), type);
+                activity.startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+                activity.showTipView(R.string.error_app_not_found_to_open_file, false);
+            }
+        }
+    }
 
-    public static void openServerPicture(Activity activity, int position, final ArrayList<OneOSFile> picList) {
+    public static void openOneOSPicture(BaseActivity activity, int position, final ArrayList<OneOSFile> picList) {
         Intent intent = new Intent(activity, PictureViewActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("StartIndex", position);
@@ -124,5 +153,21 @@ public class FileUtils {
         bundle.putSerializable("PictureList", picList);
         intent.putExtras(bundle);
         activity.startActivity(intent);
+    }
+
+
+    /** Notification system scans the specified file */
+    public static void requestScanFile(File mFile) {
+        if (mFile == null) {
+            return;
+        }
+
+        try {
+            Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            scanIntent.setData(Uri.fromFile(mFile));
+            MyApplication.getAppContext().sendBroadcast(scanIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

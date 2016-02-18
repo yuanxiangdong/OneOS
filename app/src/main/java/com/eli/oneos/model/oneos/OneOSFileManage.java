@@ -1,14 +1,17 @@
 package com.eli.oneos.model.oneos;
 
 import android.content.res.Resources;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.api.OneOSFileManageAPI;
-import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.service.TransferService;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
@@ -17,6 +20,7 @@ import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.InputMethodUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.ServerFileTreeView;
+import com.eli.oneos.widget.undobar.UndoBar;
 
 import org.json.JSONObject;
 
@@ -66,7 +70,7 @@ public class OneOSFileManage {
         public void onSuccess(String url, FileManageAction action, String response) {
             if (action == FileManageAction.ATTR) {
                 mActivity.dismissLoading();
-                // {"result":true, "path":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
+                // {"result":true, "srcPath":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
                 try {
                     OneOSFile file = fileList.get(0);
                     Resources resources = mActivity.getResources();
@@ -74,7 +78,7 @@ public class OneOSFileManage {
                     List<String> contentList = new ArrayList<>();
                     JSONObject json = new JSONObject(response);
                     titleList.add(resources.getString(R.string.file_attr_path));
-                    contentList.add(json.getString("path"));
+                    contentList.add(json.getString("srcPath"));
                     titleList.add(resources.getString(R.string.file_attr_size));
                     long size = json.getLong("size");
                     contentList.add(FileUtils.fmtFileSize(size) + " (" + size + resources.getString(R.string.tail_file_attr_size_bytes) + ")");
@@ -237,6 +241,34 @@ public class OneOSFileManage {
                     }
                 }
             });
+        } else if (action == FileManageAction.DOWNLOAD) {
+            String names = "";
+            int count = fileList.size() >= 4 ? 4 : fileList.size();
+            for (int i = 0; i < count; i++) {
+                names += fileList.get(i).getName() + " ";
+            }
+            new UndoBar.Builder(mActivity).setMessage(mActivity.getResources().getString(R.string.tip_start_download) + names)
+                    .setListener(new UndoBar.StatusBarListener() {
+
+                        @Override
+                        public void onUndo(Parcelable token) {
+
+                        }
+
+                        @Override
+                        public void onClick() {
+//                                Intent mIntent = new Intent(BroadCastAction.ACTION_CHANGE_MAIN_TAB_TO_TRANSFER);
+//                                mActivity.sendBroadcast(mIntent);
+                        }
+
+                        @Override
+                        public void onHide() {
+
+                        }
+                    }).show();
+
+            TransferService service = MyApplication.getTransferService();
+
         }
 
     }

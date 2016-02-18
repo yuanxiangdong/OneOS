@@ -45,11 +45,16 @@
             android:id="@+id/listview_timeline"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:cacheColorHint="@android:color/transparent"
             android:clipToPadding="false"
+            android:divider="@color/line_list_view"
+            android:dividerHeight="@dimen/list_divider_height"
             android:drawSelectorOnTop="true"
             android:fastScrollEnabled="true"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:listSelector="@android:color/transparent"
             android:overScrollMode="never"
-            android:padding="0dp"
             android:scrollbarStyle="outsideOverlay" />
     </com.eli.oneos.widget.PullToRefreshView>
 

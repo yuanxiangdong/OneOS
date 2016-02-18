@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.model.oneos.user.LoginSession;
 
 import java.util.ArrayList;
 import java.util.List;

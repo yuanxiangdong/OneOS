@@ -13,7 +13,7 @@ public class AppVersionUtils {
     /**
      * get app version
      *
-     * @return app version name
+     * @return app version targetPath
      */
     public static String getAppVersion() {
         String curVersion = null;
@@ -24,16 +24,16 @@ public class AppVersionUtils {
             curVersion = packInfo.versionName;
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e("Utils", "get current version name failed");
+            Log.e("Utils", "get current version targetPath failed");
         }
 
         return curVersion;
     }
 
     /**
-     * format output app version name
+     * format output app version targetPath
      *
-     * @return format app version name
+     * @return format app version targetPath
      */
     public static String formatAppVersion(String versionName) {
         if (versionName != null) {

@@ -13,14 +13,20 @@
             android:id="@+id/gridview_timeline"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
-            android:horizontalSpacing="0dp"
+            android:divider="@color/line_list_view"
+            android:dividerHeight="@dimen/list_divider_height"
+            android:fadingEdge="none"
+            android:footerDividersEnabled="false"
+            android:gravity="center"
+            android:headerDividersEnabled="false"
+            android:horizontalSpacing="5dp"
             android:listSelector="@android:color/transparent"
-            android:numColumns="3"
+            android:numColumns="4"
             android:overScrollMode="never"
+            android:paddingBottom="10dp"
             android:stretchMode="columnWidth"
-            android:verticalSpacing="0dp" />
+            android:verticalSpacing="5dp" />
     </com.eli.oneos.widget.PullToRefreshView>
 
     <LinearLayout

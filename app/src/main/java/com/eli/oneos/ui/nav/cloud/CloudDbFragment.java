@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
-import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.oneos.OneOSFile;
@@ -81,7 +80,8 @@ public class CloudDbFragment extends BaseCloudFragment {
                 mAdapter.notifyDataSetChanged();
                 updateSelectAndManagePanel();
             } else {
-                FileUtils.openServerPicture(getActivity(), position, mFileList);
+                isSelectionLastPosition = true;
+                FileUtils.openOneOSFile(mLoginSession, mMainActivity, position, mFileList);
             }
         }
     };
@@ -165,7 +165,7 @@ public class CloudDbFragment extends BaseCloudFragment {
             if (mPage < mPages - 1) {
                 getOneOSFileList(++mPage);
             } else {
-                ToastHelper.showToast(R.string.all_loaded);
+                mMainActivity.showTipView(R.string.all_loaded, true);
                 mListPullToRefreshView.onFooterRefreshComplete();
                 mGridPullToRefreshView.onFooterRefreshComplete();
             }
@@ -174,14 +174,12 @@ public class CloudDbFragment extends BaseCloudFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG, "On Create View");
+        Log.d(TAG, ">>>>>>>>On Create>>>>>>>");
 
         View view = inflater.inflate(R.layout.fragment_nav_cloud_db, container, false);
 
         mMainActivity = (MainActivity) getActivity();
         mParentFragment = (BaseNavFragment) getParentFragment();
-        curPath = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
-        mFileType = OneOSFileType.PRIVATE;
 
         initLoginSession();
         initView(view);
@@ -209,7 +207,7 @@ public class CloudDbFragment extends BaseCloudFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>");
+        Log.d(TAG, ">>>>>>>>On Resume>>>>>>>");
         autoPullToRefresh();
     }
 
@@ -316,10 +314,8 @@ public class CloudDbFragment extends BaseCloudFragment {
     }
 
     public void setFileType(OneOSFileType type, String path) {
-        if (this.mFileType != type) {
-            this.mFileType = type;
-            this.curPath = path;
-        }
+        this.mFileType = type;
+        Log.d(TAG, "========Set FileType: " + type);
     }
 
     private OneOSFileBaseAdapter getCurFileAdapter() {
@@ -475,6 +471,7 @@ public class CloudDbFragment extends BaseCloudFragment {
     }
 
     private void getOneOSFileList(int page) {
+        Log.d(TAG, "---------File type: " + mFileType);
         OneOSListDBAPI listDbAPI = new OneOSListDBAPI(mLoginSession, mFileType);
         listDbAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
             @Override

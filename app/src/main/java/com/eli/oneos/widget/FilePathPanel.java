@@ -128,7 +128,7 @@ public class FilePathPanel extends RelativeLayout {
                 shownPath = mPrefixName + File.separator;
             }
 
-            Log.d(TAG, "Add path button:" + shownPath);
+            Log.d(TAG, "Add srcPath button:" + shownPath);
 
             final String[] pathItems = shownPath.split(File.separator);
             Button[] pathBtn = new Button[pathItems.length];
@@ -168,7 +168,7 @@ public class FilePathPanel extends RelativeLayout {
                             tarPath += pathItems[j] + File.separator;
                         }
 
-                        Log.d(TAG, "Click target path is " + tarPath);
+                        Log.d(TAG, "Click target srcPath is " + tarPath);
                         if (null != mListener) {
                             mListener.onClick(v, tarPath);
                         }

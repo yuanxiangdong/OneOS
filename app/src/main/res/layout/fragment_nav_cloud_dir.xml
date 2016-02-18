@@ -89,7 +89,7 @@
 
     <include
         android:id="@+id/include_file_list"
-        layout="@layout/layout_file_list"
+        layout="@layout/layout_file_directory_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_path_panel" />

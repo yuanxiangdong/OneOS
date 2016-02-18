@@ -8,7 +8,7 @@ import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
-import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.GsonUtils;
@@ -38,7 +38,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
      */
     private String path = null;
     /**
-     * order by name or date
+     * order by targetPath or date
      */
     private String stype = null;
     /**
@@ -62,7 +62,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
 
         AjaxParams params = new AjaxParams();
         params.put("session", session);
-        params.put("path", path);
+        params.put("srcPath", path);
         params.put("stype", stype);
         params.put("pattern", pattern);
         if (!EmptyUtils.isEmpty(pdate1) && !EmptyUtils.isEmpty(pdate2)) {
@@ -141,7 +141,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
             this.path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
         }
         if (orderType == FileOrderType.NAME) {
-            this.stype = "name";
+            this.stype = "targetPath";
         } else {
             this.stype = "date";
         }

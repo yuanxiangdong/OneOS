@@ -23,7 +23,7 @@ import android.view.ViewGroup;
 
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.HttpBitmap;
 
 import java.io.File;

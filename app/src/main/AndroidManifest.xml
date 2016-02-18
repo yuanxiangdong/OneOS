@@ -50,6 +50,8 @@
             android:theme="@style/FullBleedTheme"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
         </activity>
+
+        <service android:name="com.eli.oneos.service.TransferService" />
     </application>
 
 </manifest>

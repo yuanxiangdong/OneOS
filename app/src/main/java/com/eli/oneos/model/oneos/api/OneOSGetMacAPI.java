@@ -7,7 +7,7 @@ import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.UserInfo;
-import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 
 import net.tsz.afinal.http.AjaxCallBack;

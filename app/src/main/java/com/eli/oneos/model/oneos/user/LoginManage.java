@@ -1,4 +1,4 @@
-package com.eli.oneos.model.user;
+package com.eli.oneos.model.oneos.user;
 
 /**
  * Singleton Class for manage list information.

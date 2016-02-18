@@ -126,8 +126,8 @@ public class CloudNavFragment extends BaseNavFragment {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
         if (mCurFragment != null) {
-            transaction.hide(mCurFragment);
             mCurFragment.onPause();
+            transaction.hide(mCurFragment);
         }
 
         String path;
@@ -144,7 +144,7 @@ public class CloudNavFragment extends BaseNavFragment {
             mCurFragment = mDbFragment;
             path = null;
         }
-        mDbFragment.setFileType(type, path);
+        mCurFragment.setFileType(type, path);
 
         if (!mCurFragment.isAdded()) {
             transaction.add(R.id.fragment_content, mCurFragment);

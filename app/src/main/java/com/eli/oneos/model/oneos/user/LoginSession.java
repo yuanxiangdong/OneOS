@@ -1,4 +1,4 @@
-package com.eli.oneos.model.user;
+package com.eli.oneos.model.oneos.user;
 
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.greendao.DeviceInfo;
@@ -59,6 +59,11 @@ public class LoginSession {
         this.userInfo = userInfo;
     }
 
+    /**
+     * base url
+     *
+     * @return such as http://192.168.1.17:80
+     */
     public String getBaseUrl() {
         if (null != deviceInfo) {
             return OneOSAPIs.PREFIX_HTTP + deviceInfo.getIp() + ":" + deviceInfo.getPort();

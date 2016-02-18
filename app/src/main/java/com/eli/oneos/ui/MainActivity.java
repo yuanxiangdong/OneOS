@@ -9,7 +9,7 @@ import android.view.Window;
 import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.user.LoginManage;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.receiver.NetworkStateManager;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.ui.nav.cloud.CloudNavFragment;

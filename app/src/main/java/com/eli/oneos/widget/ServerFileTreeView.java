@@ -26,7 +26,7 @@ import com.eli.oneos.model.oneos.OneOSFileManage;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
 import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
-import com.eli.oneos.model.user.LoginSession;
+import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;

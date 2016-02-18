@@ -23,7 +23,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Name = new Property(0, String.class, "name", true, "NAME");
+        public final static Property Name = new Property(0, String.class, "targetPath", true, "NAME");
         public final static Property Pwd = new Property(1, String.class, "pwd", false, "PWD");
         public final static Property Mac = new Property(2, String.class, "mac", false, "MAC");
         public final static Property Time = new Property(3, Long.class, "time", false, "TIME");
@@ -46,7 +46,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'USER_INFO' (" + //
-                "'NAME' TEXT PRIMARY KEY NOT NULL ," + // 0: name
+                "'NAME' TEXT PRIMARY KEY NOT NULL ," + // 0: targetPath
                 "'PWD' TEXT NOT NULL ," + // 1: pwd
                 "'MAC' TEXT NOT NULL ," + // 2: mac
                 "'TIME' INTEGER," + // 3: time
@@ -106,7 +106,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
     @Override
     public UserInfo readEntity(Cursor cursor, int offset) {
         UserInfo entity = new UserInfo( //
-            cursor.getString(offset + 0), // name
+            cursor.getString(offset + 0), // targetPath
             cursor.getString(offset + 1), // pwd
             cursor.getString(offset + 2), // mac
             cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // time
