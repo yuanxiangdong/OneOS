@@ -10,7 +10,7 @@ import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.ui.MainActivity;
-import com.eli.oneos.ui.nav.BaseNavFragment;
+import com.eli.oneos.ui.nav.BaseNavFileFragment;
 import com.eli.oneos.widget.FilePathPanel;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public abstract class BaseCloudFragment extends Fragment {
     protected MainActivity mMainActivity;
-    protected BaseNavFragment mParentFragment;
+    protected BaseNavFileFragment mParentFragment;
     protected FilePathPanel mPathPanel;
     protected boolean isListShown = true;
     protected FileOrderType mOrderType = FileOrderType.NAME;

@@ -38,6 +38,14 @@ public class DownloadElement extends TransferElement {
     }
 
     /**
+     * Get transmission source file name
+     */
+    @Override
+    public String getSrcName() {
+        return file.getName();
+    }
+
+    /**
      * Get transmission source file size
      */
     @Override

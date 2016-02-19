@@ -132,8 +132,8 @@ public class TransferService extends Service {
         mDownloadManager.continueDownload();
     }
 
-    public void cancelDownload(String fullName) {
-        mDownloadManager.removeDownload(fullName);
+    public void cancelDownload(String path) {
+        mDownloadManager.removeDownload(path);
     }
 
     public void cancelDownload() {

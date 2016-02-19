@@ -22,6 +22,7 @@
     <dimen name="line_radio_group_height">1.0dp</dimen>
     <dimen name="layout_nav_bar_height">50dp</dimen>
     <dimen name="layout_path_height">36dp</dimen>
+    <dimen name="layout_transfer_radio_group_height">36dp</dimen>
     <dimen name="layout_operate_height">@dimen/layout_nav_bar_height</dimen>
     <dimen name="layout_select_height">@dimen/layout_title_height</dimen>
 

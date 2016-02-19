@@ -30,7 +30,6 @@ import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
@@ -94,8 +93,7 @@ public class CircleProgressBar extends ImageView {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-        final TypedArray a = context.obtainStyledAttributes(
-                attrs, R.styleable.CircleProgressBar, defStyleAttr, 0);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleProgressBar, defStyleAttr, 0);
 //        <attr name="mlpb_inner_radius" format="dimension"/>
 //        <attr name="mlpb_background_color" format="color"/>
 //        <attr name="mlpb_progress_color" format="color"/>
@@ -118,11 +116,9 @@ public class CircleProgressBar extends ImageView {
 //        </attr>
         final float density = getContext().getResources().getDisplayMetrics().density;
 
-        mBackGroundColor = a.getColor(
-                R.styleable.CircleProgressBar_mlpb_background_color, DEFAULT_CIRCLE_BG_LIGHT);
+        mBackGroundColor = a.getColor(R.styleable.CircleProgressBar_mlpb_background_color, DEFAULT_CIRCLE_BG_LIGHT);
 
-        mProgressColor = a.getColor(
-                R.styleable.CircleProgressBar_mlpb_progress_color, DEFAULT_CIRCLE_BG_LIGHT);
+        mProgressColor = a.getColor(R.styleable.CircleProgressBar_mlpb_progress_color, DEFAULT_CIRCLE_BG_LIGHT);
         mColors = new int[]{mProgressColor};
 
         mInnerRadius = a.getDimensionPixelOffset(

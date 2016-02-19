@@ -28,7 +28,7 @@ import com.eli.oneos.model.oneos.adapter.OneOSStickyGridAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSStickyListAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListDBAPI;
 import com.eli.oneos.ui.MainActivity;
-import com.eli.oneos.ui.nav.BaseNavFragment;
+import com.eli.oneos.ui.nav.BaseNavFileFragment;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
@@ -179,7 +179,7 @@ public class CloudDbFragment extends BaseCloudFragment {
         View view = inflater.inflate(R.layout.fragment_nav_cloud_db, container, false);
 
         mMainActivity = (MainActivity) getActivity();
-        mParentFragment = (BaseNavFragment) getParentFragment();
+        mParentFragment = (BaseNavFileFragment) getParentFragment();
 
         initLoginSession();
         initView(view);

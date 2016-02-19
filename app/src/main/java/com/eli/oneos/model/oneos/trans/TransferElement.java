@@ -56,6 +56,11 @@ public abstract class TransferElement {
     public abstract String getSrcPath();
 
     /**
+     * Get transmission source file name
+     */
+    public abstract String getSrcName();
+
+    /**
      * Get transmission source file size
      */
     public abstract long getSize();

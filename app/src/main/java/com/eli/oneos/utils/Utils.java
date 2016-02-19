@@ -1,5 +1,9 @@
 package com.eli.oneos.utils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.eli.oneos.MyApplication;
 
 /**
@@ -55,4 +59,23 @@ public class Utils {
         return i >= 0 && i <= 65535;
     }
 
+    /**
+     * check WIFI is available
+     *
+     * @param context
+     * @return if available return true, else return false
+     */
+    public static boolean isWifiAvailable(Context context) {
+        if (context == null) {
+            return false;
+        }
+
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifi == null) {
+            return false;
+        }
+
+        return wifi.isAvailable();
+    }
 }

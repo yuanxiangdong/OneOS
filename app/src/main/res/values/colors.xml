@@ -51,4 +51,8 @@
 
     <color name="bg_timeline_header">#FFEEEEEE</color>
     <color name="bg_picture_viewer_title">#884B4B4B</color>
+    <color name="bg_uninstall_app">@color/red</color>
+    <color name="cicle_progress_base_color">#e5e5e5</color>
+    <color name="cicle_progress_primary_color">@color/primary</color>
+    <color name="bg_pop_menu">#95000000</color>
 </resources>

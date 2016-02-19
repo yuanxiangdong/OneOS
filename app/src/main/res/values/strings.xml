@@ -139,4 +139,37 @@
     <string name="gap_symbol">/</string>
     <string name="tip_start_download">开始下载: </string>
 
+    <!-- Transfer Fragment -->
+    <string name="download_list">下&#160;载</string>
+    <string name="upload_list">上&#160;传</string>
+    <string name="download_record">下载记录</string>
+    <string name="downloading_list">正在下载</string>
+    <string name="upload_record">上传记录</string>
+    <string name="uploading_list">正在上传</string>
+    <string name="start_all">全部开始</string>
+    <string name="pause_all">全部暂停</string>
+    <string name="delete_all">全部删除</string>
+    <string name="empty_transfer_list">没有传输记录</string>
+    <string name="cancel_and_delete_local">同时删除本地文件</string>
+    <string name="confirm_cancel_download">确认取消当前下载?</string>
+    <string name="confirm_cancel_upload">确认取消当前上传?</string>
+    <string name="cancel_download">下载已取消</string>
+    <string name="cancel_upload">上传已取消</string>
+    <string name="waiting">正在等待&#8230;</string>
+    <string name="download_pause">暂停下载</string>
+    <string name="download_failed">下载失败</string>
+    <string name="upload_pause">暂停上传</string>
+    <string name="refuse_upload_folder">暂不支持上传文件夹</string>
+
+    <!-- Download of upload failed information -->
+    <string name="local_space_insufficient">本地空间不足</string>
+    <string name="server_space_insufficient">空间不足</string>
+    <string name="request_server_exception">请求失败</string>
+    <string name="encoding_exception">解码异常</string>
+    <string name="io_exception">读写异常</string>
+    <string name="file_not_found">未找到该文件</string>
+    <string name="touch_file_failed">创建文件失败</string>
+    <string name="socket_timeout">连接超时</string>
+    <string name="unknown_exception">未知错误</string>
+    <string name="wifi_connect_break">网络中断</string>
 </resources>
