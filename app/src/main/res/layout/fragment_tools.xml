@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_tools"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/layout_title_height"
+        android:background="@color/primary"
+        android:gravity="center"
+        android:text="@string/nav_title_tool"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_mid" />
+
+    <com.eli.oneos.widget.ReboundScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/layout_nav_bar_height"
+        android:background="@color/white"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/list_divider_height"
+                android:layout_marginTop="30dp"
+                android:background="@color/line_list_view" />
+
+            <com.eli.oneos.widget.StickListView
+                android:id="@+id/listview_tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@color/line_list_view"
+                android:dividerHeight="@dimen/list_divider_height"
+                android:gravity="center"
+                android:listSelector="@android:color/transparent"
+                android:overScrollMode="never"
+                android:paddingLeft="15dp"
+                android:scrollbars="none" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/list_divider_height"
+                android:background="@color/line_list_view" />
+        </LinearLayout>
+    </com.eli.oneos.widget.ReboundScrollView>
+
+</LinearLayout>

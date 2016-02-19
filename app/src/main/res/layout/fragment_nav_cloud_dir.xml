@@ -32,7 +32,7 @@
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="@string/file_order_name"
-                android:textColor="@color/selector_dark_primary"
+                android:textColor="@color/selector_dark_to_primary"
                 android:textSize="@dimen/text_size_min" />
 
             <View
@@ -52,7 +52,7 @@
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="@string/file_order_time"
-                android:textColor="@color/selector_dark_primary"
+                android:textColor="@color/selector_dark_to_primary"
                 android:textSize="@dimen/text_size_min" />
         </RadioGroup>
 

@@ -15,6 +15,7 @@
     <string name="error_json_exception">解析协议出错</string>
     <string name="operate_failed">操作失败</string>
     <string name="app_exception">程序异常</string>
+    <string name="please_login_onespace">请先登录OneSpace</string>
 
     <!-- File Operation -->
     <string name="file_type_private">我的文件</string>
@@ -172,4 +173,28 @@
     <string name="socket_timeout">连接超时</string>
     <string name="unknown_exception">未知错误</string>
     <string name="wifi_connect_break">网络中断</string>
+
+    <!-- Tools Fragment -->
+    <string name="tool_setting">设置</string>
+    <string name="tool_backup_photo">相册备份</string>
+    <string name="tool_sync_contact">通讯录备份</string>
+    <string name="tool_sync_sms">短信备份</string>
+    <string name="tool_app">应用管理</string>
+    <string name="tool_offline">离线下载</string>
+    <string name="tool_power">设备电源</string>
+    <string name="tool_changer_user">切换用户</string>
+
+    <string name="device_power_off">安全关机</string>
+    <string name="cancel_opt_power">取&#160;&#160;消</string>
+    <string name="device_reboot">重新启动</string>
+    <string name="confirm_reboot_device">确定重新启动OneSpace?</string>
+    <string name="confirm_power_off_device">确定关闭OneSpace?</string>
+    <string name="shutting_down_device">正在关闭OneSpace&#8230;</string>
+    <string name="rebooting_device">正在重启OneSpace&#8230;</string>
+    <string name="success_power_off_device">OneSpace关闭成功</string>
+    <string name="success_reboot_device">OneSpace重启成功</string>
+    <string name="failed_power_off_device">OneSpace关闭失败</string>
+    <string name="failed_reboot_device">OneSpace重启失败</string>
+    <string name="confirm_change_user">确认切换用户?</string>
+    <string name="warning_change_user">该操作将关闭相册自动同步功能并取消所有正在上传/下载的任务!</string>
 </resources>

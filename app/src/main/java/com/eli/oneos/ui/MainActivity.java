@@ -14,6 +14,7 @@ import com.eli.oneos.receiver.NetworkStateManager;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.ui.nav.cloud.CloudNavFragment;
 import com.eli.oneos.ui.nav.tansfer.TransferNavFragment;
+import com.eli.oneos.ui.nav.tools.ToolsFragment;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
 
@@ -128,7 +129,8 @@ public class MainActivity extends BaseActivity {
         mFragmentList.add(cloudFragment);
         TransferNavFragment transferFragment = new TransferNavFragment();
         mFragmentList.add(transferFragment);
-        mFragmentList.add(cloudFragment);
+        ToolsFragment toolsFragment = new ToolsFragment();
+        mFragmentList.add(toolsFragment);
         changFragmentByIndex(mCurPageIndex);
     }
 

@@ -55,4 +55,6 @@
     <color name="cicle_progress_base_color">#e5e5e5</color>
     <color name="cicle_progress_primary_color">@color/primary</color>
     <color name="bg_pop_menu">#95000000</color>
+    <color name="bg_power_off_default">#FF4444</color>
+    <color name="bg_power_off_pressed">#FF3300</color>
 </resources>
