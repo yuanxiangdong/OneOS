@@ -31,4 +31,6 @@ dependencies {
     //    compile('com.lsjwzh:materialloadingprogressbar:0.5.8-RELEASE')
     compile project(':materialloadingprogressbar')
     compile files('libs/gson-2.2.4.jar')
+    compile files('libs/libundobar.jar')
+    compile files('libs/nineoldandroids-2.4.0.jar')
 }

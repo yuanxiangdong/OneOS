@@ -5,6 +5,8 @@ import android.os.StatFs;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.eli.oneos.constant.Constants;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +19,25 @@ import java.util.List;
 public class SDCardUtils {
 
     private static final String TAG_SDCARD = SDCardUtils.class.getSimpleName();
+
+    /**
+     * create local download store path
+     */
+    public static String createDownloadPath() {
+        String savePath;
+        if (SDCardUtils.checkSDCard()) {
+            savePath = Environment.getExternalStorageDirectory() + Constants.DEFAULT_DOWNLOAD_PATH;
+            File downLoadPath = new File(savePath);
+            if (!downLoadPath.exists()) {
+                downLoadPath.mkdir();
+            }
+        } else {
+            savePath = Environment.getDownloadCacheDirectory().getAbsolutePath() + Constants.DEFAULT_DOWNLOAD_PATH;
+        }
+
+        Log.i(TAG_SDCARD, "Create default download path: " + savePath);
+        return savePath;
+    }
 
     // /** get directory available size */
     public static long getDeviceAvailableSize(String path) {
@@ -119,6 +140,18 @@ public class SDCardUtils {
         return sdcardList;
     }
 
+    /**
+     * Check the state of SDcard, if exist return true, else return false
+     */
+    public static boolean checkSDCard() {
+        if (android.os.Environment.getExternalStorageState().equals(
+                android.os.Environment.MEDIA_MOUNTED)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private static void optimize(List<String> sdcaredPaths) {
         if (sdcaredPaths.size() == 0) {
             return;
@@ -145,7 +178,6 @@ public class SDCardUtils {
 
             index++;
         }
-
     }
 
     private static boolean isSymbolicLink(File file) {

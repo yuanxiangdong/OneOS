@@ -41,4 +41,59 @@
         <item name="android:windowEnterAnimation">@anim/alpha_in_tip</item>
         <item name="android:windowExitAnimation">@anim/alpha_out_tip</item>
     </style>
+
+    <style name="UndoRootStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/undo_bar_height</item>
+        <item name="android:layout_gravity">bottom|center_horizontal</item>
+        <item name="android:layout_marginLeft">@dimen/undo_bar_outer_margin</item>
+        <item name="android:layout_marginRight">@dimen/undo_bar_outer_margin</item>
+        <item name="android:layout_marginBottom">@dimen/undo_bar_outer_margin_bottom</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:clickable">true</item>
+        <item name="android:maxWidth">@dimen/undo_bar_max_width</item>
+        <item name="android:background">@drawable/bg_status_bar</item>
+    </style>
+
+    <style name="UndoTxtStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/undo_bar_padding</item>
+        <item name="android:paddingRight">@dimen/undo_bar_padding</item>
+        <item name="android:textColor">@color/selector_white_to_gray</item>
+        <item name="android:textSize">@dimen/text_size_min</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="UndoButtonWrapper">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="UndoDividerStyle">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/divider_margin</item>
+        <item name="android:layout_marginBottom">@dimen/divider_margin</item>
+        <item name="android:background">@color/light_gray</item>
+    </style>
+
+    <style name="UndoButtonStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">0.5</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/undo_bar_padding</item>
+        <item name="android:paddingRight">@dimen/undo_bar_padding</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:src">@drawable/selector_button_undo_bar_cancel</item>
+    </style>
 </resources>

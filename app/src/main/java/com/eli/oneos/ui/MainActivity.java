@@ -21,6 +21,8 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+    public static final String ACTION_SHOW_TRANSFER_DOWNLOAD = "action_show_transfer_download";
+    public static final String ACTION_SHOW_TRANSFER_UPLOAD = "action_show_transfer_upload";
 
     private List<BaseNavFragment> mFragmentList = new ArrayList<>();
     private BaseNavFragment mCurNavFragment;
@@ -91,7 +93,7 @@ public class MainActivity extends BaseActivity {
      * Init Views
      */
     private void initViews() {
-        mRootView = (View) findViewById(R.id.layout_root);
+        mRootView = findViewById(R.id.layout_root);
         radioGroup = (RadioGroup) findViewById(R.id.radiogroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -160,6 +162,19 @@ public class MainActivity extends BaseActivity {
         BaseNavFragment fragment = mFragmentList.get(index);
         Log.d(TAG, "Get Fragment By Index: " + index);
         return fragment;
+    }
+
+    @Override
+    public boolean controlActivity(String action) {
+        if (action.equals(ACTION_SHOW_TRANSFER_DOWNLOAD)) {
+
+            return true;
+        } else if (action.equals(ACTION_SHOW_TRANSFER_UPLOAD)) {
+
+            return true;
+        }
+
+        return false;
     }
 
     public void showNavBar() {

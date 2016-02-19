@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.eli.oneos.MyApplication;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.SDCardUtils;
@@ -93,7 +94,7 @@ public class DownloadManager {
 
     private HandlerQueueThread handlerQueueThread = new HandlerQueueThread(downloadList,
             mDownloadResultListener);
-    private static DownloadManager instance = new DownloadManager();
+    private static DownloadManager INSTANCE = new DownloadManager();
 
     private DownloadManager() {
 //        if (dbManager == null) {
@@ -110,7 +111,7 @@ public class DownloadManager {
      * @return singleton instance of class
      */
     public static DownloadManager getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public void setOnDownloadCompleteListener(OnDownloadCompleteListener listener) {
@@ -274,8 +275,7 @@ public class DownloadManager {
     }
 
     public ArrayList<DownloadElement> getCompleteList() {
-        ArrayList<DownloadElement> destList = new ArrayList<DownloadElement>(
-                Arrays.asList(new DownloadElement[completeList.size()]));
+        ArrayList<DownloadElement> destList = new ArrayList<DownloadElement>(Arrays.asList(new DownloadElement[completeList.size()]));
         synchronized (completeList) {
             Collections.copy(destList, completeList);
         }
@@ -325,8 +325,7 @@ public class DownloadManager {
                 if (hasDownloadTask) {
                     synchronized (this) {
                         try {
-                            Log.d(LOG_TAG, "----waiting for download task stop----: "
-                                    + this.getClass().getSimpleName());
+                            Log.d(LOG_TAG, "----waiting for download task stop----: " + this.getClass().getSimpleName());
                             this.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -343,10 +342,9 @@ public class DownloadManager {
                     e.printStackTrace();
                 }
 
-                synchronized (mDownloadList) { // TODO.. confirm !!
+                synchronized (mDownloadList) {
                     for (DownloadElement element : mDownloadList) {
                         if (element.getState() == TransferState.WAIT) {
-                            Log.e(LOG_TAG, "start download task: fullName = " + element.getSrcPath());
                             hasDownloadTask = true;
                             downloadThread = new DownloadThread(element, listener);
                             downloadThread.start();
@@ -435,22 +433,18 @@ public class DownloadManager {
             isInterrupt = false;
 
             LoginSession loginSession = LoginManage.getInstance().getLoginSession();
-            String session = loginSession.getSession();
-            String baseUrl = loginSession.getBaseUrl();
-            String srcPath = mElement.getSrcPath();
-
-            if (session == null || baseUrl == null) {
+            if (loginSession == null) {
                 mElement.setState(TransferState.FAILED);
                 mElement.setException(TransferException.REQUEST_SERVER);
                 Log.e(LOG_TAG, "session is null");
                 return;
             }
 
+            String session = loginSession.getSession();
             try {
-                srcPath = android.net.Uri.encode(srcPath);
-                String url = baseUrl + File.separator + srcPath;
+                String url = OneOSAPIs.genDownloadUrl(loginSession, mElement.getFile());
                 HttpGet httpGet = new HttpGet(url);
-                // Log.d(LOG_TAG, "Download srcPath: " + url);
+                Log.d(LOG_TAG, "Download file: " + url);
                 if (mElement.getOffset() < 0) {
                     Log.w(LOG_TAG, "error position, position must greater than or equal zero");
                     mElement.setOffset(0);
@@ -571,7 +565,7 @@ public class DownloadManager {
                     mElement.setException(TransferException.REQUEST_SERVER);
                     return;
                 } else if (fileLength > SDCardUtils.getDeviceAvailableSize(mElement.getTargetPath())) {
-                    Log.e(LOG_TAG, "Sd Acaliable Size Insufficient");
+                    Log.e(LOG_TAG, "Sd Avaliable Size Insufficient");
                     mElement.setState(TransferState.FAILED);
                     mElement.setException(TransferException.LOCAL_SPACE_INSUFFICIENT);
                     return;
@@ -617,10 +611,16 @@ public class DownloadManager {
         }
 
         private void saveData(InputStream input, HttpClient httpClient) {
-            RandomAccessFile outputFile = null;
+            RandomAccessFile outputFile;
             long curFileLength = mElement.getOffset();
             try {
-                outputFile = new RandomAccessFile(mElement.getTargetPath(), "rw");
+                String targetPath = mElement.getTargetPath() + File.separator + mElement.getFile().getName();
+                File file = new File(targetPath);
+                if (file.exists()) {
+                    file.renameTo(new File((targetPath + System.currentTimeMillis())));
+                }
+
+                outputFile = new RandomAccessFile(targetPath, "rw");
                 outputFile.seek(mElement.getOffset());
                 // Log.d(LOG_TAG, "write position = " +
                 // mElement.getOffset());

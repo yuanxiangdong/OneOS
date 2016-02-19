@@ -10,9 +10,11 @@ import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.api.OneOSFileManageAPI;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.service.TransferService;
 import com.eli.oneos.ui.BaseActivity;
+import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
@@ -242,33 +244,7 @@ public class OneOSFileManage {
                 }
             });
         } else if (action == FileManageAction.DOWNLOAD) {
-            String names = "";
-            int count = fileList.size() >= 4 ? 4 : fileList.size();
-            for (int i = 0; i < count; i++) {
-                names += fileList.get(i).getName() + " ";
-            }
-            new UndoBar.Builder(mActivity).setMessage(mActivity.getResources().getString(R.string.tip_start_download) + names)
-                    .setListener(new UndoBar.StatusBarListener() {
-
-                        @Override
-                        public void onUndo(Parcelable token) {
-
-                        }
-
-                        @Override
-                        public void onClick() {
-//                                Intent mIntent = new Intent(BroadCastAction.ACTION_CHANGE_MAIN_TAB_TO_TRANSFER);
-//                                mActivity.sendBroadcast(mIntent);
-                        }
-
-                        @Override
-                        public void onHide() {
-
-                        }
-                    }).show();
-
-            TransferService service = MyApplication.getTransferService();
-
+            downloadFiles();
         }
 
     }
@@ -303,6 +279,39 @@ public class OneOSFileManage {
                     });
         }
 
+    }
+
+    private void downloadFiles() {
+        String names = "";
+        int count = fileList.size() >= 4 ? 4 : fileList.size();
+        for (int i = 0; i < count; i++) {
+            names += fileList.get(i).getName() + " ";
+        }
+        new UndoBar.Builder(mActivity).setMessage(mActivity.getResources().getString(R.string.tip_start_download) + names)
+                .setListener(new UndoBar.StatusBarListener() {
+
+                    @Override
+                    public void onUndo(Parcelable token) {
+                    }
+
+                    @Override
+                    public void onClick() {
+                        mActivity.controlActivity(MainActivity.ACTION_SHOW_TRANSFER_DOWNLOAD);
+                    }
+
+                    @Override
+                    public void onHide() {
+                    }
+                }).show();
+        String savePath = LoginManage.getInstance().getDownloadPath();
+        TransferService service = MyApplication.getTransferService();
+        for (OneOSFile file : fileList) {
+            service.addDownloadTask(file, savePath);
+        }
+        
+        if (null != callback) {
+            callback.onComplete(true);
+        }
     }
 
     public interface OnManageCallback {

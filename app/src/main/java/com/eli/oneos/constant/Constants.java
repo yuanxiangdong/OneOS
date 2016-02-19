@@ -6,6 +6,7 @@ package com.eli.oneos.constant;
 public class Constants {
     public static final int DELAY_TIME_AUTO_REFRESH = 300;
 
+    public static final String DEFAULT_DOWNLOAD_PATH = "/OneOS";
 
 
 }

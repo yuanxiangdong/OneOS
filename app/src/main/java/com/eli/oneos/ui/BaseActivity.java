@@ -87,4 +87,8 @@ public class BaseActivity extends FragmentActivity {
         dismissLoading();
         mTipView.show(this, mRootView, msg, isPositive);
     }
+
+    public boolean controlActivity(String action) {
+        return false;
+    }
 }

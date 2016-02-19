@@ -9,94 +9,94 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-import com.eli.onespace.R;
+import com.eli.oneos.R;
 
 public class UndoBarView extends MaxWidthLinearLayout {
 
-	public UndoBarView(Context context) {
-		super(context);
-	}
+    public UndoBarView(Context context) {
+        super(context);
+    }
 
-	public UndoBarView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public UndoBarView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public UndoBarView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public UndoBarView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-	private TextView mMessage;
-	private View mButton;
+    private TextView mMessage;
+    private View mButton;
 
-	@Override
-	protected void onFinishInflate() {
-		super.onFinishInflate();
-		
-		mMessage = (TextView) findViewById(R.id.message);
-		mButton = findViewById(R.id.button);
-	}
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
 
-	void setMessage(CharSequence message) {
-		mMessage.setText(message);
-	}
+        mMessage = (TextView) findViewById(R.id.message);
+        mButton = findViewById(R.id.button);
+    }
 
-	void setOnUndoClickListener(OnClickListener onClickListener) {
-		mButton.setOnClickListener(onClickListener);
-		mMessage.setOnClickListener(onClickListener);
-	}
+    void setMessage(CharSequence message) {
+        mMessage.setText(message);
+    }
 
-	@Override
-	public Parcelable onSaveInstanceState() {
-		Parcelable superState = super.onSaveInstanceState();
-		SavedState ss = new SavedState(superState);
-		ss.message = mMessage.getText().toString();
-		return ss;
-	}
+    void setOnUndoClickListener(OnClickListener onClickListener) {
+        mButton.setOnClickListener(onClickListener);
+        mMessage.setOnClickListener(onClickListener);
+    }
 
-	@Override
-	public void onRestoreInstanceState(Parcelable state) {
-		if (!(state instanceof SavedState)) {
-			super.onRestoreInstanceState(state);
-			return;
-		}
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.message = mMessage.getText().toString();
+        return ss;
+    }
 
-		SavedState ss = (SavedState) state;
-		super.onRestoreInstanceState(ss.getSuperState());
-		setMessage(ss.message);
-	}
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
 
-	private static class SavedState extends BaseSavedState {
+        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+        setMessage(ss.message);
+    }
 
-		private String message;
+    private static class SavedState extends BaseSavedState {
 
-		SavedState(Parcelable superState) {
-			super(superState);
-		}
+        private String message;
 
-		@Override
-		public void writeToParcel(Parcel dest, int flags) {
-			super.writeToParcel(dest, flags);
-			dest.writeString(message);
-		}
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
 
-		private SavedState(Parcel in) {
-			super(in);
-			message = in.readString();
-		}
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(message);
+        }
 
-		@SuppressWarnings("unused")
-		private static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
+        private SavedState(Parcel in) {
+            super(in);
+            message = in.readString();
+        }
 
-			@Override
-			public SavedState createFromParcel(Parcel in) {
-				return new SavedState(in);
-			}
+        @SuppressWarnings("unused")
+        private static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
 
-			@Override
-			public SavedState[] newArray(int size) {
-				return new SavedState[size];
-			}
-		};
-	}
+            @Override
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+    }
 }

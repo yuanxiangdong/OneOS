@@ -1,5 +1,10 @@
 package com.eli.oneos.model.oneos.user;
 
+import com.eli.oneos.db.UserInfoKeeper;
+import com.eli.oneos.db.greendao.UserInfo;
+import com.eli.oneos.utils.EmptyUtils;
+import com.eli.oneos.utils.SDCardUtils;
+
 /**
  * Singleton Class for manage list information.
  * <p/>
@@ -62,6 +67,22 @@ public class LoginManage {
         }
 
         return false;
+    }
+
+    public String getDownloadPath() {
+        if (isLogin()) {
+            UserInfo userInfo = LoginManage.loginSession.getUserInfo();
+            String path = userInfo.getDownloadPath();
+            if (EmptyUtils.isEmpty(path)) {
+                path = SDCardUtils.createDownloadPath();
+                userInfo.setDownloadPath(path);
+                UserInfoKeeper.update(userInfo);
+            }
+
+            return path;
+        }
+
+        return null;
     }
 
     public void setLoginSession(LoginSession loginSession) {
