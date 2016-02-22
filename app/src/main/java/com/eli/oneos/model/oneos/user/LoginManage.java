@@ -61,6 +61,17 @@ public class LoginManage {
         return false;
     }
 
+
+    public boolean isAdmin() {
+        if (isLogin()) {
+            if (loginSession.getUserInfo().getAdmin() == 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean isLANDevice() {
         if (isLogin()) {
             return loginSession.getDeviceInfo().getIsLAN();

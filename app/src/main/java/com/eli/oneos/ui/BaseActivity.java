@@ -70,8 +70,12 @@ public class BaseActivity extends FragmentActivity {
         mLoadingView.show(this, msgId, isCancellable);
     }
 
+    public void showLoading(int msgId, int timeout, DialogInterface.OnDismissListener listener) {
+        mLoadingView.show(this, msgId, timeout, listener);
+    }
+
     public void showLoading(int msgId, boolean isCancellable, DialogInterface.OnDismissListener listener) {
-        mLoadingView.show(this, msgId, isCancellable, listener);
+        mLoadingView.show(this, msgId, isCancellable, -1, listener);
     }
 
     public void dismissLoading() {

@@ -1,6 +1,7 @@
 package com.eli.oneos.ui.nav.tools;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,10 +15,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.model.oneos.api.OneOSPowerAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.service.TransferService;
+import com.eli.oneos.ui.LoginActivity;
+import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.utils.DialogUtils;
+import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.PowerPopupView;
 import com.eli.oneos.widget.StickListView;
 
@@ -49,8 +56,9 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tools, container, false);
         Log.d(TAG, "On Create");
+        mMainActivity = (MainActivity) getActivity();
+        View view = inflater.inflate(R.layout.fragment_nav_tools, container, false);
 
         initViews(view);
 
@@ -93,38 +101,35 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         int tool = mToolList.get(arg2).toolTitle;
         Intent intent = null;
         Log.d(TAG, "On item click: tool = " + tool);
-//        if (tool == TOOL_APP) {
+        if (tool == TOOL_APP) {
 //            intent = new Intent(getActivity(), AppActivity.class);
-//        } else if (tool == TOOL_SETTING) {
-//            intent = new Intent(getActivity(), SettingActivity.class);
-//        } else if (tool == TOOL_SYNC_CONTACT) {
+        } else if (tool == TOOL_SETTING) {
+            intent = new Intent(getActivity(), SettingsActivity.class);
+        } else if (tool == TOOL_SYNC_CONTACT) {
 //            intent = new Intent(getActivity(), SyncContactActivity.class);
-//        } else if (tool == TOOL_SYNC_SMS) {
+        } else if (tool == TOOL_SYNC_SMS) {
 //            intent = new Intent(getActivity(), SyncSmsActivity.class);
-//        } else if (tool == TOOL_WIFI_CONFIG) {
-//            intent = new Intent(getActivity(), WifiConfigActivity.class);
-//        } else if (tool == TOOL_OFFLINE) {
-//            if (isLogin()) {
+        } else if (tool == TOOL_OFFLINE) {
+            if (isLogin()) {
 //                intent = new Intent(getActivity(), AriaActivity.class);
-//            } else {
-//                ToastHelper.showToast(R.string.please_login_onespace);
-//            }
-//        } else if (tool == TOOL_CHANGE_USER) {
-//            if (isLogin()) {
-//                loginOutDialog();
-//            } else {
-//                doLoginOut();
-//            }
-//        } else if (tool == TOOL_BACKUP_PHOTO) {
+            } else {
+                ToastHelper.showToast(R.string.please_login_onespace);
+            }
+        } else if (tool == TOOL_CHANGE_USER) {
+            if (isLogin()) {
+                loginOutDialog();
+            } else {
+                doLoginOut();
+            }
+        } else if (tool == TOOL_BACKUP_PHOTO) {
 //            intent = new Intent(getActivity(), BackupPhotoActivity.class);
-//        } else if (tool == TOOL_POWER) {
-//            int admin = UserInfoKeeper.readUserInfo(getActivity(), UserInfoKeeper.KEY_ADMIN_FLAG, UserInfoKeeper.DEFAULT_ADMIN_FLAG);
-//            if (isLogin() && admin == 1) {
-//                showPowerView(arg1);
-//            } else {
-//                DialogUtils.showNotifyDialog(getActivity(), R.string.dialog_tips, R.string.please_login_onespace_with_admin, R.string.ok, null);
-//            }
-//        }
+        } else if (tool == TOOL_POWER) {
+            if (isLogin() && LoginManage.getInstance().isAdmin()) {
+                showPowerView(arg1);
+            } else {
+                DialogUtils.showNotifyDialog(getActivity(), R.string.tip, R.string.please_login_onespace_with_admin, R.string.ok, null);
+            }
+        }
 
         if (intent != null) {
             startActivity(intent);
@@ -168,57 +173,42 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     }
 
     private void doPowerOffOrRebootDevice(final boolean isPowerOff) {
-//        UserInfo mUserInfo = UserInfoKeeper.readUserInfo(getActivity());
-//        String url = mUserInfo.getBaseUrl();
-//        if (isPowerOff) {
-//            url += ServerOptConstants.END_URL_HALT_DEVICE;
-//        } else {
-//            url += ServerOptConstants.END_URL_REBOOT_DEVICE;
-//        }
-//
-//        HttpUtils httpUtils = new HttpUtils(new OnHttpResultListener() {
-//
-//            @Override
-//            public void onStart() {
-//            }
-//
-//            @Override
-//            public void onSuccess(String url, String result) {
-//                int timeout = 0;
-//                int resId = 0;
-//                if (isPowerOff) {
-//                    timeout = 5;
-//                    resId = R.string.shutting_down_device;
-//                } else {
-//                    timeout = 60;
-//                    resId = R.string.rebooting_device;
-//                }
-//                IProgressDialog mDialog = new IProgressDialog(getActivity(), resId, timeout);
-//                mDialog.setOnDismissListener(new OnDismissListener() {
-//
-//                    @Override
-//                    public void onDismiss(DialogInterface dialog) {
-//                        // if (isPowerOff) {
-//                        // ToastHelper.showToast(R.string.success_power_off_device);
-//                        // } else {
-//                        // ToastHelper.showToast(R.string.success_reboot_device);
-//                        // }
-//                        doLoginOut();
-//                    }
-//                });
-//                mDialog.show();
-//            }
-//
-//            @Override
-//            public void onFailure(String url, int errorNo, String errorMsg) {
-//                if (isPowerOff) {
-//                    ToastHelper.showToast(R.string.failed_power_off_device);
-//                } else {
-//                    ToastHelper.showToast(R.string.failed_reboot_device);
-//                }
-//            }
-//        }, 10);
-//        httpUtils.get(url);
+        OneOSPowerAPI powerAPI = new OneOSPowerAPI(LoginManage.getInstance().getLoginSession());
+        powerAPI.setOnPowerListener(new OneOSPowerAPI.OnPowerListener() {
+            @Override
+            public void onStart(String url) {
+            }
+
+            @Override
+            public void onSuccess(String url, final boolean isPowerOff) {
+                int timeout = 0;
+                int resId = 0;
+                if (isPowerOff) {
+                    timeout = 5;
+                    resId = R.string.power_off_device;
+                } else {
+                    timeout = 40;
+                    resId = R.string.rebooting_device;
+                }
+                mMainActivity.showLoading(resId, timeout, new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (isPowerOff) {
+                            ToastHelper.showToast(R.string.success_power_off_device);
+                            doLoginOut();
+                        } else {
+                            mMainActivity.showTipView(R.string.success_reboot_device, true);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String url, int errorNo, String errorMsg) {
+                mMainActivity.showTipView(errorMsg, false);
+            }
+        });
+        powerAPI.power(isPowerOff);
     }
 
     private boolean isLogin() {
@@ -229,30 +219,23 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
      * login out
      */
     private void doLoginOut() {
-//        TransferService mTransferService = MyApplication.getTransferService();
-//        if (mTransferService == null) {
-//            ToastHelper.showToast(R.string.app_exception);
-//            return;
-//        }
-//        mTransferService.cancelDownload();
-//        mTransferService.cancelUpload();
-//
+        TransferService mTransferService = MyApplication.getTransferService();
+        if (mTransferService == null) {
+            ToastHelper.showToast(R.string.app_exception);
+            return;
+        }
+        mTransferService.cancelDownload();
+        mTransferService.cancelUpload();
+
+        // TODO..
 //        BackupService mBackupService = MyApplication.getBackupService();
 //        mBackupService.notifyUserLogout();
-//
-//        MyApplication mApplication = (MyApplication) getActivity().getApplication();
-//        mApplication.setLoginOut(true);
-//
-//        // 删除用户密码
-//        // UserInfoKeeper.writeUserInfo(getActivity(),
-//        // UserInfoKeeper.KEY_USER_PWD, "");
-//        UserInfoKeeper.writeUserInfo(getActivity(), UserInfoKeeper.KEY_SESSION, "");
-//        UserInfoKeeper.writeUserInfo(getActivity(), UserInfoKeeper.KEY_IS_LOGOUT, true);
-//        UsageInfoKeeper.writeUsageInfo(getActivity(), UsageInfoKeeper.KEY_USE_BACKUP_PHOTO, UsageInfoKeeper.DEFAULT_USE_BACKUP_PHOTO);
-//
-//        Intent intent = new Intent(getActivity(), LoginActivity.class);
-//        startActivity(intent);
-//        getActivity().finish();
+
+        LoginManage.getInstance().logout();
+
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivity(intent);
+        getActivity().finish();
     }
 
     /**

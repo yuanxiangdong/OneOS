@@ -40,6 +40,35 @@ public class SDCardUtils {
     }
 
     // /** get directory available size */
+    public static long getDeviceTotalSize(String path) {
+        if (path == null) {
+            return -1;
+        }
+
+        List<File> mSDCardList = SDCardUtils.getSDCardList();
+        if (null != mSDCardList && mSDCardList.size() > 0) {
+            String sdPath = null;
+            for (File root : mSDCardList) {
+                String rootPath = root.getAbsolutePath();
+                if (path.startsWith(rootPath)) {
+                    sdPath = rootPath;
+                    break;
+                }
+            }
+
+            if (null != sdPath) {
+                StatFs sf = new StatFs(sdPath);
+                long blockCount = sf.getBlockCount();
+                long blockSize = sf.getBlockSize();
+                long bookTotalSize = blockCount * blockSize;
+                return bookTotalSize;
+            }
+        }
+
+        return -1;
+    }
+
+    // /** get directory available size */
     public static long getDeviceAvailableSize(String path) {
         if (path == null) {
             return -1;
@@ -65,6 +94,36 @@ public class SDCardUtils {
         }
 
         return -1;
+    }
+
+
+    // /** Get Sd card total size */
+    public static long getSDTotalSize(String downloadPath) {
+        if (EmptyUtils.isEmpty(downloadPath)) {
+            File file = Environment.getExternalStorageDirectory();
+            StatFs statFs = new StatFs(file.getPath());
+            long blockCount = statFs.getBlockCount();
+            long blockSize = statFs.getBlockSize();
+            long bookTotalSize = blockCount * blockSize;
+            return bookTotalSize;
+        } else {
+            return getDeviceTotalSize(downloadPath);
+        }
+    }
+
+    /**
+     * Get free space of SD card
+     **/
+    public static long getSDAvailableSize(String downloadPath) {
+        if (EmptyUtils.isEmpty(downloadPath)) {
+            File path = Environment.getExternalStorageDirectory();
+            StatFs sf = new StatFs(path.getPath());
+            long blockSize = sf.getBlockSize();
+            long freeBlocks = sf.getAvailableBlocks();
+            return (freeBlocks * blockSize);
+        } else {
+            return getDeviceAvailableSize(downloadPath);
+        }
     }
 
     public static File getExternalSDCard() {

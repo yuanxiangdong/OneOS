@@ -2,6 +2,8 @@ package com.eli.oneos.model.oneos.trans;
 
 import com.eli.oneos.model.oneos.OneOSFile;
 
+import java.io.File;
+
 /**
  * Created by gaoyun@eli-tech.com on 2016/2/18.
  */
@@ -51,6 +53,10 @@ public class DownloadElement extends TransferElement {
     @Override
     public long getSize() {
         return file.getSize();
+    }
+
+    public File getDownloadFile() {
+        return new File(targetPath + File.separator + getSrcName());
     }
 
     // ===============getter and setter method======================

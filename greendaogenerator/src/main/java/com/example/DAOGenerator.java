@@ -30,6 +30,8 @@ public class DAOGenerator {
         note.addIntProperty("gid");
         note.addIntProperty("admin");
         note.addStringProperty("downloadPath");
+        note.addBooleanProperty("isPreviewPicOnlyWifi");
+        note.addBooleanProperty("isTipTransferNotWifi");
     }
 
     private static void addDeviceInfo(Schema schema) {

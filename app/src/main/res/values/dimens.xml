@@ -1,5 +1,6 @@
 <resources>
     <dimen name="layout_title_height">44dp</dimen>
+    <dimen name="layout_tool_title_height">44dp</dimen>
     <dimen name="layout_login_padding_left">40dp</dimen>
     <dimen name="layout_login_padding_right">40dp</dimen>
     <dimen name="layout_login_padding_top">60dp</dimen>
@@ -15,15 +16,17 @@
     <dimen name="line_dialog_weight">@dimen/line_common_weight</dimen>
     <dimen name="line_nav_weight">1.0dp</dimen>
     <dimen name="list_divider_height">@dimen/line_common_weight</dimen>
+    <dimen name="line_radio_group_height">1.0dp</dimen>
+    <dimen name="line_settings_weight">@dimen/line_common_weight</dimen>
 
     <dimen name="layout_spinner_line_height">53dp</dimen>
     <dimen name="layout_dialog_bottom_height">42dp</dimen>
     <dimen name="layout_dialog_margin">15dp</dimen>
-    <dimen name="line_radio_group_height">1.0dp</dimen>
     <dimen name="layout_nav_bar_height">50dp</dimen>
     <dimen name="layout_path_height">36dp</dimen>
-    <dimen name="layout_transfer_radio_group_height">36dp</dimen>
+    <dimen name="layout_transfer_radio_group_height">32dp</dimen>
     <dimen name="layout_operate_height">@dimen/layout_nav_bar_height</dimen>
     <dimen name="layout_select_height">@dimen/layout_title_height</dimen>
+    <dimen name="layout_anim_progress_width">230dp</dimen>
 
 </resources>

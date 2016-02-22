@@ -39,4 +39,21 @@
             <enum name="FILL" value="1" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="AnimCircleProgressBar">
+
+        <!-- 进度条最大值 -->
+        <attr name="max" format="integer" />
+        <!-- 是否填充圆形区域 -->
+        <attr name="fill" format="boolean" />
+        <!-- 画笔宽度，填充模式下无效，会被重置为0 -->
+        <attr name="paint_width" format="integer" />
+        <attr name="paint_weight" format="reference|dimension" />
+        <!-- 前景色 画笔颜色 -->
+        <attr name="paint_color" format="integer" />
+        <!-- 背景色 画笔颜色 -->
+        <attr name="bg_color" format="integer" />
+        <!-- 圆形区域向里缩进的距离 -->
+        <attr name="inside_interval" format="integer" />
+    </declare-styleable>
 </resources>

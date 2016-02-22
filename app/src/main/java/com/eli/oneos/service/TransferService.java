@@ -23,19 +23,19 @@ public class TransferService extends Service {
     private ServiceBinder mBinder;
     private DownloadManager mDownloadManager;
     private UploadManager mUploadManager;
-    private String savePath;
     private List<DownloadManager.OnDownloadCompleteListener> mDownloadCompleteListenerList = new ArrayList<DownloadManager.OnDownloadCompleteListener>();
     private List<UploadManager.OnUploadCompleteListener> mUploadCompleteListenerList = new ArrayList<UploadManager.OnUploadCompleteListener>();
 
     @Override
     public void onCreate() {
+        super.onCreate();
         mDownloadManager = DownloadManager.getInstance();
         mUploadManager = UploadManager.getInstance();
         mDownloadManager.setOnDownloadCompleteListener(new DownloadManager.OnDownloadCompleteListener() {
 
             @Override
             public void downloadComplete(DownloadElement element) {
-                FileUtils.requestScanFile(new File(getSavePath()));
+                FileUtils.requestScanFile(element.getDownloadFile());
 
                 for (DownloadManager.OnDownloadCompleteListener listener : mDownloadCompleteListenerList) {
                     listener.downloadComplete(element);
@@ -46,13 +46,11 @@ public class TransferService extends Service {
 
             @Override
             public void uploadComplete(UploadElement element) {
-                // TODO Auto-generated method stub
                 for (UploadManager.OnUploadCompleteListener listener : mUploadCompleteListenerList) {
                     listener.uploadComplete(element);
                 }
             }
         });
-        super.onCreate();
     }
 
     @Override
@@ -78,10 +76,6 @@ public class TransferService extends Service {
      * set on download complete listener
      */
     public boolean setOnDownloadCompleteListener(DownloadManager.OnDownloadCompleteListener listener) {
-        // if (mDownloadManager != null) {
-        // mDownloadManager.setDownloadManager.OnDownloadCompleteListener(listener);
-        // return true;
-        // }
         if (!mDownloadCompleteListenerList.contains(listener)) {
             return mDownloadCompleteListenerList.add(listener);
         }
@@ -99,15 +93,10 @@ public class TransferService extends Service {
     }
 
     // Download Operation
-    public long addDownloadTask(OneOSFile file, String savepath) {
-        setSavePath(savepath);
-        DownloadElement element = new DownloadElement(file, savepath);
+    public long addDownloadTask(OneOSFile file, String savePath) {
+        DownloadElement element = new DownloadElement(file, savePath);
         return mDownloadManager.enqueue(element);
     }
-
-    // public ArrayList<TransferElement> getDownloadCompleteList() {
-    // return mDownloadManager.getCompleteList();
-    // }
 
     public ArrayList<DownloadElement> getDownloadList() {
         return mDownloadManager.getDownloadList();
@@ -146,10 +135,6 @@ public class TransferService extends Service {
         return mUploadManager.enqueue(element);
     }
 
-    // public ArrayList<TransferElement> getUploadCompleteList() {
-    // return mUploadManager.getCompleteList();
-    // }
-
     public ArrayList<UploadElement> getUploadList() {
         return mUploadManager.getUploadList();
     }
@@ -184,17 +169,9 @@ public class TransferService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d(ACTIVITY_SERVICE, "transfer manager service destroy.");
+        super.onDestroy();
+        Log.d(ACTIVITY_SERVICE, "Transfer service destroy.");
         mDownloadManager.destroy();
         mUploadManager.destroy();
-        super.onDestroy();
-    }
-
-    public String getSavePath() {
-        return savePath;
-    }
-
-    public void setSavePath(String savePath) {
-        this.savePath = savePath;
     }
 }

@@ -17,6 +17,8 @@ public class UserInfo {
     private Integer gid;
     private Integer admin;
     private String downloadPath;
+    private Boolean isPreviewPicOnlyWifi;
+    private Boolean isTipTransferNotWifi;
 
     public UserInfo() {
     }
@@ -25,7 +27,7 @@ public class UserInfo {
         this.name = name;
     }
 
-    public UserInfo(String name, String pwd, String mac, Long time, Integer uid, Integer gid, Integer admin, String downloadPath) {
+    public UserInfo(String name, String pwd, String mac, Long time, Integer uid, Integer gid, Integer admin, String downloadPath, Boolean isPreviewPicOnlyWifi, Boolean isTipTransferNotWifi) {
         this.name = name;
         this.pwd = pwd;
         this.mac = mac;
@@ -34,6 +36,8 @@ public class UserInfo {
         this.gid = gid;
         this.admin = admin;
         this.downloadPath = downloadPath;
+        this.isPreviewPicOnlyWifi = isPreviewPicOnlyWifi;
+        this.isTipTransferNotWifi = isTipTransferNotWifi;
     }
 
     /** Not-null value. */
@@ -104,6 +108,22 @@ public class UserInfo {
 
     public void setDownloadPath(String downloadPath) {
         this.downloadPath = downloadPath;
+    }
+
+    public Boolean getIsPreviewPicOnlyWifi() {
+        return isPreviewPicOnlyWifi;
+    }
+
+    public void setIsPreviewPicOnlyWifi(Boolean isPreviewPicOnlyWifi) {
+        this.isPreviewPicOnlyWifi = isPreviewPicOnlyWifi;
+    }
+
+    public Boolean getIsTipTransferNotWifi() {
+        return isTipTransferNotWifi;
+    }
+
+    public void setIsTipTransferNotWifi(Boolean isTipTransferNotWifi) {
+        this.isTipTransferNotWifi = isTipTransferNotWifi;
     }
 
 }

@@ -93,7 +93,7 @@ public class CircleProgressBar extends ImageView {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleProgressBar, defStyleAttr, 0);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AnimCircleProgressBar, defStyleAttr, 0);
 //        <attr name="mlpb_inner_radius" format="dimension"/>
 //        <attr name="mlpb_background_color" format="color"/>
 //        <attr name="mlpb_progress_color" format="color"/>
@@ -116,32 +116,32 @@ public class CircleProgressBar extends ImageView {
 //        </attr>
         final float density = getContext().getResources().getDisplayMetrics().density;
 
-        mBackGroundColor = a.getColor(R.styleable.CircleProgressBar_mlpb_background_color, DEFAULT_CIRCLE_BG_LIGHT);
+        mBackGroundColor = a.getColor(R.styleable.AnimCircleProgressBar_mlpb_background_color, DEFAULT_CIRCLE_BG_LIGHT);
 
-        mProgressColor = a.getColor(R.styleable.CircleProgressBar_mlpb_progress_color, DEFAULT_CIRCLE_BG_LIGHT);
+        mProgressColor = a.getColor(R.styleable.AnimCircleProgressBar_mlpb_progress_color, DEFAULT_CIRCLE_BG_LIGHT);
         mColors = new int[]{mProgressColor};
 
         mInnerRadius = a.getDimensionPixelOffset(
-                R.styleable.CircleProgressBar_mlpb_inner_radius, -1);
+                R.styleable.AnimCircleProgressBar_mlpb_inner_radius, -1);
 
         mProgressStokeWidth = a.getDimensionPixelOffset(
-                R.styleable.CircleProgressBar_mlpb_progress_stoke_width, (int) (STROKE_WIDTH_LARGE * density));
+                R.styleable.AnimCircleProgressBar_mlpb_progress_stoke_width, (int) (STROKE_WIDTH_LARGE * density));
         mArrowWidth = a.getDimensionPixelOffset(
-                R.styleable.CircleProgressBar_mlpb_arrow_width, -1);
+                R.styleable.AnimCircleProgressBar_mlpb_arrow_width, -1);
         mArrowHeight = a.getDimensionPixelOffset(
-                R.styleable.CircleProgressBar_mlpb_arrow_height, -1);
+                R.styleable.AnimCircleProgressBar_mlpb_arrow_height, -1);
         mTextSize = a.getDimensionPixelOffset(
-                R.styleable.CircleProgressBar_mlpb_progress_text_size, (int) (DEFAULT_TEXT_SIZE * density));
+                R.styleable.AnimCircleProgressBar_mlpb_progress_text_size, (int) (DEFAULT_TEXT_SIZE * density));
         mTextColor = a.getColor(
-                R.styleable.CircleProgressBar_mlpb_progress_text_color, Color.BLACK);
+                R.styleable.AnimCircleProgressBar_mlpb_progress_text_color, Color.BLACK);
 
-        mShowArrow = a.getBoolean(R.styleable.CircleProgressBar_mlpb_show_arrow, false);
-        mCircleBackgroundEnabled = a.getBoolean(R.styleable.CircleProgressBar_mlpb_enable_circle_background, true);
+        mShowArrow = a.getBoolean(R.styleable.AnimCircleProgressBar_mlpb_show_arrow, false);
+        mCircleBackgroundEnabled = a.getBoolean(R.styleable.AnimCircleProgressBar_mlpb_enable_circle_background, true);
 
 
-        mProgress = a.getInt(R.styleable.CircleProgressBar_mlpb_progress, 0);
-        mMax = a.getInt(R.styleable.CircleProgressBar_mlpb_max, 100);
-        int textVisible = a.getInt(R.styleable.CircleProgressBar_mlpb_progress_text_visibility, 1);
+        mProgress = a.getInt(R.styleable.AnimCircleProgressBar_mlpb_progress, 0);
+        mMax = a.getInt(R.styleable.AnimCircleProgressBar_mlpb_max, 100);
+        int textVisible = a.getInt(R.styleable.AnimCircleProgressBar_mlpb_progress_text_visibility, 1);
         if (textVisible != 1) {
             mIfDrawText = true;
         }

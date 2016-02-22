@@ -85,11 +85,11 @@ public class PullToRefreshView extends LinearLayout {
      */
     // private TextView mFooterUpdateTextView;
     /**
-     * header progress bar
+     * header anim_progress bar
      */
     private CircleProgressBar mHeaderProgressBar;
     /**
-     * footer progress bar
+     * footer anim_progress bar
      */
     private CircleProgressBar mFooterProgressBar;
     /**

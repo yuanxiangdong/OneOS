@@ -65,7 +65,7 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
         mTransOrCompleteGroup = (RadioGroup) view.findViewById(R.id.radiogroup);
         mTransOrCompleteGroup.setOnCheckedChangeListener(this);
 
-        mTransferBtn = (RadioButton) view.findViewById(R.id.radio_transfe);
+        mTransferBtn = (RadioButton) view.findViewById(R.id.radio_transfer);
         mCompleteBtn = (RadioButton) view.findViewById(R.id.radio_complete);
 
         ImageButton mControlBtn = (ImageButton) view.findViewById(R.id.btn_control);
@@ -142,7 +142,7 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
                 isDownload = false;
             }
         } else {
-            if (checkedId == R.id.radio_transfe) {
+            if (checkedId == R.id.radio_transfer) {
                 isTransfer = true;
             } else {
                 isTransfer = false;

@@ -528,7 +528,7 @@ public class UploadManager {
                 return;
             }
 
-            // Modified to new position, to make sure progress is correct
+            // Modified to new position, to make sure anim_progress is correct
             mElement.setLength(uploadPosition);
             mElement.setOffset(uploadPosition);
 //            mElement.setTotalFileLength(fileLength);
@@ -698,7 +698,7 @@ public class UploadManager {
                 return;
             }
 
-            // Modified to new position, to make sure progress is correct
+            // Modified to new position, to make sure anim_progress is correct
             mElement.setLength(uploadPosition);
             mElement.setOffset(uploadPosition);
 //            mElement.setTotalFileLength(fileLen);

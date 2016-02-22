@@ -120,9 +120,9 @@ public class CircleStateProgressBar extends View {
 
         TypedArray mTypedArray = context.obtainStyledAttributes(attrs, R.styleable.CircleStateProgressStyle);
 
-        baseColor = mTypedArray.getColor(R.styleable.CircleStateProgressStyle_baseColor, context.getResources().getColor(R.color.cicle_progress_base_color));
+        baseColor = mTypedArray.getColor(R.styleable.CircleStateProgressStyle_baseColor, context.getResources().getColor(R.color.circle_progress_base_color));
         primaryColor = mTypedArray.getColor(R.styleable.CircleStateProgressStyle_primaryColor,
-                context.getResources().getColor(R.color.cicle_progress_primary_color));
+                context.getResources().getColor(R.color.circle_progress_primary_color));
         secondaryColor = mTypedArray.getColor(R.styleable.CircleStateProgressStyle_secondaryColor, Color.GREEN);
         primaryStartAngle = mTypedArray.getInteger(R.styleable.CircleStateProgressStyle_primaryStartAngle, -90);
         secondaryStartAngle = mTypedArray.getInteger(R.styleable.CircleStateProgressStyle_secondaryStartAngle, -90);
@@ -232,7 +232,7 @@ public class CircleStateProgressBar extends View {
     }
 
     /**
-     * set Max progress
+     * set Max anim_progress
      *
      * @param max
      */
@@ -244,7 +244,7 @@ public class CircleStateProgressBar extends View {
     }
 
     /**
-     * get primary progress
+     * get primary anim_progress
      *
      * @return
      */
@@ -253,7 +253,7 @@ public class CircleStateProgressBar extends View {
     }
 
     /**
-     * get secondary progress
+     * get secondary anim_progress
      *
      * @return
      */
@@ -262,13 +262,13 @@ public class CircleStateProgressBar extends View {
     }
 
     /**
-     * set primary progress
+     * set primary anim_progress
      *
      * @param progress
      */
     public synchronized void setProgress(int progress) {
         if (progress < 0) {
-            Log.e(TAG, "progress can not less than 0");
+            Log.e(TAG, "anim_progress can not less than 0");
             progress = 0;
         }
         if (progress > maxProgress) {
@@ -281,13 +281,13 @@ public class CircleStateProgressBar extends View {
     }
 
     /**
-     * set secondary progress
+     * set secondary anim_progress
      *
      * @param progressNext
      */
     public synchronized void setSecondaryProgress(int progressNext) {
         if (progressNext < 0) {
-            Log.e(TAG, "progress can not less than 0");
+            Log.e(TAG, "anim_progress can not less than 0");
             progressNext = 0;
         }
         if (progressNext > maxProgress) {

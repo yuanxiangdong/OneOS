@@ -8,6 +8,7 @@
     <string name="cancel">取消</string>
     <string name="tip">提示</string>
     <string name="paste">粘贴</string>
+    <string name="dialog_continue">继续</string>
     <string name="loading">正在加载&#8230;</string>
     <string name="all_loaded">已加载全部</string>
     <string name="network_not_available">当前网络不可用，请检查网络连接！</string>
@@ -16,6 +17,9 @@
     <string name="operate_failed">操作失败</string>
     <string name="app_exception">程序异常</string>
     <string name="please_login_onespace">请先登录OneSpace</string>
+    <string name="please_login_onespace_with_admin">请使用管理员用户登录OneSpace</string>
+    <string name="confirm_download_not_wifi">当前非Wi-Fi网络环境，继续下载将产生数据流量!</string>
+    <string name="confirm_upload_not_wifi">当前非Wi-Fi网络环境，继续上传将产生数据流量!</string>
 
     <!-- File Operation -->
     <string name="file_type_private">我的文件</string>
@@ -189,7 +193,7 @@
     <string name="device_reboot">重新启动</string>
     <string name="confirm_reboot_device">确定重新启动OneSpace?</string>
     <string name="confirm_power_off_device">确定关闭OneSpace?</string>
-    <string name="shutting_down_device">正在关闭OneSpace&#8230;</string>
+    <string name="power_off_device">正在关闭OneSpace&#8230;</string>
     <string name="rebooting_device">正在重启OneSpace&#8230;</string>
     <string name="success_power_off_device">OneSpace关闭成功</string>
     <string name="success_reboot_device">OneSpace重启成功</string>
@@ -197,4 +201,61 @@
     <string name="failed_reboot_device">OneSpace重启失败</string>
     <string name="confirm_change_user">确认切换用户?</string>
     <string name="warning_change_user">该操作将关闭相册自动同步功能并取消所有正在上传/下载的任务!</string>
+
+    <!-- Settings Activity -->
+    <string name="title_settings">设置</string>
+    <string name="not_login">尚未登录</string>
+    <string name="current_user">当前用户</string>
+    <string name="current_path">当前存储目录：</string>
+    <string name="clean_record">清除所有上传下载记录</string>
+    <string name="clean_record_success">清除成功</string>
+    <string name="clean_record_failed">清除失败</string>
+    <string name="setting_success">设置成功</string>
+    <string name="setting_failed">设置失败</string>
+    <string name="confirm_clear_record">确认清除记录?</string>
+    <string name="set_default_path">设置下载默认存储路径</string>
+    <string name="only_wifi_preview_pic">仅在Wi-Fi环境预览图片</string>
+    <string name="not_wifi_download_tips">非Wi-Fi环境上传/下载文件提醒</string>
+    <string name="about_onespace">关于OneSpace</string>
+    <string name="title_onespace_forum">OneSpace 论坛</string>
+    <string name="title_onespace_website">OneSpace 官网</string>
+    <string name="title_root_external_sd">修改外置SD卡权限</string>
+    <string name="space_total">OneSpace总空间</string>
+    <string name="space_user">当前用户空间</string>
+    <string name="space_local">SD卡空间</string>
+    <string name="sd_state_unmounted">没有可用的SD卡</string>
+
+    <!-- App Upgrade -->
+    <string name="get_version_exception">版本获取失败</string>
+    <string name="get_version_from_server_exception">获取新版本信息失败</string>
+    <string name="is_latest_version">当前已是最新版本</string>
+    <string name="have_new_version_app">检测到新版本:&#160;V&#160;</string>
+    <string name="confirm_cancel_download_app">确定取消下载新版本?</string>
+    <string name="interrupt_download">取消下载</string>
+    <string name="continue_download">继续下载</string>
+    <string name="check_app_version">APP版本检测&#8230;</string>
+    <string name="app_version_low">您的Android APP版本过低，请在: 工具包->设置->关于OneSpace 中更新APP版本！</string>
+    <string name="confirm_update_app">立即升级</string>
+    <string name="ignore_update_app">下次再说</string>
+    <string name="download_new_app">正在下载新版APP</string>
+    <string name="download_app_failed">下载失败，请重新尝试</string>
+
+    <!-- Space Activity -->
+    <string name="user_space_info">您的空间已使用</string>
+    <string name="title_local">SD卡空间</string>
+    <string name="title_server">OneSpace总空间</string>
+    <string name="title_user">当前用户空间</string>
+    <string name="total_space">总&#160;&#160;空&#160;&#160;间:</string>
+    <string name="available_space">可用空间:</string>
+    <string name="used_space">已用空间:</string>
+    <string name="query_space_failure">查询失败</string>
+    <string name="device_dev_sda">盘A</string>
+    <string name="device_dev_sdb">盘B</string>
+
+    <!-- About Activity -->
+    <string name="title_about">关于OneSpace</string>
+    <string name="copyright_statement">Powered by OneSpace</string>
+    <string name="website_onespace">www.onespace.cc</string>
+    <string name="start_download_file">开始下载文件&#8230;</string>
+
 </resources>

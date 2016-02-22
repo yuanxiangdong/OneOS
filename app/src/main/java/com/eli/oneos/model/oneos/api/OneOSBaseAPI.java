@@ -5,6 +5,7 @@ import android.content.Context;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.greendao.DeviceInfo;
+import com.eli.oneos.model.oneos.user.LoginSession;
 
 import net.tsz.afinal.FinalHttp;
 
@@ -22,6 +23,13 @@ public abstract class OneOSBaseAPI {
     protected String ip = null;
     protected String session = null;
     protected String port = OneOSAPIs.ONE_API_DEFAULT_PORT;
+
+    protected OneOSBaseAPI(LoginSession loginSession) {
+        this.ip = loginSession.getDeviceInfo().getIp();
+        this.port = loginSession.getDeviceInfo().getPort();
+        this.session = loginSession.getSession();
+        initHttp();
+    }
 
     protected OneOSBaseAPI(DeviceInfo info) {
         this.ip = info.getIp();

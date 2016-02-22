@@ -35,7 +35,7 @@ public class OneOSGetMacAPI extends OneOSBaseAPI {
     }
 
     public void getMac() {
-        url = genOneOSAPIUrl(OneOSAPIs.GET_MAC);
+        url = genOneOSAPIUrl(OneOSAPIs.NET_GET_MAC);
         Log.d(TAG, "Get OneSpace Mac: " + url);
         AjaxParams params = new AjaxParams();
         params.put("iface", "eth1");

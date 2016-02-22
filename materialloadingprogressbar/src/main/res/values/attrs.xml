@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CircleProgressBar">
+    <declare-styleable name="AnimCircleProgressBar">
         <attr name="mlpb_inner_radius" format="dimension"/>
         <attr name="mlpb_background_color" format="color"/>
         <attr name="mlpb_progress_color" format="color"/>

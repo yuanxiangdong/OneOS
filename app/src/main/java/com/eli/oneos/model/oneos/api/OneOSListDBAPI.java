@@ -45,7 +45,7 @@ public class OneOSListDBAPI extends OneOSBaseAPI {
     }
 
     public void list(int page) {
-        url = genOneOSAPIUrl(OneOSAPIs.GET_FILE_LIST_DB);
+        url = genOneOSAPIUrl(OneOSAPIs.FILE_LIST_DB);
         Log.d(TAG, "Login: " + url);
 
         AjaxParams params = new AjaxParams();

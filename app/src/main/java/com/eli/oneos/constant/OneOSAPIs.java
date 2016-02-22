@@ -21,13 +21,19 @@ public class OneOSAPIs {
 
     public static final String LOGIN = ONE_API + "/user/login";
     public static final String USER_MANAGE = ONE_API + "/user/manage";
-    public static final String GET_MAC = ONE_API + "/net/infowire";
-    public static final String GET_FILE_LIST = ONE_API + "/file/list";
-    public static final String GET_SEARCH_FILE = ONE_API + "/file/search";
-    public static final String GET_FILE_LIST_DB = ONE_API + "/file/listdb";
+
+    public static final String NET_GET_MAC = ONE_API + "/net/infowire";
+
+    public static final String FILE_LIST = ONE_API + "/file/list";
+    public static final String FILE_SEARCH = ONE_API + "/file/search";
+    public static final String FILE_LIST_DB = ONE_API + "/file/listdb";
     public static final String FILE_MANAGE = ONE_API + "/file/manage";
     public static final String FILE_DOWNLOAD = ONE_API + "/file/download";
     public static final String FILE_THUMBNAIL = ONE_API + "/file/thumbnail";
+
+    public static final String SYSTEM_REBOOT = ONE_API + "/sys/reboot";
+    public static final String SYSTEM_HALT = ONE_API + "/sys/halt";
+    public static final String SYSTEM_HD_SMART = ONE_API + "/sys/hdsmart";
 
 //    public static String genOpenUrl(LoginSession loginSession, OneOSFile file) {
 //        String srcPath = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getTargetPath()));

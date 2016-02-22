@@ -23,7 +23,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Name = new Property(0, String.class, "targetPath", true, "NAME");
+        public final static Property Name = new Property(0, String.class, "name", true, "NAME");
         public final static Property Pwd = new Property(1, String.class, "pwd", false, "PWD");
         public final static Property Mac = new Property(2, String.class, "mac", false, "MAC");
         public final static Property Time = new Property(3, Long.class, "time", false, "TIME");
@@ -31,6 +31,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         public final static Property Gid = new Property(5, Integer.class, "gid", false, "GID");
         public final static Property Admin = new Property(6, Integer.class, "admin", false, "ADMIN");
         public final static Property DownloadPath = new Property(7, String.class, "downloadPath", false, "DOWNLOAD_PATH");
+        public final static Property IsPreviewPicOnlyWifi = new Property(8, Boolean.class, "isPreviewPicOnlyWifi", false, "IS_PREVIEW_PIC_ONLY_WIFI");
+        public final static Property IsTipTransferNotWifi = new Property(9, Boolean.class, "isTipTransferNotWifi", false, "IS_TIP_TRANSFER_NOT_WIFI");
     };
 
 
@@ -46,14 +48,16 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'USER_INFO' (" + //
-                "'NAME' TEXT PRIMARY KEY NOT NULL ," + // 0: targetPath
+                "'NAME' TEXT PRIMARY KEY NOT NULL ," + // 0: name
                 "'PWD' TEXT NOT NULL ," + // 1: pwd
                 "'MAC' TEXT NOT NULL ," + // 2: mac
                 "'TIME' INTEGER," + // 3: time
                 "'UID' INTEGER," + // 4: uid
                 "'GID' INTEGER," + // 5: gid
                 "'ADMIN' INTEGER," + // 6: admin
-                "'DOWNLOAD_PATH' TEXT);"); // 7: downloadPath
+                "'DOWNLOAD_PATH' TEXT," + // 7: downloadPath
+                "'IS_PREVIEW_PIC_ONLY_WIFI' INTEGER," + // 8: isPreviewPicOnlyWifi
+                "'IS_TIP_TRANSFER_NOT_WIFI' INTEGER);"); // 9: isTipTransferNotWifi
     }
 
     /** Drops the underlying database table. */
@@ -94,6 +98,16 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         if (downloadPath != null) {
             stmt.bindString(8, downloadPath);
         }
+ 
+        Boolean isPreviewPicOnlyWifi = entity.getIsPreviewPicOnlyWifi();
+        if (isPreviewPicOnlyWifi != null) {
+            stmt.bindLong(9, isPreviewPicOnlyWifi ? 1l: 0l);
+        }
+ 
+        Boolean isTipTransferNotWifi = entity.getIsTipTransferNotWifi();
+        if (isTipTransferNotWifi != null) {
+            stmt.bindLong(10, isTipTransferNotWifi ? 1l: 0l);
+        }
     }
 
     /** @inheritdoc */
@@ -106,14 +120,16 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
     @Override
     public UserInfo readEntity(Cursor cursor, int offset) {
         UserInfo entity = new UserInfo( //
-            cursor.getString(offset + 0), // targetPath
+            cursor.getString(offset + 0), // name
             cursor.getString(offset + 1), // pwd
             cursor.getString(offset + 2), // mac
             cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // time
             cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // uid
             cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // gid
             cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // admin
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7) // downloadPath
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // downloadPath
+            cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0, // isPreviewPicOnlyWifi
+            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0 // isTipTransferNotWifi
         );
         return entity;
     }
@@ -129,6 +145,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
         entity.setGid(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
         entity.setAdmin(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
         entity.setDownloadPath(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setIsPreviewPicOnlyWifi(cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0);
+        entity.setIsTipTransferNotWifi(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
      }
     
     /** @inheritdoc */

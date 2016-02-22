@@ -70,6 +70,10 @@ public class TitleBackLayout extends LinearLayout {
         mTitleTxt.setText(resid);
     }
 
+    public void setTitle(String title) {
+        mTitleTxt.setText(title);
+    }
+
     public void setBackTitle(int resid) {
         mBackTxt.setText(resid);
     }

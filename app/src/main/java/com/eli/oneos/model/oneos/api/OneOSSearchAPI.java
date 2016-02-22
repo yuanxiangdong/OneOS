@@ -57,7 +57,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
     }
 
     private void search() {
-        url = genOneOSAPIUrl(OneOSAPIs.GET_SEARCH_FILE);
+        url = genOneOSAPIUrl(OneOSAPIs.FILE_SEARCH);
         Log.d(TAG, "Search File: " + url);
 
         AjaxParams params = new AjaxParams();

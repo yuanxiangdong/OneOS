@@ -50,7 +50,7 @@ public class TransmissionFragment extends BaseTransferFragment implements Downlo
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_transfer_child, container, false);
+        View view = inflater.inflate(R.layout.fragment_nav_transfer_child, container, false);
 
         initView(view);
 
