@@ -140,7 +140,7 @@ public class ShowSpaceActivity extends BaseActivity {
         float r = (float) progress / (float) 50;
         int durTime = (int) (r * ANIM_DURATION_TIME_BASE);
         // if (mCircleProgress != null) {
-        // Log.d(TAG, "Duration time = " + durTime);
+        // Logged.d(TAG, "Duration time = " + durTime);
         // mCircleProgress.setAnimParameter(durTime, anim_progress);
         // mCircleProgress.startCartoom();
         // }

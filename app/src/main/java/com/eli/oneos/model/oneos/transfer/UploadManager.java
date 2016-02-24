@@ -879,7 +879,7 @@ public class UploadManager {
             // }
             // } catch (Exception e) {
             // e.getStackTrace();
-            // Log.e(TAG, "stop upload exception");
+            // Logged.e(TAG, "stop upload exception");
             // }
         }
 
@@ -889,7 +889,7 @@ public class UploadManager {
         // public void stopUpload() {
         // isInterrupt = true;
         // mElement.setState(TransferState.PAUSE);
-        // Log.d(LOG_TAG, "stop upload");
+        // Logged.d(LOG_TAG, "stop upload");
         // }
 
         /**
@@ -1037,21 +1037,21 @@ public class UploadManager {
     // public void onFailure(int arg0, Header[] arg1, byte[] arg2,
     // Throwable arg3) {
     // // TODO Auto-generated method stub
-    // Log.e(TAG, ">>>>>>>>>>>> AsyncHttpClient Upload Failure: " +
+    // Logged.e(TAG, ">>>>>>>>>>>> AsyncHttpClient Upload Failure: " +
     // arg3.toString());
     // }
     //
     // @Override
     // public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
     // // TODO Auto-generated method stub
-    // Log.e(TAG, ">>>>>>>>>>>> AsyncHttpClient Upload Success");
+    // Logged.e(TAG, ">>>>>>>>>>>> AsyncHttpClient Upload Success");
     // }
     // });
 
     // try {
     // /** -----------upload file------------- */
     // String url = mElement.getUrlString();
-    // Log.d(TAG, "Upload url: " + url);
+    // Logged.d(TAG, "Upload url: " + url);
     // HttpPost httpPost = new HttpPost(url);
     // File file = new File(filePath);
     // BlockStreamBody fileBody = new BlockStreamBody(100, 1, file);
@@ -1064,9 +1064,9 @@ public class UploadManager {
     // mMultiEntity.addPart("savepath", new StringBody(savePath,
     // Charset.forName(HTTP.UTF_8)));
     // mMultiEntity.addPart("file", fileBody);
-    // Log.d(TAG, "Save srcPath: " + savePath);
+    // Logged.d(TAG, "Save srcPath: " + savePath);
     // long totalLength = mMultiEntity.getContentLength();
-    // Log.i(TAG, "UpLoad total size is: " + totalLength);
+    // Logged.i(TAG, "UpLoad total size is: " + totalLength);
     // mElement.setTotalFileLength(totalLength);
     // httpPost.setEntity(mMultiEntity);
     //
@@ -1078,11 +1078,11 @@ public class UploadManager {
     // HttpResponse httpResponse = httpClient.execute(httpPost);
     //
     // int code = httpResponse.getStatusLine().getStatusCode();
-    // Log.d(LOG_TAG, "Response Status Code: " + code);
+    // Logged.d(LOG_TAG, "Response Status Code: " + code);
     // if (totalLength < 0 || (code != 200 && code != 206)) {
-    // Log.e(LOG_TAG, "ERROR Reason: " +
+    // Logged.e(LOG_TAG, "ERROR Reason: " +
     // httpResponse.getStatusLine().getReasonPhrase());
-    // Log.e(LOG_TAG, "ERROR: content length = " + totalLength);
+    // Logged.e(LOG_TAG, "ERROR: content length = " + totalLength);
     // mElement.setState(TransferState.FAILED);
     // mElement.setException(TransferException.UNKNOW_EXCEPTION);
     // }

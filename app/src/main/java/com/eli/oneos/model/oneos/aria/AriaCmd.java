@@ -71,7 +71,7 @@ public class AriaCmd {
 			} else {
 				this.paramsArray.put(0, content);
 			}
-			// Log.d(TAG, "JSON Param: " + this.paramsArray.toString());
+			// Logged.d(TAG, "JSON Param: " + this.paramsArray.toString());
 		}
 	}
 
@@ -83,7 +83,7 @@ public class AriaCmd {
 	 * @throws FileNotFoundException
 	 */
 	private void initAriaMethod() throws JSONException {
-		// Log.d(TAG, "---Init Aria Method by Action---");
+		// Logged.d(TAG, "---Init Aria Method by Action---");
 
 		if (this.action == null) {
 			Log.w(TAG, "AriaAction is NULL");

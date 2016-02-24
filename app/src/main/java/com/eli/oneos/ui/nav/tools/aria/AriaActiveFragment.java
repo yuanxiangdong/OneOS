@@ -266,13 +266,13 @@ public class AriaActiveFragment extends Fragment implements MenuPopupView.OnMenu
 
                         @Override
                         public void onSuccess(String result) {
-                            // Log.d(TAG, "Operate Aria Result: " + result);
+                            // Logged.d(TAG, "Operate Aria Result: " + result);
                             dismissProgressDelay();
                         }
 
                         @Override
                         public void onFailure(Throwable t, int errorNo, String strMsg) {
-                            // Log.e(TAG, "Operate Aria Failure: " + strMsg);
+                            // Logged.e(TAG, "Operate Aria Failure: " + strMsg);
                             Log.e(TAG, "Exception", t);
                             dismissProgressDelay();
                         }
@@ -323,7 +323,7 @@ public class AriaActiveFragment extends Fragment implements MenuPopupView.OnMenu
 
                         @Override
                         public void onSuccess(String result) {
-                            // Log.d(TAG, "Get Aria Active List Result: " + result);
+                            // Logged.d(TAG, "Get Aria Active List Result: " + result);
                             try {
                                 JSONObject json = new JSONObject(result);
                                 if (!json.isNull("result")) {
@@ -337,7 +337,7 @@ public class AriaActiveFragment extends Fragment implements MenuPopupView.OnMenu
 
                         @Override
                         public void onFailure(Throwable t, int errorNo, String strMsg) {
-                            // Log.e(TAG, "Get Aria Active List Failure: " + strMsg);
+                            // Logged.e(TAG, "Get Aria Active List Failure: " + strMsg);
                             Log.e(TAG, "Exception", t);
                             mEmptyTxt.setText(R.string.connect_aria_exception);
                             activeList.clear();
@@ -361,7 +361,7 @@ public class AriaActiveFragment extends Fragment implements MenuPopupView.OnMenu
         FinalHttp finalHttp = new FinalHttp();
         finalHttp.configCookieStore(new BasicCookieStore());
 
-        // Log.d(TAG, "Add Aria Download Url: " + baseUrl + waitingAriaCmd.getEndUrl());
+        // Logged.d(TAG, "Add Aria Download Url: " + baseUrl + waitingAriaCmd.getEndUrl());
         try {
             finalHttp.post(baseUrl + waitingAriaCmd.getEndUrl(),
                     new StringEntity(waitingAriaCmd.toJsonParam()), AriaUtils.ARIA_PARAMS_ENCODE,
@@ -372,7 +372,7 @@ public class AriaActiveFragment extends Fragment implements MenuPopupView.OnMenu
 
                         @Override
                         public void onSuccess(String result) {
-                            // Log.d(TAG, "Get Aria Active List Result: " + result);
+                            // Logged.d(TAG, "Get Aria Active List Result: " + result);
                             try {
                                 JSONObject json = new JSONObject(result);
                                 if (!json.isNull("result")) {
@@ -386,7 +386,7 @@ public class AriaActiveFragment extends Fragment implements MenuPopupView.OnMenu
 
                         @Override
                         public void onFailure(Throwable t, int errorNo, String strMsg) {
-                            // Log.e(TAG, "Get Aria Active List Failure: " + strMsg);
+                            // Logged.e(TAG, "Get Aria Active List Failure: " + strMsg);
                             Log.e(TAG, "Exception", t);
                             mEmptyTxt.setText(R.string.connect_aria_exception);
                             waitingList.clear();

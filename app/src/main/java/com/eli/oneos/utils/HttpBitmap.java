@@ -66,13 +66,13 @@ public class HttpBitmap {
                     TouchImageView touchView = (TouchImageView) imageView;
                     touchView.onLoadOver(true, bitmap);
                 } else if (imageView instanceof ImageView) {
-//                    Log.d(TAG, "===>>>>FinalBitmap: Load Picture Success");
+//                    Logged.d(TAG, "===>>>>FinalBitmap: Load Picture Success");
                     ImageView mView = (ImageView) imageView;
                     mView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     mView.setImageBitmap(bitmap);
                 }
                 // else {
-                // Log.d(TAG, "===>>>>FinalBitmap: Load Picture Success");
+                // Logged.d(TAG, "===>>>>FinalBitmap: Load Picture Success");
                 // ImageView mView = (ImageView) imageView;
                 // mView.setImageBitmap(config.getLoadfailBitmap());
                 // }

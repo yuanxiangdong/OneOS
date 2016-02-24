@@ -159,7 +159,7 @@ public class SDCardUtils {
             String lineStr;
             while ((lineStr = inBr.readLine()) != null) {
                 // 获得命令执行后在控制台的输出信息
-                // Log.i(TAG_SDCARD, "--" + lineStr);
+                // Logged.i(TAG_SDCARD, "--" + lineStr);
 
                 String[] temp = TextUtils.split(lineStr, " ");
                 // 得到的输出的第二个空格后面是路径
@@ -167,7 +167,7 @@ public class SDCardUtils {
                 File file = new File(result);
                 if (!result.endsWith("legacy") && file.isDirectory() && file.canRead()
                         && file.canWrite() && !isSymbolicLink(file)) {
-                    // Log.d(TAG_SDCARD, "directory can read can write:" +
+                    // Logged.d(TAG_SDCARD, "directory can read can write:" +
                     // file.getAbsolutePath());
                     // 可读可写的文件夹未必是sdcard，我的手机的sdcard下的Android/obb文件夹也可以得到
                     sdcardPaths.add(result);
@@ -192,7 +192,7 @@ public class SDCardUtils {
         ArrayList<File> sdcardList = new ArrayList<File>();
         for (Iterator<String> iterator = sdcardPaths.iterator(); iterator.hasNext(); ) {
             String path = (String) iterator.next();
-            // Log.e(TAG_SDCARD, "清除过后: " + string);
+            // Logged.e(TAG_SDCARD, "清除过后: " + string);
             sdcardList.add(new File(path));
         }
 

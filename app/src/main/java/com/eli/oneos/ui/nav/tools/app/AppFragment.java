@@ -275,7 +275,7 @@ public class AppFragment extends Fragment implements OnItemClickListener {
     // appInfo.pkName = pkName;
     // mAppList.add(appInfo);
     // }
-    // Log.e(TAG, "Total APP: " + mAppList.size());
+    // Logged.e(TAG, "Total APP: " + mAppList.size());
     // }
 
     // private void queryPacakgeSize(String pkgName) throws Exception {

@@ -144,12 +144,12 @@ public class TouchImageView extends ImageView {
                         break;
                     case MotionEvent.ACTION_POINTER_DOWN:
                         oldDist = spacing(event);
-                        // Log.d(TAG, "oldDist=" + oldDist);
+                        // Logged.d(TAG, "oldDist=" + oldDist);
                         if (oldDist > 10f) {
                             savedMatrix.set(matrix);
                             midPoint(mid, event);
                             mode = ZOOM;
-                            // Log.d(TAG, "mode=ZOOM");
+                            // Logged.d(TAG, "mode=ZOOM");
                         }
                         break;
                     case MotionEvent.ACTION_UP:
@@ -194,7 +194,7 @@ public class TouchImageView extends ImageView {
                         velocity = 0;
                         savedMatrix.set(matrix);
                         oldDist = spacing(event);
-                        // Log.d(TAG, "mode=NONE");
+                        // Logged.d(TAG, "mode=NONE");
                         break;
 
                     case MotionEvent.ACTION_MOVE:
@@ -339,14 +339,14 @@ public class TouchImageView extends ImageView {
 
     private void checkSiding() {
         fillMatrixXY();
-        // Log.d(TAG, "x: " + matrixX + " y: " + matrixY + " left: " + right / 2 + " top:" + bottom
+        // Logged.d(TAG, "x: " + matrixX + " y: " + matrixY + " left: " + right / 2 + " top:" + bottom
         // / 2);
         float scaleWidth = Math.round(origWidth * saveScale);
         float scaleHeight = Math.round(origHeight * saveScale);
         onLeftSide = onRightSide = onTopSide = onBottomSide = false;
         if (-matrixX < 10.0f)
             onLeftSide = true;
-        // Log.d("GalleryViewPager", String.format("ScaleW: %f; W: %f, MatrixX: %f", scaleWidth,
+        // Logged.d("GalleryViewPager", String.format("ScaleW: %f; W: %f, MatrixX: %f", scaleWidth,
         // width, matrixX));
         if ((scaleWidth >= width && (matrixX + scaleWidth - width) < 10)
                 || (scaleWidth <= width && -matrixX + scaleWidth <= width))

@@ -190,7 +190,7 @@ public class CloudDbFragment extends BaseCloudFragment {
 //    @Override
 //    public void onConfigurationChanged(Configuration newConfig) {
 //        super.onConfigurationChanged(newConfig);
-//        Log.d(TAG, "On Configuration Changed");
+//        Logged.d(TAG, "On Configuration Changed");
 //        int orientation = this.getResources().getConfiguration().orientation;
 //        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
 //

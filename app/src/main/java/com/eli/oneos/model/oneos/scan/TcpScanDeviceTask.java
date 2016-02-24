@@ -119,7 +119,7 @@ public class TcpScanDeviceTask extends AsyncTask<Void, String, String[]> {
                 break;
             }
         } catch (IOException e) {
-            // Log.e(TAG, "TCP Scan Exception: " + e);
+            // Logged.e(TAG, "TCP Scan Exception: " + e);
         } finally {
 
             try {

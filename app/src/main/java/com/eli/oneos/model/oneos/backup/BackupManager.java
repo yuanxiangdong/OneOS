@@ -6,10 +6,10 @@ import android.util.Log;
 
 import com.eli.oneos.db.BackupInfoKeeper;
 import com.eli.oneos.db.greendao.BackupInfo;
-import com.eli.oneos.model.oneos.api.OneOSUploadFileAPI;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
+import com.eli.oneos.model.oneos.transfer.UploadFileThread;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
@@ -192,20 +192,20 @@ public class BackupManager {
     }
 
     private class HandlerQueueThread extends Thread {
-        private final String TAG = "==" + HandlerQueueThread.class.getSimpleName();
-        // private List<BackupElement> mCompletelist;
-        private List<BackupElement> mBackuplist = Collections.synchronizedList(new ArrayList<BackupElement>());
-        private BackupFileThread backupPhotoThread = null;
+        private final String TAG = HandlerQueueThread.class.getSimpleName();
+        private List<BackupElement> mBackupList = Collections.synchronizedList(new ArrayList<BackupElement>());
+        private UploadFileThread backupPhotoThread = null;
         private boolean isRunning = false;
         private boolean hasBackupTask = false;
-        private OnBackupListener listener = new OnBackupListener() {
+        private UploadFileThread.OnUploadListener listener = new UploadFileThread.OnUploadListener() {
             @Override
-            public void onResult(BackupElement mElement) {
-                Log.e(TAG, "----OnBackupListener Result: " + mElement.getFile().getName() + "  : " + System.currentTimeMillis());
+            public void onComplete(UploadElement element) {
+                BackupElement mElement = (BackupElement) element;
+                Log.d(TAG, "Backup Result: " + mElement.getFile().getName() + ", State: " + mElement.getState() + ", Time: " + System.currentTimeMillis());
 
                 stopCurrentBackupTask();
 
-                if (mBackuplist.contains(mElement)) {
+                if (mBackupList.contains(mElement)) {
                     if (mElement.getState() == TransferState.COMPLETE) {
                         mElement.setTime(System.currentTimeMillis());
 
@@ -221,11 +221,11 @@ public class BackupManager {
                         }
 
                         completeList.add(mElement);
-                        mBackuplist.remove(mElement);
+                        mBackupList.remove(mElement);
                         Log.d(TAG, "Backup Complete");
                     } else {
                         if (mElement.getState() == TransferState.FAILED && mElement.getException() == TransferException.FILE_NOT_FOUND) {
-                            mBackuplist.remove(mElement);
+                            mBackupList.remove(mElement);
                         } else {
                             Log.e(TAG, "Backup Failed");
                             mElement.setState(TransferState.WAIT);
@@ -267,8 +267,8 @@ public class BackupManager {
 
                 try {
                     Log.d(TAG, "Waiting for Backup List Change: " + System.currentTimeMillis());
-                    synchronized (mBackuplist) {
-                        mBackuplist.wait();
+                    synchronized (mBackupList) {
+                        mBackupList.wait();
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -286,11 +286,11 @@ public class BackupManager {
                     }
                 }
 
-                for (BackupElement element : mBackuplist) {
+                for (BackupElement element : mBackupList) {
                     if (element.getState() == TransferState.WAIT) {
                         Log.d(TAG, "start Backup task");
                         hasBackupTask = true;
-                        backupPhotoThread = new BackupFileThread(element, listener);
+                        backupPhotoThread = new UploadFileThread(element, mLoginSession, listener);
                         backupPhotoThread.start();
                         break;
                     }
@@ -305,7 +305,7 @@ public class BackupManager {
         private synchronized void stopCurrentBackupTask() {
             hasBackupTask = false;
             synchronized (this) {
-                // Log.d(TAG, "====Stop Current Backup Task: " +
+                // Logged.d(TAG, "====Stop Current Backup Task: " +
                 // System.currentTimeMillis());
                 this.notify();
             }
@@ -316,10 +316,10 @@ public class BackupManager {
          * and Backup list removed
          */
         private synchronized void notifyNewBackupTask() {
-            synchronized (mBackuplist) {
-                // Log.d(TAG, "====Notify New Backup Task: " +
+            synchronized (mBackupList) {
+                // Logged.d(TAG, "====Notify New Backup Task: " +
                 // System.currentTimeMillis());
-                mBackuplist.notify();
+                mBackupList.notify();
             }
         }
 
@@ -328,12 +328,12 @@ public class BackupManager {
                 return false;
             }
 
-            synchronized (mBackuplist) {
-                int curSize = mBackuplist.size();
-                if (mBackuplist.addAll(mAddList)) {
+            synchronized (mBackupList) {
+                int curSize = mBackupList.size();
+                if (mBackupList.addAll(mAddList)) {
                     if (curSize <= 0) {
                         if (!hasBackupTask) {
-                            mBackuplist.notify();
+                            mBackupList.notify();
                         }
                     }
                 } else {
@@ -349,12 +349,12 @@ public class BackupManager {
                 return false;
             }
 
-            synchronized (mBackuplist) {
-                int curSize = mBackuplist.size();
-                if (mBackuplist.add(mElement)) {
+            synchronized (mBackupList) {
+                int curSize = mBackupList.size();
+                if (mBackupList.add(mElement)) {
                     if (curSize <= 0) {
                         if (!hasBackupTask) {
-                            mBackuplist.notify();
+                            mBackupList.notify();
                         }
                     }
                 } else {
@@ -380,102 +380,11 @@ public class BackupManager {
         }
 
         public int getBackupListSize() {
-            if (mBackuplist == null) {
+            if (mBackupList == null) {
                 return 0;
             }
-            return this.mBackuplist.size();
+            return this.mBackupList.size();
         }
     }
 
-    /**
-     * The thread for backup photo file to server, based on HTTP or Socket.
-     */
-    public class BackupFileThread extends Thread {
-        private final String LOG_TAG = BackupFileThread.class.getSimpleName();
-        private BackupElement mElement;
-        private OnBackupListener mListener = null;
-        private OneOSUploadFileAPI uploadFileAPI;
-
-        public BackupFileThread(BackupElement element, OnBackupListener mListener) {
-            if (mListener == null || mLoginSession == null) {
-                Log.e(TAG, "Backup StatusListener is NULL");
-                new Throwable(new NullPointerException("OnBackupListener or LoginSession is NULL"));
-            }
-            this.mElement = element;
-            this.mListener = mListener;
-        }
-
-        @Override
-        public void run() {
-            uploadFileAPI = new OneOSUploadFileAPI(mLoginSession, mElement);
-            uploadFileAPI.setOnUploadFileListener(new OneOSUploadFileAPI.OnUploadFileListener() {
-                @Override
-                public void onStart(String url, UploadElement element) {
-                }
-
-                @Override
-                public void onComplete(String url, UploadElement element) {
-                    mListener.onResult((BackupElement) element);
-                }
-            });
-            uploadFileAPI.upload();
-        }
-
-        public void stopBackupPhoto() {
-            uploadFileAPI.stopUpload();
-            mElement.setState(TransferState.PAUSE);
-            Log.d(LOG_TAG, "stop upload");
-            interrupt();
-        }
-
-//        /**
-//         * get user server free space from server
-//         *
-//         * @param session
-//         * @param userId
-//         * @param baseUrl
-//         * @return user free space
-//         * @throws ClientProtocolException
-//         * @throws IOException
-//         * @throws JSONException
-//         */
-//        private long getUserServerFreeSpace(String session, long userId, String baseUrl) throws ClientProtocolException, IOException, JSONException {
-//            long userFreeSpace = 0;
-//
-//            // --------- Query server storage space whether enough to upload
-//            // file -----------
-//            List<NameValuePair> params = new ArrayList<NameValuePair>();
-//            params.add(new BasicNameValuePair("session", session));
-//            params.add(new BasicNameValuePair("uid", String.valueOf(userId)));
-//            HttpPost httpRequest = new HttpPost(baseUrl + ServerOptConstants.END_URL_GET_SPACE);
-//            DefaultHttpClient client = new DefaultHttpClient();
-//            // httpClient.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT,
-//            // 5000);
-//            client.getParams().setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, 10000);
-//            httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-//            HttpResponse response = client.execute(httpRequest);
-//            String userSpaceStr = null;
-//            if (response.getStatusLine().getStatusCode() == 200) {
-//                userSpaceStr = EntityUtils.toString(response.getEntity(), "UTF-8");
-//                JSONObject jsonObj = new JSONObject(userSpaceStr);
-//                boolean isRequested = jsonObj.getBoolean("result");
-//                if (isRequested) {
-//                    long totalSize = jsonObj.getLong("total") * 1024 * 1024 * 1024;
-//                    userFreeSpace = totalSize - jsonObj.getLong("used");
-//                } else {
-//                    userFreeSpace = -1;
-//                }
-//            } else {
-//                userFreeSpace = -1;
-//                throw new ClientProtocolException();
-//            }
-//
-//            return userFreeSpace;
-//        }
-
-    }
-
-    public interface OnBackupListener {
-        void onResult(BackupElement mElement);
-    }
 }

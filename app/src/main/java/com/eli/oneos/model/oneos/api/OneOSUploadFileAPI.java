@@ -176,7 +176,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         long retry = 0; // exception retry times
         long uploadLen = 0;
         int chunkNum = (int) Math.ceil((double) fileLen / (double) HTTP_BLOCK_SIZE);
-        int chunkIndex = 0;
+        int chunkIndex;
         for (chunkIndex = 0; chunkIndex < chunkNum; chunkIndex++) {
             Log.d(TAG, "=====>>> BlockIndex:" + chunkIndex + ", BlockNum:" + chunkNum + ", BlockSize:" + HTTP_BLOCK_SIZE);
             long blockUpLen = 0;

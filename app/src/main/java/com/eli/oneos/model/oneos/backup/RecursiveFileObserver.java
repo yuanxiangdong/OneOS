@@ -60,31 +60,31 @@ public class RecursiveFileObserver extends FileObserver {
 
         switch (event) {
             // case FileObserver.ACCESS:
-            // Log.d("RecursiveFileObserver", "ACCESS: " + path);
+            // Logged.d("RecursiveFileObserver", "ACCESS: " + path);
             // break;
             // case FileObserver.ATTRIB:
-            // Log.d("RecursiveFileObserver", "ATTRIB: " + path);
+            // Logged.d("RecursiveFileObserver", "ATTRIB: " + path);
             // break;
             // case FileObserver.CLOSE_NOWRITE:
-            // Log.d("RecursiveFileObserver", "CLOSE_NOWRITE: " + path);
+            // Logged.d("RecursiveFileObserver", "CLOSE_NOWRITE: " + path);
             // break;
             // case FileObserver.CLOSE_WRITE:
-            // Log.d("RecursiveFileObserver", "CLOSE_WRITE: " + path);
+            // Logged.d("RecursiveFileObserver", "CLOSE_WRITE: " + path);
             // break;
             // case FileObserver.DELETE:
-            // Log.d("RecursiveFileObserver", "REMOVE: " + path);
+            // Logged.d("RecursiveFileObserver", "REMOVE: " + path);
             // break;
             // case FileObserver.DELETE_SELF:
-            // Log.d("RecursiveFileObserver", "DELETE_SELF: " + path);
+            // Logged.d("RecursiveFileObserver", "DELETE_SELF: " + path);
             // break;
             // case FileObserver.MODIFY:
-            // Log.d("RecursiveFileObserver", "MODIFY: " + path);
+            // Logged.d("RecursiveFileObserver", "MODIFY: " + path);
             // break;
             // case FileObserver.MOVE_SELF:
-            // Log.d("RecursiveFileObserver", "MOVE_SELF: " + path);
+            // Logged.d("RecursiveFileObserver", "MOVE_SELF: " + path);
             // break;
             // case FileObserver.MOVED_FROM:
-            // Log.d("RecursiveFileObserver", "MOVED_FROM: " + path);
+            // Logged.d("RecursiveFileObserver", "MOVED_FROM: " + path);
             // break;
             case FileObserver.CREATE:
                 Log.d("RecursiveFileObserver", "CREATE: " + path);
@@ -95,10 +95,10 @@ public class RecursiveFileObserver extends FileObserver {
                 onCreateDir(path);
                 break;
             // case FileObserver.OPEN:
-            // Log.d("RecursiveFileObserver", "OPEN: " + path);
+            // Logged.d("RecursiveFileObserver", "OPEN: " + path);
             // break;
             // default:
-            // Log.d("RecursiveFileObserver", "DEFAULT(" + event + "): " + path);
+            // Logged.d("RecursiveFileObserver", "DEFAULT(" + event + "): " + path);
             // break;
         }
     }

@@ -240,16 +240,16 @@ public class AppUpgradeManager {
         Pattern pattern = Pattern.compile(regEx);
         Matcher matcher = pattern.matcher(version);
         String numStr = matcher.replaceAll("").trim();
-        // Log.d(TAG, "Version Num String: " + numStr);
+        // Logged.d(TAG, "Version Num String: " + numStr);
         String[] nums = numStr.split("\\.");
         int ver = 0;
         for (int i = 0; i < nums.length; i++) {
-            // Log.d(TAG, "Version Num string " + i + ": " + nums[i]);
+            // Logged.d(TAG, "Version Num string " + i + ": " + nums[i]);
             int leverl = 4 - i - 1;
             ver += Integer.valueOf(nums[i]) * Math.pow(10, leverl * 2);
         }
 
-        // Log.d(TAG, "Version Num: " + ver);
+        // Logged.d(TAG, "Version Num: " + ver);
 
         return ver;
     }

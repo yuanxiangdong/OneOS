@@ -558,7 +558,7 @@ public class DownloadManager {
                     return;
                 }
                 long fileLength = entity.getContentLength();
-                // Log.d(LOG_TAG, "download file length = " + fileLength);
+                // Logged.d(LOG_TAG, "download file length = " + fileLength);
                 if (fileLength < 0) {
                     Log.e(LOG_TAG, "ERROR: content length=" + fileLength);
                     mElement.setState(TransferState.FAILED);
@@ -576,7 +576,7 @@ public class DownloadManager {
                     int last = contentRanges.lastIndexOf('/');
                     String totalString = contentRanges.substring(last + 1, contentRanges.length());
                     fileLength = Long.valueOf(totalString);
-                    // Log.d(LOG_TAG,
+                    // Logged.d(LOG_TAG,
                     // "header targetPath=" + header.getTargetPath() + ", value=" +
                     // header.getValue());
                 }
@@ -622,7 +622,7 @@ public class DownloadManager {
 
                 outputFile = new RandomAccessFile(targetPath, "rw");
                 outputFile.seek(mElement.getOffset());
-                // Log.d(LOG_TAG, "write position = " +
+                // Logged.d(LOG_TAG, "write position = " +
                 // mElement.getOffset());
                 byte[] buffer = new byte[HTTP_BUFFER_SIZE];
                 int nRead = 0;
@@ -684,7 +684,7 @@ public class DownloadManager {
                 // outputFile.close();
                 // }
                 // } catch (IOException e) {
-                // Log.e(LOG_TAG, "input/output closed error.");
+                // Logged.e(LOG_TAG, "input/output closed error.");
                 // e.printStackTrace();
                 // }
             }

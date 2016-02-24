@@ -93,7 +93,7 @@ public class UdpScanDeviceTask extends AsyncTask<Void, String, String[]> {
                 udpSocket = null;
             }
         }
-        // Log.e(TAG, "----doInBackground over----");
+        // Logged.e(TAG, "----doInBackground over----");
 
         return null;
     }

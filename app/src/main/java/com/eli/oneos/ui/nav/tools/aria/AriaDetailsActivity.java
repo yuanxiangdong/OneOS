@@ -181,7 +181,7 @@ public class AriaDetailsActivity extends BaseActivity {
         FinalHttp finalHttp = new FinalHttp();
         finalHttp.configCookieStore(new BasicCookieStore());
 
-        // Log.d(TAG, "Add Aria Download Url: " + baseUrl + activeAriaCmd.getEndUrl());
+        // Logged.d(TAG, "Add Aria Download Url: " + baseUrl + activeAriaCmd.getEndUrl());
         try {
             finalHttp.post(baseUrl + detailsCmd.getEndUrl(),
                     new StringEntity(detailsCmd.toJsonParam()), AriaUtils.ARIA_PARAMS_ENCODE,

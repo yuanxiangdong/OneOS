@@ -213,7 +213,7 @@ public class AriaActivity extends BaseActivity implements OnClickListener {
                         @Override
                         public void onFailure(Throwable t, int errorNo, String strMsg) {
                             dismissLoading();
-                            // Log.e(TAG, "Get Aria Active List Failure: " +
+                            // Logged.e(TAG, "Get Aria Active List Failure: " +
                             // strMsg);
                             Log.e(TAG, "Exception", t);
                             ToastHelper.showToast(R.string.error_request_aria_params);
