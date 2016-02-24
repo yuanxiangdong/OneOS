@@ -21,7 +21,7 @@ import org.json.JSONObject;
 
 /**
  * OneSpace OS Login API
- * <p/>
+ * <p>
  * Created by gaoyun@eli-tech.com on 2016/1/8.
  */
 public class OneOSLoginAPI extends OneOSBaseAPI {
@@ -78,12 +78,12 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
                             long time = System.currentTimeMillis();
                             boolean isLAN = (!EmptyUtils.isEmpty(mac)) ? true : false;
 
-                            UserInfo userInfo = null;
+                            UserInfo userInfo;
                             if (!EmptyUtils.isEmpty(mac)) {
                                 userInfo = UserInfoKeeper.insertOrReplace(user, pwd, mac, time, uid, gid, admin);
                             } else {
                                 // Needs to update database after access to device mac
-                                userInfo = new UserInfo(user, pwd, mac, time, uid, gid, admin, null, true, true);
+                                userInfo = new UserInfo(0L, user, pwd, mac, time, uid, gid, admin, null, true, true, false, true);
                             }
 
                             if (!isLAN) {
@@ -92,9 +92,9 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
                             }
 
                             DeviceInfo deviceInfo = new DeviceInfo(ip, mac, time, port, "", "", isLAN);
-                            LoginSession loginInfo = new LoginSession(userInfo, deviceInfo, session, time);
+                            LoginSession loginSession = new LoginSession(userInfo, deviceInfo, session, time);
 
-                            listener.onSuccess(url, loginInfo);
+                            listener.onSuccess(url, loginSession);
                         } else {
                             // {"errno":-1,"msg":"list error","result":false}
                             int errorNo = json.getInt("errno");

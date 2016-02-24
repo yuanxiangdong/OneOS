@@ -15,7 +15,7 @@
             android:layout_height="match_parent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/line_list_view"
-            android:dividerHeight="@dimen/list_divider_height"
+            android:dividerHeight="@dimen/line_list_divider_height"
             android:fadingEdge="none"
             android:footerDividersEnabled="false"
             android:gravity="center"

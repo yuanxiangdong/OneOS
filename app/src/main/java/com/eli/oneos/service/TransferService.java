@@ -1,6 +1,7 @@
 package com.eli.oneos.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -8,11 +9,16 @@ import android.os.Parcel;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.eli.oneos.MyApplication;
+import com.eli.oneos.db.BackupInfoKeeper;
 import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.oneos.trans.DownloadElement;
-import com.eli.oneos.model.oneos.trans.DownloadManager;
-import com.eli.oneos.model.oneos.trans.UploadElement;
-import com.eli.oneos.model.oneos.trans.UploadManager;
+import com.eli.oneos.model.oneos.backup.BackupManager;
+import com.eli.oneos.model.oneos.transfer.DownloadElement;
+import com.eli.oneos.model.oneos.transfer.DownloadManager;
+import com.eli.oneos.model.oneos.transfer.UploadElement;
+import com.eli.oneos.model.oneos.transfer.UploadManager;
+import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.FileUtils;
 
 import java.io.File;
@@ -20,15 +26,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransferService extends Service {
+    private static final String TAG = TransferService.class.getSimpleName();
+
+    private Context context;
     private ServiceBinder mBinder;
     private DownloadManager mDownloadManager;
     private UploadManager mUploadManager;
+    private BackupManager mBackupManager;
     private List<DownloadManager.OnDownloadCompleteListener> mDownloadCompleteListenerList = new ArrayList<DownloadManager.OnDownloadCompleteListener>();
     private List<UploadManager.OnUploadCompleteListener> mUploadCompleteListenerList = new ArrayList<UploadManager.OnUploadCompleteListener>();
 
     @Override
     public void onCreate() {
         super.onCreate();
+        context = MyApplication.getAppContext();
+
         mDownloadManager = DownloadManager.getInstance();
         mUploadManager = UploadManager.getInstance();
         mDownloadManager.setOnDownloadCompleteListener(new DownloadManager.OnDownloadCompleteListener() {
@@ -70,6 +82,42 @@ public class TransferService extends Service {
         protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
             return super.onTransact(code, data, reply, flags);
         }
+    }
+
+    public void startBackup() {
+        LoginSession loginSession = LoginManage.getInstance().getLoginSession();
+        if (!loginSession.getUserInfo().getIsAutoBackup()) {
+            Log.e(TAG, "Do not open auto backup photo");
+            return;
+        }
+        if (mBackupManager != null) {
+            mBackupManager.stopBackup();
+        }
+
+        mBackupManager = new BackupManager(loginSession, context);
+        mBackupManager.startBackup();
+        Log.d(TAG, "======Start Backup Service=======");
+    }
+
+    public void stopBackup() {
+        if (mBackupManager != null) {
+            mBackupManager.stopBackup();
+            mBackupManager = null;
+        }
+    }
+
+    public void resetBackup() {
+        stopBackup();
+        LoginSession loginSession = LoginManage.getInstance().getLoginSession();
+        BackupInfoKeeper.reset(loginSession.getDeviceInfo().getMac(), loginSession.getUserInfo().getName());
+        startBackup();
+    }
+
+    public int getBackupListSize() {
+        if (mBackupManager == null) {
+            return 0;
+        }
+        return mBackupManager.getBackupListSize();
     }
 
     /**
@@ -173,5 +221,6 @@ public class TransferService extends Service {
         Log.d(ACTIVITY_SERVICE, "Transfer service destroy.");
         mDownloadManager.destroy();
         mUploadManager.destroy();
+        stopBackup();
     }
 }

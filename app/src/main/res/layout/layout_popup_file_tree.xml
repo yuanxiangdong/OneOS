@@ -60,7 +60,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
                 android:divider="@color/line_tree_view"
-                android:dividerHeight="@dimen/list_divider_height"
+                android:dividerHeight="@dimen/line_list_divider_height"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:headerDividersEnabled="false"

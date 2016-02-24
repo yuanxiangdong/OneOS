@@ -28,7 +28,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/list_divider_height"
+                android:layout_height="@dimen/line_list_divider_height"
                 android:layout_marginTop="30dp"
                 android:background="@color/line_list_view" />
 
@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="@color/line_list_view"
-                android:dividerHeight="@dimen/list_divider_height"
+                android:dividerHeight="@dimen/line_list_divider_height"
                 android:gravity="center"
                 android:listSelector="@android:color/transparent"
                 android:overScrollMode="never"
@@ -46,7 +46,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/list_divider_height"
+                android:layout_height="@dimen/line_list_divider_height"
                 android:background="@color/line_list_view" />
         </LinearLayout>
     </com.eli.oneos.widget.ReboundScrollView>

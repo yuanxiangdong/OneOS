@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.DeviceHistoryKeeper;
@@ -25,6 +26,7 @@ import com.eli.oneos.model.oneos.scan.ScanDeviceManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.receiver.NetworkStateManager;
+import com.eli.oneos.service.TransferService;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
@@ -161,6 +163,8 @@ public class LoginActivity extends BaseActivity {
         }
         LoginManage loginManager = LoginManage.getInstance();
         loginManager.setLoginSession(mLoginSession);
+        TransferService service = MyApplication.getTransferService();
+        service.startBackup();
     }
 
     @Override

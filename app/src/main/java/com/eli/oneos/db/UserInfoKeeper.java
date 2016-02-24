@@ -84,7 +84,7 @@ public class UserInfoKeeper {
         UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
         UserInfo userInfo = getUserInfo(user, mac);
         if (userInfo == null) {
-            userInfo = new UserInfo(user, pwd, mac, time, uid, gid, admin, null, true, true);
+            userInfo = new UserInfo(0L, user, pwd, mac, time, uid, gid, admin, null, true, true, false, true);
             dao.insert(userInfo);
         } else {
             userInfo.setPwd(pwd);

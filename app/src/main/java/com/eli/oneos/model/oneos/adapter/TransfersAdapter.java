@@ -13,10 +13,10 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.oneos.trans.TransferControlListener;
-import com.eli.oneos.model.oneos.trans.TransferElement;
-import com.eli.oneos.model.oneos.trans.TransferException;
-import com.eli.oneos.model.oneos.trans.TransferState;
+import com.eli.oneos.model.oneos.transfer.TransferControlListener;
+import com.eli.oneos.model.oneos.transfer.TransferElement;
+import com.eli.oneos.model.oneos.transfer.TransferException;
+import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.CircleStateProgressBar;

@@ -6,6 +6,7 @@ package com.eli.oneos.db.greendao;
  */
 public class UserInfo {
 
+    private Long id;
     /** Not-null value. */
     private String name;
     /** Not-null value. */
@@ -19,15 +20,18 @@ public class UserInfo {
     private String downloadPath;
     private Boolean isPreviewPicOnlyWifi;
     private Boolean isTipTransferNotWifi;
+    private Boolean isAutoBackup;
+    private Boolean isBackupOnlyWifi;
 
     public UserInfo() {
     }
 
-    public UserInfo(String name) {
-        this.name = name;
+    public UserInfo(Long id) {
+        this.id = id;
     }
 
-    public UserInfo(String name, String pwd, String mac, Long time, Integer uid, Integer gid, Integer admin, String downloadPath, Boolean isPreviewPicOnlyWifi, Boolean isTipTransferNotWifi) {
+    public UserInfo(Long id, String name, String pwd, String mac, Long time, Integer uid, Integer gid, Integer admin, String downloadPath, Boolean isPreviewPicOnlyWifi, Boolean isTipTransferNotWifi, Boolean isAutoBackup, Boolean isBackupOnlyWifi) {
+        this.id = id;
         this.name = name;
         this.pwd = pwd;
         this.mac = mac;
@@ -38,6 +42,16 @@ public class UserInfo {
         this.downloadPath = downloadPath;
         this.isPreviewPicOnlyWifi = isPreviewPicOnlyWifi;
         this.isTipTransferNotWifi = isTipTransferNotWifi;
+        this.isAutoBackup = isAutoBackup;
+        this.isBackupOnlyWifi = isBackupOnlyWifi;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /** Not-null value. */
@@ -124,6 +138,22 @@ public class UserInfo {
 
     public void setIsTipTransferNotWifi(Boolean isTipTransferNotWifi) {
         this.isTipTransferNotWifi = isTipTransferNotWifi;
+    }
+
+    public Boolean getIsAutoBackup() {
+        return isAutoBackup;
+    }
+
+    public void setIsAutoBackup(Boolean isAutoBackup) {
+        this.isAutoBackup = isAutoBackup;
+    }
+
+    public Boolean getIsBackupOnlyWifi() {
+        return isBackupOnlyWifi;
+    }
+
+    public void setIsBackupOnlyWifi(Boolean isBackupOnlyWifi) {
+        this.isBackupOnlyWifi = isBackupOnlyWifi;
     }
 
 }

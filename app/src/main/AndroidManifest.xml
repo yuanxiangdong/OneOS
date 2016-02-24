@@ -74,6 +74,42 @@
             android:theme="@style/FullBleedTheme"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
         </activity>
+        <activity
+            android:name=".ui.nav.tools.app.AppsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+        </activity>
+        <activity
+            android:name=".ui.nav.tools.aria.AriaActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+        </activity>
+        <activity
+            android:name=".ui.nav.tools.aria.AriaDetailsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+        </activity>
+        <activity
+            android:name=".ui.nav.tools.aria.SelectTorrentActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+        </activity>
+        <activity
+            android:name=".ui.nav.tools.aria.AddAriaTaskActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+        </activity>
+        <activity
+            android:name=".ui.nav.tools.BackupPhotoActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+        </activity>
 
         <service android:name="com.eli.oneos.service.TransferService" />
     </application>

@@ -88,7 +88,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "attributes");
-        params.put("srcPath", path);
+        params.put("path", path);
 
         doManageFiles(params);
     }
@@ -103,8 +103,8 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         Log.d(TAG, "session = " + session);
         params.put("cmd", isDelShift ? "deleteshift" : "delete");
         Log.d(TAG, "cmd = " + (isDelShift ? "deleteshift" : "delete"));
-        params.put("srcPath", path);
-        Log.d(TAG, "srcPath = " + path);
+        params.put("path", path);
+        Log.d(TAG, "path = " + path);
         doManageFiles(params);
     }
 
@@ -117,7 +117,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "move");
-        params.put("srcPath", path);
+        params.put("path", path);
         params.put("todir", toDir);
 
         doManageFiles(params);
@@ -131,7 +131,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "copy");
-        params.put("srcPath", path);
+        params.put("path", path);
         params.put("todir", toDir);
 
         doManageFiles(params);
@@ -145,7 +145,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "rename");
-        params.put("srcPath", path);
+        params.put("path", path);
         params.put("newname", newName);
 
         doManageFiles(params);
@@ -161,7 +161,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "mkdir");
-        params.put("srcPath", path);
+        params.put("path", path);
         params.put("newname", newName);
 
         doManageFiles(params);
@@ -175,7 +175,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", isEncrypt ? "encrypt" : "decrypt");
-        params.put("srcPath", path);
+        params.put("path", path);
         params.put("password", pwd);
 
         doManageFiles(params);

@@ -51,11 +51,11 @@ public class OneOSListDirAPI extends OneOSBaseAPI {
     public void list(String ftype) {
         this.type = ftype;
         url = genOneOSAPIUrl(OneOSAPIs.FILE_LIST);
-        Log.d(TAG, "Login: " + url);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
-        params.put("srcPath", path);
+        params.put("path", path);
         params.put("ftype", type);
+        logDebug(TAG, url, params);
 
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 

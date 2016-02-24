@@ -48,7 +48,7 @@
             android:cacheColorHint="@android:color/transparent"
             android:clipToPadding="false"
             android:divider="@color/line_list_view"
-            android:dividerHeight="@dimen/list_divider_height"
+            android:dividerHeight="@dimen/line_list_divider_height"
             android:drawSelectorOnTop="true"
             android:fastScrollEnabled="true"
             android:footerDividersEnabled="false"

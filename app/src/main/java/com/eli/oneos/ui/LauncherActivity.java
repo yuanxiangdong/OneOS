@@ -9,6 +9,7 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.UserInfoKeeper;
@@ -18,6 +19,7 @@ import com.eli.oneos.model.oneos.scan.OnScanDeviceListener;
 import com.eli.oneos.model.oneos.scan.ScanDeviceManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.service.TransferService;
 import com.eli.oneos.utils.AppVersionUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
@@ -127,6 +129,8 @@ public class LauncherActivity extends BaseActivity {
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                TransferService service = MyApplication.getTransferService();
+                service.startBackup();
                 Intent intent = new Intent(LauncherActivity.this, MainActivity.class);
                 if (null != mSendIntent) {
                     intent.putExtra("IntentFilter", mSendIntent);

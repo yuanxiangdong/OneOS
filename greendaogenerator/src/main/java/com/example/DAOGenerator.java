@@ -16,13 +16,15 @@ public class DAOGenerator {
 
         addUserInfo(schema);
         addDeviceInfo(schema);
+        addBackupInfo(schema);
 
         new DaoGenerator().generateAll(schema, "app/src/main/java");
     }
 
     private static void addUserInfo(Schema schema) {
         Entity note = schema.addEntity("UserInfo");
-        note.addStringProperty("name").notNull().primaryKey();
+        note.addIdProperty().autoincrement();
+        note.addStringProperty("name").notNull(); //.primaryKey();
         note.addStringProperty("pwd").notNull();
         note.addStringProperty("mac").notNull(); //.primaryKey();
         note.addLongProperty("time");
@@ -30,8 +32,10 @@ public class DAOGenerator {
         note.addIntProperty("gid");
         note.addIntProperty("admin");
         note.addStringProperty("downloadPath");
-        note.addBooleanProperty("isPreviewPicOnlyWifi");
-        note.addBooleanProperty("isTipTransferNotWifi");
+        note.addBooleanProperty("isPreviewPicOnlyWifi"); // default is true
+        note.addBooleanProperty("isTipTransferNotWifi"); // default is true
+        note.addBooleanProperty("isAutoBackup");  //default is false
+        note.addBooleanProperty("isBackupOnlyWifi"); // default is true
     }
 
     private static void addDeviceInfo(Schema schema) {
@@ -41,6 +45,18 @@ public class DAOGenerator {
         note.addStringProperty("port").notNull();
         note.addLongProperty("time");
         note.addBooleanProperty("isLAN");
+    }
+
+    private static void addBackupInfo(Schema schema) {
+        Entity note = schema.addEntity("BackupInfo");
+        note.addIdProperty().autoincrement();
+        note.addStringProperty("mac").notNull();
+        note.addStringProperty("user").notNull();
+        note.addStringProperty("path").notNull();
+        note.addLongProperty("time"); // last backup time
+        note.addLongProperty("count"); // backup total count
+        note.addIntProperty("priority"); // backup priority, 1 > 2 > 3 ...
+        note.addStringProperty("type"); // backup file type, such as picture
     }
 
 //    private static void addCustomerOrder(Schema schema) {

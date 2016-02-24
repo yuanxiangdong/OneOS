@@ -14,7 +14,7 @@ import com.eli.oneos.db.greendao.UserInfo;
 /** 
  * DAO for table USER_INFO.
 */
-public class UserInfoDao extends AbstractDao<UserInfo, String> {
+public class UserInfoDao extends AbstractDao<UserInfo, Long> {
 
     public static final String TABLENAME = "USER_INFO";
 
@@ -23,16 +23,19 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Name = new Property(0, String.class, "name", true, "NAME");
-        public final static Property Pwd = new Property(1, String.class, "pwd", false, "PWD");
-        public final static Property Mac = new Property(2, String.class, "mac", false, "MAC");
-        public final static Property Time = new Property(3, Long.class, "time", false, "TIME");
-        public final static Property Uid = new Property(4, Integer.class, "uid", false, "UID");
-        public final static Property Gid = new Property(5, Integer.class, "gid", false, "GID");
-        public final static Property Admin = new Property(6, Integer.class, "admin", false, "ADMIN");
-        public final static Property DownloadPath = new Property(7, String.class, "downloadPath", false, "DOWNLOAD_PATH");
-        public final static Property IsPreviewPicOnlyWifi = new Property(8, Boolean.class, "isPreviewPicOnlyWifi", false, "IS_PREVIEW_PIC_ONLY_WIFI");
-        public final static Property IsTipTransferNotWifi = new Property(9, Boolean.class, "isTipTransferNotWifi", false, "IS_TIP_TRANSFER_NOT_WIFI");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
+        public final static Property Pwd = new Property(2, String.class, "pwd", false, "PWD");
+        public final static Property Mac = new Property(3, String.class, "mac", false, "MAC");
+        public final static Property Time = new Property(4, Long.class, "time", false, "TIME");
+        public final static Property Uid = new Property(5, Integer.class, "uid", false, "UID");
+        public final static Property Gid = new Property(6, Integer.class, "gid", false, "GID");
+        public final static Property Admin = new Property(7, Integer.class, "admin", false, "ADMIN");
+        public final static Property DownloadPath = new Property(8, String.class, "downloadPath", false, "DOWNLOAD_PATH");
+        public final static Property IsPreviewPicOnlyWifi = new Property(9, Boolean.class, "isPreviewPicOnlyWifi", false, "IS_PREVIEW_PIC_ONLY_WIFI");
+        public final static Property IsTipTransferNotWifi = new Property(10, Boolean.class, "isTipTransferNotWifi", false, "IS_TIP_TRANSFER_NOT_WIFI");
+        public final static Property IsAutoBackup = new Property(11, Boolean.class, "isAutoBackup", false, "IS_AUTO_BACKUP");
+        public final static Property IsBackupOnlyWifi = new Property(12, Boolean.class, "isBackupOnlyWifi", false, "IS_BACKUP_ONLY_WIFI");
     };
 
 
@@ -48,16 +51,19 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'USER_INFO' (" + //
-                "'NAME' TEXT PRIMARY KEY NOT NULL ," + // 0: name
-                "'PWD' TEXT NOT NULL ," + // 1: pwd
-                "'MAC' TEXT NOT NULL ," + // 2: mac
-                "'TIME' INTEGER," + // 3: time
-                "'UID' INTEGER," + // 4: uid
-                "'GID' INTEGER," + // 5: gid
-                "'ADMIN' INTEGER," + // 6: admin
-                "'DOWNLOAD_PATH' TEXT," + // 7: downloadPath
-                "'IS_PREVIEW_PIC_ONLY_WIFI' INTEGER," + // 8: isPreviewPicOnlyWifi
-                "'IS_TIP_TRANSFER_NOT_WIFI' INTEGER);"); // 9: isTipTransferNotWifi
+                "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                "'NAME' TEXT NOT NULL ," + // 1: name
+                "'PWD' TEXT NOT NULL ," + // 2: pwd
+                "'MAC' TEXT NOT NULL ," + // 3: mac
+                "'TIME' INTEGER," + // 4: time
+                "'UID' INTEGER," + // 5: uid
+                "'GID' INTEGER," + // 6: gid
+                "'ADMIN' INTEGER," + // 7: admin
+                "'DOWNLOAD_PATH' TEXT," + // 8: downloadPath
+                "'IS_PREVIEW_PIC_ONLY_WIFI' INTEGER," + // 9: isPreviewPicOnlyWifi
+                "'IS_TIP_TRANSFER_NOT_WIFI' INTEGER," + // 10: isTipTransferNotWifi
+                "'IS_AUTO_BACKUP' INTEGER," + // 11: isAutoBackup
+                "'IS_BACKUP_ONLY_WIFI' INTEGER);"); // 12: isBackupOnlyWifi
     }
 
     /** Drops the underlying database table. */
@@ -70,66 +76,84 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
     @Override
     protected void bindValues(SQLiteStatement stmt, UserInfo entity) {
         stmt.clearBindings();
-        stmt.bindString(1, entity.getName());
-        stmt.bindString(2, entity.getPwd());
-        stmt.bindString(3, entity.getMac());
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+        stmt.bindString(2, entity.getName());
+        stmt.bindString(3, entity.getPwd());
+        stmt.bindString(4, entity.getMac());
  
         Long time = entity.getTime();
         if (time != null) {
-            stmt.bindLong(4, time);
+            stmt.bindLong(5, time);
         }
  
         Integer uid = entity.getUid();
         if (uid != null) {
-            stmt.bindLong(5, uid);
+            stmt.bindLong(6, uid);
         }
  
         Integer gid = entity.getGid();
         if (gid != null) {
-            stmt.bindLong(6, gid);
+            stmt.bindLong(7, gid);
         }
  
         Integer admin = entity.getAdmin();
         if (admin != null) {
-            stmt.bindLong(7, admin);
+            stmt.bindLong(8, admin);
         }
  
         String downloadPath = entity.getDownloadPath();
         if (downloadPath != null) {
-            stmt.bindString(8, downloadPath);
+            stmt.bindString(9, downloadPath);
         }
  
         Boolean isPreviewPicOnlyWifi = entity.getIsPreviewPicOnlyWifi();
         if (isPreviewPicOnlyWifi != null) {
-            stmt.bindLong(9, isPreviewPicOnlyWifi ? 1l: 0l);
+            stmt.bindLong(10, isPreviewPicOnlyWifi ? 1l: 0l);
         }
  
         Boolean isTipTransferNotWifi = entity.getIsTipTransferNotWifi();
         if (isTipTransferNotWifi != null) {
-            stmt.bindLong(10, isTipTransferNotWifi ? 1l: 0l);
+            stmt.bindLong(11, isTipTransferNotWifi ? 1l: 0l);
+        }
+ 
+        Boolean isAutoBackup = entity.getIsAutoBackup();
+        if (isAutoBackup != null) {
+            stmt.bindLong(12, isAutoBackup ? 1l: 0l);
+        }
+ 
+        Boolean isBackupOnlyWifi = entity.getIsBackupOnlyWifi();
+        if (isBackupOnlyWifi != null) {
+            stmt.bindLong(13, isBackupOnlyWifi ? 1l: 0l);
         }
     }
 
     /** @inheritdoc */
     @Override
-    public String readKey(Cursor cursor, int offset) {
-        return cursor.getString(offset + 0);
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
     public UserInfo readEntity(Cursor cursor, int offset) {
         UserInfo entity = new UserInfo( //
-            cursor.getString(offset + 0), // name
-            cursor.getString(offset + 1), // pwd
-            cursor.getString(offset + 2), // mac
-            cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // time
-            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // uid
-            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // gid
-            cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // admin
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // downloadPath
-            cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0, // isPreviewPicOnlyWifi
-            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0 // isTipTransferNotWifi
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.getString(offset + 1), // name
+            cursor.getString(offset + 2), // pwd
+            cursor.getString(offset + 3), // mac
+            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4), // time
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // uid
+            cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // gid
+            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7), // admin
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // downloadPath
+            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0, // isPreviewPicOnlyWifi
+            cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0, // isTipTransferNotWifi
+            cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0, // isAutoBackup
+            cursor.isNull(offset + 12) ? null : cursor.getShort(offset + 12) != 0 // isBackupOnlyWifi
         );
         return entity;
     }
@@ -137,29 +161,33 @@ public class UserInfoDao extends AbstractDao<UserInfo, String> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, UserInfo entity, int offset) {
-        entity.setName(cursor.getString(offset + 0));
-        entity.setPwd(cursor.getString(offset + 1));
-        entity.setMac(cursor.getString(offset + 2));
-        entity.setTime(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
-        entity.setUid(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
-        entity.setGid(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
-        entity.setAdmin(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
-        entity.setDownloadPath(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setIsPreviewPicOnlyWifi(cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0);
-        entity.setIsTipTransferNotWifi(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setName(cursor.getString(offset + 1));
+        entity.setPwd(cursor.getString(offset + 2));
+        entity.setMac(cursor.getString(offset + 3));
+        entity.setTime(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
+        entity.setUid(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
+        entity.setGid(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
+        entity.setAdmin(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
+        entity.setDownloadPath(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setIsPreviewPicOnlyWifi(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
+        entity.setIsTipTransferNotWifi(cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0);
+        entity.setIsAutoBackup(cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0);
+        entity.setIsBackupOnlyWifi(cursor.isNull(offset + 12) ? null : cursor.getShort(offset + 12) != 0);
      }
     
     /** @inheritdoc */
     @Override
-    protected String updateKeyAfterInsert(UserInfo entity, long rowId) {
-        return entity.getName();
+    protected Long updateKeyAfterInsert(UserInfo entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     /** @inheritdoc */
     @Override
-    public String getKey(UserInfo entity) {
+    public Long getKey(UserInfo entity) {
         if(entity != null) {
-            return entity.getName();
+            return entity.getId();
         } else {
             return null;
         }

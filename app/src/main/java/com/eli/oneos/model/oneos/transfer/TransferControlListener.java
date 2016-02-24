@@ -1,4 +1,4 @@
-package com.eli.oneos.model.oneos.trans;
+package com.eli.oneos.model.oneos.transfer;
 
 public interface TransferControlListener {
 	void onPause(TransferElement element);

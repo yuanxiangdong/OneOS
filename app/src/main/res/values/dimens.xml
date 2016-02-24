@@ -15,7 +15,7 @@
     <dimen name="line_common_weight">0.5dp</dimen>
     <dimen name="line_dialog_weight">@dimen/line_common_weight</dimen>
     <dimen name="line_nav_weight">1.0dp</dimen>
-    <dimen name="list_divider_height">@dimen/line_common_weight</dimen>
+    <dimen name="line_list_divider_height">@dimen/line_common_weight</dimen>
     <dimen name="line_radio_group_height">1.0dp</dimen>
     <dimen name="line_settings_weight">@dimen/line_common_weight</dimen>
 

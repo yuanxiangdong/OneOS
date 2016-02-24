@@ -204,6 +204,7 @@
 
     <!-- Settings Activity -->
     <string name="title_settings">设置</string>
+    <string name="settings">设置</string>
     <string name="not_login">尚未登录</string>
     <string name="current_user">当前用户</string>
     <string name="current_path">当前存储目录：</string>
@@ -257,5 +258,70 @@
     <string name="copyright_statement">Powered by OneSpace</string>
     <string name="website_onespace">www.onespace.cc</string>
     <string name="start_download_file">开始下载文件&#8230;</string>
+
+    <!-- Apps Activity -->
+    <string name="title_apps_phone">手机</string>
+    <string name="getting_app_list">获取应用列表&#8230;</string>
+    <string name="error_open_app">很抱歉，无法打开此应用</string>
+    <string name="error_get_app_details">未查询到该应用信息</string>
+    <string name="can_not_uninstall">无法卸载</string>
+    <string name="app_not_found_exception">未查询到该应用信息</string>
+    <string name="confirm_uninstall_plugin">确认卸载&#160;&#160;</string>
+    <string name="confirm_open_plugin">确认打开&#160;&#160;</string>
+    <string name="confirm_close_plugin">确认关闭&#160;&#160;</string>
+
+
+    <!-- Aria Download Activity -->
+    <string name="enter_url_hint">HTTP、FTP 或 Magnet</string>
+    <string name="select_torrent">选择Torrent</string>
+    <string name="add_aria_download">添加离线下载任务</string>
+    <string name="download_to_onespace">下载到OneSpace</string>
+    <string name="select_torrent_file">请选择种子文件</string>
+    <string name="dir_without_torrent">该目录无种子文件</string>
+    <string name="offline_download_tips">请填写需要下载的文件链接或上传种子文件</string>
+    <string name="offline_download_path_tips">离线下载文件将保存在OneSpace公共目录Download中</string>
+    <string name="confirm_del_active_aria">确定删除该离线下载任务？</string>
+    <string name="confirm_del_stopped_aria">确定删除该离线下载记录？</string>
+    <string name="aria_task_file_list">文件列表</string>
+    <string name="aria_task_details">任务详情</string>
+    <string name="title_aria">离线下载</string>
+    <string name="title_aria_task_details">离线任务详情</string>
+    <string name="save_settings">保存设置</string>
+    <string name="aria_global_settings">离线下载设置</string>
+    <string name="aria_upload_speed_limit">上传速度限制:</string>
+    <string name="aria_download_speed_limit">下载速度限制:</string>
+    <string name="aria_download_max_concurrent">并发数:</string>
+    <string name="aria_download_piece_length">最小分片大小:</string>
+    <string name="aria_download_dir">下载目录:</string>
+    <string name="aria_download_size">大小:</string>
+    <string name="aria_download_speed">速度速度:</string>
+    <string name="aria_download_time">剩余时间:</string>
+    <string name="aria_download_connections">连接数:</string>
+    <string name="aria_download_peers">分片数:</string>
+    <string name="aria_download_peer_len">分片大小:</string>
+    <string name="please_enter_limit">请先填写限制速度大小</string>
+    <string name="success_save_aria_setting">设置成功</string>
+    <string name="request_aria_settings">获取Aria配置&#8230;</string>
+    <string name="request_set_aria_settings">配置Aria&#8230;</string>
+    <string name="error_request_aria_params">获取Aria配置失败</string>
+    <string name="error_set_aria_params">配置Aria失败</string>
+    <string name="fmt_add_aria_task_success">添加 %s 离线下载成功！</string>
+    <string name="fmt_add_aria_task_failed">添加 %s 添加离线下载失败！</string>
+    <string name="tips_no_sd_card">未检测到您的SD卡，请确认SD卡正常挂载！</string>
+    <string name="connect_aria_exception">Aria已离线，请确认是否打开Aria离线下载</string>
+
+    <!--Backup Photo Activity -->
+    <string name="title_backup_photo">相册备份</string>
+    <string name="remain">剩余</string>
+    <string name="counts">个</string>
+    <string name="backup_dir_shown" formatted="false">备份保存目录： 来自：%s-%s</string>
+    <string name="backup_complete">备份完成</string>
+    <string name="backup_closed">备份关闭</string>
+    <string name="auto_backup_photo">自动备份相册</string>
+    <string name="title_reset_backup">重置相册备份</string>
+    <string name="tips_reset_backup">重置后，将重新检测备份相册中所有图片和视频</string>
+    <string name="success_reset_backup">重置成功!</string>
+    <string name="reset_now">立即重置</string>
+    <string name="auto_backup_only_wifi">仅在Wi-Fi环境下备份</string>
 
 </resources>

@@ -2,9 +2,13 @@ package com.eli.oneos.utils;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.Formatter;
+import android.util.Base64;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
@@ -15,12 +19,77 @@ import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.ui.PictureViewActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
 public class FileUtils {
+
+    /**
+     * get photo date
+     *
+     * @param file
+     * @return photo date
+     */
+    public static String getPhotoDate(File file) {
+        try {
+            ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+            if (exif != null) {
+                String dateTime = exif.getAttribute(ExifInterface.TAG_DATETIME);
+                if (dateTime != null) {
+                    String date = exif.getAttribute(ExifInterface.TAG_DATETIME).substring(0, 7);
+                    return date.replace(":", "-");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "未知时间";
+    }
+
+    /**
+     * Compress Image
+     *
+     * @param imgPath
+     * @param width   target width
+     * @param height  target height
+     * @return
+     */
+    public static Bitmap compressImage(String imgPath, float width, float height) {
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        // 开始读入图片，options.inJustDecodeBounds=true，即只读边不读内容
+        newOpts.inJustDecodeBounds = true;
+        newOpts.inPreferredConfig = Bitmap.Config.RGB_565;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(imgPath, newOpts);
+        newOpts.inJustDecodeBounds = false;
+
+        int w = newOpts.outWidth;
+        int h = newOpts.outHeight;
+
+        float hh = height;
+        float ww = width;
+
+        int be = 1;// 缩放比例
+        if (w > h && w > ww) {
+            be = (int) (newOpts.outWidth / ww);
+        } else if (w < h && h > hh) {
+            be = (int) (newOpts.outHeight / hh);
+        }
+        if (be <= 0) {
+            be = 1;
+        }
+        newOpts.inSampleSize = be;
+
+        bitmap = BitmapFactory.decodeFile(imgPath, newOpts);
+
+        return bitmap;
+    }
 
     public static String getFileTime(File file) {
         long time = file.lastModified();
@@ -115,6 +184,14 @@ public class FileUtils {
         return icon;
     }
 
+    public static int fmtFileIcon(File file) {
+        if (file.isDirectory()) {
+            return R.drawable.icon_file_folder;
+        }
+
+        return fmtFileIcon(file.getName());
+    }
+
     public static final String fmtFileSize(long len) {
         return Formatter.formatFileSize(MyApplication.getAppContext(), len);
     }
@@ -156,7 +233,9 @@ public class FileUtils {
     }
 
 
-    /** Notification system scans the specified file */
+    /**
+     * Notification system scans the specified file
+     */
     public static void requestScanFile(File mFile) {
         if (mFile == null) {
             return;
@@ -169,5 +248,68 @@ public class FileUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * encode file to Base64 String
+     *
+     * @param path file path
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static String encodeFileToBase64(String path) throws FileNotFoundException, IOException {
+        File file = new File(path);
+        if (!file.exists()) {
+            return null;
+        }
+        FileInputStream inputFile = new FileInputStream(file);
+        byte[] buffer = new byte[(int) file.length()];
+        inputFile.read(buffer);
+        inputFile.close();
+        return Base64.encodeToString(buffer, Base64.DEFAULT);
+    }
+
+    /**
+     * get file name by path
+     */
+    public static String getFileName(String fullname) {
+        String filename = null;
+        if (null != fullname) {
+            fullname = fullname.trim();
+            int index = fullname.lastIndexOf("/");
+            filename = fullname.substring(index + 1, fullname.length());
+        }
+        return filename;
+    }
+
+    public static boolean isPictureFile(String name) {
+        if (name != null) {
+            name = name.toLowerCase();
+            if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".gif")
+                    || name.endsWith(".jpeg") || name.endsWith(".bmp")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isVideoFile(String name) {
+        if (name != null) {
+            name = name.toLowerCase();
+            if (name.endsWith(".mp4") || name.endsWith(".avi") || name.endsWith(".rmvb")
+                    || name.endsWith(".3gp") || name.endsWith(".rm") || name.endsWith(".asf")
+                    || name.endsWith(".wmv") || name.endsWith(".flv") || name.endsWith(".mov")
+                    || name.endsWith(".mkv")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isPictureOrVideo(File file) {
+        return isPictureFile(file.getName()) || isVideoFile(file.getName());
     }
 }

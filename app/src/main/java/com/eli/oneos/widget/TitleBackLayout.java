@@ -62,7 +62,7 @@ public class TitleBackLayout extends LinearLayout {
         mBackLayout.setOnClickListener(listener);
     }
 
-    public void setRightClickListener(OnClickListener listener) {
+    public void setOnRightClickListener(OnClickListener listener) {
         mRightIBtn.setOnClickListener(listener);
     }
 
@@ -80,5 +80,9 @@ public class TitleBackLayout extends LinearLayout {
 
     public void setRightButton(int resid) {
         mRightIBtn.setImageResource(resid);
+    }
+
+    public void setRightButtonVisible(int v) {
+        mRightIBtn.setVisibility(v);
     }
 }

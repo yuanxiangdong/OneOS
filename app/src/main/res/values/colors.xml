@@ -20,6 +20,7 @@
     <color name="gray_normal">@color/gray</color>
     <color name="gray_pressed">@color/darker_gray</color>
     <color name="gray_disabled">@color/light_gray</color>
+    <color name="content_empty">@color/gray</color>
 
     <!-- EditText border selector-->
     <color name="edittext_border_normal">@color/darker_gray</color>

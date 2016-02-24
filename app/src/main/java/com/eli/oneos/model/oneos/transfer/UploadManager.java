@@ -1,4 +1,4 @@
-package com.eli.oneos.model.oneos.trans;
+package com.eli.oneos.model.oneos.transfer;
 
 import android.util.Log;
 
@@ -734,7 +734,7 @@ public class UploadManager {
                     StringBuffer sb = new StringBuffer();
 
                     sb.append(PREFIX).append(BOUNDARY).append(LINE_END);
-                    sb.append("Content-Disposition: form-data; targetPath=\"session\"" + LINE_END);
+                    sb.append("Content-Disposition: form-data; name=\"session\"" + LINE_END);
                     sb.append(LINE_END);
                     sb.append(session);
                     sb.append(LINE_END);
@@ -743,7 +743,7 @@ public class UploadManager {
 
                     sb = new StringBuffer();
                     sb.append(PREFIX).append(BOUNDARY).append(LINE_END);
-                    sb.append("Content-Disposition: form-data; targetPath=\"savepath\"" + LINE_END);
+                    sb.append("Content-Disposition: form-data; name=\"savepath\"" + LINE_END);
                     sb.append(LINE_END);
                     sb.append(savePath);
                     sb.append(LINE_END);
@@ -752,7 +752,7 @@ public class UploadManager {
 
                     sb = new StringBuffer();
                     sb.append(PREFIX).append(BOUNDARY).append(LINE_END);
-                    sb.append("Content-Disposition: form-data; targetPath=\"chunks\"" + LINE_END);
+                    sb.append("Content-Disposition: form-data; name=\"chunks\"" + LINE_END);
                     sb.append(LINE_END);
                     sb.append(chunkNum);
                     sb.append(LINE_END);
@@ -761,7 +761,7 @@ public class UploadManager {
 
                     sb = new StringBuffer();
                     sb.append(PREFIX).append(BOUNDARY).append(LINE_END);
-                    sb.append("Content-Disposition: form-data; targetPath=\"chunk\"" + LINE_END);
+                    sb.append("Content-Disposition: form-data; name=\"chunk\"" + LINE_END);
                     sb.append(LINE_END);
                     sb.append(chunkIndex);
                     sb.append(LINE_END);
@@ -770,7 +770,7 @@ public class UploadManager {
 
                     sb = new StringBuffer();
                     sb.append(PREFIX).append(BOUNDARY).append(LINE_END);
-                    sb.append("Content-Disposition: form-data; targetPath=\"targetPath\"" + LINE_END);
+                    sb.append("Content-Disposition: form-data; name=\"name\"" + LINE_END);
                     sb.append(LINE_END);
                     sb.append(uploadFile.getName());
                     sb.append(LINE_END);
@@ -779,7 +779,7 @@ public class UploadManager {
 
                     sb = new StringBuffer();
                     sb.append(PREFIX).append(BOUNDARY).append(LINE_END);
-                    sb.append("Content-Disposition: form-data; targetPath=\"file\"; filename=\"" + uploadFile.getName() + "\"" + LINE_END);
+                    sb.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + uploadFile.getName() + "\"" + LINE_END);
                     sb.append("Content-Type: application/octet-stream;charset=" + HTTP.UTF_8 + LINE_END);
                     sb.append(LINE_END);
                     outStream.write(sb.toString().getBytes());

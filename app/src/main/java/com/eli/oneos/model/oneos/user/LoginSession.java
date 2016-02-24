@@ -51,7 +51,6 @@ public class LoginSession {
     }
 
     public UserInfo getUserInfo() {
-
         return userInfo;
     }
 

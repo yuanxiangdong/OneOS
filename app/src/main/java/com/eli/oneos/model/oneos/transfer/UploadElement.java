@@ -1,4 +1,4 @@
-package com.eli.oneos.model.oneos.trans;
+package com.eli.oneos.model.oneos.transfer;
 
 import java.io.File;
 
@@ -7,10 +7,23 @@ import java.io.File;
  */
 public class UploadElement extends TransferElement {
     private File file;
+    // needs check if file exist
+    private boolean check = false;
+    // overwrite if target file exist
+    private boolean overwrite = false;
+
+    public UploadElement() {
+    }
 
     public UploadElement(File file, String uploadPath) {
         this.file = file;
         this.targetPath = uploadPath;
+    }
+
+    public UploadElement(File file, String uploadPath, boolean check) {
+        this.file = file;
+        this.targetPath = uploadPath;
+        this.check = check;
     }
 
     public boolean isUploadToPrivateDir() {
@@ -51,6 +64,11 @@ public class UploadElement extends TransferElement {
         return file.length();
     }
 
+    @Override
+    public String toString() {
+        return "{src:" + file.getAbsolutePath() + ", target:" + targetPath + ", overwrite:" + overwrite + "}";
+    }
+
     // ===============getter and setter method======================
     public File getFile() {
         return file;
@@ -59,5 +77,22 @@ public class UploadElement extends TransferElement {
     public void setFile(File file) {
         this.file = file;
     }
+
+    public boolean isCheck() {
+        return check;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
+    }
+
+    public boolean isOverwrite() {
+        return overwrite;
+    }
+
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
+    }
+
     // ===============getter and setter method======================
 }

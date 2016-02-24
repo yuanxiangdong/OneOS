@@ -1,6 +1,7 @@
 package com.eli.oneos.model.oneos.api;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.constant.OneOSAPIs;
@@ -8,6 +9,7 @@ import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 import net.tsz.afinal.FinalHttp;
+import net.tsz.afinal.http.AjaxParams;
 
 import org.apache.http.impl.client.BasicCookieStore;
 
@@ -63,5 +65,9 @@ public abstract class OneOSBaseAPI {
 
     public String genOneOSAPIUrl(String action) {
         return OneOSAPIs.PREFIX_HTTP + ip + ":" + port + action;
+    }
+
+    public void logDebug(String TAG, String url, AjaxParams params) {
+        Log.d(TAG, "Url: " + url + ", Params: " + (params == null ? "Null" : params.toString()));
     }
 }

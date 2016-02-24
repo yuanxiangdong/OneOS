@@ -29,11 +29,15 @@ public class OneOSAPIs {
     public static final String FILE_LIST_DB = ONE_API + "/file/listdb";
     public static final String FILE_MANAGE = ONE_API + "/file/manage";
     public static final String FILE_DOWNLOAD = ONE_API + "/file/download";
+    public static final String FILE_UPLOAD = ONE_API + "/file/upload";
     public static final String FILE_THUMBNAIL = ONE_API + "/file/thumbnail";
 
     public static final String SYSTEM_REBOOT = ONE_API + "/sys/reboot";
     public static final String SYSTEM_HALT = ONE_API + "/sys/halt";
     public static final String SYSTEM_HD_SMART = ONE_API + "/sys/hdsmart";
+
+    public static final String APP_LIST = ONE_API + "/app/list";
+    public static final String APP_MANAGE = ONE_API + "/app/manage";
 
 //    public static String genOpenUrl(LoginSession loginSession, OneOSFile file) {
 //        String srcPath = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getTargetPath()));

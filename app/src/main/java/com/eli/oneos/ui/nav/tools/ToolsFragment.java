@@ -23,6 +23,8 @@ import com.eli.oneos.service.TransferService;
 import com.eli.oneos.ui.LoginActivity;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
+import com.eli.oneos.ui.nav.tools.app.AppsActivity;
+import com.eli.oneos.ui.nav.tools.aria.AriaActivity;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.PowerPopupView;
@@ -102,7 +104,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         Intent intent = null;
         Log.d(TAG, "On item click: tool = " + tool);
         if (tool == TOOL_APP) {
-//            intent = new Intent(getActivity(), AppActivity.class);
+            intent = new Intent(getActivity(), AppsActivity.class);
         } else if (tool == TOOL_SETTING) {
             intent = new Intent(getActivity(), SettingsActivity.class);
         } else if (tool == TOOL_SYNC_CONTACT) {
@@ -111,7 +113,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
 //            intent = new Intent(getActivity(), SyncSmsActivity.class);
         } else if (tool == TOOL_OFFLINE) {
             if (isLogin()) {
-//                intent = new Intent(getActivity(), AriaActivity.class);
+                intent = new Intent(getActivity(), AriaActivity.class);
             } else {
                 ToastHelper.showToast(R.string.please_login_onespace);
             }
@@ -122,7 +124,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
                 doLoginOut();
             }
         } else if (tool == TOOL_BACKUP_PHOTO) {
-//            intent = new Intent(getActivity(), BackupPhotoActivity.class);
+            intent = new Intent(getActivity(), BackupPhotoActivity.class);
         } else if (tool == TOOL_POWER) {
             if (isLogin() && LoginManage.getInstance().isAdmin()) {
                 showPowerView(arg1);
@@ -226,10 +228,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         }
         mTransferService.cancelDownload();
         mTransferService.cancelUpload();
-
-        // TODO..
-//        BackupService mBackupService = MyApplication.getBackupService();
-//        mBackupService.notifyUserLogout();
+        mTransferService.stopBackup();
 
         LoginManage.getInstance().logout();
 
