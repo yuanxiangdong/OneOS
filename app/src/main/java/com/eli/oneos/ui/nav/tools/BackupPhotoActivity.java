@@ -1,6 +1,5 @@
 package com.eli.oneos.ui.nav.tools;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,10 +13,11 @@ import android.widget.TextView;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.Constants;
 import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
-import com.eli.oneos.service.TransferService;
+import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
@@ -42,7 +42,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
     private boolean isFragmentVisible = true;
     private Thread mThread = null;
 
-    private TransferService mBackupService;
+    private OneSpaceService mBackupService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
 
         mSwitchButton = (SwitchButton) findViewById(R.id.btn_auto_backup);
         if (getLoginStatus()) {
-            String dir = String.format(getResources().getString(R.string.backup_dir_shown), Build.BRAND, Build.MODEL);
+            String dir = getResources().getString(R.string.backup_dir_shown) + Constants.BACKUP_ONEOS_ROOT_DIR_NAME_ALBUM;
             mServerDirTxt.setText(dir);
             mSwitchButton.setEnabled(true);
             isAutoBackup = LoginManage.getInstance().getLoginSession().getUserInfo().getIsAutoBackup();
@@ -104,10 +104,10 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
 
                         if (isChecked) {
                             Log.d(TAG, "-----Start Backup-----");
-                            mBackupService.startBackup();
+                            mBackupService.startBackupFile();
                         } else {
                             Log.d(TAG, "-----Stop Backup-----");
-                            mBackupService.stopBackup();
+                            mBackupService.stopBackupFile();
                         }
                     }
                 }
@@ -153,7 +153,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
                     @Override
                     public void onClick(boolean isPositiveBtn) {
                         if (isPositiveBtn) {
-                            mBackupService.resetBackup();
+                            mBackupService.resetBackupFile();
                             ToastHelper.showToast(R.string.success_reset_backup);
                         }
                     }
@@ -253,7 +253,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_REFRESH_UI:
-                    int count = mBackupService.getBackupListSize();
+                    int count = mBackupService.getBackupFileCount();
                     if (count > 0) {
                         isBackup = true;
                     } else {

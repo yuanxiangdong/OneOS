@@ -4,7 +4,7 @@
     <item android:color="@color/primary_dark" android:state_pressed="true" />
     <item android:color="@color/primary_dark" android:state_selected="true" />
     <item android:color="@color/primary_dark" android:state_checked="true" />
-    <item android:color="@color/primary_dark" android:state_enabled="false" />
+    <item android:color="@color/light_gray" android:state_enabled="false" />
     <item android:color="@color/primary" />
 
 </selector>

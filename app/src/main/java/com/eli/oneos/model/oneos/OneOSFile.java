@@ -13,7 +13,7 @@ public class OneOSFile implements Serializable {
 
     // for sticky header
     private int section = 0;
-    //    {"perm":"rwxr-xr-x","type":"audio","targetPath":"haizeiw .mp3","gid":0,"srcPath":"\/haizeiw .mp3","uid":1001,"time":1187168313,"size":6137050}
+    // {"perm":"rwxr-xr-x","type":"audio","targetPath":"haizeiw .mp3","gid":0,"path":"\/haizeiw .mp3","uid":1001,"time":1187168313,"size":6137050}
     private String path = null;
     private String perm = null;
     /**
@@ -38,10 +38,10 @@ public class OneOSFile implements Serializable {
     private String fmtSize = null;
 
     /**
-     * OneOS File real srcPath
+     * OneOS File real path
      *
-     * @param user user targetPath
-     * @return private file: [/home/user/srcPath], public file: [srcPath]
+     * @param user user name
+     * @return private file: [/home/user/path], public file: [path]
      */
     public String getRealPath(String user) {
         if (isPublicFile()) {
@@ -187,7 +187,7 @@ public class OneOSFile implements Serializable {
 
     @Override
     public String toString() {
-        return "OneOSFile:{targetPath:\"" + name + "\", srcPath:\"" + path + "\", uid:\"" + uid + "\", type:\"" + type
+        return "OneOSFile:{name:\"" + name + "\", path:\"" + path + "\", uid:\"" + uid + "\", type:\"" + type
                 + "\", size:\"" + fmtSize + "\", time:\"" + fmtSize + "\", perm:\"" + perm + "\", gid:\"" + gid + "\"}";
     }
 }

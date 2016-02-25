@@ -10,6 +10,8 @@ import java.io.File;
 public class DownloadElement extends TransferElement {
 
     private OneOSFile file;
+    // needs check phone space
+    private boolean check = true;
 
     public DownloadElement(OneOSFile file, String downloadPath) {
         this(file, downloadPath, 0);
@@ -66,6 +68,14 @@ public class DownloadElement extends TransferElement {
 
     public void setFile(OneOSFile file) {
         this.file = file;
+    }
+
+    public boolean isCheck() {
+        return check;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
     }
     // ===============getter and setter method======================
 }

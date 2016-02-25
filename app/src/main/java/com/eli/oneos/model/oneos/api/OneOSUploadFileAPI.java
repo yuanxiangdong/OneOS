@@ -53,12 +53,12 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         this.listener = listener;
     }
 
-    public void upload() {
+    public boolean upload() {
         if (null != listener) {
             listener.onStart(url, uploadElement);
         }
 
-        if (uploadElement.isCheck() ||
+        if (!uploadElement.isCheck() ||
                 !checkExist(uploadElement.getTargetPath() + uploadElement.getSrcName(), uploadElement.getSize())) {
             doUpload();
         } else {
@@ -68,6 +68,8 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         if (null != listener) {
             listener.onComplete(url, uploadElement);
         }
+
+        return uploadElement.getState() == TransferState.COMPLETE;
     }
 
     public void stopUpload() {

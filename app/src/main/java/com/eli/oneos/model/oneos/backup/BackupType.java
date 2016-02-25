@@ -6,4 +6,7 @@ package com.eli.oneos.model.oneos.backup;
 public class BackupType {
     public static final String ALL = "all"; // all file
     public static final String ALBUM = "album"; // album file
+
+//    public static final String CONTACTS = "contacts";
+//    public static final String SMS = "sms";
 }

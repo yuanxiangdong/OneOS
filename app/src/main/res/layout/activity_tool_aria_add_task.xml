@@ -45,7 +45,7 @@
                     android:layout_height="fill_parent"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/btn_torrent"
-                    android:background="@drawable/selector_square_full_stroke"
+                    android:background="@drawable/selector_square_stroke_edittext"
                     android:hint="@string/enter_url_hint"
                     android:inputType="textUri"
                     android:padding="10dp"

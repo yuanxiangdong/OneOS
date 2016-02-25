@@ -83,7 +83,7 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
                                 userInfo = UserInfoKeeper.insertOrReplace(user, pwd, mac, time, uid, gid, admin);
                             } else {
                                 // Needs to update database after access to device mac
-                                userInfo = new UserInfo(0L, user, pwd, mac, time, uid, gid, admin, null, true, true, false, true);
+                                userInfo = new UserInfo(null, user, pwd, mac, time, uid, gid, admin, null, true, true, false, true);
                             }
 
                             if (!isLAN) {

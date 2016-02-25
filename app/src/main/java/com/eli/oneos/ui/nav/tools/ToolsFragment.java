@@ -19,7 +19,7 @@ import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.api.OneOSPowerAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
-import com.eli.oneos.service.TransferService;
+import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.LoginActivity;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
@@ -108,7 +108,11 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         } else if (tool == TOOL_SETTING) {
             intent = new Intent(getActivity(), SettingsActivity.class);
         } else if (tool == TOOL_SYNC_CONTACT) {
-//            intent = new Intent(getActivity(), SyncContactActivity.class);
+            if (isLogin()) {
+                intent = new Intent(getActivity(), BackupContactActivity.class);
+            } else {
+                ToastHelper.showToast(R.string.please_login_onespace);
+            }
         } else if (tool == TOOL_SYNC_SMS) {
 //            intent = new Intent(getActivity(), SyncSmsActivity.class);
         } else if (tool == TOOL_OFFLINE) {
@@ -221,14 +225,14 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
      * login out
      */
     private void doLoginOut() {
-        TransferService mTransferService = MyApplication.getTransferService();
+        OneSpaceService mTransferService = MyApplication.getTransferService();
         if (mTransferService == null) {
             ToastHelper.showToast(R.string.app_exception);
             return;
         }
         mTransferService.cancelDownload();
         mTransferService.cancelUpload();
-        mTransferService.stopBackup();
+        mTransferService.stopBackupFile();
 
         LoginManage.getInstance().logout();
 

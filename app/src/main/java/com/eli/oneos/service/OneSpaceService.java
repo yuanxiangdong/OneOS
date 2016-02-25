@@ -10,9 +10,9 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.eli.oneos.MyApplication;
-import com.eli.oneos.db.BackupInfoKeeper;
+import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.oneos.backup.BackupManager;
+import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
 import com.eli.oneos.model.oneos.transfer.DownloadManager;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
@@ -25,14 +25,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransferService extends Service {
-    private static final String TAG = TransferService.class.getSimpleName();
+public class OneSpaceService extends Service {
+    private static final String TAG = OneSpaceService.class.getSimpleName();
 
     private Context context;
     private ServiceBinder mBinder;
     private DownloadManager mDownloadManager;
     private UploadManager mUploadManager;
-    private BackupManager mBackupManager;
+    private BackupFileManager mBackupPhotoManager;
     private List<DownloadManager.OnDownloadCompleteListener> mDownloadCompleteListenerList = new ArrayList<DownloadManager.OnDownloadCompleteListener>();
     private List<UploadManager.OnUploadCompleteListener> mUploadCompleteListenerList = new ArrayList<UploadManager.OnUploadCompleteListener>();
 
@@ -74,8 +74,8 @@ public class TransferService extends Service {
     }
 
     public class ServiceBinder extends Binder {
-        public TransferService getService() {
-            return TransferService.this;
+        public OneSpaceService getService() {
+            return OneSpaceService.this;
         }
 
         @Override
@@ -84,41 +84,47 @@ public class TransferService extends Service {
         }
     }
 
-    public void startBackup() {
+
+    // ==========================================Auto Backup file==========================================
+    public void startBackupFile() {
         LoginSession loginSession = LoginManage.getInstance().getLoginSession();
         if (!loginSession.getUserInfo().getIsAutoBackup()) {
             Log.e(TAG, "Do not open auto backup photo");
             return;
         }
-        if (mBackupManager != null) {
-            mBackupManager.stopBackup();
+        if (mBackupPhotoManager != null) {
+            mBackupPhotoManager.stopBackup();
         }
 
-        mBackupManager = new BackupManager(loginSession, context);
-        mBackupManager.startBackup();
+        mBackupPhotoManager = new BackupFileManager(loginSession, context);
+        mBackupPhotoManager.startBackup();
         Log.d(TAG, "======Start Backup Service=======");
     }
 
-    public void stopBackup() {
-        if (mBackupManager != null) {
-            mBackupManager.stopBackup();
-            mBackupManager = null;
+    public void stopBackupFile() {
+        if (mBackupPhotoManager != null) {
+            mBackupPhotoManager.stopBackup();
+            mBackupPhotoManager = null;
         }
     }
 
-    public void resetBackup() {
-        stopBackup();
+    public void resetBackupFile() {
+        stopBackupFile();
         LoginSession loginSession = LoginManage.getInstance().getLoginSession();
-        BackupInfoKeeper.reset(loginSession.getDeviceInfo().getMac(), loginSession.getUserInfo().getName());
-        startBackup();
+        BackupFileKeeper.reset(loginSession.getDeviceInfo().getMac(), loginSession.getUserInfo().getName());
+        startBackupFile();
     }
 
-    public int getBackupListSize() {
-        if (mBackupManager == null) {
+    public int getBackupFileCount() {
+        if (mBackupPhotoManager == null) {
             return 0;
         }
-        return mBackupManager.getBackupListSize();
+        return mBackupPhotoManager.getBackupListSize();
     }
+    // ==========================================Auto Backup file==========================================
+
+
+    // ========================================Download and Upload file======================================
 
     /**
      * set on download complete listener
@@ -151,12 +157,12 @@ public class TransferService extends Service {
     }
 
     public void pauseDownload(String fullName) {
-        Log.d("TransferService", "pause download: " + fullName);
+        Log.d("OneSpaceService", "pause download: " + fullName);
         mDownloadManager.pauseDownload(fullName);
     }
 
     public void pauseDownload() {
-        Log.d("TransferService", "pause all download");
+        Log.d("OneSpaceService", "pause all download");
         mDownloadManager.pauseDownload();
     }
 
@@ -165,7 +171,7 @@ public class TransferService extends Service {
     }
 
     public void continueDownload() {
-        Log.d("TransferService", "continue all download");
+        Log.d("OneSpaceService", "continue all download");
         mDownloadManager.continueDownload();
     }
 
@@ -188,22 +194,22 @@ public class TransferService extends Service {
     }
 
     public void pauseUpload(String filepath) {
-        Log.d("TransferService", "pause upload: " + filepath);
+        Log.d("OneSpaceService", "pause upload: " + filepath);
         mUploadManager.pauseUpload(filepath);
     }
 
     public void pauseUpload() {
-        Log.d("TransferService", "pause all upload");
+        Log.d("OneSpaceService", "pause all upload");
         mUploadManager.pauseUpload();
     }
 
     public void continueUpload(String filepath) {
-        Log.d("TransferService", "continue upload: " + filepath);
+        Log.d("OneSpaceService", "continue upload: " + filepath);
         mUploadManager.continueUpload(filepath);
     }
 
     public void continueUpload() {
-        Log.d("TransferService", "continue all  upload");
+        Log.d("OneSpaceService", "continue all  upload");
         mUploadManager.continueUpload();
     }
 
@@ -214,6 +220,7 @@ public class TransferService extends Service {
     public void cancelUpload() {
         mUploadManager.removeUpload();
     }
+    // ========================================Download and Upload file======================================
 
     @Override
     public void onDestroy() {
@@ -221,6 +228,6 @@ public class TransferService extends Service {
         Log.d(ACTIVITY_SERVICE, "Transfer service destroy.");
         mDownloadManager.destroy();
         mUploadManager.destroy();
-        stopBackup();
+        stopBackupFile();
     }
 }

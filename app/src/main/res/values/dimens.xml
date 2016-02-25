@@ -14,7 +14,7 @@
 
     <dimen name="line_common_weight">0.5dp</dimen>
     <dimen name="line_dialog_weight">@dimen/line_common_weight</dimen>
-    <dimen name="line_nav_weight">1.0dp</dimen>
+    <dimen name="line_nav_weight">0.5dp</dimen>
     <dimen name="line_list_divider_height">@dimen/line_common_weight</dimen>
     <dimen name="line_radio_group_height">1.0dp</dimen>
     <dimen name="line_settings_weight">@dimen/line_common_weight</dimen>
@@ -23,6 +23,7 @@
     <dimen name="layout_dialog_bottom_height">42dp</dimen>
     <dimen name="layout_dialog_margin">15dp</dimen>
     <dimen name="layout_nav_bar_height">50dp</dimen>
+    <dimen name="layout_nav_radio_height">49dp</dimen>
     <dimen name="layout_path_height">36dp</dimen>
     <dimen name="layout_transfer_radio_group_height">32dp</dimen>
     <dimen name="layout_operate_height">@dimen/layout_nav_bar_height</dimen>

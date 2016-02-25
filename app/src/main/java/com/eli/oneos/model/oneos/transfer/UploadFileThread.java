@@ -4,7 +4,7 @@ import com.eli.oneos.model.logger.LogLevel;
 import com.eli.oneos.model.logger.Logged;
 import com.eli.oneos.model.logger.Logger;
 import com.eli.oneos.model.oneos.api.OneOSUploadFileAPI;
-import com.eli.oneos.model.oneos.backup.BackupElement;
+import com.eli.oneos.model.oneos.backup.file.BackupFileElement;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 /**
@@ -15,13 +15,13 @@ import com.eli.oneos.model.oneos.user.LoginSession;
 public class UploadFileThread extends Thread {
     private final String TAG = UploadFileThread.class.getSimpleName();
 
-    private BackupElement mElement;
+    private BackupFileElement mElement;
     private OnUploadResultListener mResultListener = null;
     private OneOSUploadFileAPI.OnUploadFileListener mUploadListener = null;
     private OneOSUploadFileAPI uploadFileAPI;
     private LoginSession mLoginSession;
 
-    public UploadFileThread(BackupElement element, LoginSession mLoginSession, OnUploadResultListener mListener) {
+    public UploadFileThread(BackupFileElement element, LoginSession mLoginSession, OnUploadResultListener mListener) {
         if (mListener == null || mLoginSession == null) {
             Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadResultListener or LoginSession is NULL");
             new Throwable(new NullPointerException("OnUploadResultListener or LoginSession is NULL"));
@@ -31,7 +31,7 @@ public class UploadFileThread extends Thread {
         this.mResultListener = mListener;
     }
 
-    public UploadFileThread(BackupElement element, LoginSession mLoginSession, OneOSUploadFileAPI.OnUploadFileListener mListener) {
+    public UploadFileThread(BackupFileElement element, LoginSession mLoginSession, OneOSUploadFileAPI.OnUploadFileListener mListener) {
         if (mListener == null || mLoginSession == null) {
             Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadFileListener or LoginSession is NULL");
             new Throwable(new NullPointerException("OnUploadFileListener or LoginSession is NULL"));

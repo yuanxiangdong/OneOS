@@ -6,10 +6,16 @@
     android:clipToPadding="false"
     android:fitsSystemWindows="true">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_nav_weight"
+        android:layout_above="@+id/radiogroup"
+        android:background="@color/line_nav_bar" />
+
     <RadioGroup
         android:id="@+id/radiogroup"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/layout_nav_bar_height"
+        android:layout_height="@dimen/layout_nav_radio_height"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="@color/bg_nav_bar"

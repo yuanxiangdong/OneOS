@@ -1,9 +1,10 @@
-package com.eli.oneos.model.oneos.backup;
+package com.eli.oneos.model.oneos.backup.file;
 
-import com.eli.oneos.db.greendao.BackupInfo;
+import com.eli.oneos.db.greendao.BackupFileInfo;
 import com.eli.oneos.model.logger.LogLevel;
 import com.eli.oneos.model.logger.Logged;
 import com.eli.oneos.model.logger.Logger;
+import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.utils.EmptyUtils;
 
 import java.io.File;
@@ -15,25 +16,25 @@ import java.util.List;
 /**
  * Created by gaoyun@eli-tech.com on 2016/2/24.
  */
-public class BackupScanThread extends Thread {
-    private static final String TAG = BackupScanThread.class.getSimpleName();
+public class BackupScanFileThread extends Thread {
+    private static final String TAG = BackupScanFileThread.class.getSimpleName();
     private static final int SCAN_FREQUENCY = 1000 * 60 * 60;
 
-    private List<BackupInfo> mBackupList;
+    private List<BackupFileInfo> mBackupList;
     private OnScanFileListener mListener;
     private boolean isInterrupt = false;
 
-    public BackupScanThread(List<BackupInfo> mBackupList, OnScanFileListener mScanListener) {
+    public BackupScanFileThread(List<BackupFileInfo> mBackupList, OnScanFileListener mScanListener) {
         this.mBackupList = mBackupList;
         this.mListener = mScanListener;
         if (EmptyUtils.isEmpty(mBackupList)) {
-            Logger.p(LogLevel.ERROR, Logged.BACKUP, TAG, "BackupInfo List is Empty");
+            Logger.p(LogLevel.ERROR, Logged.BACKUP_FILE, TAG, "BackupFileInfo List is Empty");
             isInterrupt = true;
         }
-        Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Backup List Size: " + mBackupList.size());
+        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Backup List Size: " + mBackupList.size());
     }
 
-    private ArrayList<BackupElement> scanningBackupFiles(BackupInfo info) {
+    private ArrayList<BackupFileElement> scanningBackupFiles(BackupFileInfo info) {
         final long lastBackupTime = info.getTime();
         boolean isFirstBackup = (lastBackupTime <= 0) ? true : false;
         boolean isBackupAlbum = info.getType().equalsIgnoreCase(BackupType.ALBUM);  // 相册备份
@@ -41,18 +42,18 @@ public class BackupScanThread extends Thread {
         ArrayList<File> files = new ArrayList<>();
         // 遍历备份目录文件
         listFiles(files, backupDir, isBackupAlbum, lastBackupTime);
-        ArrayList<BackupElement> backupElements = new ArrayList<>();
+        ArrayList<BackupFileElement> backupElements = new ArrayList<>();
         if (null != files) {
             for (File file : files) {
-                BackupElement element = new BackupElement(info, file, !isFirstBackup);
+                BackupFileElement element = new BackupFileElement(info, file, !isFirstBackup);
                 backupElements.add(element);
-                Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Add Backup Element: " + element.toString());
+                Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Add Backup Element: " + element.toString());
             }
         }
 
-        Collections.sort(backupElements, new Comparator<BackupElement>() {
+        Collections.sort(backupElements, new Comparator<BackupFileElement>() {
             @Override
-            public int compare(BackupElement elem1, BackupElement elem2) {
+            public int compare(BackupFileElement elem1, BackupFileElement elem2) {
                 if (elem1.getFile().lastModified() > elem2.getFile().lastModified()) {
                     return 1;
                 } else if (elem1.getFile().lastModified() < elem2.getFile().lastModified()) {
@@ -69,10 +70,10 @@ public class BackupScanThread extends Thread {
     @Override
     public void run() {
         while (!isInterrupt) {
-            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "======Start Sort Backup Task=====");
-            Collections.sort(mBackupList, new Comparator<BackupInfo>() {
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "======Start Sort Backup Task=====");
+            Collections.sort(mBackupList, new Comparator<BackupFileInfo>() {
                 @Override
-                public int compare(BackupInfo info1, BackupInfo info2) {
+                public int compare(BackupFileInfo info1, BackupFileInfo info2) {
                     // priority 1 is max
                     if (info1.getPriority() < info2.getPriority()) {
                         return 1;
@@ -82,37 +83,38 @@ public class BackupScanThread extends Thread {
                     return 0;
                 }
             });
-            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "======Complete Sort Backup Task=====");
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "======Complete Sort Backup Task=====");
 
-            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, ">>>>>>Start Scanning Directory=====");
-            ArrayList<BackupElement> backupElements = new ArrayList<>();
-            for (BackupInfo info : mBackupList) {
-                Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "------Scanning: " + info.getPath());
-                ArrayList<BackupElement> files = scanningBackupFiles(info);
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, ">>>>>>Start Scanning Directory=====");
+            ArrayList<BackupFileElement> backupElements = new ArrayList<>();
+            for (BackupFileInfo info : mBackupList) {
+                Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "------Scanning: " + info.getPath());
+                ArrayList<BackupFileElement> files = scanningBackupFiles(info);
                 backupElements.addAll(files);
+                info.setCount(info.getCount() + 1);
             }
-            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, ">>>>>>Complete Scanning Directory: " + backupElements.size());
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, ">>>>>>Complete Scanning Directory: " + backupElements.size());
 
             if (mListener != null) {
                 mListener.onComplete(backupElements);
             }
 
-            if (BackupManager.USE_FILE_OBSERVER) {
+            if (BackupFileManager.USE_FILE_OBSERVER) {
                 stopBackupThread();
                 break;
             }
 
             try {
-                Logger.p(LogLevel.INFO, Logged.BACKUP, TAG, "======Sleep 10min====");
+                Logger.p(LogLevel.INFO, Logged.BACKUP_FILE, TAG, "======Sleep 10min====");
                 sleep(SCAN_FREQUENCY);
             } catch (InterruptedException e) {
-                Logger.p(LogLevel.ERROR, Logged.BACKUP, TAG, "BackupScanThread Exception", e);
+                Logger.p(LogLevel.ERROR, Logged.BACKUP_FILE, TAG, "BackupScanFileThread Exception", e);
             }
         }
     }
 
     private void listFiles(ArrayList<File> list, File dir, boolean isBackupAlbum, long lastBackupTime) {
-        Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "######List: " + dir.getAbsolutePath());
+        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "######List: " + dir.getAbsolutePath());
         if (dir.isDirectory()) {
             File[] files = dir.listFiles(new BackupFileFilter(isBackupAlbum, lastBackupTime));
             if (null != files) {
@@ -135,6 +137,6 @@ public class BackupScanThread extends Thread {
     }
 
     public interface OnScanFileListener {
-        void onComplete(ArrayList<BackupElement> backupList);
+        void onComplete(ArrayList<BackupFileElement> backupList);
     }
 }

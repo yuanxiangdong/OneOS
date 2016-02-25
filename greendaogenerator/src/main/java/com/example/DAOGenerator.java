@@ -15,8 +15,9 @@ public class DAOGenerator {
         Schema schema = new Schema(DB_VERSION, DEFAULT_PACKAGE);
 
         addUserInfo(schema);
-        addDeviceInfo(schema);
-        addBackupInfo(schema);
+        addDeviceHistory(schema);
+        addBackupFileInfo(schema);
+        addBackupInfoHistory(schema);
 
         new DaoGenerator().generateAll(schema, "app/src/main/java");
     }
@@ -38,7 +39,7 @@ public class DAOGenerator {
         note.addBooleanProperty("isBackupOnlyWifi"); // default is true
     }
 
-    private static void addDeviceInfo(Schema schema) {
+    private static void addDeviceHistory(Schema schema) {
         Entity note = schema.addEntity("DeviceHistory");
         note.addStringProperty("ip").notNull().primaryKey();
         note.addStringProperty("mac").notNull();
@@ -47,8 +48,8 @@ public class DAOGenerator {
         note.addBooleanProperty("isLAN");
     }
 
-    private static void addBackupInfo(Schema schema) {
-        Entity note = schema.addEntity("BackupInfo");
+    private static void addBackupFileInfo(Schema schema) {
+        Entity note = schema.addEntity("BackupFileInfo");
         note.addIdProperty().autoincrement();
         note.addStringProperty("mac").notNull();
         note.addStringProperty("user").notNull();
@@ -57,6 +58,15 @@ public class DAOGenerator {
         note.addLongProperty("count"); // backup total count
         note.addIntProperty("priority"); // backup priority, 1 > 2 > 3 ...
         note.addStringProperty("type"); // backup file type, such as picture
+    }
+
+    private static void addBackupInfoHistory(Schema schema) {
+        Entity note = schema.addEntity("BackupInfoHistory");
+        note.addIdProperty().autoincrement();
+        note.addLongProperty("uid");
+        note.addStringProperty("type"); // backup info type, such as contacts
+        note.addLongProperty("time"); // last backup time
+        note.addLongProperty("count"); // backup total count
     }
 
 //    private static void addCustomerOrder(Schema schema) {

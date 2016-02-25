@@ -12,7 +12,7 @@ import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.api.OneOSFileManageAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
-import com.eli.oneos.service.TransferService;
+import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.utils.AnimUtils;
@@ -304,7 +304,7 @@ public class OneOSFileManage {
                     }
                 }).show();
         String savePath = LoginManage.getInstance().getDownloadPath();
-        TransferService service = MyApplication.getTransferService();
+        OneSpaceService service = MyApplication.getTransferService();
         for (OneOSFile file : fileList) {
             service.addDownloadTask(file, savePath);
         }

@@ -10,8 +10,8 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.eli.oneos.MyApplication;
-import com.eli.oneos.db.BackupInfoKeeper;
-import com.eli.oneos.model.oneos.backup.BackupManager;
+import com.eli.oneos.db.BackupFileKeeper;
+import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
@@ -19,7 +19,7 @@ public class BackupService extends Service {
     private static final String TAG = BackupService.class.getSimpleName();
     private BackupServiceBinder mBinder;
     private Context context;
-    private BackupManager mBackupManager;
+    private BackupFileManager mBackupManager;
 
     @Override
     public void onCreate() {
@@ -54,7 +54,7 @@ public class BackupService extends Service {
             mBackupManager.stopBackup();
         }
 
-        mBackupManager = new BackupManager(loginSession, context);
+        mBackupManager = new BackupFileManager(loginSession, context);
         mBackupManager.startBackup();
         Log.d(TAG, "======Start Backup Thread");
     }
@@ -77,7 +77,7 @@ public class BackupService extends Service {
     public void resetBackupPhoto() {
         stopBackupPhoto();
         LoginSession loginSession = LoginManage.getInstance().getLoginSession();
-        BackupInfoKeeper.reset(loginSession.getDeviceInfo().getMac(), loginSession.getUserInfo().getName());
+        BackupFileKeeper.reset(loginSession.getDeviceInfo().getMac(), loginSession.getUserInfo().getName());
         startBackupPhoto();
     }
 

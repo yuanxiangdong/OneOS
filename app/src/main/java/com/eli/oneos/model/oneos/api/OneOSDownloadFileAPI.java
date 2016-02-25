@@ -64,7 +64,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
         this.listener = listener;
     }
 
-    public void download() {
+    public boolean download() {
         if (null != listener) {
             listener.onStart(url, downloadElement);
         }
@@ -75,6 +75,8 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "download over");
             listener.onComplete(url, downloadElement);
         }
+
+        return downloadElement.getState() == TransferState.COMPLETE;
     }
 
     public void stopDownload() {
@@ -119,7 +121,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 downloadElement.setState(TransferState.FAILED);
                 downloadElement.setException(TransferException.REQUEST_SERVER);
                 return;
-            } else if (fileLength > SDCardUtils.getDeviceAvailableSize(downloadElement.getTargetPath())) {
+            } else if (downloadElement.isCheck() && fileLength > SDCardUtils.getDeviceAvailableSize(downloadElement.getTargetPath())) {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "SD Available Size Insufficient");
                 downloadElement.setState(TransferState.FAILED);
                 downloadElement.setException(TransferException.LOCAL_SPACE_INSUFFICIENT);
@@ -192,10 +194,8 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             // httpClient.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT,
             // 5000);
             httpClient.getParams().setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, 10000);
-
             httpRequest.setEntity(new UrlEncodedFormEntity(param, HTTP.UTF_8));
             HttpResponse httpResponse = httpClient.execute(httpRequest);
-
             HttpEntity entity = httpResponse.getEntity();
             int code = httpResponse.getStatusLine().getStatusCode();
             if (code != 200 && code != 206) {
@@ -287,7 +287,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 downloadElement.setState(TransferState.PAUSE);
                 Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download interrupt");
             } else {
-                if (curFileLength != downloadElement.getSize()) {
+                if (downloadElement.getSize() > 0 && curFileLength != downloadElement.getSize()) {
                     Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download file length is not equals file real length");
                     downloadElement.setState(TransferState.FAILED);
                     downloadElement.setException(TransferException.UNKNOW_EXCEPTION);

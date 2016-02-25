@@ -22,7 +22,7 @@ import com.eli.oneos.model.oneos.transfer.TransferControlListener;
 import com.eli.oneos.model.oneos.transfer.TransferElement;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.model.oneos.transfer.UploadManager;
-import com.eli.oneos.service.TransferService;
+import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.SwipeListView;
@@ -41,7 +41,7 @@ public class TransmissionFragment extends BaseTransferFragment implements Downlo
     private SwipeListView mListView;
 
     private Thread mThread = null;
-    private TransferService mTransferService = null;
+    private OneSpaceService mTransferService = null;
     private TransfersAdapter mAdapter;
 
     public TransmissionFragment(boolean isDownload) {

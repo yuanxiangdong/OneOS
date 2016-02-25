@@ -1,7 +1,7 @@
 package com.eli.oneos.db;
 
-import com.eli.oneos.db.greendao.BackupInfo;
-import com.eli.oneos.db.greendao.BackupInfoDao;
+import com.eli.oneos.db.greendao.BackupFileInfo;
+import com.eli.oneos.db.greendao.BackupFileInfoDao;
 import com.eli.oneos.utils.EmptyUtils;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import de.greenrobot.dao.query.QueryBuilder;
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
-public class BackupInfoKeeper {
+public class BackupFileKeeper {
 
     /**
      * List Backup Info by mac and username
@@ -20,11 +20,11 @@ public class BackupInfoKeeper {
      * @param user login user name
      * @return
      */
-    public static List<BackupInfo> all(String mac, String user) {
-        BackupInfoDao dao = DBHelper.getDaoSession().getBackupInfoDao();
+    public static List<BackupFileInfo> all(String mac, String user) {
+        BackupFileInfoDao dao = DBHelper.getDaoSession().getBackupFileInfoDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
-        queryBuilder.where(BackupInfoDao.Properties.User.eq(user));
-        queryBuilder.where(BackupInfoDao.Properties.Mac.eq(mac));
+        queryBuilder.where(BackupFileInfoDao.Properties.User.eq(user));
+        queryBuilder.where(BackupFileInfoDao.Properties.Mac.eq(mac));
 
         return queryBuilder.list();
     }
@@ -35,16 +35,16 @@ public class BackupInfoKeeper {
      * @param user user targetPath
      * @param mac  mac address
      * @param path backup path
-     * @return BackupInfo or NULL
+     * @return BackupFileInfo or NULL
      */
-    public static BackupInfo getBackupInfo(String mac, String user, String path) {
-        BackupInfoDao dao = DBHelper.getDaoSession().getBackupInfoDao();
+    public static BackupFileInfo getBackupInfo(String mac, String user, String path) {
+        BackupFileInfoDao dao = DBHelper.getDaoSession().getBackupFileInfoDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
-        queryBuilder.where(BackupInfoDao.Properties.User.eq(user));
-        queryBuilder.where(BackupInfoDao.Properties.Mac.eq(mac));
-        queryBuilder.where(BackupInfoDao.Properties.Path.eq(path));
+        queryBuilder.where(BackupFileInfoDao.Properties.User.eq(user));
+        queryBuilder.where(BackupFileInfoDao.Properties.Mac.eq(mac));
+        queryBuilder.where(BackupFileInfoDao.Properties.Path.eq(path));
         queryBuilder.limit(1);
-        List<BackupInfo> list = queryBuilder.list();
+        List<BackupFileInfo> list = queryBuilder.list();
         if (!EmptyUtils.isEmpty(list)) {
             return list.get(0);
         }
@@ -58,9 +58,9 @@ public class BackupInfoKeeper {
      * @param info
      * @return insertOrReplace result
      */
-    public static boolean insertOrReplace(BackupInfo info) {
+    public static boolean insertOrReplace(BackupFileInfo info) {
         if (info != null) {
-            BackupInfoDao dao = DBHelper.getDaoSession().getBackupInfoDao();
+            BackupFileInfoDao dao = DBHelper.getDaoSession().getBackupFileInfoDao();
             return dao.insertOrReplace(info) > 0;
         }
 
@@ -75,14 +75,14 @@ public class BackupInfoKeeper {
      * @return
      */
     public static boolean reset(String mac, String user) {
-        BackupInfoDao dao = DBHelper.getDaoSession().getBackupInfoDao();
+        BackupFileInfoDao dao = DBHelper.getDaoSession().getBackupFileInfoDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
-        queryBuilder.where(BackupInfoDao.Properties.User.eq(user));
-        queryBuilder.where(BackupInfoDao.Properties.Mac.eq(mac));
+        queryBuilder.where(BackupFileInfoDao.Properties.User.eq(user));
+        queryBuilder.where(BackupFileInfoDao.Properties.Mac.eq(mac));
 
-        List<BackupInfo> list = queryBuilder.list();
+        List<BackupFileInfo> list = queryBuilder.list();
         if (null != list) {
-            for (BackupInfo info : list) {
+            for (BackupFileInfo info : list) {
                 info.setTime(0L);
                 update(info);
             }
@@ -97,9 +97,9 @@ public class BackupInfoKeeper {
      * @param info
      * @return delete result
      */
-    public static boolean delete(BackupInfo info) {
+    public static boolean delete(BackupFileInfo info) {
         if (info != null) {
-            BackupInfoDao dao = DBHelper.getDaoSession().getBackupInfoDao();
+            BackupFileInfoDao dao = DBHelper.getDaoSession().getBackupFileInfoDao();
             dao.delete(info);
 
             return true;
@@ -114,12 +114,12 @@ public class BackupInfoKeeper {
      * @param user
      * @return
      */
-    public static boolean update(BackupInfo user) {
+    public static boolean update(BackupFileInfo user) {
         if (null == user) {
             return false;
         }
 
-        BackupInfoDao dao = DBHelper.getDaoSession().getBackupInfoDao();
+        BackupFileInfoDao dao = DBHelper.getDaoSession().getBackupFileInfoDao();
         dao.update(user);
         return true;
     }

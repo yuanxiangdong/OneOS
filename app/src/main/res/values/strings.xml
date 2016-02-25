@@ -314,7 +314,7 @@
     <string name="title_backup_photo">相册备份</string>
     <string name="remain">剩余</string>
     <string name="counts">个</string>
-    <string name="backup_dir_shown" formatted="false">备份保存目录： 来自：%s-%s</string>
+    <string name="backup_dir_shown">保存目录：&#160;</string>
     <string name="backup_complete">备份完成</string>
     <string name="backup_closed">备份关闭</string>
     <string name="auto_backup_photo">自动备份相册</string>
@@ -323,5 +323,36 @@
     <string name="success_reset_backup">重置成功!</string>
     <string name="reset_now">立即重置</string>
     <string name="auto_backup_only_wifi">仅在Wi-Fi环境下备份</string>
+
+    <!--Backup Contacts and SMS-->
+    <string name="title_sync_contacts">通讯录备份</string>
+    <string name="sync_time">上次备份时间：</string>
+    <string name="sync_contacts_to_server">备份通讯录到设备</string>
+    <string name="recover_contacts_to_phone">恢复通讯录到手机</string>
+    <string name="title_sync_sms">短信备份</string>
+    <string name="sync_sms_to_server">备份短信到设备</string>
+    <string name="recover_sms_to_phone">恢复短信到手机</string>
+    <string name="recovering">正在恢复</string>
+    <string name="recover_waiting">等待恢复</string>
+    <string name="recover_prepare">准备恢复</string>
+    <string name="recover_success">完成恢复</string>
+    <string name="recover_failed">恢复失败</string>
+    <string name="error_export_sms">备份短信出错</string>
+    <string name="error_export_contacts">备份通讯录出错</string>
+    <string name="error_import_sms">恢复短信出错</string>
+    <string name="error_import_contacts">恢复通讯录出错</string>
+    <string name="no_sms_to_recover">未检测到可恢复的短信</string>
+    <string name="no_contact_to_recover">未检测到可恢复的联系人</string>
+    <string name="syncing">正在备份</string>
+    <string name="not_sync">尚未备份</string>
+    <string name="exporting">正在导出</string>
+    <string name="sync_failed">备份失败</string>
+    <string name="sync_success">完成备份</string>
+    <string name="sync_waiting">等待备份</string>
+    <string name="wait_to_sync">等待操作</string>
+    <string name="no_sms_to_sync">未检测到可备份的短信</string>
+    <string name="no_contact_to_sync">未检测到可备份的联系人</string>
+    <string name="sync_exception_download">备份失败，请重新尝试</string>
+    <string name="recovery_exception_upload">恢复失败，请重新尝试</string>
 
 </resources>

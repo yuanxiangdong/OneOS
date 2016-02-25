@@ -8,7 +8,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.eli.oneos.service.TransferService;
+import com.eli.oneos.service.OneSpaceService;
 
 public class MyApplication extends Application {
     private static final String TAG = MyApplication.class.getSimpleName();
@@ -16,7 +16,7 @@ public class MyApplication extends Application {
     private static Context context = null;
 
     private static boolean mIsServiceBound = false;
-    private static TransferService mTransferService;
+    private static OneSpaceService mTransferService;
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -27,7 +27,7 @@ public class MyApplication extends Application {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(TAG, "service connected, get download manager service instance");
-            TransferService.ServiceBinder binder = (TransferService.ServiceBinder) service;
+            OneSpaceService.ServiceBinder binder = (OneSpaceService.ServiceBinder) service;
             mTransferService = binder.getService();
 
             mIsServiceBound = true;
@@ -53,7 +53,7 @@ public class MyApplication extends Application {
     /** bind transfer service for download and upload */
     private void bindTransferService() {
         Log.i(TAG, "Bind Transfer Service");
-        Intent intent = new Intent(this, TransferService.class);
+        Intent intent = new Intent(this, OneSpaceService.class);
         if (this.bindService(intent, mConnection, Context.BIND_AUTO_CREATE)) {
             Log.d(TAG, "bind service success");
         } else {
@@ -72,7 +72,7 @@ public class MyApplication extends Application {
         return MyApplication.context;
     }
 
-    public static TransferService getTransferService() {
+    public static OneSpaceService getTransferService() {
         if (mIsServiceBound && mTransferService != null) {
             return mTransferService;
         }
