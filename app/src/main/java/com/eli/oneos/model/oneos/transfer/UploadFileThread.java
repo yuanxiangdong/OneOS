@@ -16,52 +16,66 @@ public class UploadFileThread extends Thread {
     private final String TAG = UploadFileThread.class.getSimpleName();
 
     private BackupElement mElement;
-    private OnUploadListener mListener = null;
+    private OnUploadResultListener mResultListener = null;
+    private OneOSUploadFileAPI.OnUploadFileListener mUploadListener = null;
     private OneOSUploadFileAPI uploadFileAPI;
     private LoginSession mLoginSession;
 
-    public UploadFileThread(BackupElement element, LoginSession mLoginSession, OnUploadListener mListener) {
+    public UploadFileThread(BackupElement element, LoginSession mLoginSession, OnUploadResultListener mListener) {
         if (mListener == null || mLoginSession == null) {
-            logger(LogLevel.ERROR, "OnUploadListener or LoginSession is NULL");
-            new Throwable(new NullPointerException("OnUploadListener or LoginSession is NULL"));
+            Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadResultListener or LoginSession is NULL");
+            new Throwable(new NullPointerException("OnUploadResultListener or LoginSession is NULL"));
         }
         this.mLoginSession = mLoginSession;
         this.mElement = element;
-        this.mListener = mListener;
+        this.mResultListener = mListener;
+    }
+
+    public UploadFileThread(BackupElement element, LoginSession mLoginSession, OneOSUploadFileAPI.OnUploadFileListener mListener) {
+        if (mListener == null || mLoginSession == null) {
+            Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadFileListener or LoginSession is NULL");
+            new Throwable(new NullPointerException("OnUploadFileListener or LoginSession is NULL"));
+        }
+        this.mLoginSession = mLoginSession;
+        this.mElement = element;
+        this.mUploadListener = mListener;
     }
 
     @Override
     public void run() {
         uploadFileAPI = new OneOSUploadFileAPI(mLoginSession, mElement);
-        uploadFileAPI.setOnUploadFileListener(new OneOSUploadFileAPI.OnUploadFileListener() {
-            @Override
-            public void onStart(String url, UploadElement element) {
-                logger(LogLevel.INFO, "Start Upload file: " + element.getSrcPath());
-            }
+        if (mUploadListener != null) {
+            uploadFileAPI.setOnUploadFileListener(mUploadListener);
+        } else {
+            uploadFileAPI.setOnUploadFileListener(new OneOSUploadFileAPI.OnUploadFileListener() {
+                @Override
+                public void onStart(String url, UploadElement element) {
+                    Logger.p(LogLevel.INFO, Logged.UPLOAD, TAG, "Start Upload file: " + element.getSrcPath());
+                }
 
-            @Override
-            public void onComplete(String url, UploadElement element) {
-                logger(LogLevel.INFO, "Complete Upload file: " + element.getSrcPath() + ", state: " + element.getState());
-                mListener.onComplete(element);
-            }
-        });
-        uploadFileAPI.upload();
+                @Override
+                public void onUploading(String url, UploadElement element) {
+
+                }
+
+                @Override
+                public void onComplete(String url, UploadElement element) {
+                    Logger.p(LogLevel.INFO, Logged.UPLOAD, TAG, "Complete Upload file: " + element.getSrcPath() + ", state: " + element.getState());
+                    mResultListener.onResult(element);
+                }
+            });
+            uploadFileAPI.upload();
+        }
     }
 
     public void stopBackupPhoto() {
         uploadFileAPI.stopUpload();
         mElement.setState(TransferState.PAUSE);
         interrupt();
-        logger(LogLevel.DEBUG, "Stop Upload file");
+        Logger.p(LogLevel.INFO, Logged.UPLOAD, TAG, "Stop Upload file");
     }
 
-    private void logger(LogLevel level, String msg) {
-        if (Logged.UPLOAD) {
-            Logger.p(level, TAG, msg);
-        }
-    }
-
-    public interface OnUploadListener {
-        void onComplete(UploadElement mElement);
+    public interface OnUploadResultListener {
+        void onResult(UploadElement mElement);
     }
 }

@@ -1,8 +1,9 @@
 package com.eli.oneos.model.oneos.backup;
 
-import android.util.Log;
-
 import com.eli.oneos.db.greendao.BackupInfo;
+import com.eli.oneos.model.logger.LogLevel;
+import com.eli.oneos.model.logger.Logged;
+import com.eli.oneos.model.logger.Logger;
 import com.eli.oneos.utils.EmptyUtils;
 
 import java.io.File;
@@ -16,7 +17,6 @@ import java.util.List;
  */
 public class BackupScanThread extends Thread {
     private static final String TAG = BackupScanThread.class.getSimpleName();
-    private static final boolean IS_LOG_DEBUG = true;
     private static final int SCAN_FREQUENCY = 1000 * 60 * 60;
 
     private List<BackupInfo> mBackupList;
@@ -27,10 +27,10 @@ public class BackupScanThread extends Thread {
         this.mBackupList = mBackupList;
         this.mListener = mScanListener;
         if (EmptyUtils.isEmpty(mBackupList)) {
-            Log.e(TAG, "Backup List is Empty");
+            Logger.p(LogLevel.ERROR, Logged.BACKUP, TAG, "BackupInfo List is Empty");
             isInterrupt = true;
         }
-        logDebug("Backup List Size: " + mBackupList.size());
+        Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Backup List Size: " + mBackupList.size());
     }
 
     private ArrayList<BackupElement> scanningBackupFiles(BackupInfo info) {
@@ -46,7 +46,7 @@ public class BackupScanThread extends Thread {
             for (File file : files) {
                 BackupElement element = new BackupElement(info, file, !isFirstBackup);
                 backupElements.add(element);
-                logDebug("Add Backup Element: " + element.toString());
+                Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Add Backup Element: " + element.toString());
             }
         }
 
@@ -69,7 +69,7 @@ public class BackupScanThread extends Thread {
     @Override
     public void run() {
         while (!isInterrupt) {
-            logDebug("======Start Sort Backup Task=====");
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "======Start Sort Backup Task=====");
             Collections.sort(mBackupList, new Comparator<BackupInfo>() {
                 @Override
                 public int compare(BackupInfo info1, BackupInfo info2) {
@@ -82,16 +82,16 @@ public class BackupScanThread extends Thread {
                     return 0;
                 }
             });
-            logDebug("======Complete Sort Backup Task=====");
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "======Complete Sort Backup Task=====");
 
-            logDebug(">>>>>>Start Scanning Directory=====");
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, ">>>>>>Start Scanning Directory=====");
             ArrayList<BackupElement> backupElements = new ArrayList<>();
             for (BackupInfo info : mBackupList) {
-                logDebug("------Scanning: " + info.getPath());
+                Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "------Scanning: " + info.getPath());
                 ArrayList<BackupElement> files = scanningBackupFiles(info);
                 backupElements.addAll(files);
             }
-            logDebug(">>>>>>Complete Scanning Directory: " + backupElements.size());
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, ">>>>>>Complete Scanning Directory: " + backupElements.size());
 
             if (mListener != null) {
                 mListener.onComplete(backupElements);
@@ -103,16 +103,16 @@ public class BackupScanThread extends Thread {
             }
 
             try {
-                Log.i(TAG, "======Sleep 10min====");
+                Logger.p(LogLevel.INFO, Logged.BACKUP, TAG, "======Sleep 10min====");
                 sleep(SCAN_FREQUENCY);
             } catch (InterruptedException e) {
-                Log.e(TAG, "BackupScanThread Exception", e);
+                Logger.p(LogLevel.ERROR, Logged.BACKUP, TAG, "BackupScanThread Exception", e);
             }
         }
     }
 
     private void listFiles(ArrayList<File> list, File dir, boolean isBackupAlbum, long lastBackupTime) {
-        logDebug("######List: " + dir.getAbsolutePath());
+        Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "######List: " + dir.getAbsolutePath());
         if (dir.isDirectory()) {
             File[] files = dir.listFiles(new BackupFileFilter(isBackupAlbum, lastBackupTime));
             if (null != files) {
@@ -132,12 +132,6 @@ public class BackupScanThread extends Thread {
     public void stopBackupThread() {
         this.isInterrupt = true;
         interrupt();
-    }
-
-    private void logDebug(String msg) {
-        if (IS_LOG_DEBUG) {
-            Log.d(TAG, msg);
-        }
     }
 
     public interface OnScanFileListener {

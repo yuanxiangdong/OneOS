@@ -67,7 +67,7 @@ public abstract class OneOSBaseAPI {
         return OneOSAPIs.PREFIX_HTTP + ip + ":" + port + action;
     }
 
-    public void logDebug(String TAG, String url, AjaxParams params) {
+    public void logHttp(String TAG, String url, AjaxParams params) {
         Log.d(TAG, "Url: " + url + ", Params: " + (params == null ? "Null" : params.toString()));
     }
 }

@@ -205,8 +205,8 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
         }
     }
 
-    private static final int REFRESH_FREQUENCE = 40; // 刷新频率，单位ms
-    private static final int TIMES_PRE_SECONDS = 1000 / REFRESH_FREQUENCE; // 每秒刷新次数
+    private static final int REFRESH_FREQUENCY = 40; // 刷新频率，单位ms
+    private static final int TIMES_PRE_SECONDS = 1000 / REFRESH_FREQUENCY; // 每秒刷新次数
     private static final int PROGRESS_PRE_TIMES = 100 / TIMES_PRE_SECONDS; // 刷新进度变化值基数
     private boolean isProgressUp = true;
     private boolean isBackup = false;
@@ -217,7 +217,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
             int times = 0;
 
             while (isFragmentVisible) {
-                Message message = null;
+                Message message;
                 try {
                     if (times == 0) {
                         message = new Message();
@@ -230,7 +230,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
                     message.arg1 = times;
                     handler.sendMessage(message);
 
-                    Thread.sleep(REFRESH_FREQUENCE); // sleep 800ms
+                    Thread.sleep(REFRESH_FREQUENCY); // sleep 800ms
                     if (times == 0) {
                         isProgressUp = true;
                     } else if (times == TIMES_PRE_SECONDS) {

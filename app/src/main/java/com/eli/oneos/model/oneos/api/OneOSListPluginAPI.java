@@ -38,7 +38,7 @@ public class OneOSListPluginAPI extends OneOSBaseAPI {
     public void list() {
         url = genOneOSAPIUrl(OneOSAPIs.APP_LIST);
         AjaxParams params = new AjaxParams();
-        logDebug(TAG, url, params);
+        logHttp(TAG, url, params);
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 
             @Override

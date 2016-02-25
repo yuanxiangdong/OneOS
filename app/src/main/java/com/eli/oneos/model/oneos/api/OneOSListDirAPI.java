@@ -55,7 +55,7 @@ public class OneOSListDirAPI extends OneOSBaseAPI {
         params.put("session", session);
         params.put("path", path);
         params.put("ftype", type);
-        logDebug(TAG, url, params);
+        logHttp(TAG, url, params);
 
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 

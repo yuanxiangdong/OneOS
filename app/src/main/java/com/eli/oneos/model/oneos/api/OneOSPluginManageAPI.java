@@ -49,7 +49,7 @@ public class OneOSPluginManageAPI extends OneOSBaseAPI {
         params.put("pack", pack);
         params.put("cmd", cmd);
         params.put("session", session);
-        logDebug(TAG, url, params);
+        logHttp(TAG, url, params);
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 
             @Override

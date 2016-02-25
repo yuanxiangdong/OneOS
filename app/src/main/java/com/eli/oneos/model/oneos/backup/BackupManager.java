@@ -2,10 +2,12 @@ package com.eli.oneos.model.oneos.backup;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
 
 import com.eli.oneos.db.BackupInfoKeeper;
 import com.eli.oneos.db.greendao.BackupInfo;
+import com.eli.oneos.model.logger.LogLevel;
+import com.eli.oneos.model.logger.Logged;
+import com.eli.oneos.model.logger.Logger;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
@@ -22,14 +24,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class BackupManager {
-    private static final String TAG = "BackupManager";
+    private static final String TAG = BackupManager.class.getSimpleName();
+
     public static final boolean USE_FILE_OBSERVER = true;
-    private static final int HTTP_UPLOAD_RETRY_TIMES = 5;
-    private static final int HTTP_BUFFER_SIZE = 1024 * 8;
-    /**
-     * chuck block size: 5mb
-     */
-    private static final int HTTP_BLOCK_SIZE = 1024 * 1024 * 4;
 
     private List<BackupElement> completeList = Collections.synchronizedList(new ArrayList<BackupElement>());
     private BackupScanThread mBackupThread = null;
@@ -88,14 +85,13 @@ public class BackupManager {
         if (null != mExternalDCIMDir) {
             File mExternalDCIM = new File(mExternalDCIMDir, "DCIM");
             if (null != mExternalDCIM && mExternalDCIM.exists()) {
-                Log.e(TAG, "=========External DCIM Dir: " + mExternalDCIM.getAbsolutePath());
                 BackupInfo info = BackupInfoKeeper.getBackupInfo(mLoginSession.getDeviceInfo().getMac(),
                         mLoginSession.getUserInfo().getName(), mExternalDCIM.getAbsolutePath());
                 if (null == info) {
                     info = new BackupInfo(0L, mLoginSession.getDeviceInfo().getMac(), mLoginSession.getUserInfo().getName(),
                             mExternalDCIM.getAbsolutePath(), 0L, 0L, BackupPriority.MAX, BackupType.ALBUM);
                     BackupInfoKeeper.insertOrReplace(info);
-                    Log.d(TAG, "Add New Backup: " + info.getPath());
+                    Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Add New Backup Album Dir: " + info.getPath());
                     isNewBackupPath = true;
                     mBackupInfoList.add(info);
                 }
@@ -103,14 +99,13 @@ public class BackupManager {
         }
         File mInternalDCIMDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         if (null != mInternalDCIMDir && mInternalDCIMDir.exists()) {
-            Log.e(TAG, "=========Internal DCIM Dir: " + mInternalDCIMDir.getAbsolutePath());
             BackupInfo info = BackupInfoKeeper.getBackupInfo(mLoginSession.getDeviceInfo().getMac(),
                     mLoginSession.getUserInfo().getName(), mInternalDCIMDir.getAbsolutePath());
             if (null == info) {
                 info = new BackupInfo(0L, mLoginSession.getDeviceInfo().getMac(), mLoginSession.getUserInfo().getName(),
                         mInternalDCIMDir.getAbsolutePath(), 0L, 0L, BackupPriority.MAX, BackupType.ALBUM);
                 BackupInfoKeeper.insertOrReplace(info);
-                Log.d(TAG, "Add New Backup: " + info.getPath());
+                Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Add New Backup Album Dir: " + info.getPath());
                 isNewBackupPath = true;
                 mBackupInfoList.add(info);
             }
@@ -157,11 +152,11 @@ public class BackupManager {
 
     private boolean addBackupElements(List<BackupElement> mList) {
         if (mList == null) {
-            Log.e(TAG, "Backup element is null");
+            Logger.p(LogLevel.ERROR, Logged.BACKUP, TAG, "Backup List is empty, nothing need to add");
             return false;
         }
-        Log.e(TAG, "==>>>Add backup photo list: " + mList.size());
 
+        Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "==>>>Add backup list, size: " + mList.size());
         if (handlerQueueThread != null) {
             if (!handlerQueueThread.isRunning) {
                 handlerQueueThread.start();
@@ -175,11 +170,11 @@ public class BackupManager {
 
     private boolean addBackupElement(BackupElement mElement) {
         if (mElement == null) {
-            Log.e(TAG, "Backup element is null");
+            Logger.p(LogLevel.ERROR, Logged.BACKUP, TAG, "Backup element is empty, nothing need to add");
             return false;
         }
-        Log.d(TAG, "Add backup photo path: " + mElement.getFile().getAbsolutePath());
 
+        Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "==>>>Add backup item: " + mElement.toString());
         if (handlerQueueThread != null) {
             if (!handlerQueueThread.isRunning) {
                 handlerQueueThread.start();
@@ -197,11 +192,11 @@ public class BackupManager {
         private UploadFileThread backupPhotoThread = null;
         private boolean isRunning = false;
         private boolean hasBackupTask = false;
-        private UploadFileThread.OnUploadListener listener = new UploadFileThread.OnUploadListener() {
+        private UploadFileThread.OnUploadResultListener listener = new UploadFileThread.OnUploadResultListener() {
             @Override
-            public void onComplete(UploadElement element) {
+            public void onResult(UploadElement element) {
                 BackupElement mElement = (BackupElement) element;
-                Log.d(TAG, "Backup Result: " + mElement.getFile().getName() + ", State: " + mElement.getState() + ", Time: " + System.currentTimeMillis());
+                Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Backup Result: " + mElement.getFile().getName() + ", State: " + mElement.getState() + ", Time: " + System.currentTimeMillis());
 
                 stopCurrentBackupTask();
 
@@ -213,21 +208,21 @@ public class BackupManager {
                         if (mLastBackupTime > mElement.getBackupInfo().getTime()) {
                             mElement.getBackupInfo().setTime(mLastBackupTime);
                             if (BackupInfoKeeper.update(mElement.getBackupInfo())) {
-                                Log.d(TAG, "Update Database Last Backup Time Success: " + FileUtils.formatTime(mLastBackupTime));
+                                Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Update Database Last Backup Time Success: " + FileUtils.formatTime(mLastBackupTime));
                             } else {
-                                Log.e(TAG, "Update Database Last Backup Time Failed");
+                                Logger.p(LogLevel.ERROR, Logged.BACKUP, TAG, "Update Database Last Backup Time Failed");
                                 return;
                             }
                         }
 
                         completeList.add(mElement);
                         mBackupList.remove(mElement);
-                        Log.d(TAG, "Backup Complete");
+                        Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Backup Complete");
                     } else {
                         if (mElement.getState() == TransferState.FAILED && mElement.getException() == TransferException.FILE_NOT_FOUND) {
                             mBackupList.remove(mElement);
                         } else {
-                            Log.e(TAG, "Backup Failed");
+                            Logger.p(LogLevel.ERROR, Logged.BACKUP, TAG, "Backup Failed");
                             mElement.setState(TransferState.WAIT);
                         }
                     }
@@ -257,7 +252,7 @@ public class BackupManager {
                 if (hasBackupTask) {
                     synchronized (this) {
                         try {
-                            Log.d(TAG, "Waiting for Backup task stop: " + System.currentTimeMillis());
+                            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Waiting for Backup task stop: " + System.currentTimeMillis());
                             this.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -266,7 +261,7 @@ public class BackupManager {
                 }
 
                 try {
-                    Log.d(TAG, "Waiting for Backup List Change: " + System.currentTimeMillis());
+                    Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Waiting for Backup List Change: " + System.currentTimeMillis());
                     synchronized (mBackupList) {
                         mBackupList.wait();
                     }
@@ -280,7 +275,7 @@ public class BackupManager {
                     try {
                         sleep(60000); // sleep 60 * 1000 = 60s
                         isOnlyWifiBackup = mLoginSession.getUserInfo().getIsBackupOnlyWifi();
-                        Log.d(TAG, "-------Is Backup Only Wifi: " + isOnlyWifiBackup);
+                        Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "----Is Backup Only Wifi: " + isOnlyWifiBackup);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -288,7 +283,7 @@ public class BackupManager {
 
                 for (BackupElement element : mBackupList) {
                     if (element.getState() == TransferState.WAIT) {
-                        Log.d(TAG, "start Backup task");
+                        Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "Start a New Backup Task");
                         hasBackupTask = true;
                         backupPhotoThread = new UploadFileThread(element, mLoginSession, listener);
                         backupPhotoThread.start();
@@ -305,8 +300,6 @@ public class BackupManager {
         private synchronized void stopCurrentBackupTask() {
             hasBackupTask = false;
             synchronized (this) {
-                // Logged.d(TAG, "====Stop Current Backup Task: " +
-                // System.currentTimeMillis());
                 this.notify();
             }
         }
@@ -317,8 +310,6 @@ public class BackupManager {
          */
         private synchronized void notifyNewBackupTask() {
             synchronized (mBackupList) {
-                // Logged.d(TAG, "====Notify New Backup Task: " +
-                // System.currentTimeMillis());
                 mBackupList.notify();
             }
         }
@@ -369,7 +360,7 @@ public class BackupManager {
          * stop backup
          */
         public void stopBackupThread() {
-            Log.d(TAG, "====Stop Backup");
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP, TAG, "====Stop Backup====");
             isRunning = false;
             if (backupPhotoThread != null) {
                 backupPhotoThread.stopBackupPhoto();

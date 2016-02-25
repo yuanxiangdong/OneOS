@@ -1,8 +1,9 @@
 package com.eli.oneos.model.oneos.api;
 
-import android.util.Log;
-
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.logger.LogLevel;
+import com.eli.oneos.model.logger.Logged;
+import com.eli.oneos.model.logger.Logger;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
@@ -71,7 +72,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
     public void stopUpload() {
         isInterrupt = true;
-        Log.d(TAG, "stop upload");
+        Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "Upload Stopped");
     }
 
     /**
@@ -87,22 +88,22 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         params.put("session", session);
         params.put("cmd", "attributes");
         params.put("path", path);
-        logDebug(TAG, url, params);
+        logHttp(TAG, url, params);
         try {
             String result = (String) finalHttp.postSync(url, params);
-            Log.d(TAG, "File Attr: " + result);
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "File Attr: " + result);
             JSONObject json = new JSONObject(result);
             boolean ret = json.getBoolean("result");
             if (ret) {
                 long size = json.getLong("size");
                 if (size == srcSize) {
-                    Log.e(TAG, "****Upload file is exist: " + path);
+                    Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file does exist on the server: " + path);
                     return true;
                 }
             }
         } catch (Exception e) {
-//            e.printStackTrace();
-            Log.d(TAG, "****Upload file is not exist");
+            // e.printStackTrace();
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file does not exist on the server: " + path, e);
         }
 
         return false;
@@ -110,7 +111,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
     private void doUpload() {
         url = genOneOSAPIUrl(OneOSAPIs.FILE_UPLOAD);
-        logDebug(TAG, url, null);
+        logHttp(TAG, url, null);
 
         uploadElement.setState(TransferState.START);
         String session = loginSession.getSession();
@@ -149,7 +150,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
         File uploadFile = new File(srcPath);
         if (!uploadFile.exists()) {
-            Log.e(TAG, "upload file is not exist");
+            Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "upload file does not exist");
             uploadElement.setState(TransferState.FAILED);
             uploadElement.setException(TransferException.FILE_NOT_FOUND);
             return;
@@ -158,7 +159,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         long fileLen = uploadFile.length();
         long uploadPosition = 0;
         if (isUploadToPrivateDir && (userFreeSpace <= fileLen - uploadPosition)) {
-            Log.e(TAG, "File Length = " + fileLen + " ; Disk space = " + userFreeSpace);
+            Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "Space Insufficient: File Length = " + fileLen + ", Disk Space = " + userFreeSpace);
             uploadElement.setState(TransferState.FAILED);
             uploadElement.setException(TransferException.SERVER_SPACE_INSUFFICIENT);
             return;
@@ -178,7 +179,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         int chunkNum = (int) Math.ceil((double) fileLen / (double) HTTP_BLOCK_SIZE);
         int chunkIndex;
         for (chunkIndex = 0; chunkIndex < chunkNum; chunkIndex++) {
-            Log.d(TAG, "=====>>> BlockIndex:" + chunkIndex + ", BlockNum:" + chunkNum + ", BlockSize:" + HTTP_BLOCK_SIZE);
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "=====>>> BlockIndex:" + chunkIndex + ", BlockNum:" + chunkNum + ", BlockSize:" + HTTP_BLOCK_SIZE);
             long blockUpLen = 0;
             try {
                 URL mUrl = new URL(url);
@@ -263,12 +264,19 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                 RandomAccessFile inputStream = new RandomAccessFile(uploadFile, "r");
                 inputStream.seek(chunkIndex * HTTP_BLOCK_SIZE);
                 byte[] bytes = new byte[HTTP_BUFFER_SIZE];
-                int len = 0;
+                int len;
+                int callback = 0; // for upload progress callback
                 while (!isInterrupt && (len = inputStream.read(bytes)) != -1) {
                     outStream.write(bytes, 0, len);
                     blockUpLen += len;
                     uploadLen += len;
                     uploadElement.setLength(uploadLen);
+                    callback++;
+                    if (null != listener && callback == 64) {
+                        // callback every 512KB
+                        listener.onUploading(url, uploadElement);
+                        callback = 0;
+                    }
                     if (blockUpLen >= HTTP_BLOCK_SIZE) {
                         break;
                     }
@@ -284,7 +292,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
                     int code = conn.getResponseCode();
                     if (code != HttpURLConnection.HTTP_OK) {
-                        Log.e(TAG, "Http Response Error, code = " + code);
+                        Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "Http Response Error, code = " + code);
                         uploadElement.setException(TransferException.REQUEST_SERVER);
                         retry++;
                     } else {
@@ -292,7 +300,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                     }
                 } else {
                     outStream.close();
-                    Log.d(TAG, "======== Stop upload");
+                    Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "End, file upload interrupt");
                     break;
                 }
             } catch (MalformedURLException e) {
@@ -319,13 +327,13 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                     }
                 }
                 if (!isInterrupt && retry > HTTP_UPLOAD_RETRY_TIMES) {
-                    Log.w(TAG, "=====>>>Upload exception, retry " + HTTP_UPLOAD_RETRY_TIMES + " times, exit ...");
+                    Logger.p(LogLevel.WARN, Logged.UPLOAD, TAG, "Upload exception: Retry " + HTTP_UPLOAD_RETRY_TIMES + " times, Exit...");
                     break;
                 }
             }
         }
 
-        Log.d(TAG, "========Upload Over; FileLen = " + fileLen + ", UploadLen = " + uploadLen);
+        Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "The end of the file upload: FileLen = " + fileLen + ", UploadLen = " + uploadLen);
         if (fileLen == uploadLen) {
             uploadElement.setState(TransferState.COMPLETE);
         } else {
@@ -339,6 +347,8 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
     public interface OnUploadFileListener {
         void onStart(String url, UploadElement element);
+
+        void onUploading(String url, UploadElement element);
 
         void onComplete(String url, UploadElement element);
     }
