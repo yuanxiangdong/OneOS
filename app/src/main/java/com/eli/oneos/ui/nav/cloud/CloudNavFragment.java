@@ -16,6 +16,7 @@ import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileTypeItem;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
+import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFileFragment;
 import com.eli.oneos.widget.FileManagePanel;
@@ -235,6 +236,12 @@ public class CloudNavFragment extends BaseNavFileFragment {
      */
     @Override
     public void onNetworkChanged(boolean isAvailable, boolean isWifiAvailable) {
-
+        if (null != mCurFragment
+                ) {
+            OneOSFileBaseAdapter adapter = mCurFragment.getFileAdapter();
+            if (null != adapter) {
+                adapter.setWifiAvailable(isWifiAvailable);
+            }
+        }
     }
 }

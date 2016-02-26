@@ -107,14 +107,13 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             intent = new Intent(getActivity(), AppsActivity.class);
         } else if (tool == TOOL_SETTING) {
             intent = new Intent(getActivity(), SettingsActivity.class);
-        } else if (tool == TOOL_SYNC_CONTACT) {
+        } else if (tool == TOOL_SYNC_CONTACT || tool == TOOL_SYNC_SMS) {
             if (isLogin()) {
-                intent = new Intent(getActivity(), BackupContactActivity.class);
+                intent = new Intent(getActivity(), BackupInfoActivity.class);
+                intent.putExtra(BackupInfoActivity.EXTRA_BACKUP_INFO_TYPE, tool == TOOL_SYNC_CONTACT);
             } else {
                 ToastHelper.showToast(R.string.please_login_onespace);
             }
-        } else if (tool == TOOL_SYNC_SMS) {
-//            intent = new Intent(getActivity(), SyncSmsActivity.class);
         } else if (tool == TOOL_OFFLINE) {
             if (isLogin()) {
                 intent = new Intent(getActivity(), AriaActivity.class);

@@ -2,6 +2,9 @@ package com.eli.oneos.constant;
 
 import android.os.Build;
 
+import com.eli.oneos.MyApplication;
+import com.eli.oneos.R;
+
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
@@ -10,10 +13,13 @@ public class Constants {
 
     public static final String DEFAULT_DOWNLOAD_PATH = "/OneOS";
 
-    public static final String BACKUP_ONEOS_ROOT_DIR_NAME = "/From：" + Build.BRAND + "-" + Build.MODEL + "/";
-    public static final String BACKUP_ONEOS_ROOT_DIR_NAME_ALBUM = BACKUP_ONEOS_ROOT_DIR_NAME + "Album/";
+    public static final String BACKUP_FILE_ONEOS_ROOT_DIR_NAME = "/From：" + Build.BRAND + "-" + Build.MODEL + "/";
+    public static final String BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM = BACKUP_FILE_ONEOS_ROOT_DIR_NAME + "Album/";
 
-    public static final String BACKUP_ONEOS_ROOT_DIR_CONTACTS = BACKUP_ONEOS_ROOT_DIR_NAME;
-    public static final String BACKUP_FILE_NAME_CONTACTS = ".contactsfromandroid.vcf";
+    public static final String BACKUP_INFO_ONEOS_ROOT_DIR = "/";
+    public static final String BACKUP_CONTACTS_FILE_NAME = ".contactsfromandroid.vcf";
+    public static final String BACKUP_SMS_FILE_NAME = ".messagefromandroid.xml";
+
+    public static final String PHOTO_DATE_UNKNOWN = MyApplication.getAppContext().getString(R.string.unknown_photo_date);
 
 }

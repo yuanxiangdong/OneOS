@@ -12,6 +12,7 @@ import android.util.Base64;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginSession;
@@ -49,7 +50,7 @@ public class FileUtils {
             e.printStackTrace();
         }
 
-        return "未知时间";
+        return Constants.PHOTO_DATE_UNKNOWN;
     }
 
     /**
@@ -100,6 +101,10 @@ public class FileUtils {
 
     public static String getCurFormatTime() {
         return formatTime(System.currentTimeMillis());
+    }
+
+    public static String getCurFormatTime(String fmt) {
+        return formatTime(System.currentTimeMillis(), fmt);
     }
 
     public static String formatTime(long time) {

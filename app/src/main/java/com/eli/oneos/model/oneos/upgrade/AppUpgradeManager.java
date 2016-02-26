@@ -277,15 +277,13 @@ public class AppUpgradeManager {
                 JSONObject apkJson = json.getJSONObject("android");
                 serverVersion = apkJson.getString("str");
                 appUrl = apkJson.getString("file");
-                Log.d(TAG, "Server App Version: " + serverVersion + "; File DownLoad URL: "
-                        + appUrl);
+                Log.d(TAG, "Server App Version: " + serverVersion + "; File DownLoad URL: " + appUrl);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private class DownloadAppThread extends Thread {

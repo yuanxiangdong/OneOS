@@ -6,6 +6,7 @@ package com.eli.oneos.model.logger;
 public class Logged {
     public static boolean BACKUP_FILE = true;
     public static boolean BACKUP_CONTACTS = true;
+    public static boolean BACKUP_SMS = true;
     public static boolean UPLOAD = true;
     public static boolean DOWNLOAD = true;
 

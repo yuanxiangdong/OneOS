@@ -1,4 +1,4 @@
-package com.eli.oneos.model.oneos.backup.info.contacts;
+package com.eli.oneos.model.oneos.backup.info.contact;
 
 import android.util.Log;
 

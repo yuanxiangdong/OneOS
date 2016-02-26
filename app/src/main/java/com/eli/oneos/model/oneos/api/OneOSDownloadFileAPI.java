@@ -111,7 +111,11 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             if (code != 200 && code != 206) {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "ERROR: status code=" + code);
                 downloadElement.setState(TransferState.FAILED);
-                downloadElement.setException(TransferException.REQUEST_SERVER);
+                if (code == 404) {
+                    downloadElement.setException(TransferException.SERVER_FILE_NOT_FOUND);
+                } else {
+                    downloadElement.setException(TransferException.FAILED_REQUEST_SERVER);
+                }
                 return;
             }
 
@@ -119,7 +123,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             if (fileLength < 0) {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "ERROR: content length=" + fileLength);
                 downloadElement.setState(TransferState.FAILED);
-                downloadElement.setException(TransferException.REQUEST_SERVER);
+                downloadElement.setException(TransferException.FAILED_REQUEST_SERVER);
                 return;
             } else if (downloadElement.isCheck() && fileLength > SDCardUtils.getDeviceAvailableSize(downloadElement.getTargetPath())) {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "SD Available Size Insufficient");
@@ -134,7 +138,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
 
         } catch (HttpHostConnectException e) {
             downloadElement.setState(TransferState.FAILED);
-            downloadElement.setException(TransferException.REQUEST_SERVER);
+            downloadElement.setException(TransferException.FAILED_REQUEST_SERVER);
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             downloadElement.setState(TransferState.FAILED);
@@ -158,7 +162,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             e.printStackTrace();
         } catch (Exception e) {
             downloadElement.setState(TransferState.FAILED);
-            downloadElement.setException(TransferException.UNKNOW_EXCEPTION);
+            downloadElement.setException(TransferException.UNKNOWN_EXCEPTION);
             e.printStackTrace();
         }
     }
@@ -172,7 +176,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
 
         if (session == null) {
             downloadElement.setState(TransferState.FAILED);
-            downloadElement.setException(TransferException.REQUEST_SERVER);
+            downloadElement.setException(TransferException.FAILED_REQUEST_SERVER);
             Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "Session is null");
             return;
         }
@@ -201,7 +205,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             if (code != 200 && code != 206) {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "ERROR: status code=" + code);
                 downloadElement.setState(TransferState.FAILED);
-                downloadElement.setException(TransferException.REQUEST_SERVER);
+                downloadElement.setException(TransferException.FAILED_REQUEST_SERVER);
                 return;
             }
             long fileLength = entity.getContentLength();
@@ -209,7 +213,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             if (fileLength < 0) {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "ERROR: content length=" + fileLength);
                 downloadElement.setState(TransferState.FAILED);
-                downloadElement.setException(TransferException.REQUEST_SERVER);
+                downloadElement.setException(TransferException.FAILED_REQUEST_SERVER);
                 return;
             } else if (fileLength > SDCardUtils.getDeviceAvailableSize(downloadElement.getTargetPath())) {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "SDCard Available Size Insufficient");
@@ -235,7 +239,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
 
         } catch (HttpHostConnectException e) {
             downloadElement.setState(TransferState.FAILED);
-            downloadElement.setException(TransferException.REQUEST_SERVER);
+            downloadElement.setException(TransferException.FAILED_REQUEST_SERVER);
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             downloadElement.setState(TransferState.FAILED);
@@ -290,7 +294,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 if (downloadElement.getSize() > 0 && curFileLength != downloadElement.getSize()) {
                     Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download file length is not equals file real length");
                     downloadElement.setState(TransferState.FAILED);
-                    downloadElement.setException(TransferException.UNKNOW_EXCEPTION);
+                    downloadElement.setException(TransferException.UNKNOWN_EXCEPTION);
                 } else {
                     downloadElement.setState(TransferState.COMPLETE);
                 }
@@ -316,7 +320,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             e.printStackTrace();
         } catch (Exception e) {
             downloadElement.setState(TransferState.FAILED);
-            downloadElement.setException(TransferException.UNKNOW_EXCEPTION);
+            downloadElement.setException(TransferException.UNKNOWN_EXCEPTION);
             e.printStackTrace();
         } finally {
             try {

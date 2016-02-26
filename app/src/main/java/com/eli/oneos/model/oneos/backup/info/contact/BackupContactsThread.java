@@ -1,4 +1,4 @@
-package com.eli.oneos.model.oneos.backup.info.contacts;
+package com.eli.oneos.model.oneos.backup.info.contact;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -82,8 +82,8 @@ public class BackupContactsThread extends Thread {
      * Upload contacts file to server
      */
     private void uploadContacts() {
-        File file = new File(context.getCacheDir().getAbsolutePath() + File.separator + Constants.BACKUP_FILE_NAME_CONTACTS);
-        String path = Constants.BACKUP_ONEOS_ROOT_DIR_CONTACTS;
+        File file = new File(context.getCacheDir().getAbsolutePath() + File.separator + Constants.BACKUP_CONTACTS_FILE_NAME);
+        String path = Constants.BACKUP_INFO_ONEOS_ROOT_DIR;
 
         UploadElement element = new UploadElement();
         element.setFile(file);
@@ -127,7 +127,7 @@ public class BackupContactsThread extends Thread {
     private boolean exportContacts() {
         boolean result = true;
 
-        String fileName = context.getCacheDir().getAbsolutePath() + File.separator + Constants.BACKUP_FILE_NAME_CONTACTS;
+        String fileName = context.getCacheDir().getAbsolutePath() + File.separator + Constants.BACKUP_CONTACTS_FILE_NAME;
         ContentResolver cResolver = context.getContentResolver();
         String[] projection = {ContactsContract.Contacts._ID};
         Cursor cursor = cResolver.query(ContactsContract.Contacts.CONTENT_URI, projection, null, null, null);
@@ -155,13 +155,13 @@ public class BackupContactsThread extends Thread {
             } else {
                 Logger.p(LogLevel.ERROR, IS_LOG, TAG, "No Contacts to Export");
 //                showSyncTips(R.string.no_contact_to_sync);
-                exception = BackupInfoException.LOCAL_EMPTY;
+                exception = BackupInfoException.NO_BACKUP;
                 result = false;
             }
         } catch (Exception e) {
             Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Error Export Contacts", e);
 //            showSyncTips(R.string.error_export_contacts);
-            exception = BackupInfoException.EXPORT_ERROR;
+            exception = BackupInfoException.ERROR_EXPORT;
             result = false;
         } finally {
             if (cursor != null) {
@@ -179,5 +179,4 @@ public class BackupContactsThread extends Thread {
             mListener.onBackup(TYPE, BackupInfoStep.EXPORT, progress);
         }
     }
-
 }

@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
+import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.ui.MainActivity;
@@ -48,4 +49,11 @@ public abstract class BaseCloudFragment extends Fragment {
      * @return If consumed returns true, otherwise returns false.
      */
     public abstract boolean onBackPressed();
+
+    /**
+     * Get current file adapter
+     *
+     * @return
+     */
+    public abstract OneOSFileBaseAdapter getFileAdapter();
 }

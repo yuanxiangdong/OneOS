@@ -64,7 +64,7 @@ public class CloudDbFragment extends BaseCloudFragment {
             mLastClickPosition = position;
             mLastClickItem2Top = view.getTop();
 
-            OneOSFileBaseAdapter mAdapter = getCurFileAdapter();
+            OneOSFileBaseAdapter mAdapter = getFileAdapter();
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (isMultiMode) {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
@@ -92,7 +92,7 @@ public class CloudDbFragment extends BaseCloudFragment {
                 position -= 1; // for PullToRefreshView header
             }
 
-            OneOSFileBaseAdapter mAdapter = getCurFileAdapter();
+            OneOSFileBaseAdapter mAdapter = getFileAdapter();
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (!isMultiMode) {
                 setMultiModel(true, position);
@@ -118,8 +118,8 @@ public class CloudDbFragment extends BaseCloudFragment {
     private FileSelectPanel.OnFileSelectListener mFileSelectListener = new FileSelectPanel.OnFileSelectListener() {
         @Override
         public void onSelect(boolean isSelectAll) {
-            getCurFileAdapter().selectAllItem(isSelectAll);
-            getCurFileAdapter().notifyDataSetChanged();
+            getFileAdapter().selectAllItem(isSelectAll);
+            getFileAdapter().notifyDataSetChanged();
             updateSelectAndManagePanel();
         }
 
@@ -318,14 +318,6 @@ public class CloudDbFragment extends BaseCloudFragment {
         Log.d(TAG, "========Set FileType: " + type);
     }
 
-    private OneOSFileBaseAdapter getCurFileAdapter() {
-        if (isListShown) {
-            return mListAdapter;
-        } else {
-            return mGridAdapter;
-        }
-    }
-
     /**
      * Use to handle parent Activity back action
      *
@@ -333,12 +325,26 @@ public class CloudDbFragment extends BaseCloudFragment {
      */
     @Override
     public boolean onBackPressed() {
-        if (getCurFileAdapter().isMultiChooseModel()) {
+        if (getFileAdapter().isMultiChooseModel()) {
             showSelectAndOperatePanel(false);
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Get current file adapter
+     *
+     * @return
+     */
+    @Override
+    public OneOSFileBaseAdapter getFileAdapter() {
+        if (isListShown) {
+            return mListAdapter;
+        } else {
+            return mGridAdapter;
+        }
     }
 
     protected void autoPullToRefresh() {
@@ -448,7 +454,7 @@ public class CloudDbFragment extends BaseCloudFragment {
     }
 
     private boolean setMultiModel(boolean isSetMultiModel, int position) {
-        boolean curIsMultiModel = getCurFileAdapter().isMultiChooseModel();
+        boolean curIsMultiModel = getFileAdapter().isMultiChooseModel();
         if (curIsMultiModel == isSetMultiModel) {
             return false;
         }
@@ -459,13 +465,13 @@ public class CloudDbFragment extends BaseCloudFragment {
             mListAdapter.setIsMultiModel(true);
             mGridAdapter.setIsMultiModel(true);
             mSelectedList.add(mFileList.get(position));
-            getCurFileAdapter().notifyDataSetChanged();
+            getFileAdapter().notifyDataSetChanged();
             return true;
         } else {
             showSelectAndOperatePanel(false);
             mListAdapter.setIsMultiModel(false);
             mGridAdapter.setIsMultiModel(false);
-            getCurFileAdapter().notifyDataSetChanged();
+            getFileAdapter().notifyDataSetChanged();
             return true;
         }
     }

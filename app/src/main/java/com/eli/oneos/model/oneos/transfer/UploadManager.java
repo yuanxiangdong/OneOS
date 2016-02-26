@@ -455,7 +455,7 @@ public class UploadManager {
             LoginSession loginSession = LoginManage.getInstance().getLoginSession();
             if (loginSession == null) {
                 mElement.setState(TransferState.FAILED);
-                mElement.setException(TransferException.UNKNOW_EXCEPTION);
+                mElement.setException(TransferException.UNKNOWN_EXCEPTION);
                 Log.e(LOG_TAG, "user info is null");
                 return;
             }
@@ -472,7 +472,7 @@ public class UploadManager {
             if (mElement.isUploadToPrivateDir()) {
                 if (session == null || savePath == null) {
                     mElement.setState(TransferState.FAILED);
-                    mElement.setException(TransferException.REQUEST_SERVER);
+                    mElement.setException(TransferException.FAILED_REQUEST_SERVER);
                     Log.e(LOG_TAG, "session is null");
                     return;
                 }
@@ -482,7 +482,7 @@ public class UploadManager {
                     if (userFreeSpace < 0) {
                         mElement.setState(TransferState.FAILED);
                         if (userFreeSpace == -1) {
-                            mElement.setException(TransferException.REQUEST_SERVER);
+                            mElement.setException(TransferException.FAILED_REQUEST_SERVER);
                         } else {
                             mElement.setException(TransferException.SERVER_SPACE_INSUFFICIENT);
                         }
@@ -495,11 +495,11 @@ public class UploadManager {
                 } catch (IOException e) {
                     e.printStackTrace();
                     mElement.setState(TransferState.FAILED);
-                    mElement.setException(TransferException.REQUEST_SERVER);
+                    mElement.setException(TransferException.FAILED_REQUEST_SERVER);
                 } catch (Exception e) {
                     e.printStackTrace();
                     mElement.setState(TransferState.FAILED);
-                    mElement.setException(TransferException.UNKNOW_EXCEPTION);
+                    mElement.setException(TransferException.UNKNOWN_EXCEPTION);
                 }
 
             }
@@ -577,7 +577,7 @@ public class UploadManager {
                         }
                     } else {
                         mElement.setState(TransferState.FAILED);
-                        mElement.setException(TransferException.UNKNOW_EXCEPTION);
+                        mElement.setException(TransferException.UNKNOWN_EXCEPTION);
                     }
                 }
             } catch (FileNotFoundException e) {
@@ -587,11 +587,11 @@ public class UploadManager {
             } catch (SocketException e) {
                 e.printStackTrace();
                 mElement.setState(TransferState.FAILED);
-                mElement.setException(TransferException.REQUEST_SERVER);
+                mElement.setException(TransferException.FAILED_REQUEST_SERVER);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
                 mElement.setState(TransferState.FAILED);
-                mElement.setException(TransferException.REQUEST_SERVER);
+                mElement.setException(TransferException.FAILED_REQUEST_SERVER);
             } catch (IOException e) {
                 e.printStackTrace();
                 mElement.setState(TransferState.FAILED);
@@ -599,7 +599,7 @@ public class UploadManager {
             } catch (Exception e) {
                 e.printStackTrace();
                 mElement.setState(TransferState.FAILED);
-                mElement.setException(TransferException.UNKNOW_EXCEPTION);
+                mElement.setException(TransferException.UNKNOWN_EXCEPTION);
             } finally {
                 try {
                     if (fileReader != null) {
@@ -626,7 +626,7 @@ public class UploadManager {
             LoginSession loginSession = LoginManage.getInstance().getLoginSession();
             if (loginSession == null) {
                 mElement.setState(TransferState.FAILED);
-                mElement.setException(TransferException.UNKNOW_EXCEPTION);
+                mElement.setException(TransferException.UNKNOWN_EXCEPTION);
                 Log.e(LOG_TAG, "user info is null");
                 return;
             }
@@ -642,7 +642,7 @@ public class UploadManager {
             if (mElement.isUploadToPrivateDir()) {
                 if (session == null || savePath == null) {
                     mElement.setState(TransferState.FAILED);
-                    mElement.setException(TransferException.REQUEST_SERVER);
+                    mElement.setException(TransferException.FAILED_REQUEST_SERVER);
                     Log.e(LOG_TAG, "session is null");
                     return;
                 }
@@ -652,7 +652,7 @@ public class UploadManager {
                     if (userFreeSpace < 0) {
                         mElement.setState(TransferState.FAILED);
                         if (userFreeSpace == -1) {
-                            mElement.setException(TransferException.REQUEST_SERVER);
+                            mElement.setException(TransferException.FAILED_REQUEST_SERVER);
                         } else {
                             mElement.setException(TransferException.SERVER_SPACE_INSUFFICIENT);
                         }
@@ -665,11 +665,11 @@ public class UploadManager {
                 } catch (IOException e) {
                     e.printStackTrace();
                     mElement.setState(TransferState.FAILED);
-                    mElement.setException(TransferException.REQUEST_SERVER);
+                    mElement.setException(TransferException.FAILED_REQUEST_SERVER);
                 } catch (Exception e) {
                     e.printStackTrace();
                     mElement.setState(TransferState.FAILED);
-                    mElement.setException(TransferException.UNKNOW_EXCEPTION);
+                    mElement.setException(TransferException.UNKNOWN_EXCEPTION);
                 }
             }
 
@@ -811,7 +811,7 @@ public class UploadManager {
                         if (code != HttpURLConnection.HTTP_OK) {
                             Log.e(TAG, "Http Response Error, code = " + code);
                             // mElement.setState(TransferState.FAILED);
-                            mElement.setException(TransferException.REQUEST_SERVER);
+                            mElement.setException(TransferException.FAILED_REQUEST_SERVER);
                             // return;
                             retry++;
                         } else {
@@ -826,7 +826,7 @@ public class UploadManager {
                     e.printStackTrace();
                     retry++;
                     // mElement.setState(TransferState.FAILED);
-                    mElement.setException(TransferException.REQUEST_SERVER);
+                    mElement.setException(TransferException.FAILED_REQUEST_SERVER);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     retry++;

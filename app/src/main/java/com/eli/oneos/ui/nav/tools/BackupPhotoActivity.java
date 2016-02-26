@@ -81,7 +81,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
 
         mSwitchButton = (SwitchButton) findViewById(R.id.btn_auto_backup);
         if (getLoginStatus()) {
-            String dir = getResources().getString(R.string.backup_dir_shown) + Constants.BACKUP_ONEOS_ROOT_DIR_NAME_ALBUM;
+            String dir = getResources().getString(R.string.backup_dir_shown) + Constants.BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM;
             mServerDirTxt.setText(dir);
             mSwitchButton.setEnabled(true);
             isAutoBackup = LoginManage.getInstance().getLoginSession().getUserInfo().getIsAutoBackup();

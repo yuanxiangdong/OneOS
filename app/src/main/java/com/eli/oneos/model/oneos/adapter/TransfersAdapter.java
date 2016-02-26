@@ -191,7 +191,7 @@ public class TransfersAdapter extends BaseAdapter {
         String failedInfo = null;
 
         if (!Utils.isWifiAvailable(context)) {
-            mElement.setException(TransferException.WIFI_UNAVALIABLE);
+            mElement.setException(TransferException.WIFI_UNAVAILABLE);
         }
 
         TransferException failedId = mElement.getException();
@@ -201,7 +201,7 @@ public class TransfersAdapter extends BaseAdapter {
             failedInfo = context.getResources().getString(R.string.local_space_insufficient);
         } else if (failedId == TransferException.SERVER_SPACE_INSUFFICIENT) {
             failedInfo = context.getResources().getString(R.string.server_space_insufficient);
-        } else if (failedId == TransferException.REQUEST_SERVER) {
+        } else if (failedId == TransferException.FAILED_REQUEST_SERVER) {
             failedInfo = context.getResources().getString(R.string.request_server_exception);
         } else if (failedId == TransferException.ENCODING_EXCEPTION) {
             failedInfo = context.getResources().getString(R.string.encoding_exception);
@@ -213,11 +213,13 @@ public class TransfersAdapter extends BaseAdapter {
             } else {
                 failedInfo = context.getResources().getString(R.string.file_not_found);
             }
-        } else if (failedId == TransferException.UNKNOW_EXCEPTION) {
+        } else if (failedId == TransferException.SERVER_FILE_NOT_FOUND) {
+            failedInfo = context.getResources().getString(R.string.file_not_found);
+        } else if (failedId == TransferException.UNKNOWN_EXCEPTION) {
             failedInfo = context.getResources().getString(R.string.unknown_exception);
         } else if (failedId == TransferException.SOCKET_TIMEOUT) {
             failedInfo = context.getResources().getString(R.string.socket_timeout);
-        } else if (failedId == TransferException.WIFI_UNAVALIABLE) {
+        } else if (failedId == TransferException.WIFI_UNAVAILABLE) {
             failedInfo = context.getResources().getString(R.string.wifi_connect_break);
         }
         return failedInfo;

@@ -30,7 +30,7 @@ public class BackupFileElement extends UploadElement {
             // 相对路径
             String relativeDir = file.getParent().replaceFirst(backupDir.getAbsolutePath(), "");
             // 相册路径： /来自：MI4/Album/RelativeDir/2015-09/xxx.png
-            String serverPath = Constants.BACKUP_ONEOS_ROOT_DIR_NAME_ALBUM + relativeDir + File.separator + cameraDate + File.separator;
+            String serverPath = Constants.BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM + relativeDir + File.separator + cameraDate + File.separator;
             setTargetPath(serverPath);
         } else {
             ToastHelper.showToast("TODO.. Backup All Files");

@@ -6,9 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 
+import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.utils.HttpBitmap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
     public LoginSession mLoginSession = null;
     public String mBasicUrl = null;
     public String mSession = null;
+    private boolean isWifiAvailable = true;
     public OnMultiChooseClickListener mListener = null;
 
     public OneOSFileBaseAdapter(Context context, List<OneOSFile> fileList, ArrayList<OneOSFile> selectedList, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
@@ -113,6 +118,18 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
             if (isSelectAll) {
                 mSelectedList.addAll(mFileList);
             }
+        }
+    }
+
+    public void setWifiAvailable(boolean isWifiAvailable) {
+        this.isWifiAvailable = isWifiAvailable;
+    }
+
+    public void showPicturePreview(ImageView imageView, OneOSFile file) {
+        if (!mLoginSession.getUserInfo().getIsPreviewPicOnlyWifi() || isWifiAvailable) {
+            HttpBitmap.getInstance().display(imageView, OneOSAPIs.genThumbnailUrl(mLoginSession, file));
+        } else {
+            imageView.setImageResource(R.drawable.icon_file_pic);
         }
     }
 

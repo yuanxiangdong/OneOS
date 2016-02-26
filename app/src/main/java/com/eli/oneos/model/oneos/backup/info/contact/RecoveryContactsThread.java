@@ -1,4 +1,4 @@
-package com.eli.oneos.model.oneos.backup.info.contacts;
+package com.eli.oneos.model.oneos.backup.info.contact;
 
 import android.content.Context;
 
@@ -15,6 +15,7 @@ import com.eli.oneos.model.oneos.backup.info.BackupInfoStep;
 import com.eli.oneos.model.oneos.backup.info.BackupInfoType;
 import com.eli.oneos.model.oneos.backup.info.OnBackupInfoListener;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
+import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
@@ -77,10 +78,10 @@ public class RecoveryContactsThread extends Thread {
     }
 
     private boolean downloadContacts() {
-        String path = Constants.BACKUP_ONEOS_ROOT_DIR_CONTACTS + Constants.BACKUP_FILE_NAME_CONTACTS;
+        String path = Constants.BACKUP_INFO_ONEOS_ROOT_DIR + Constants.BACKUP_CONTACTS_FILE_NAME;
         OneOSFile file = new OneOSFile();
         file.setPath(path);
-        file.setName(Constants.BACKUP_FILE_NAME_CONTACTS);
+        file.setName(Constants.BACKUP_CONTACTS_FILE_NAME);
 
         String targetPath = context.getCacheDir().getAbsolutePath();
         DownloadElement downloadElement = new DownloadElement(file, targetPath);
@@ -108,7 +109,11 @@ public class RecoveryContactsThread extends Thread {
                     if (element.getState() == TransferState.COMPLETE) {
                         mListener.onBackup(TYPE, BackupInfoStep.DOWNLOAD, 100);
                     } else {
-                        exception = BackupInfoException.DOWNLOAD_ERROR;
+                        if (element.getException() == TransferException.SERVER_FILE_NOT_FOUND) {
+                            exception = BackupInfoException.NO_RECOVERY;
+                        } else {
+                            exception = BackupInfoException.DOWNLOAD_ERROR;
+                        }
                     }
                 }
             }
@@ -123,7 +128,7 @@ public class RecoveryContactsThread extends Thread {
     private boolean importContacts() {
         boolean result;
         try {
-            String path = context.getCacheDir().getAbsolutePath() + File.separator + Constants.BACKUP_FILE_NAME_CONTACTS;
+            String path = context.getCacheDir().getAbsolutePath() + File.separator + Constants.BACKUP_CONTACTS_FILE_NAME;
             File file = new File(path);
             BufferedReader buffer = new BufferedReader(new FileReader(path));
             long maxLen = file.length();
@@ -144,14 +149,14 @@ public class RecoveryContactsThread extends Thread {
                 result = true;
             } else {
 //                showSyncTips(R.string.no_contact_to_sync);
-                exception = BackupInfoException.SERVER_EMPTY;
+                exception = BackupInfoException.NO_RECOVERY;
                 result = false;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
 //            showSyncTips(R.string.error_import_contacts);
-            exception = BackupInfoException.IMPORT_ERROR;
+            exception = BackupInfoException.ERROR_IMPORT;
             result = false;
         }
 

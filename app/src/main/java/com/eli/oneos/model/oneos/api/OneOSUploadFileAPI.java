@@ -129,7 +129,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 //                if (userFreeSpace < 0) {
 //                    uploadElement.setState(TransferState.FAILED);
 //                    if (userFreeSpace == -1) {
-//                        uploadElement.setException(TransferException.REQUEST_SERVER);
+//                        uploadElement.setException(TransferException.FAILED_REQUEST_SERVER);
 //                    } else {
 //                        uploadElement.setException(TransferException.SERVER_SPACE_INSUFFICIENT);
 //                    }
@@ -142,11 +142,11 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //                uploadElement.setState(TransferState.FAILED);
-//                uploadElement.setException(TransferException.REQUEST_SERVER);
+//                uploadElement.setException(TransferException.FAILED_REQUEST_SERVER);
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //                uploadElement.setState(TransferState.FAILED);
-//                uploadElement.setException(TransferException.UNKNOW_EXCEPTION);
+//                uploadElement.setException(TransferException.UNKNOWN_EXCEPTION);
 //            }
 //        }
 
@@ -295,7 +295,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                     int code = conn.getResponseCode();
                     if (code != HttpURLConnection.HTTP_OK) {
                         Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "Http Response Error, code = " + code);
-                        uploadElement.setException(TransferException.REQUEST_SERVER);
+                        uploadElement.setException(TransferException.FAILED_REQUEST_SERVER);
                         retry++;
                     } else {
                         retry = 0;
@@ -308,7 +308,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
                 retry++;
-                uploadElement.setException(TransferException.REQUEST_SERVER);
+                uploadElement.setException(TransferException.FAILED_REQUEST_SERVER);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 retry++;
