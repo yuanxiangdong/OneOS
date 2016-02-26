@@ -12,7 +12,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
-import com.eli.oneos.db.UserInfoKeeper;
+import com.eli.oneos.db.UserSettingsKeeper;
 import com.eli.oneos.model.oneos.upgrade.AppUpgradeManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
@@ -58,7 +58,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        UserInfoKeeper.update(loginSession.getUserInfo());
+        UserSettingsKeeper.update(loginSession.getUserSettings());
     }
 
     private void initViews() {
@@ -105,10 +105,10 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             switch (buttonView.getId()) {
                 case R.id.switch_preview:
-                    loginSession.getUserInfo().setIsPreviewPicOnlyWifi(isChecked);
+                    loginSession.getUserSettings().setIsPreviewPicOnlyWifi(isChecked);
                     break;
                 case R.id.switch_download:
-                    loginSession.getUserInfo().setIsTipTransferNotWifi(isChecked);
+                    loginSession.getUserSettings().setIsTipTransferNotWifi(isChecked);
                     break;
                 default:
                     break;
@@ -136,8 +136,8 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
         if (isLogin(false)) {
             mPreviewSwitcher.setEnabled(true);
             mDownloadSwitcher.setEnabled(true);
-            mPreviewSwitcher.setChecked(loginSession.getUserInfo().getIsPreviewPicOnlyWifi());
-            mDownloadSwitcher.setChecked(loginSession.getUserInfo().getIsTipTransferNotWifi());
+            mPreviewSwitcher.setChecked(loginSession.getUserSettings().getIsPreviewPicOnlyWifi());
+            mDownloadSwitcher.setChecked(loginSession.getUserSettings().getIsTipTransferNotWifi());
             mUserText.setText(loginSession.getUserInfo().getName());
             mIPTxt.setText(loginSession.getDeviceInfo().getIp());
             mIPTxt.setVisibility(View.VISIBLE);

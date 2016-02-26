@@ -7,33 +7,37 @@ package com.eli.oneos.db.greendao;
 public class DeviceInfo {
 
     /** Not-null value. */
+    private String mac;
+    /** Not-null value. */
     private String ip;
     /** Not-null value. */
-    private String mac;
-    private Long time;
-    /** Not-null value. */
     private String port;
-    /** Not-null value. */
-    private String model;
-    /** Not-null value. */
-    private String version;
     private Boolean isLAN;
+    private Long time;
 
     public DeviceInfo() {
     }
 
-    public DeviceInfo(String ip) {
-        this.ip = ip;
+    public DeviceInfo(String mac) {
+        this.mac = mac;
     }
 
-    public DeviceInfo(String ip, String mac, Long time, String port, String model, String version, Boolean isLAN) {
-        this.ip = ip;
+    public DeviceInfo(String mac, String ip, String port, Boolean isLAN, Long time) {
         this.mac = mac;
-        this.time = time;
+        this.ip = ip;
         this.port = port;
-        this.model = model;
-        this.version = version;
         this.isLAN = isLAN;
+        this.time = time;
+    }
+
+    /** Not-null value. */
+    public String getMac() {
+        return mac;
+    }
+
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setMac(String mac) {
+        this.mac = mac;
     }
 
     /** Not-null value. */
@@ -47,24 +51,6 @@ public class DeviceInfo {
     }
 
     /** Not-null value. */
-    public String getMac() {
-        return mac;
-    }
-
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setMac(String mac) {
-        this.mac = mac;
-    }
-
-    public Long getTime() {
-        return time;
-    }
-
-    public void setTime(Long time) {
-        this.time = time;
-    }
-
-    /** Not-null value. */
     public String getPort() {
         return port;
     }
@@ -74,32 +60,20 @@ public class DeviceInfo {
         this.port = port;
     }
 
-    /** Not-null value. */
-    public String getModel() {
-        return model;
-    }
-
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    /** Not-null value. */
-    public String getVersion() {
-        return version;
-    }
-
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public Boolean getIsLAN() {
         return isLAN;
     }
 
     public void setIsLAN(Boolean isLAN) {
         this.isLAN = isLAN;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 
 }

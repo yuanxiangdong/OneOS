@@ -8,8 +8,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
-import com.eli.oneos.db.BackupInfoHistoryKeeper;
-import com.eli.oneos.db.greendao.BackupInfoHistory;
+import com.eli.oneos.db.BackupInfoKeeper;
+import com.eli.oneos.db.greendao.BackupInfo;
 import com.eli.oneos.model.logger.Logged;
 import com.eli.oneos.model.oneos.backup.info.BackupInfoException;
 import com.eli.oneos.model.oneos.backup.info.BackupInfoManager;
@@ -141,7 +141,7 @@ public class BackupInfoActivity extends BaseActivity implements OnClickListener 
         super.onResume();
 
         LoginSession loginSession = LoginManage.getInstance().getLoginSession();
-        BackupInfoHistory mBackupHistory = BackupInfoHistoryKeeper.getBackupHistory(loginSession.getUserInfo().getId(), mBackupType);
+        BackupInfo mBackupHistory = BackupInfoKeeper.getBackupHistory(loginSession.getUserInfo().getId(), mBackupType);
         long time = 0;
         if (mBackupHistory != null) {
             time = mBackupHistory.getTime();

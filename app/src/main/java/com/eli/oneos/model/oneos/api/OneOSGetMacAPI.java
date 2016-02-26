@@ -65,7 +65,7 @@ public class OneOSGetMacAPI extends OneOSBaseAPI {
                             if (EmptyUtils.isEmpty(mac)) {
                                 listener.onFailure(url, -1, "Response Mac Address is NULL");
                             } else {
-                                UserInfo userHistory = UserInfoKeeper.top();
+                                UserInfo userHistory = UserInfoKeeper.lastUser();
                                 if (null != userHistory) {
                                     userHistory.setMac(mac);
                                     UserInfoKeeper.update(userHistory);

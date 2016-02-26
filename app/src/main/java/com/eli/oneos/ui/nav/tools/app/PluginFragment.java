@@ -101,7 +101,7 @@ public class PluginFragment extends Fragment {
             public void onClick(View view, PluginInfo info) {
                 switch (view.getId()) {
                     case R.id.app_uninstall:
-                        if (!LoginManage.getInstance().isAdmin()) {
+                        if (!LoginManage.getInstance().getLoginSession().isAdmin()) {
                             ToastHelper.showToast(R.string.please_login_onespace_with_admin);
                         } else {
                             showOperatePluginDialog(info, true);
@@ -111,7 +111,7 @@ public class PluginFragment extends Fragment {
                         SwitchButton mBtn = (SwitchButton) view;
                         // 屏蔽非主动点击事件
                         if (info.isOpened() != mBtn.isChecked()) {
-                            if (!LoginManage.getInstance().isAdmin()) {
+                            if (!LoginManage.getInstance().getLoginSession().isAdmin()) {
                                 ToastHelper.showToast(R.string.please_login_onespace_with_admin);
                                 mAdapter.notifyDataSetChanged();
                             } else {

@@ -31,7 +31,7 @@ public interface IPullToRefresh<T extends View> {
 	 * aware it is there. This could be useful when the user first opens your
 	 * app, etc. The animation will only happen if the Refresh View (ListView,
 	 * ScrollView, etc) is in a state where a Pull-to-Refresh could occur by a
-	 * user's touch gesture (i.e. scrolled to the top/bottom).
+	 * user's touch gesture (i.e. scrolled to the lastUser/bottom).
 	 * 
 	 * @return true - if the Demo has been started, false if not.
 	 */
@@ -57,13 +57,13 @@ public interface IPullToRefresh<T extends View> {
 	public boolean getFilterTouchEvents();
 
 	/**
-	 * Returns a proxy object which allows you to call methods on all of the
+	 * Returns a proxy object which allows you to call methods on activeUsers of the
 	 * LoadingLayouts (the Views which show when Pulling/Refreshing).
 	 * <p />
 	 * You should not keep the result of this method any longer than you need
 	 * it.
 	 * 
-	 * @return Object which will proxy any calls you make on it, to all of the
+	 * @return Object which will proxy any calls you make on it, to activeUsers of the
 	 *         LoadingLayouts.
 	 */
 	public ILoadingLayout getLoadingLayoutProxy();

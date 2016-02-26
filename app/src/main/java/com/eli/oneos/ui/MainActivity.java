@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity {
         public void onChanged(boolean isAvailable, boolean isWifiAvailable) {
             LoginManage mLoginManager = LoginManage.getInstance();
             if (mLoginManager.isLogin()) {
-                boolean isLANDevice = mLoginManager.isLANDevice();
+                boolean isLANDevice = mLoginManager.getLoginSession().isLANDevice();
                 if (isLANDevice) {
                     if (!isWifiAvailable) {
                         DialogUtils.showNotifyDialog(MainActivity.this, R.string.tip, R.string.wifi_not_available, R.string.ok, null);

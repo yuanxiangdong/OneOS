@@ -303,12 +303,12 @@ public class OneOSFileManage {
                     public void onHide() {
                     }
                 }).show();
-        String savePath = LoginManage.getInstance().getDownloadPath();
+        String savePath = LoginManage.getInstance().getLoginSession().getDownloadPath();
         OneSpaceService service = MyApplication.getTransferService();
         for (OneOSFile file : fileList) {
             service.addDownloadTask(file, savePath);
         }
-        
+
         if (null != callback) {
             callback.onComplete(true);
         }

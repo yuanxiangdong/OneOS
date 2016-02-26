@@ -36,7 +36,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     private void doManageFiles(AjaxParams params) {
         url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
-
+        logHttp(TAG, url, params);
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 
             @Override
@@ -82,8 +82,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     public void attr(OneOSFile file) {
         this.action = FileManageAction.ATTR;
-
-        url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         String path = file.getPath();
         AjaxParams params = new AjaxParams();
         params.put("session", session);
@@ -95,24 +93,17 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     public void delete(ArrayList<OneOSFile> delList, boolean isDelShift) {
         this.action = isDelShift ? FileManageAction.DELETE_SHIFT : FileManageAction.DELETE;
-
-        Log.d(TAG, "url = " + url);
         String path = genJsonArray(delList);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
-        Log.d(TAG, "session = " + session);
         params.put("cmd", isDelShift ? "deleteshift" : "delete");
-        Log.d(TAG, "cmd = " + (isDelShift ? "deleteshift" : "delete"));
         params.put("path", path);
-        Log.d(TAG, "path = " + path);
         doManageFiles(params);
     }
 
     public void move(ArrayList<OneOSFile> delList, String toDir) {
         this.action = FileManageAction.MOVE;
-
         Log.d(TAG, "Move file to: " + toDir);
-        url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         String path = genJsonArray(delList);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
@@ -125,8 +116,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     public void copy(ArrayList<OneOSFile> delList, String toDir) {
         this.action = FileManageAction.COPY;
-
-        url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         String path = genJsonArray(delList);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
@@ -139,8 +128,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     public void rename(OneOSFile file, String newName) {
         this.action = FileManageAction.RENAME;
-
-        url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         String path = file.getPath();
         AjaxParams params = new AjaxParams();
         params.put("session", session);
@@ -157,7 +144,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         if (!path.endsWith(File.separator)) {
             path += File.separator;
         }
-        url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "mkdir");
@@ -169,8 +155,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     public void crypt(OneOSFile file, String pwd, boolean isEncrypt) {
         this.action = isEncrypt ? FileManageAction.ENCRYPT : FileManageAction.DECRYPT;
-
-        url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         String path = file.getPath();
         AjaxParams params = new AjaxParams();
         params.put("session", session);
@@ -183,8 +167,6 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     public void cleanRecycle() {
         this.action = FileManageAction.CLEAN_RECYCLE;
-
-        url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "cleanrecycle");

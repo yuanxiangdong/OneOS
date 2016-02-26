@@ -10,18 +10,14 @@ public class UserInfo {
     /** Not-null value. */
     private String name;
     /** Not-null value. */
-    private String pwd;
-    /** Not-null value. */
     private String mac;
-    private Long time;
+    /** Not-null value. */
+    private String pwd;
+    private Integer admin;
     private Integer uid;
     private Integer gid;
-    private Integer admin;
-    private String downloadPath;
-    private Boolean isPreviewPicOnlyWifi;
-    private Boolean isTipTransferNotWifi;
-    private Boolean isAutoBackup;
-    private Boolean isBackupOnlyWifi;
+    private Long time;
+    private Boolean isActive;
 
     public UserInfo() {
     }
@@ -30,20 +26,16 @@ public class UserInfo {
         this.id = id;
     }
 
-    public UserInfo(Long id, String name, String pwd, String mac, Long time, Integer uid, Integer gid, Integer admin, String downloadPath, Boolean isPreviewPicOnlyWifi, Boolean isTipTransferNotWifi, Boolean isAutoBackup, Boolean isBackupOnlyWifi) {
+    public UserInfo(Long id, String name, String mac, String pwd, Integer admin, Integer uid, Integer gid, Long time, Boolean isActive) {
         this.id = id;
         this.name = name;
-        this.pwd = pwd;
         this.mac = mac;
-        this.time = time;
+        this.pwd = pwd;
+        this.admin = admin;
         this.uid = uid;
         this.gid = gid;
-        this.admin = admin;
-        this.downloadPath = downloadPath;
-        this.isPreviewPicOnlyWifi = isPreviewPicOnlyWifi;
-        this.isTipTransferNotWifi = isTipTransferNotWifi;
-        this.isAutoBackup = isAutoBackup;
-        this.isBackupOnlyWifi = isBackupOnlyWifi;
+        this.time = time;
+        this.isActive = isActive;
     }
 
     public Long getId() {
@@ -65,16 +57,6 @@ public class UserInfo {
     }
 
     /** Not-null value. */
-    public String getPwd() {
-        return pwd;
-    }
-
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-
-    /** Not-null value. */
     public String getMac() {
         return mac;
     }
@@ -84,12 +66,22 @@ public class UserInfo {
         this.mac = mac;
     }
 
-    public Long getTime() {
-        return time;
+    /** Not-null value. */
+    public String getPwd() {
+        return pwd;
     }
 
-    public void setTime(Long time) {
-        this.time = time;
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    public Integer getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Integer admin) {
+        this.admin = admin;
     }
 
     public Integer getUid() {
@@ -108,52 +100,20 @@ public class UserInfo {
         this.gid = gid;
     }
 
-    public Integer getAdmin() {
-        return admin;
+    public Long getTime() {
+        return time;
     }
 
-    public void setAdmin(Integer admin) {
-        this.admin = admin;
+    public void setTime(Long time) {
+        this.time = time;
     }
 
-    public String getDownloadPath() {
-        return downloadPath;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    public void setDownloadPath(String downloadPath) {
-        this.downloadPath = downloadPath;
-    }
-
-    public Boolean getIsPreviewPicOnlyWifi() {
-        return isPreviewPicOnlyWifi;
-    }
-
-    public void setIsPreviewPicOnlyWifi(Boolean isPreviewPicOnlyWifi) {
-        this.isPreviewPicOnlyWifi = isPreviewPicOnlyWifi;
-    }
-
-    public Boolean getIsTipTransferNotWifi() {
-        return isTipTransferNotWifi;
-    }
-
-    public void setIsTipTransferNotWifi(Boolean isTipTransferNotWifi) {
-        this.isTipTransferNotWifi = isTipTransferNotWifi;
-    }
-
-    public Boolean getIsAutoBackup() {
-        return isAutoBackup;
-    }
-
-    public void setIsAutoBackup(Boolean isAutoBackup) {
-        this.isAutoBackup = isAutoBackup;
-    }
-
-    public Boolean getIsBackupOnlyWifi() {
-        return isBackupOnlyWifi;
-    }
-
-    public void setIsBackupOnlyWifi(Boolean isBackupOnlyWifi) {
-        this.isBackupOnlyWifi = isBackupOnlyWifi;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
 }

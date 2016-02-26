@@ -14,75 +14,92 @@ public class DAOGenerator {
     public static void main(String[] args) throws Exception {
         Schema schema = new Schema(DB_VERSION, DEFAULT_PACKAGE);
 
-        addUserInfo(schema);
-        addDeviceHistory(schema);
-        addBackupFileInfo(schema);
-        addBackupInfoHistory(schema);
+        addDeviceInfoTable(schema);
+        addUserInfoTable(schema);
+        addUserSettingsTable(schema);
+        addBackupFileTable(schema);
+        addBackupInfoTable(schema);
 
         new DaoGenerator().generateAll(schema, "app/src/main/java");
     }
 
-    private static void addUserInfo(Schema schema) {
+    /**
+     * 设备信息表
+     *
+     * @param schema
+     */
+    private static void addDeviceInfoTable(Schema schema) {
+        Entity note = schema.addEntity("DeviceInfo");
+        note.addStringProperty("mac").notNull().primaryKey();   // 设备Mac地址
+        note.addStringProperty("ip").notNull();                 // 设备IP地址
+        note.addStringProperty("port").notNull();               // 设备端口号
+        note.addBooleanProperty("isLAN");                       // 是否是局域网设备
+        note.addLongProperty("time");                           // 创建时间
+    }
+
+    /**
+     * 用户信息表
+     *
+     * @param schema
+     */
+    private static void addUserInfoTable(Schema schema) {
         Entity note = schema.addEntity("UserInfo");
         note.addIdProperty().autoincrement();
-        note.addStringProperty("name").notNull(); //.primaryKey();
-        note.addStringProperty("pwd").notNull();
-        note.addStringProperty("mac").notNull(); //.primaryKey();
-        note.addLongProperty("time");
-        note.addIntProperty("uid");
-        note.addIntProperty("gid");
-        note.addIntProperty("admin");
-        note.addStringProperty("downloadPath");
-        note.addBooleanProperty("isPreviewPicOnlyWifi"); // default is true
-        note.addBooleanProperty("isTipTransferNotWifi"); // default is true
-        note.addBooleanProperty("isAutoBackup");  //default is false
-        note.addBooleanProperty("isBackupOnlyWifi"); // default is true
+        note.addStringProperty("name").notNull();   // 用户名
+        note.addStringProperty("mac").notNull();    // 设备Mac地址
+        note.addStringProperty("pwd").notNull();    // 用户密码
+        note.addIntProperty("admin");               // 是否为管理员用户（1:true, 2: false）
+        note.addIntProperty("uid");                 // 设备数据库中的ID
+        note.addIntProperty("gid");                 // 用户组ID
+        note.addLongProperty("time");               // 最后登录时间
+        note.addBooleanProperty("isActive");        // 是否活跃（默认为false）；为false时，登录页面不显示该用户为备选
     }
 
-    private static void addDeviceHistory(Schema schema) {
-        Entity note = schema.addEntity("DeviceHistory");
-        note.addStringProperty("ip").notNull().primaryKey();
-        note.addStringProperty("mac").notNull();
-        note.addStringProperty("port").notNull();
-        note.addLongProperty("time");
-        note.addBooleanProperty("isLAN");
+    /**
+     * 用户设置信息表
+     *
+     * @param schema
+     */
+    private static void addUserSettingsTable(Schema schema) {
+        Entity note = schema.addEntity("UserSettings");
+        note.addLongProperty("uid").notNull().primaryKey(); // 主键，用户信息表中的ID
+        note.addStringProperty("downloadPath");             // 下载文件保存路径
+        note.addBooleanProperty("isAutoBackupFile");        // 自动备份文件（默认为false）
+        note.addBooleanProperty("isPreviewPicOnlyWifi");    // 仅Wi-Fi环境下显示预览图（默认为true）
+        note.addBooleanProperty("isTipTransferNotWifi");    // 非Wi-Fi环境上传/下载文件提示（默认为true）
+        note.addBooleanProperty("isBackupFileOnlyWifi");    // 仅Wi-Fi环境下自动备份文件（默认为true）
+        note.addLongProperty("time");                       // 最后更新时间
     }
 
-    private static void addBackupFileInfo(Schema schema) {
-        Entity note = schema.addEntity("BackupFileInfo");
+    /**
+     * 备份文件表
+     *
+     * @param schema
+     */
+    private static void addBackupFileTable(Schema schema) {
+        Entity note = schema.addEntity("BackupFile");
         note.addIdProperty().autoincrement();
-        note.addStringProperty("mac").notNull();
-        note.addStringProperty("user").notNull();
-        note.addStringProperty("path").notNull();
-        note.addLongProperty("time"); // last backup time
-        note.addLongProperty("count"); // backup total count
-        note.addIntProperty("priority"); // backup priority, 1 > 2 > 3 ...
-        note.addStringProperty("type"); // backup file type, such as picture
+        note.addLongProperty("uid").notNull();                  // 用户ID
+        note.addStringProperty("path").notNull();               // 备份路径
+        note.addBooleanProperty("auto");                        // 自动备份（默认为true）
+        note.addIntProperty("type");                            // 备份类型： 图片/视频、全部
+        note.addIntProperty("priority");                        // 备份优先级： 1 > 2 > 3 ...
+        note.addLongProperty("time");                           // 备份时间点
+        note.addLongProperty("count");                          // 备份次数
     }
 
-    private static void addBackupInfoHistory(Schema schema) {
-        Entity note = schema.addEntity("BackupInfoHistory");
+    /**
+     * 备份信息表：通讯录/短信
+     *
+     * @param schema
+     */
+    private static void addBackupInfoTable(Schema schema) {
+        Entity note = schema.addEntity("BackupInfo");
         note.addIdProperty().autoincrement();
-        note.addLongProperty("uid");
-        note.addStringProperty("type"); // backup info type, such as contacts
-        note.addLongProperty("time"); // last backup time
-        note.addLongProperty("count"); // backup total count
+        note.addLongProperty("uid");        // 用户ID
+        note.addIntProperty("type");        // 备份类型： 通讯录/短信
+        note.addLongProperty("count");      // 备份次数
+        note.addLongProperty("time");       // 最后备份时间
     }
 
-//    private static void addCustomerOrder(Schema schema) {
-//        Entity customer = schema.addEntity("Customer");
-//        customer.addIdProperty();
-//        customer.addStringProperty("name").notNull();
-//
-//        Entity order = schema.addEntity("Order");
-//        order.setTableName("ORDERS"); // "ORDER" is a reserved keyword
-//        order.addIdProperty();
-//        Property orderDate = order.addDateProperty("date").getProperty();
-//        Property customerId = order.addLongProperty("customerId").notNull().getProperty();
-//        order.addToOne(customer, customerId);
-//
-//        ToMany customerToOrders = customer.addToMany(order, customerId);
-//        customerToOrders.setName("orders");
-//        customerToOrders.orderAsc(orderDate);
-//    }
 }

@@ -43,7 +43,7 @@ public class StickyListHeadersView extends FrameLayout {
     }
 
     /**
-     * Notifies the listener when the sticky headers top offset has changed.
+     * Notifies the listener when the sticky headers lastUser offset has changed.
      */
     public interface OnStickyHeaderOffsetChangedListener {
         /**
@@ -53,7 +53,7 @@ public class StickyListHeadersView extends FrameLayout {
          *               It is however guaranteed that this view has been measured,
          *               therefor you should user getMeasured* methods instead of
          *               get* methods for determining the view's size.
-         * @param offset The amount the sticky header is offset by towards to top of the screen.
+         * @param offset The amount the sticky header is offset by towards to lastUser of the screen.
          */
         void onStickyHeaderOffsetChanged(StickyListHeadersView l, View header, int offset);
     }
@@ -80,7 +80,7 @@ public class StickyListHeadersView extends FrameLayout {
 
     /* --- Header state --- */
     private Long mHeaderId;
-    // used to not have to call getHeaderId() all the time
+    // used to not have to call getHeaderId() activeUsers the time
     private Integer mHeaderPosition;
     private Integer mHeaderOffset;
 
@@ -292,7 +292,7 @@ public class StickyListHeadersView extends FrameLayout {
             mHeaderPosition = null;
             mHeaderOffset = null;
 
-            // reset the top clipping length
+            // reset the lastUser clipping length
             mList.setTopClippingLength(0);
             updateHeaderVisibilities();
         }
@@ -526,7 +526,7 @@ public class StickyListHeadersView extends FrameLayout {
 
         @Override
         public void onDispatchDrawOccurred(Canvas canvas) {
-            // onScroll is not called often at all before froyo
+            // onScroll is not called often at activeUsers before froyo
             // therefor we need to update the header here as well.
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
                 updateOrClearHeader(mList.getFixedFirstVisibleItem());
@@ -605,7 +605,7 @@ public class StickyListHeadersView extends FrameLayout {
     }
 
     /**
-     * @param stickyHeaderTopOffset The offset of the sticky header fom the top of the view
+     * @param stickyHeaderTopOffset The offset of the sticky header fom the lastUser of the view
      */
     public void setStickyHeaderTopOffset(int stickyHeaderTopOffset) {
         mStickyHeaderTopOffset = stickyHeaderTopOffset;
@@ -619,7 +619,7 @@ public class StickyListHeadersView extends FrameLayout {
     public void setDrawingListUnderStickyHeader(
             boolean drawingListUnderStickyHeader) {
         mIsDrawingListUnderStickyHeader = drawingListUnderStickyHeader;
-        // reset the top clipping length
+        // reset the lastUser clipping length
         mList.setTopClippingLength(0);
     }
 

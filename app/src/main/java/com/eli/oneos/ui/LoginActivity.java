@@ -15,9 +15,9 @@ import android.widget.TextView;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.db.DeviceHistoryKeeper;
+import com.eli.oneos.db.DeviceInfoKeeper;
 import com.eli.oneos.db.UserInfoKeeper;
-import com.eli.oneos.db.greendao.DeviceHistory;
+import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.oneos.api.OneOSGetMacAPI;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
@@ -48,6 +48,7 @@ import java.util.Map;
  */
 public class LoginActivity extends BaseActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
+
     private EditText mUserTxt, mPwdTxt, mPortTxt;
     private Button mLoginBtn, mMoreUserBtn, mMoreIpBtn;
     private RelativeLayout mUserLayout, mIPLayout;
@@ -56,8 +57,8 @@ public class LoginActivity extends BaseActivity {
     private LoginSession mLoginSession;
     private UserInfo mLastLoginUser;
     private List<UserInfo> mHistoryUserList = new ArrayList<UserInfo>();
-    private List<DeviceHistory> mHistoryDeviceList = new ArrayList<DeviceHistory>();
-    private List<DeviceHistory> mLANDeviceList = new ArrayList<DeviceHistory>();
+    private List<DeviceInfo> mHistoryDeviceList = new ArrayList<DeviceInfo>();
+    private List<DeviceInfo> mLANDeviceList = new ArrayList<DeviceInfo>();
     private SpinnerView mUserSpinnerView, mDeviceSpinnerView;
     private ScanDeviceManager mScanManager = new ScanDeviceManager(this, new OnScanDeviceListener() {
         @Override
@@ -79,8 +80,8 @@ public class LoginActivity extends BaseActivity {
             while (iterator.hasNext()) {
                 String key = iterator.next();
                 String value = mDeviceMap.get(key);
-                DeviceHistory deviceHistory = new DeviceHistory(value, key, OneOSAPIs.ONE_API_DEFAULT_PORT, System.currentTimeMillis(), true);
-                mLANDeviceList.add(deviceHistory);
+                DeviceInfo DeviceInfo = new DeviceInfo(key, value, OneOSAPIs.ONE_API_DEFAULT_PORT, true, System.currentTimeMillis());
+                mLANDeviceList.add(DeviceInfo);
             }
         }
     });
@@ -212,8 +213,8 @@ public class LoginActivity extends BaseActivity {
         } else {
             if (!EmptyUtils.isEmpty(mHistoryUserList)) {
                 mUserSpinnerView = new SpinnerView(this, view.getWidth());
-                ArrayList<String> users = new ArrayList<String>();
-                ArrayList<Integer> icons = new ArrayList<Integer>();
+                ArrayList<String> users = new ArrayList<>();
+                ArrayList<Integer> icons = new ArrayList<>();
                 for (UserInfo info : mHistoryUserList) {
                     users.add(info.getName());
                     icons.add(R.drawable.btn_clear);
@@ -225,7 +226,7 @@ public class LoginActivity extends BaseActivity {
                     public void onClick(View view, int index) {
                         UserInfo UserHistory = mHistoryUserList.get(index);
                         mHistoryUserList.remove(UserHistory);
-                        UserInfoKeeper.delete(UserHistory);
+                        UserInfoKeeper.unActive(UserHistory);
                         mUserSpinnerView.dismiss();
                     }
                 });
@@ -249,15 +250,15 @@ public class LoginActivity extends BaseActivity {
         } else {
             if (!EmptyUtils.isEmpty(mLANDeviceList) || !EmptyUtils.isEmpty(mHistoryDeviceList)) {
                 mDeviceSpinnerView = new SpinnerView(this, view.getWidth());
-                final ArrayList<DeviceHistory> mDeviceList = new ArrayList<>();
-                ArrayList<String> users = new ArrayList<String>();
-                ArrayList<Integer> icons = new ArrayList<Integer>();
-                for (DeviceHistory info : mLANDeviceList) {
+                final ArrayList<DeviceInfo> mDeviceList = new ArrayList<>();
+                ArrayList<String> users = new ArrayList<>();
+                ArrayList<Integer> icons = new ArrayList<>();
+                for (DeviceInfo info : mLANDeviceList) {
                     mDeviceList.add(info);
                     users.add(info.getIp());
                     icons.add(R.drawable.btn_clear);
                 }
-                for (DeviceHistory info : mHistoryDeviceList) {
+                for (DeviceInfo info : mHistoryDeviceList) {
                     mDeviceList.add(info);
                     users.add(info.getIp());
                     icons.add(R.drawable.btn_clear);
@@ -266,12 +267,12 @@ public class LoginActivity extends BaseActivity {
                 mDeviceSpinnerView.setOnSpinnerButtonClickListener(new SpinnerView.OnSpinnerButtonClickListener() {
                     @Override
                     public void onClick(View view, int index) {
-                        DeviceHistory device = mDeviceList.get(index);
+                        DeviceInfo device = mDeviceList.get(index);
                         if (device.getIsLAN()) {
                             mLANDeviceList.remove(device);
                         } else {
                             mHistoryUserList.remove(device);
-                            DeviceHistoryKeeper.delete(device);
+                            DeviceInfoKeeper.delete(device);
                         }
 
                         mDeviceSpinnerView.dismiss();
@@ -280,9 +281,9 @@ public class LoginActivity extends BaseActivity {
                 mDeviceSpinnerView.setOnSpinnerItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        DeviceHistory deviceHistory = mLANDeviceList.get(position);
-                        mIPTxt.setText(deviceHistory.getIp());
-                        mPortTxt.setText(deviceHistory.getPort());
+                        DeviceInfo DeviceInfo = mLANDeviceList.get(position);
+                        mIPTxt.setText(DeviceInfo.getIp());
+                        mPortTxt.setText(DeviceInfo.getPort());
                         mDeviceSpinnerView.dismiss();
                     }
                 });
@@ -292,7 +293,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initLoginHistory() {
-        List<UserInfo> userList = UserInfoKeeper.all();
+        List<UserInfo> userList = UserInfoKeeper.activeUsers();
         if (!EmptyUtils.isEmpty(userList)) {
             mHistoryUserList.addAll(userList);
             mLastLoginUser = userList.get(0);
@@ -300,7 +301,7 @@ public class LoginActivity extends BaseActivity {
             mPwdTxt.setText(mLastLoginUser.getPwd());
         }
 
-        List<DeviceHistory> deviceList = DeviceHistoryKeeper.all();
+        List<DeviceInfo> deviceList = DeviceInfoKeeper.all();
         if (!EmptyUtils.isEmpty(deviceList)) {
             mHistoryDeviceList.addAll(deviceList);
         }
@@ -406,7 +407,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private String getLANDeviceMacByIP(String ip) {
-        for (DeviceHistory info : mLANDeviceList) {
+        for (DeviceInfo info : mLANDeviceList) {
             if (info.getIp().equals(ip)) {
                 return info.getMac();
             }

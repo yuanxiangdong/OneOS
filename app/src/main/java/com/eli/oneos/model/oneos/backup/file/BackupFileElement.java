@@ -1,7 +1,7 @@
 package com.eli.oneos.model.oneos.backup.file;
 
 import com.eli.oneos.constant.Constants;
-import com.eli.oneos.db.greendao.BackupFileInfo;
+import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.utils.FileUtils;
@@ -10,19 +10,19 @@ import com.eli.oneos.utils.ToastHelper;
 import java.io.File;
 
 public class BackupFileElement extends UploadElement {
-    private BackupFileInfo backupInfo;
+    private BackupFile backupInfo;
 
-//    public BackupFileElement(BackupFileInfo backupInfo, File file, String uploadPath, boolean overwrite) {
+//    public BackupFileElement(BackupFile backupInfo, File file, String uploadPath, boolean overwrite) {
 //        super(file, uploadPath, overwrite);
 //        this.backupInfo = backupInfo;
 //    }
 
-    public BackupFileElement(BackupFileInfo info, File file, boolean check) {
+    public BackupFileElement(BackupFile info, File file, boolean check) {
         this.backupInfo = info;
         setFile(file);
         setCheck(check);
 
-        boolean isBackupAlbum = info.getType().equalsIgnoreCase(BackupType.ALBUM);  // 相册备份
+        boolean isBackupAlbum = info.getType() == BackupType.ALBUM;  // 相册备份
         File backupDir = new File(info.getPath());
         // 设备备份保存根目录
         if (isBackupAlbum) {
@@ -38,11 +38,11 @@ public class BackupFileElement extends UploadElement {
         }
     }
 
-    public BackupFileInfo getBackupInfo() {
+    public BackupFile getBackupInfo() {
         return backupInfo;
     }
 
-    public void setBackupInfo(BackupFileInfo backupInfo) {
+    public void setBackupInfo(BackupFile backupInfo) {
         this.backupInfo = backupInfo;
     }
 }

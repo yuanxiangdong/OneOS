@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 
 import com.eli.oneos.db.BackupFileKeeper;
-import com.eli.oneos.db.greendao.BackupFileInfo;
+import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.model.logger.LogLevel;
 import com.eli.oneos.model.logger.Logged;
 import com.eli.oneos.model.logger.Logger;
@@ -37,7 +37,7 @@ public class BackupFileManager {
     private HandlerQueueThread handlerQueueThread = null;
 
     private LoginSession mLoginSession = null;
-    private List<BackupFileInfo> mBackupInfoList = null;
+    private List<BackupFile> mBackupList = null;
     private Context context;
     private long mLastBackupTime = 0;
 
@@ -56,7 +56,7 @@ public class BackupFileManager {
     private RecursiveFileObserver.OnObserverCallback mObserverListener = new RecursiveFileObserver.OnObserverCallback() {
 
         @Override
-        public void onAdd(BackupFileInfo backupInfo, File file) {
+        public void onAdd(BackupFile backupInfo, File file) {
             BackupFileElement mElement = new BackupFileElement(backupInfo, file, true);
             if (mElement != null) {
                 addBackupElement(mElement);
@@ -68,18 +68,18 @@ public class BackupFileManager {
         this.mLoginSession = mLoginSession;
         this.context = context;
 
-        mBackupInfoList = BackupFileKeeper.all(mLoginSession.getDeviceInfo().getMac(), mLoginSession.getUserInfo().getName());
+        mBackupList = BackupFileKeeper.all(mLoginSession.getUserInfo().getId());
         initBackupPhotoIfNeeds();
 
         handlerQueueThread = new HandlerQueueThread();
         if (USE_FILE_OBSERVER) {
-            for (BackupFileInfo info : mBackupInfoList) {
+            for (BackupFile info : mBackupList) {
                 RecursiveFileObserver mFileObserver = new RecursiveFileObserver(info, info.getPath(),
                         RecursiveFileObserver.EVENTS_BACKUP_PHOTOS, mObserverListener);
                 mFileObserverList.add(mFileObserver);
             }
         }
-        mBackupThread = new BackupScanFileThread(mBackupInfoList, mScanListener);
+        mBackupThread = new BackupScanFileThread(mBackupList, mScanListener);
     }
 
     private boolean initBackupPhotoIfNeeds() {
@@ -88,29 +88,27 @@ public class BackupFileManager {
         if (null != mExternalDCIMDir) {
             File mExternalDCIM = new File(mExternalDCIMDir, "DCIM");
             if (null != mExternalDCIM && mExternalDCIM.exists()) {
-                BackupFileInfo info = BackupFileKeeper.getBackupInfo(mLoginSession.getDeviceInfo().getMac(),
-                        mLoginSession.getUserInfo().getName(), mExternalDCIM.getAbsolutePath());
+                BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath());
                 if (null == info) {
-                    info = new BackupFileInfo(null, mLoginSession.getDeviceInfo().getMac(), mLoginSession.getUserInfo().getName(),
-                            mExternalDCIM.getAbsolutePath(), 0L, 0L, BackupPriority.MAX, BackupType.ALBUM);
+                    info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(),
+                            true, BackupType.ALBUM, BackupPriority.MAX, System.currentTimeMillis(), 0L);
                     BackupFileKeeper.insertOrReplace(info);
                     Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Add New Backup Album Dir: " + info.getPath());
                     isNewBackupPath = true;
-                    mBackupInfoList.add(info);
+                    mBackupList.add(info);
                 }
             }
         }
         File mInternalDCIMDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         if (null != mInternalDCIMDir && mInternalDCIMDir.exists()) {
-            BackupFileInfo info = BackupFileKeeper.getBackupInfo(mLoginSession.getDeviceInfo().getMac(),
-                    mLoginSession.getUserInfo().getName(), mInternalDCIMDir.getAbsolutePath());
+            BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath());
             if (null == info) {
-                info = new BackupFileInfo(null, mLoginSession.getDeviceInfo().getMac(), mLoginSession.getUserInfo().getName(),
-                        mInternalDCIMDir.getAbsolutePath(), 0L, 0L, BackupPriority.MAX, BackupType.ALBUM);
+                info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath(),
+                        true, BackupType.ALBUM, BackupPriority.MAX, System.currentTimeMillis(), 0L);
                 BackupFileKeeper.insertOrReplace(info);
                 Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Add New Backup Album Dir: " + info.getPath());
                 isNewBackupPath = true;
-                mBackupInfoList.add(info);
+                mBackupList.add(info);
             }
         }
 
@@ -273,11 +271,11 @@ public class BackupFileManager {
                 }
 
                 // for control backup only in wifi
-                boolean isOnlyWifiBackup = mLoginSession.getUserInfo().getIsBackupOnlyWifi();
+                boolean isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupFileOnlyWifi();
                 while (isOnlyWifiBackup && !Utils.isWifiAvailable(context)) {
                     try {
                         sleep(60000); // sleep 60 * 1000 = 60s
-                        isOnlyWifiBackup = mLoginSession.getUserInfo().getIsBackupOnlyWifi();
+                        isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupFileOnlyWifi();
                         Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "----Is Backup Only Wifi: " + isOnlyWifiBackup);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

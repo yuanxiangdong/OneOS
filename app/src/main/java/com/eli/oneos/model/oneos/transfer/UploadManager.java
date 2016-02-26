@@ -176,12 +176,12 @@ public class UploadManager {
     }
 
     /**
-     * pause all upload
+     * pause activeUsers upload
      *
      * @return
      */
     public boolean pauseUpload() {
-        Log.i(TAG, "Pause all upload");
+        Log.i(TAG, "Pause activeUsers upload");
 
         if (handlerQueueThread != null) {
             handlerQueueThread.stopCurrentUploadThread();
@@ -215,7 +215,7 @@ public class UploadManager {
     }
 
     public boolean continueUpload() {
-        Log.i(TAG, "Continue all upload");
+        Log.i(TAG, "Continue activeUsers upload");
 
         boolean hasTask = false;
         if (null != uploadList) {

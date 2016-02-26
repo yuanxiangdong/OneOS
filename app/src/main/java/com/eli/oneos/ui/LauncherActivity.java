@@ -71,7 +71,7 @@ public class LauncherActivity extends BaseActivity {
     }
 
     private void initLastLoginInfo() {
-        lastUserHistory = UserInfoKeeper.top();
+        lastUserHistory = UserInfoKeeper.lastUser();
 //        lastUserHistory = null; // TODO.. test code
     }
 

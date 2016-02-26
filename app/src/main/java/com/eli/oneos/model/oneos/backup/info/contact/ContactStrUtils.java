@@ -38,7 +38,7 @@ public class ContactStrUtils {
 		int len = s.length();
 		int i;
 
-		// Find all characters in string matching one of the separators in 'sep'
+		// Find activeUsers characters in string matching one of the separators in 'sep'
 		for (i = 0; i < len; i++) {
 			if (sep.indexOf(s.charAt(i)) != -1) {
 				tokenIndex.addElement(new Integer(i));
@@ -192,7 +192,7 @@ public class ContactStrUtils {
 	 * the RFC 2822 (par. 2.2.3)
 	 * 
 	 * @param recipients
-	 *            A string containing all recipients comma-separated
+	 *            A string containing activeUsers recipients comma-separated
 	 * @return A string containing the email list of the recipients spread over
 	 *         more lines, ended by CRLF and beginning from the second with the
 	 *         WSP defined in the RFC 2822

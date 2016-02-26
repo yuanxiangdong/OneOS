@@ -40,7 +40,7 @@ public class OneOSPluginManageAPI extends OneOSBaseAPI {
     }
 
     public void delete(String pack) {
-        doManage(pack, "delete");
+        doManage(pack, "unActive");
     }
 
     private void doManage(final String pack, final String cmd) {

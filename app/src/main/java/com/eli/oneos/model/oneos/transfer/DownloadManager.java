@@ -131,7 +131,7 @@ public class DownloadManager {
     }
 
     public boolean removeDownload() {
-        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Remove all download");
+        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Remove activeUsers download");
 
         if (handlerQueueThread != null) {
             handlerQueueThread.stopCurrentDownloadThread();
@@ -160,7 +160,7 @@ public class DownloadManager {
     }
 
     public boolean continueDownload() {
-        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Continue all downloads");
+        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Continue activeUsers downloads");
 
         boolean hasTask = false;
         if (null != downloadList) {

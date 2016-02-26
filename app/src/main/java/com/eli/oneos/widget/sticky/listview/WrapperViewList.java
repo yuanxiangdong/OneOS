@@ -72,7 +72,7 @@ class WrapperViewList extends ListView {
 	}
 
 	private int getSelectorPosition() {
-		if (mSelectorPositionField == null) { // not all supported andorid
+		if (mSelectorPositionField == null) { // not activeUsers supported andorid
 			// version have this variable
 			for (int i = 0; i < getChildCount(); i++) {
 				if (getChildAt(i).getBottom() == mSelectorRect.bottom) {

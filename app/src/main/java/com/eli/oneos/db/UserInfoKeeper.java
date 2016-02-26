@@ -14,24 +14,25 @@ import de.greenrobot.dao.query.QueryBuilder;
 public class UserInfoKeeper {
 
     /**
-     * List all Users by ID Desc
+     * List Active Users Users by ID Desc
      *
      * @return user list
      */
-    public static List<UserInfo> all() {
+    public static List<UserInfo> activeUsers() {
         UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
+        queryBuilder.where(UserInfoDao.Properties.IsActive.eq(true));
         queryBuilder.orderDesc(UserInfoDao.Properties.Time);
 
         return queryBuilder.list();
     }
 
     /**
-     * Query top user (Last Login user)
+     * Query Last login user
      *
-     * @return last list user
+     * @return last login user
      */
-    public static UserInfo top() {
+    public static UserInfo lastUser() {
         UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.orderDesc(UserInfoDao.Properties.Time);
@@ -69,23 +70,24 @@ public class UserInfoKeeper {
      * Insert a user into Database if it does not exist or replace it.
      *
      * @param info
-     * @return insertOrReplace result
+     * @return user ID or -1
      */
-    public static boolean insertOrReplace(UserInfo info) {
+    public static long insert(UserInfo info) {
         if (info != null) {
             UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
-            return dao.insertOrReplace(info) > 0;
+            return dao.insert(info);
         }
 
-        return false;
+        return -1;
     }
 
     public static UserInfo insertOrReplace(String user, String pwd, String mac, Long time, int uid, int gid, int admin) {
         UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
         UserInfo userInfo = getUserInfo(user, mac);
         if (userInfo == null) {
-            userInfo = new UserInfo(null, user, pwd, mac, time, uid, gid, admin, null, true, true, false, true);
+            userInfo = new UserInfo(null, user, mac, pwd, admin, uid, gid, time, true);
             dao.insert(userInfo);
+            // TODO.. create user settings info..
         } else {
             userInfo.setPwd(pwd);
             userInfo.setTime(time);
@@ -100,20 +102,20 @@ public class UserInfoKeeper {
 
 
     /**
-     * Delete a user from Database
+     * Set the user is not active
      *
      * @param info
-     * @return delete result
+     * @return
      */
-    public static boolean delete(UserInfo info) {
-        if (info != null) {
-            UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
-            dao.delete(info);
-
-            return true;
+    public static boolean unActive(UserInfo info) {
+        if (info == null) {
+            return false;
         }
 
-        return false;
+        UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
+        info.setIsActive(false);
+        dao.update(info);
+        return true;
     }
 
     /**

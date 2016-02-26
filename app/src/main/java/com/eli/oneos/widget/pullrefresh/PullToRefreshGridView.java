@@ -94,7 +94,7 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY,
 					scrollRangeX, scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
-			// Does all of the hard work...
+			// Does activeUsers of the hard work...
 			OverscrollHelper.overScrollBy(PullToRefreshGridView.this, deltaX, scrollX, deltaY,
 					scrollY, isTouchEvent);
 

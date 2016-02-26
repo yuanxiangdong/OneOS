@@ -129,7 +129,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         } else if (tool == TOOL_BACKUP_PHOTO) {
             intent = new Intent(getActivity(), BackupPhotoActivity.class);
         } else if (tool == TOOL_POWER) {
-            if (isLogin() && LoginManage.getInstance().isAdmin()) {
+            if (isLogin() && LoginManage.getInstance().getLoginSession().isAdmin()) {
                 showPowerView(arg1);
             } else {
                 DialogUtils.showNotifyDialog(getActivity(), R.string.tip, R.string.please_login_onespace_with_admin, R.string.ok, null);

@@ -5,11 +5,14 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.db.DeviceHistoryKeeper;
+import com.eli.oneos.db.DeviceInfoKeeper;
 import com.eli.oneos.db.UserInfoKeeper;
-import com.eli.oneos.db.greendao.DeviceHistory;
+import com.eli.oneos.db.UserSettingsKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
+import com.eli.oneos.db.greendao.UserSettings;
+import com.eli.oneos.model.logger.LogLevel;
+import com.eli.oneos.model.logger.Logger;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 
@@ -21,7 +24,7 @@ import org.json.JSONObject;
 
 /**
  * OneSpace OS Login API
- * <p>
+ * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/8.
  */
 public class OneOSLoginAPI extends OneOSBaseAPI {
@@ -78,21 +81,42 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
                             long time = System.currentTimeMillis();
                             boolean isLAN = (!EmptyUtils.isEmpty(mac)) ? true : false;
 
-                            UserInfo userInfo;
                             if (!EmptyUtils.isEmpty(mac)) {
-                                userInfo = UserInfoKeeper.insertOrReplace(user, pwd, mac, time, uid, gid, admin);
+                                mac = "";
+                            }
+
+                            long id; // user id
+                            UserSettings userSettings;
+                            UserInfo userInfo = UserInfoKeeper.getUserInfo(user, mac);
+                            if (null == userInfo) {
+                                userInfo = new UserInfo(null, user, mac, pwd, admin, uid, gid, time, true);
+                                id = UserInfoKeeper.insert(userInfo);
+                                if (id == -1) {
+                                    Logger.p(LogLevel.ERROR, true, TAG, "Insert UserInfo Error: " + id);
+                                    new Throwable(new Exception("Insert UserInfo Error"));
+                                    return;
+                                } else {
+                                    userSettings = UserSettingsKeeper.insertDefault(id);
+                                }
                             } else {
-                                // Needs to update database after access to device mac
-                                userInfo = new UserInfo(null, user, pwd, mac, time, uid, gid, admin, null, true, true, false, true);
+                                userInfo.setPwd(pwd);
+                                userInfo.setAdmin(admin);
+                                userInfo.setUid(uid);
+                                userInfo.setGid(gid);
+                                userInfo.setTime(time);
+                                userInfo.setIsActive(true);
+                                UserInfoKeeper.update(userInfo);
+
+                                id = userInfo.getId();
+                                userSettings = UserSettingsKeeper.getSettings(id);
                             }
 
+                            DeviceInfo deviceInfo = new DeviceInfo(mac, ip, port, false, time);
                             if (!isLAN) {
-                                DeviceHistory deviceHistory = new DeviceHistory(ip, mac, port, time, false);
-                                DeviceHistoryKeeper.insertOrReplace(deviceHistory);
+                                DeviceInfoKeeper.insertOrReplace(deviceInfo);
                             }
 
-                            DeviceInfo deviceInfo = new DeviceInfo(ip, mac, time, port, "", "", isLAN);
-                            LoginSession loginSession = new LoginSession(userInfo, deviceInfo, session, time);
+                            LoginSession loginSession = new LoginSession(userInfo, deviceInfo, userSettings, session, time);
 
                             listener.onSuccess(url, loginSession);
                         } else {

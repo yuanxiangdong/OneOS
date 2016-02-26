@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
-import com.eli.oneos.db.UserInfoKeeper;
+import com.eli.oneos.db.UserSettingsKeeper;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.service.OneSpaceService;
@@ -84,7 +84,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
             String dir = getResources().getString(R.string.backup_dir_shown) + Constants.BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM;
             mServerDirTxt.setText(dir);
             mSwitchButton.setEnabled(true);
-            isAutoBackup = LoginManage.getInstance().getLoginSession().getUserInfo().getIsAutoBackup();
+            isAutoBackup = LoginManage.getInstance().getLoginSession().getUserSettings().getIsAutoBackupFile();
         } else {
             mServerDirTxt.setText(R.string.please_login_onespace);
             mSwitchButton.setEnabled(false);
@@ -99,8 +99,8 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
                     if (isAutoBackup != isChecked) {
                         Log.e(TAG, "-----On Checked Changed-----");
                         isAutoBackup = isChecked;
-                        mLoginSession.getUserInfo().setIsAutoBackup(isAutoBackup);
-                        UserInfoKeeper.update(mLoginSession.getUserInfo());
+                        mLoginSession.getUserSettings().setIsAutoBackupFile(isAutoBackup);
+                        UserSettingsKeeper.update(mLoginSession.getUserSettings());
 
                         if (isChecked) {
                             Log.d(TAG, "-----Start Backup-----");
@@ -117,7 +117,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
             }
         });
 
-        isWifiBackup = mLoginSession.getUserInfo().getIsBackupOnlyWifi();
+        isWifiBackup = mLoginSession.getUserSettings().getIsBackupFileOnlyWifi();
         mCtrlSwitchButton = (SwitchButton) findViewById(R.id.btn_wifi_backup);
         mCtrlSwitchButton.setChecked(isWifiBackup);
         mCtrlSwitchButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -125,8 +125,8 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isWifiBackup = isChecked;
-                mLoginSession.getUserInfo().setIsBackupOnlyWifi(isWifiBackup);
-                UserInfoKeeper.update(mLoginSession.getUserInfo());
+                mLoginSession.getUserSettings().setIsBackupFileOnlyWifi(isWifiBackup);
+                UserSettingsKeeper.update(mLoginSession.getUserSettings());
             }
         });
     }

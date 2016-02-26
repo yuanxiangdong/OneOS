@@ -238,7 +238,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		switch (action) {
 			case MotionEvent.ACTION_MOVE: {
-				// If we're refreshing, and the flag is set. Eat all MOVE events
+				// If we're refreshing, and the flag is set. Eat activeUsers MOVE events
 				if (!mScrollingWhileRefreshingEnabled && isRefreshing()) {
 					return true;
 				}
@@ -349,7 +349,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 						return true;
 					}
 
-					// If we're already refreshing, just scroll back to the top
+					// If we're already refreshing, just scroll back to the lastUser
 					if (isRefreshing()) {
 						smoothScrollTo(0);
 						return true;
@@ -673,7 +673,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * Implemented by derived class to return whether the View is in a state
 	 * where the user can Pull to Refresh by scrolling from the start.
 	 * 
-	 * @return true if the View is currently the correct state (for example, top
+	 * @return true if the View is currently the correct state (for example, lastUser
 	 *         of a ListView)
 	 */
 	protected abstract boolean isReadyForPullStart();
@@ -964,7 +964,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		if (USE_HW_LAYERS) {
 			/**
 			 * Use a Hardware Layer on the Refreshable View if we've scrolled at
-			 * all. We don't use them on the Header/Footer Views as they change
+			 * activeUsers. We don't use them on the Header/Footer Views as they change
 			 * often, which would negate any HW layer performance boost.
 			 */
 			ViewCompat.setLayerType(mRefreshableViewWrapper, value != 0 ? View.LAYER_TYPE_HARDWARE
@@ -1331,7 +1331,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	public static enum Mode {
 
 		/**
-		 * Disable all Pull-to-Refresh gesture and Refreshing handling
+		 * Disable activeUsers Pull-to-Refresh gesture and Refreshing handling
 		 */
 		DISABLED(0x0),
 
@@ -1613,7 +1613,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			} else {
 
 				/**
-				 * We do do all calculations in long to reduce software float
+				 * We do do activeUsers calculations in long to reduce software float
 				 * calculations. We use 1000 as it gives us good accuracy and
 				 * small rounding errors
 				 */

@@ -7,7 +7,7 @@ import android.net.Uri;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.constant.Constants;
-import com.eli.oneos.db.BackupInfoHistoryKeeper;
+import com.eli.oneos.db.BackupInfoKeeper;
 import com.eli.oneos.model.logger.LogLevel;
 import com.eli.oneos.model.logger.Logged;
 import com.eli.oneos.model.logger.Logger;
@@ -74,7 +74,7 @@ public class BackupSMSThread extends Thread {
         if (null == exception) {
             long time = System.currentTimeMillis();
             Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Backup SMS Success, Update database: " + time);
-            BackupInfoHistoryKeeper.update(loginSession.getUserInfo().getId(), BackupInfoType.BACKUP_CONTACTS, time);
+            BackupInfoKeeper.update(loginSession.getUserInfo().getId(), BackupInfoType.BACKUP_CONTACTS, time);
         }
 
         if (mListener != null) {

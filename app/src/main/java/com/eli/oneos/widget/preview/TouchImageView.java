@@ -339,7 +339,7 @@ public class TouchImageView extends ImageView {
 
     private void checkSiding() {
         fillMatrixXY();
-        // Logged.d(TAG, "x: " + matrixX + " y: " + matrixY + " left: " + right / 2 + " top:" + bottom
+        // Logged.d(TAG, "x: " + matrixX + " y: " + matrixY + " left: " + right / 2 + " lastUser:" + bottom
         // / 2);
         float scaleWidth = Math.round(origWidth * saveScale);
         float scaleHeight = Math.round(origHeight * saveScale);

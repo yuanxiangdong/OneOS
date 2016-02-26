@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GridView that displays items in sections with headers that stick to the top of the view.
+ * GridView that displays items in sections with headers that stick to the lastUser of the view.
  *
  * @author Tonic Artos, Emil Sjölander, caguilar187
  */

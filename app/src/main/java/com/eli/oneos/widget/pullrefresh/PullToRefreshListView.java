@@ -267,7 +267,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
 					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
-			// Does all of the hard work...
+			// Does activeUsers of the hard work...
 			OverscrollHelper.overScrollBy(PullToRefreshListView.this, deltaX, scrollX, deltaY, scrollY, isTouchEvent);
 
 			return returnValue;

@@ -160,7 +160,7 @@ public class SystemBarManager {
     }
 
     /**
-     * Apply the specified color tint to all system UI bars.
+     * Apply the specified color tint to activeUsers system UI bars.
      *
      * @param color The color of the background tint.
      */
@@ -170,7 +170,7 @@ public class SystemBarManager {
     }
 
     /**
-     * Apply the specified drawable or color resource to all system UI bars.
+     * Apply the specified drawable or color resource to activeUsers system UI bars.
      *
      * @param res The identifier of the resource.
      */
@@ -180,7 +180,7 @@ public class SystemBarManager {
     }
 
     /**
-     * Apply the specified drawable to all system UI bars.
+     * Apply the specified drawable to activeUsers system UI bars.
      *
      * @param drawable The drawable to use as the background, or null to remove it.
      */
@@ -190,7 +190,7 @@ public class SystemBarManager {
     }
 
     /**
-     * Apply the specified alpha to all system UI bars.
+     * Apply the specified alpha to activeUsers system UI bars.
      *
      * @param alpha The alpha to use
      */
@@ -526,7 +526,7 @@ public class SystemBarManager {
         }
 
         /**
-         * Get the layout inset for any system UI that appears at the top of the screen.
+         * Get the layout inset for any system UI that appears at the lastUser of the screen.
          *
          * @param withActionBar True to include the height of the action bar, False otherwise.
          * @return The layout inset (in pixels).

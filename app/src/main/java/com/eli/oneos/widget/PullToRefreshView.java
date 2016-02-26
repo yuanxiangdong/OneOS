@@ -141,7 +141,7 @@ public class PullToRefreshView extends LinearLayout {
     }
 
     private void init() {
-        // Load all of the animations we need in code rather than through XML
+        // Load activeUsers of the animations we need in code rather than through XML
         mFlipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f,
                 RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         mFlipAnimation.setInterpolator(new LinearInterpolator());
@@ -394,7 +394,7 @@ public class PullToRefreshView extends LinearLayout {
     }
 
     /**
-     * ‰øÆÊîπHeader view top marginÁöÑÂÄº
+     * ‰øÆÊîπHeader view lastUser marginÁöÑÂÄº
      *
      * @param deltaY
      * @return hylin 2012-7-31‰∏ãÂçà1:14:31

@@ -88,7 +88,7 @@ public class OneSpaceService extends Service {
     // ==========================================Auto Backup file==========================================
     public void startBackupFile() {
         LoginSession loginSession = LoginManage.getInstance().getLoginSession();
-        if (!loginSession.getUserInfo().getIsAutoBackup()) {
+        if (!loginSession.getUserSettings().getIsAutoBackupFile()) {
             Log.e(TAG, "Do not open auto backup photo");
             return;
         }
@@ -111,7 +111,7 @@ public class OneSpaceService extends Service {
     public void resetBackupFile() {
         stopBackupFile();
         LoginSession loginSession = LoginManage.getInstance().getLoginSession();
-        BackupFileKeeper.reset(loginSession.getDeviceInfo().getMac(), loginSession.getUserInfo().getName());
+        BackupFileKeeper.reset(loginSession.getUserInfo().getId());
         startBackupFile();
     }
 
@@ -162,7 +162,7 @@ public class OneSpaceService extends Service {
     }
 
     public void pauseDownload() {
-        Log.d("OneSpaceService", "pause all download");
+        Log.d("OneSpaceService", "pause activeUsers download");
         mDownloadManager.pauseDownload();
     }
 
@@ -171,7 +171,7 @@ public class OneSpaceService extends Service {
     }
 
     public void continueDownload() {
-        Log.d("OneSpaceService", "continue all download");
+        Log.d("OneSpaceService", "continue activeUsers download");
         mDownloadManager.continueDownload();
     }
 
@@ -199,7 +199,7 @@ public class OneSpaceService extends Service {
     }
 
     public void pauseUpload() {
-        Log.d("OneSpaceService", "pause all upload");
+        Log.d("OneSpaceService", "pause activeUsers upload");
         mUploadManager.pauseUpload();
     }
 
@@ -209,7 +209,7 @@ public class OneSpaceService extends Service {
     }
 
     public void continueUpload() {
-        Log.d("OneSpaceService", "continue all  upload");
+        Log.d("OneSpaceService", "continue activeUsers  upload");
         mUploadManager.continueUpload();
     }
 

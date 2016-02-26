@@ -126,7 +126,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
     }
 
     public void showPicturePreview(ImageView imageView, OneOSFile file) {
-        if (!mLoginSession.getUserInfo().getIsPreviewPicOnlyWifi() || isWifiAvailable) {
+        if (!mLoginSession.getUserSettings().getIsPreviewPicOnlyWifi() || isWifiAvailable) {
             HttpBitmap.getInstance().display(imageView, OneOSAPIs.genThumbnailUrl(mLoginSession, file));
         } else {
             imageView.setImageResource(R.drawable.icon_file_pic);

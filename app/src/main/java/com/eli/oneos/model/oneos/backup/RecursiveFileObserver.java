@@ -3,7 +3,7 @@ package com.eli.oneos.model.oneos.backup;
 import android.os.FileObserver;
 import android.util.Log;
 
-import com.eli.oneos.db.greendao.BackupFileInfo;
+import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.utils.FileUtils;
 
 import java.io.File;
@@ -20,11 +20,11 @@ public class RecursiveFileObserver extends FileObserver {
 
     private List<SingleFileObserver> mObservers = null;
     private OnObserverCallback mCallback = null;
-    private BackupFileInfo backupInfo;
+    private BackupFile backupInfo;
     private String mPath = null;
     private int mMask;
 
-    public RecursiveFileObserver(BackupFileInfo backupInfo, String path, int mask, OnObserverCallback mCallback) {
+    public RecursiveFileObserver(BackupFile backupInfo, String path, int mask, OnObserverCallback mCallback) {
         super(path, mask);
         this.backupInfo = backupInfo;
         this.mPath = path;
@@ -151,7 +151,7 @@ public class RecursiveFileObserver extends FileObserver {
     }
 
     /**
-     * Monitor single directory and dispatch all events to its parent, with full path.
+     * Monitor single directory and dispatch activeUsers events to its parent, with full path.
      *
      * @author uestc.Mobius <mobius@toraleap.com>
      * @version 2011.0121
@@ -177,6 +177,6 @@ public class RecursiveFileObserver extends FileObserver {
     }
 
     public interface OnObserverCallback {
-        void onAdd(BackupFileInfo backupInfo, File file);
+        void onAdd(BackupFile backupInfo, File file);
     }
 }
