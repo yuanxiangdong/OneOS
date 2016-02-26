@@ -2,7 +2,6 @@ package com.eli.oneos.db;
 
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserInfoDao;
-import com.eli.oneos.utils.EmptyUtils;
 
 import java.util.List;
 
@@ -37,12 +36,8 @@ public class UserInfoKeeper {
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.orderDesc(UserInfoDao.Properties.Time);
         queryBuilder.limit(1);
-        List<UserInfo> list = queryBuilder.list();
-        if (!EmptyUtils.isEmpty(list)) {
-            return list.get(0);
-        }
 
-        return null;
+        return (UserInfo) queryBuilder.unique();
     }
 
     /**
@@ -57,13 +52,8 @@ public class UserInfoKeeper {
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.where(UserInfoDao.Properties.Name.eq(user));
         queryBuilder.where(UserInfoDao.Properties.Mac.eq(mac));
-        queryBuilder.limit(1);
-        List<UserInfo> list = queryBuilder.list();
-        if (!EmptyUtils.isEmpty(list)) {
-            return list.get(0);
-        }
 
-        return null;
+        return (UserInfo) queryBuilder.unique();
     }
 
     /**
@@ -80,26 +70,6 @@ public class UserInfoKeeper {
 
         return -1;
     }
-
-    public static UserInfo insertOrReplace(String user, String pwd, String mac, Long time, int uid, int gid, int admin) {
-        UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
-        UserInfo userInfo = getUserInfo(user, mac);
-        if (userInfo == null) {
-            userInfo = new UserInfo(null, user, mac, pwd, admin, uid, gid, time, true);
-            dao.insert(userInfo);
-            // TODO.. create user settings info..
-        } else {
-            userInfo.setPwd(pwd);
-            userInfo.setTime(time);
-            userInfo.setUid(uid);
-            userInfo.setGid(gid);
-            userInfo.setAdmin(admin);
-            dao.update(userInfo);
-        }
-
-        return userInfo;
-    }
-
 
     /**
      * Set the user is not active

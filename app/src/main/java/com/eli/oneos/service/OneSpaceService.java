@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.db.BackupFileKeeper;
+import com.eli.oneos.db.TransferHistoryKeeper;
+import com.eli.oneos.db.greendao.TransferHistory;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
@@ -48,6 +50,11 @@ public class OneSpaceService extends Service {
             @Override
             public void downloadComplete(DownloadElement element) {
                 FileUtils.requestScanFile(element.getDownloadFile());
+
+                long uid = LoginManage.getInstance().getLoginSession().getUserInfo().getId();
+                TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(true), element.getSrcName(),
+                        element.getSrcPath(), element.getTargetPath(), element.getSize(), 0L, System.currentTimeMillis());
+                TransferHistoryKeeper.insert(history);
 
                 for (DownloadManager.OnDownloadCompleteListener listener : mDownloadCompleteListenerList) {
                     listener.downloadComplete(element);

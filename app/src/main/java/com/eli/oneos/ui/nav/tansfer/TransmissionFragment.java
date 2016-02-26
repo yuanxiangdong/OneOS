@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
-import com.eli.oneos.model.oneos.adapter.TransfersAdapter;
+import com.eli.oneos.model.oneos.adapter.TransmissionAdapter;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
 import com.eli.oneos.model.oneos.transfer.DownloadManager;
 import com.eli.oneos.model.oneos.transfer.TransferControlListener;
@@ -42,7 +42,7 @@ public class TransmissionFragment extends BaseTransferFragment implements Downlo
 
     private Thread mThread = null;
     private OneSpaceService mTransferService = null;
-    private TransfersAdapter mAdapter;
+    private TransmissionAdapter mAdapter;
 
     public TransmissionFragment(boolean isDownload) {
         super(isDownload);
@@ -91,7 +91,7 @@ public class TransmissionFragment extends BaseTransferFragment implements Downlo
         View mEmptyView = (View) view.findViewById(R.id.layout_empty);
         mListView = (SwipeListView) view.findViewById(R.id.list_transfer);
         mListView.setEmptyView(mEmptyView);
-        mAdapter = new TransfersAdapter(getActivity(), mListView.getRightViewWidth());
+        mAdapter = new TransmissionAdapter(getActivity(), mListView.getRightViewWidth());
         mAdapter.setOnControlListener(new TransferControlListener() {
 
             @Override

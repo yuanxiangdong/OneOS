@@ -23,7 +23,7 @@ import com.eli.oneos.widget.CircleStateProgressBar;
 
 import java.util.List;
 
-public class TransfersAdapter extends BaseAdapter {
+public class TransmissionAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
     private Context context;
@@ -32,7 +32,7 @@ public class TransfersAdapter extends BaseAdapter {
     private int rightWidth = 0;
     private TransferControlListener mListener;
 
-    public TransfersAdapter(Context context, int rightWidth) {
+    public TransmissionAdapter(Context context, int rightWidth) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.rightWidth = rightWidth;

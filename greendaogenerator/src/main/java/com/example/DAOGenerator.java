@@ -19,6 +19,7 @@ public class DAOGenerator {
         addUserSettingsTable(schema);
         addBackupFileTable(schema);
         addBackupInfoTable(schema);
+        addTransferHistoryTable(schema);
 
         new DaoGenerator().generateAll(schema, "app/src/main/java");
     }
@@ -79,7 +80,7 @@ public class DAOGenerator {
     private static void addBackupFileTable(Schema schema) {
         Entity note = schema.addEntity("BackupFile");
         note.addIdProperty().autoincrement();
-        note.addLongProperty("uid").notNull();                  // 用户ID
+        note.addLongProperty("uid").notNull();                  // 用户信息表中的ID
         note.addStringProperty("path").notNull();               // 备份路径
         note.addBooleanProperty("auto");                        // 自动备份（默认为true）
         note.addIntProperty("type");                            // 备份类型： 图片/视频、全部
@@ -96,10 +97,28 @@ public class DAOGenerator {
     private static void addBackupInfoTable(Schema schema) {
         Entity note = schema.addEntity("BackupInfo");
         note.addIdProperty().autoincrement();
-        note.addLongProperty("uid");        // 用户ID
+        note.addLongProperty("uid");        // 用户信息表中的ID
         note.addIntProperty("type");        // 备份类型： 通讯录/短信
         note.addLongProperty("count");      // 备份次数
         note.addLongProperty("time");       // 最后备份时间
+    }
+
+    /**
+     * 上传下载记录表
+     *
+     * @param schema
+     */
+    private static void addTransferHistoryTable(Schema schema) {
+        Entity note = schema.addEntity("TransferHistory");
+        note.addIdProperty().autoincrement();
+        note.addLongProperty("uid");        // 用户信息表中的ID
+        note.addIntProperty("type");        // 传输类型： 上传/下载
+        note.addStringProperty("name").notNull();           // 文件名
+        note.addStringProperty("srcPath").notNull();        // 原文件路径
+        note.addStringProperty("targetPath").notNull();     // 目标文件路径
+        note.addLongProperty("size");       // 文件大小
+        note.addLongProperty("duration");   // 用时（s）
+        note.addLongProperty("time");       // 完成时间
     }
 
 }

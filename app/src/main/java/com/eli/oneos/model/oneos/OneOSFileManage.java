@@ -72,7 +72,7 @@ public class OneOSFileManage {
         public void onSuccess(String url, FileManageAction action, String response) {
             if (action == FileManageAction.ATTR) {
                 mActivity.dismissLoading();
-                // {"result":true, "srcPath":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
+                // {"result":true, "path":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
                 try {
                     OneOSFile file = fileList.get(0);
                     Resources resources = mActivity.getResources();
@@ -80,7 +80,7 @@ public class OneOSFileManage {
                     List<String> contentList = new ArrayList<>();
                     JSONObject json = new JSONObject(response);
                     titleList.add(resources.getString(R.string.file_attr_path));
-                    contentList.add(json.getString("srcPath"));
+                    contentList.add(json.getString("path"));
                     titleList.add(resources.getString(R.string.file_attr_size));
                     long size = json.getLong("size");
                     contentList.add(FileUtils.fmtFileSize(size) + " (" + size + resources.getString(R.string.tail_file_attr_size_bytes) + ")");

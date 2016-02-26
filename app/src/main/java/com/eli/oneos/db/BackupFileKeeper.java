@@ -2,7 +2,6 @@ package com.eli.oneos.db;
 
 import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.db.greendao.BackupFileDao;
-import com.eli.oneos.utils.EmptyUtils;
 
 import java.util.List;
 
@@ -39,13 +38,8 @@ public class BackupFileKeeper {
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.where(BackupFileDao.Properties.Uid.eq(uid));
         queryBuilder.where(BackupFileDao.Properties.Path.eq(path));
-        queryBuilder.limit(1);
-        List<BackupFile> list = queryBuilder.list();
-        if (!EmptyUtils.isEmpty(list)) {
-            return list.get(0);
-        }
 
-        return null;
+        return (BackupFile) queryBuilder.unique();
     }
 
     /**

@@ -3,9 +3,6 @@ package com.eli.oneos.db;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.db.greendao.UserSettingsDao;
-import com.eli.oneos.utils.EmptyUtils;
-
-import java.util.List;
 
 import de.greenrobot.dao.query.QueryBuilder;
 
@@ -23,13 +20,8 @@ public class UserSettingsKeeper {
         UserSettingsDao dao = DBHelper.getDaoSession().getUserSettingsDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.where(UserSettingsDao.Properties.Uid.eq(uid));
-        queryBuilder.limit(1);
-        List<UserSettings> list = queryBuilder.list();
-        if (!EmptyUtils.isEmpty(list)) {
-            return list.get(0);
-        }
 
-        return null;
+        return (UserSettings) queryBuilder.unique();
     }
 
     /**

@@ -35,14 +35,8 @@ public class BackupInfoKeeper {
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.where(BackupInfoDao.Properties.Uid.eq(uid));
         queryBuilder.where(BackupInfoDao.Properties.Type.eq(getBackupType(type)));
-        queryBuilder.limit(1);
 
-        List<BackupInfo> list = queryBuilder.list();
-        if (!EmptyUtils.isEmpty(list)) {
-            return list.get(0);
-        }
-
-        return null;
+        return (BackupInfo) queryBuilder.unique();
     }
 
     public static boolean insertOrReplace(BackupInfo info) {
