@@ -163,8 +163,10 @@ public class LoginActivity extends BaseActivity {
         }
         LoginManage loginManager = LoginManage.getInstance();
         loginManager.setLoginSession(mLoginSession);
-        OneSpaceService service = MyApplication.getTransferService();
-        service.startBackupFile();
+        if (loginManager.isLogin()) {
+            OneSpaceService service = MyApplication.getTransferService();
+            service.startBackupFile();
+        }
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.receiver.NetworkStateManager;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.ui.nav.cloud.CloudNavFragment;
+import com.eli.oneos.ui.nav.phone.LocalNavFragment;
 import com.eli.oneos.ui.nav.tansfer.TransferNavFragment;
 import com.eli.oneos.ui.nav.tools.ToolsFragment;
 import com.eli.oneos.utils.DialogUtils;
@@ -126,8 +127,9 @@ public class MainActivity extends BaseActivity {
 
         fragmentManager = getSupportFragmentManager();
 
+        LocalNavFragment localFragment = new LocalNavFragment();
+        mFragmentList.add(localFragment);
         CloudNavFragment cloudFragment = new CloudNavFragment();
-        mFragmentList.add(cloudFragment);
         mFragmentList.add(cloudFragment);
         mTransferFragment = new TransferNavFragment();
         mFragmentList.add(mTransferFragment);

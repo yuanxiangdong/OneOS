@@ -47,13 +47,13 @@ public class MenuPopupView {
     }
 
     public void setMenuItems(int[] title, int[] resId) {
-        if (null == title || null == resId) {
+        if (null == title && null == resId) {
             return;
         }
 
         for (int i = 0; i < title.length; i++) {
             itemList.add(context.getResources().getString(title[i]));
-            if (i < resId.length) {
+            if (resId != null && i < resId.length) {
                 resList.add(resId[i]);
             } else {
                 resList.add(Integer.valueOf(-1));
@@ -121,7 +121,7 @@ public class MenuPopupView {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
+            ViewHolder holder;
             if (convertView == null) {
                 convertView = LayoutInflater.from(context).inflate(R.layout.item_listview_menu, null);
                 holder = new ViewHolder();
@@ -137,7 +137,10 @@ public class MenuPopupView {
             holder.mTitleTxt.setText(itemList.get(position));
             if (position < resList.size()) {
                 if (resList.get(position) > 0) {
+                    holder.mIconImage.setVisibility(View.VISIBLE);
                     holder.mIconImage.setImageResource(resList.get(position));
+                } else {
+                    holder.mIconImage.setVisibility(View.GONE);
                 }
             }
 

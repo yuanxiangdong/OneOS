@@ -1,4 +1,4 @@
-package com.eli.oneos.ui.nav.cloud;
+package com.eli.oneos.ui.nav.phone;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +27,8 @@ import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSStickyGridAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSStickyListAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListDBAPI;
+import com.eli.oneos.model.phone.LocalFileType;
+import com.eli.oneos.model.phone.adapter.LocalFileBaseAdapter;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
@@ -41,10 +43,10 @@ import com.eli.oneos.widget.sticky.listview.StickyListHeadersView;
 import java.util.ArrayList;
 
 /**
- * Created by gaoyun@eli-tech.com on 2016/02/03.
+ * Created by gaoyun@eli-tech.com on 2016/02/29.
  */
-public class CloudDbFragment extends BaseCloudFragment {
-    private static final String TAG = CloudDbFragment.class.getSimpleName();
+public class LocalDbFragment extends BaseLocalFragment {
+    private static final String TAG = LocalDbFragment.class.getSimpleName();
 
     private RelativeLayout mListLayout, mGridLayout;
     private StickyListHeadersView mListView;
@@ -175,7 +177,7 @@ public class CloudDbFragment extends BaseCloudFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, ">>>>>>>>On Create>>>>>>>");
 
-        View view = inflater.inflate(R.layout.fragment_nav_cloud_db, container, false);
+        View view = inflater.inflate(R.layout.fragment_nav_local_db, container, false);
 
         mMainActivity = (MainActivity) getActivity();
         mParentFragment = (BaseNavFileFragment) getParentFragment();
@@ -312,7 +314,7 @@ public class CloudDbFragment extends BaseCloudFragment {
         mGridView.setAdapter(mGridAdapter);
     }
 
-    public void setFileType(OneOSFileType type, String path) {
+    public void setFileType(LocalFileType type, String path) {
         this.mFileType = type;
         Log.d(TAG, "========Set FileType: " + type);
     }
@@ -338,7 +340,7 @@ public class CloudDbFragment extends BaseCloudFragment {
      * @return
      */
     @Override
-    public OneOSFileBaseAdapter getFileAdapter() {
+    public LocalFileBaseAdapter getFileAdapter() {
         if (isListShown) {
             return mListAdapter;
         } else {

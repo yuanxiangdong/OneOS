@@ -156,8 +156,7 @@ public class AppUpgradeManager {
         }
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(Uri.parse("file://" + newAppFile.toString()),
-                "application/vnd.android.package-archive");
+        intent.setDataAndType(Uri.parse("file://" + newAppFile.toString()), "application/vnd.android.package-archive");
         activity.startActivity(intent);
         android.os.Process.killProcess(android.os.Process.myPid());
     }
@@ -174,7 +173,7 @@ public class AppUpgradeManager {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    confirmCancelDowloadDialog(mProgressDialog, mDownloadAppThread);
+                    confirmCancelDownloadDialog(mProgressDialog, mDownloadAppThread);
                     return false;
                 }
 
@@ -190,8 +189,7 @@ public class AppUpgradeManager {
             doDownloadApp();
         } else {
             DialogUtils.showConfirmDialog(activity, R.string.tip, R.string.confirm_download_not_wifi,
-                    R.string.dialog_continue, R.string.cancel,
-                    new DialogUtils.OnDialogClickListener() {
+                    R.string.dialog_continue, R.string.cancel, new DialogUtils.OnDialogClickListener() {
 
                         @Override
                         public void onClick(boolean isPositiveBtn) {
@@ -218,7 +216,7 @@ public class AppUpgradeManager {
                 });
     }
 
-    private void confirmCancelDowloadDialog(final ProgressDialog mDialog, final DownloadAppThread mDownloadThread) {
+    private void confirmCancelDownloadDialog(final ProgressDialog mDialog, final DownloadAppThread mDownloadThread) {
 
         DialogUtils.showConfirmDialog(activity, R.string.tip, R.string.confirm_cancel_download_app, R.string.interrupt_download,
                 R.string.continue_download, new DialogUtils.OnDialogClickListener() {
@@ -274,7 +272,7 @@ public class AppUpgradeManager {
                 is.close();
 
                 JSONObject json = new JSONObject(resultStr);
-                JSONObject apkJson = json.getJSONObject("android");
+                JSONObject apkJson = json.getJSONObject("android_v3.0");
                 serverVersion = apkJson.getString("str");
                 appUrl = apkJson.getString("file");
                 Log.d(TAG, "Server App Version: " + serverVersion + "; File DownLoad URL: " + appUrl);

@@ -33,6 +33,7 @@ public class FilePathPanel extends RelativeLayout {
     private OnPathPanelClickListener mListener;
 
     private String path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
+    private String mSDCardRootDirShownName = null;
     private String mPrivateRootDirShownName = null;
     private String mPublicRootDirShownName = null;
     private String mRecycleRootDirShownName = null;
@@ -52,6 +53,7 @@ public class FilePathPanel extends RelativeLayout {
         mPrivateRootDirShownName = getResources().getString(R.string.root_dir_name_private);
         mPublicRootDirShownName = getResources().getString(R.string.root_dir_name_public);
         mRecycleRootDirShownName = getResources().getString(R.string.root_dir_name_recycle);
+        mSDCardRootDirShownName = getResources().getString(R.string.root_dir_name_sdcard);
         pathMaxWidth = Utils.dipToPx(120);
         pathMinWidth = Utils.dipToPx(30);
         pathBtnPadding = Utils.dipToPx(5);
@@ -67,6 +69,12 @@ public class FilePathPanel extends RelativeLayout {
                 }
             }
         });
+    }
+
+    public void updatePath(String path, String rootPath) {
+        this.path = path;
+        setVisibility(View.VISIBLE);
+        genFilePathLayout(rootPath);
     }
 
     public void updatePath(OneOSFileType type, String path) {
@@ -115,6 +123,78 @@ public class FilePathPanel extends RelativeLayout {
             rootStr = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
             rootShownName = mPrivateRootDirShownName;
         }
+
+        try {
+            final boolean hasPrefix = !EmptyUtils.isEmpty(mPrefixName);
+            String shownPath;
+            if (null != path) {
+                if (hasPrefix) {
+                    rootShownName = mPrefixName + File.separator + rootShownName;
+                }
+                shownPath = path.replaceFirst(rootStr, rootShownName + File.separator);
+            } else {
+                shownPath = mPrefixName + File.separator;
+            }
+
+            Log.d(TAG, "Add srcPath button:" + shownPath);
+
+            final String[] pathItems = shownPath.split(File.separator);
+            Button[] pathBtn = new Button[pathItems.length];
+            Resources resource = getResources();
+            ColorStateList csl = (ColorStateList) resource.getColorStateList(R.color.selector_gray_to_primary);
+
+            for (int i = 0; i < pathItems.length; ++i) {
+                pathBtn[i] = new Button(getContext());
+                pathBtn[i].setTag(i);
+                pathBtn[i].setText(pathItems[i]);
+                pathBtn[i].setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.text_size_sm));
+                pathBtn[i].setMaxWidth(pathMaxWidth);
+                pathBtn[i].setMinWidth(pathMinWidth);
+                pathBtn[i].setPadding(pathBtnPadding, 0, pathBtnPadding, 0);
+                pathBtn[i].setSingleLine(true);
+                pathBtn[i].setEllipsize(TextUtils.TruncateAt.END);
+                pathBtn[i].setTextColor(csl);
+                pathBtn[i].setGravity(Gravity.CENTER);
+                pathBtn[i].setBackgroundResource(R.drawable.bg_path_item);
+                mPathLayout.addView(pathBtn[i]);
+                pathBtn[i].setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int i = (Integer) v.getTag();
+                        int j = 1;
+                        if (hasPrefix) {
+                            j++;
+                            if (i == 0) {
+                                if (null != mListener) {
+                                    mListener.onClick(v, null);
+                                }
+                                return;
+                            }
+                        }
+                        String tarPath = rootStr;
+                        for (; j <= i; j++) {
+                            tarPath += pathItems[j] + File.separator;
+                        }
+
+                        Log.d(TAG, "Click target srcPath is " + tarPath);
+                        if (null != mListener) {
+                            mListener.onClick(v, tarPath);
+                        }
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.getStackTrace();
+            Log.e(TAG, "Generate Path Layout Exception: ", e);
+        }
+    }
+
+    private void genFilePathLayout(String rootPath) {
+        Log.i(TAG, "Original Path:" + path);
+        mPathLayout.removeAllViews();
+
+        final String rootStr = rootPath;
+        String rootShownName = mSDCardRootDirShownName;
 
         try {
             final boolean hasPrefix = !EmptyUtils.isEmpty(mPrefixName);

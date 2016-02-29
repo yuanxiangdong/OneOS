@@ -1,4 +1,4 @@
-package com.eli.oneos.ui.nav.cloud;
+package com.eli.oneos.ui.nav.phone;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -12,28 +12,22 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
-import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileTypeItem;
-import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.oneos.OneOSFileType;
-import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
+import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.SearchPanel;
 import com.eli.oneos.widget.TypePopupView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
- * Created by gaoyun@eli-tech.com on 2016/1/13.
+ * Created by Administrator on 2016/2/29.
  */
-public class CloudNavFragment extends BaseNavFileFragment {
-    private static final String TAG = CloudNavFragment.class.getSimpleName();
-
-    private BaseCloudFragment mCurFragment;
-    private CloudDirFragment mDirFragment;
-    private CloudDbFragment mDbFragment;
+public class LocalNavFragment extends BaseNavFileFragment {
+    private static final String TAG = LocalNavFragment.class.getSimpleName();
 
     private FileSelectPanel mSelectPanel;
     private SearchPanel mSearchPanel;
@@ -45,6 +39,8 @@ public class CloudNavFragment extends BaseNavFileFragment {
     private TypePopupView mTypePopView;
 
     private ArrayList<FileTypeItem> mFileTypeList = new ArrayList<>();
+    private LocalDirFragment mDirFragment;
+    private BaseLocalFragment mCurFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,14 +48,7 @@ public class CloudNavFragment extends BaseNavFileFragment {
 
         mMainActivity = (MainActivity) getActivity();
 
-        View view = inflater.inflate(R.layout.fragment_nav_local, container, false);
-//        mHandler = getCurApplication().getHandler();
-//
-//        getCurApplication().setCloudFileType(LocalFileType.PRIVATE);
-//
-//        registerBroadcastReceiver();
-//
-//        initAnimActions();
+        View view = inflater.inflate(R.layout.fragment_nav_cloud, container, false);
 
         initView(view);
         initTypeView();
@@ -89,41 +78,41 @@ public class CloudNavFragment extends BaseNavFileFragment {
         });
     }
 
+    private void initFragment() {
+        mDirFragment = new LocalDirFragment();
+        changeFragmentByType(LocalFileType.PRIVATE);
+    }
+
     private void initTypeView() {
-        FileTypeItem privateItem = new FileTypeItem(R.string.file_type_private, R.drawable.btn_file_type_private, R.drawable.btn_file_type_private_pressed, OneOSFileType.PRIVATE);
+        FileTypeItem privateItem = new FileTypeItem(R.string.file_type_private, R.drawable.btn_file_type_private, R.drawable.btn_file_type_private_pressed, LocalFileType.PRIVATE);
         mFileTypeList.add(privateItem);
-        FileTypeItem publicItem = new FileTypeItem(R.string.file_type_public, R.drawable.btn_file_type_public, R.drawable.btn_file_type_public_pressed, OneOSFileType.PUBLIC);
-        mFileTypeList.add(publicItem);
-        FileTypeItem docItem = new FileTypeItem(R.string.file_type_doc, R.drawable.btn_file_type_doc, R.drawable.btn_file_type_doc_pressed, OneOSFileType.DOC);
+        FileTypeItem docItem = new FileTypeItem(R.string.file_type_doc, R.drawable.btn_file_type_doc, R.drawable.btn_file_type_doc_pressed, LocalFileType.DOC);
         mFileTypeList.add(docItem);
-        FileTypeItem picItem = new FileTypeItem(R.string.file_type_pic, R.drawable.btn_file_type_pic, R.drawable.btn_file_type_pic_pressed, OneOSFileType.PICTURE);
+        FileTypeItem picItem = new FileTypeItem(R.string.file_type_pic, R.drawable.btn_file_type_pic, R.drawable.btn_file_type_pic_pressed, LocalFileType.PICTURE);
         mFileTypeList.add(picItem);
-        FileTypeItem audioItem = new FileTypeItem(R.string.file_type_audio, R.drawable.btn_file_type_audio, R.drawable.btn_file_type_audio_pressed, OneOSFileType.AUDIO);
+        FileTypeItem audioItem = new FileTypeItem(R.string.file_type_audio, R.drawable.btn_file_type_audio, R.drawable.btn_file_type_audio_pressed, LocalFileType.AUDIO);
         mFileTypeList.add(audioItem);
-        FileTypeItem videoItem = new FileTypeItem(R.string.file_type_video, R.drawable.btn_file_type_video, R.drawable.btn_file_type_video_pressed, OneOSFileType.VIDEO);
+        FileTypeItem videoItem = new FileTypeItem(R.string.file_type_video, R.drawable.btn_file_type_video, R.drawable.btn_file_type_video_pressed, LocalFileType.VIDEO);
         mFileTypeList.add(videoItem);
-        FileTypeItem recycleItem = new FileTypeItem(R.string.file_type_cycle, R.drawable.btn_file_type_recycle, R.drawable.btn_file_type_recycle_pressed, OneOSFileType.RECYCLE);
-        mFileTypeList.add(recycleItem);
+        FileTypeItem appItem = new FileTypeItem(R.string.file_type_app, R.drawable.btn_file_type_app, R.drawable.btn_file_type_app_pressed, LocalFileType.APP);
+        mFileTypeList.add(appItem);
+        FileTypeItem downloadItem = new FileTypeItem(R.string.file_type_download, R.drawable.btn_file_type_download, R.drawable.btn_file_type_download_pressed, LocalFileType.DOWNLOAD);
+        mFileTypeList.add(downloadItem);
+
         mTypePopView = new TypePopupView(mMainActivity, mFileTypeList);
         mTypePopView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FileTypeItem item = mFileTypeList.get(position);
-                OneOSFileType type = (OneOSFileType) item.getFlag();
-                mTypeBtn.setText(OneOSFileType.getTypeName(type));
+                LocalFileType type = (LocalFileType) item.getFlag();
+                mTypeBtn.setText(LocalFileType.getTypeName(type));
                 changeFragmentByType(type);
                 mTypePopView.dismiss();
             }
         });
     }
 
-    private void initFragment() {
-        mDirFragment = new CloudDirFragment();
-        mDbFragment = new CloudDbFragment();
-        changeFragmentByType(OneOSFileType.PRIVATE);
-    }
-
-    private void changeFragmentByType(OneOSFileType type) {
+    private void changeFragmentByType(LocalFileType type) {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
         if (mCurFragment != null) {
@@ -131,21 +120,11 @@ public class CloudNavFragment extends BaseNavFileFragment {
             transaction.hide(mCurFragment);
         }
 
-        String path;
-        if (type == OneOSFileType.PRIVATE) {
+        if (type == LocalFileType.PRIVATE) {
             mCurFragment = mDirFragment;
-            path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
-        } else if (type == OneOSFileType.PUBLIC) {
-            mCurFragment = mDirFragment;
-            path = OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
-        } else if (type == OneOSFileType.RECYCLE) {
-            mCurFragment = mDirFragment;
-            path = OneOSAPIs.ONE_OS_RECYCLE_ROOT_DIR;
-        } else {
-            mCurFragment = mDbFragment;
-            path = null;
         }
-        mCurFragment.setFileType(type, path);
+
+        mCurFragment.setFileType(type, null);
 
         if (!mCurFragment.isAdded()) {
             transaction.add(R.id.fragment_content, mCurFragment);
@@ -154,24 +133,6 @@ public class CloudNavFragment extends BaseNavFileFragment {
         }
         transaction.show(mCurFragment);
         transaction.commitAllowingStateLoss();
-    }
-
-    public void addSearchListener(SearchPanel.OnSearchActionListener listener) {
-        mSearchPanel.setOnSearchListener(listener);
-    }
-
-    /**
-     * Use to handle parent Activity back action
-     *
-     * @return If consumed returns true, otherwise returns false.
-     */
-    @Override
-    public boolean onBackPressed() {
-        if (null != mCurFragment) {
-            return mCurFragment.onBackPressed();
-        }
-
-        return false;
     }
 
     /**
@@ -223,9 +184,33 @@ public class CloudNavFragment extends BaseNavFileFragment {
      * @param mListener    On file operate listener
      */
     @Override
-    public void updateManageBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener) {
+    public void updateManageBar(LocalFileType fileType, ArrayList<File> selectedList, FileManagePanel.OnFileManageListener mListener) {
         mManagePanel.setOnOperateListener(mListener);
         mManagePanel.updatePanelItems(fileType, selectedList);
+    }
+
+    /**
+     * Add search file listener
+     *
+     * @param listener
+     */
+    @Override
+    public void addSearchListener(SearchPanel.OnSearchActionListener listener) {
+        mSearchPanel.setOnSearchListener(listener);
+    }
+
+    /**
+     * Use to handle parent Activity back action
+     *
+     * @return If consumed returns true, otherwise returns false.
+     */
+    @Override
+    public boolean onBackPressed() {
+        if (null != mCurFragment) {
+            return mCurFragment.onBackPressed();
+        }
+
+        return false;
     }
 
     /**
@@ -236,11 +221,6 @@ public class CloudNavFragment extends BaseNavFileFragment {
      */
     @Override
     public void onNetworkChanged(boolean isAvailable, boolean isWifiAvailable) {
-        if (null != mCurFragment) {
-            OneOSFileBaseAdapter adapter = mCurFragment.getFileAdapter();
-            if (null != adapter) {
-                adapter.setWifiAvailable(isWifiAvailable);
-            }
-        }
+
     }
 }

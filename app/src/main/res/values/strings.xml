@@ -29,6 +29,8 @@
     <string name="file_type_audio">音乐</string>
     <string name="file_type_video">视频</string>
     <string name="file_type_cycle">回收站</string>
+    <string name="file_type_download">下载</string>
+    <string name="file_type_app">安装包</string>
 
     <string name="details_file">详情</string>
     <string name="open_file">打开</string>
@@ -126,8 +128,10 @@
     <string name="root_dir_name_private">我的目录</string>
     <string name="root_dir_name_public">公共目录</string>
     <string name="root_dir_name_recycle">回收站</string>
+    <string name="root_dir_name_sdcard">内存目录</string>
     <string name="root_dir_all">全部</string>
-
+    <string name="action_upload_file">上&#160;传&#160;文&#160;件</string>
+    <string name="action_new_folder">新建文件夹</string>
     <string name="file_order_time">时间</string>
     <string name="file_order_name">文件名</string>
 

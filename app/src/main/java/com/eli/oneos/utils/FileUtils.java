@@ -232,11 +232,37 @@ public class FileUtils {
         }
     }
 
+    public static void openLocalFile(BaseActivity activity, int position, final ArrayList<File> fileList) {
+        File file = fileList.get(position);
+
+        if (isPictureFile(file.getName())) {
+            ArrayList<File> picList = new ArrayList<>();
+            for (File f : fileList) {
+                if (isPictureFile(f.getName())) {
+                    picList.add(f);
+                }
+            }
+            openLocalFile(activity, position, picList);
+        } else {
+            openLocalFile(activity, file);
+        }
+    }
+
     public static void openOneOSPicture(BaseActivity activity, int position, final ArrayList<OneOSFile> picList) {
         Intent intent = new Intent(activity, PictureViewActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("StartIndex", position);
         bundle.putBoolean("IsLocalPicture", false);
+        bundle.putSerializable("PictureList", picList);
+        intent.putExtras(bundle);
+        activity.startActivity(intent);
+    }
+
+    public static void openLocalPicture(BaseActivity activity, int position, final ArrayList<File> picList) {
+        Intent intent = new Intent(activity, PictureViewActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("StartIndex", position);
+        bundle.putBoolean("IsLocalPicture", true);
         bundle.putSerializable("PictureList", picList);
         intent.putExtras(bundle);
         activity.startActivity(intent);

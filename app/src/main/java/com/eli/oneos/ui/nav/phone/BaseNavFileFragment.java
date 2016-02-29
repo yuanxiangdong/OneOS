@@ -1,12 +1,13 @@
-package com.eli.oneos.ui.nav;
+package com.eli.oneos.ui.nav.phone;
 
 
-import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.oneos.OneOSFileType;
+import com.eli.oneos.model.phone.LocalFileType;
+import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.SearchPanel;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -46,7 +47,7 @@ public abstract class BaseNavFileFragment extends BaseNavFragment {
      * @param selectedList Selected file list
      * @param mListener    On file operate listener
      */
-    public abstract void updateManageBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener);
+    public abstract void updateManageBar(LocalFileType fileType, ArrayList<File> selectedList, FileManagePanel.OnFileManageListener mListener);
 
     /**
      * Add search file listener

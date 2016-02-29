@@ -1,4 +1,4 @@
-package com.eli.oneos.ui.nav.cloud;
+package com.eli.oneos.ui.nav.phone;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -6,9 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -19,52 +17,53 @@ import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
-import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
-import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.oneos.OneOSFileManage;
-import com.eli.oneos.model.oneos.OneOSFileType;
-import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
-import com.eli.oneos.model.oneos.adapter.OneOSFileGridAdapter;
-import com.eli.oneos.model.oneos.adapter.OneOSFileListAdapter;
-import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
-import com.eli.oneos.model.oneos.api.OneOSSearchAPI;
-import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
-import com.eli.oneos.model.oneos.comp.OneOSFileTimeComparator;
+import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.model.phone.LocalFileType;
+import com.eli.oneos.model.phone.adapter.LocalFileBaseAdapter;
+import com.eli.oneos.model.phone.adapter.LocalFileGridAdapter;
+import com.eli.oneos.model.phone.adapter.LocalFileListAdapter;
+import com.eli.oneos.model.phone.comp.FileNameComparator;
+import com.eli.oneos.model.phone.comp.FileTimeComparator;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.utils.AnimUtils;
+import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
+import com.eli.oneos.utils.SDCardUtils;
 import com.eli.oneos.utils.ToastHelper;
-import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FilePathPanel;
 import com.eli.oneos.widget.FileSelectPanel;
-import com.eli.oneos.widget.MenuPopupView;
 import com.eli.oneos.widget.SearchPanel;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshBase;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshGridView;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshListView;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
- * Created by gaoyun@eli-tech.com on 2016/1/13.
+ * Created by gaoyun@eli-tech.com on 2016/2/29.
  */
-public class CloudDirFragment extends BaseCloudFragment {
-    private static final String TAG = CloudDirFragment.class.getSimpleName();
-    private static final int[] ACTION_TITLES = new int[]{R.string.action_upload_file, R.string.action_new_folder};
+public class LocalDirFragment extends BaseLocalFragment {
+    private static final String TAG = LocalDirFragment.class.getSimpleName();
 
     private ListView mListView;
     private GridView mGridView;
     private PullToRefreshListView mPullRefreshListView;
     private PullToRefreshGridView mPullRefreshGridView;
-    private OneOSFileListAdapter mListAdapter;
-    private OneOSFileGridAdapter mGridAdapter;
-    private MenuPopupView mAddPopView;
+    private LocalFileListAdapter mListAdapter;
+    private LocalFileGridAdapter mGridAdapter;
+
+    private File curDir = null;
+    private String rootPath = null;
+    private ArrayList<File> mSDCardList = new ArrayList<>();
 
     private AdapterView.OnItemClickListener mFileItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -75,11 +74,11 @@ public class CloudDirFragment extends BaseCloudFragment {
             mLastClickPosition = position;
             mLastClickItem2Top = view.getTop();
 
-            OneOSFileBaseAdapter mAdapter = getFileAdapter();
+            LocalFileBaseAdapter mAdapter = getFileAdapter();
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (isMultiMode) {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
-                OneOSFile file = mFileList.get(position);
+                File file = mFileList.get(position);
                 boolean isSelected = mClickedCheckBox.isChecked();
                 if (isSelected) {
                     mSelectedList.remove(file);
@@ -91,13 +90,16 @@ public class CloudDirFragment extends BaseCloudFragment {
                 mAdapter.notifyDataSetChanged();
                 updateSelectAndManagePanel();
             } else {
-                OneOSFile file = mFileList.get(position);
+                File file = mFileList.get(position);
                 if (file.isDirectory()) {
-                    curPath = file.getPath();
+                    if (null == curDir) {
+                        rootPath = file.getAbsolutePath();
+                    }
+                    curDir = file;
                     autoPullToRefresh();
                 } else {
                     isSelectionLastPosition = true;
-                    FileUtils.openOneOSFile(mLoginSession, mMainActivity, position, mFileList);
+                    FileUtils.openLocalFile(mMainActivity, position, mFileList);
                 }
             }
         }
@@ -109,14 +111,14 @@ public class CloudDirFragment extends BaseCloudFragment {
                 position -= 1; // for PullToRefreshView header
             }
 
-            OneOSFileBaseAdapter mAdapter = getFileAdapter();
+            LocalFileBaseAdapter mAdapter = getFileAdapter();
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (!isMultiMode) {
                 setMultiModel(true, position);
                 updateSelectAndManagePanel();
             } else {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
-                OneOSFile file = mFileList.get(position);
+                File file = mFileList.get(position);
                 boolean isSelected = mClickedCheckBox.isChecked();
                 if (isSelected) {
                     mSelectedList.remove(file);
@@ -146,48 +148,19 @@ public class CloudDirFragment extends BaseCloudFragment {
         }
     };
     private FileManagePanel.OnFileManageListener mFileManageListener = new FileManagePanel.OnFileManageListener() {
+
         @Override
         public void onClick(View view, ArrayList<?> selectedList, FileManageAction action) {
             if (EmptyUtils.isEmpty(selectedList)) {
                 ToastHelper.showToast(R.string.tip_select_file);
             } else {
                 isSelectionLastPosition = true;
-                OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, mPathPanel, new OneOSFileManage.OnManageCallback() {
-                    @Override
-                    public void onComplete(boolean isSuccess) {
-                        autoPullToRefresh();
-                    }
-                });
-                fileManage.manage(mFileType, action, (ArrayList<OneOSFile>) selectedList);
+                // TODO.. manage file
             }
         }
 
         @Override
         public void onDismiss() {
-        }
-    };
-    private int mFirstVisibleItem = 0;
-    private AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            switch (scrollState) {
-                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                    // ToastHelper.showToast("停止...");
-//                    showOrderLayout(mFirstVisibleItem == 0);
-                    showOrderLayout(true);
-                    break;
-                case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                    // ToastHelper.showToast("正在滑动...");
-                    break;
-                case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
-                    // ToastHelper.showToast("开始滚动...");
-                    break;
-            }
-        }
-
-        @Override
-        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            mFirstVisibleItem = firstVisibleItem;
         }
     };
     private String mSearchFilter = null;
@@ -214,37 +187,23 @@ public class CloudDirFragment extends BaseCloudFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(TAG, "On Create View");
 
-        View view = inflater.inflate(R.layout.fragment_nav_cloud_dir, container, false);
+        View view = inflater.inflate(R.layout.fragment_nav_local_dir, container, false);
 
         mMainActivity = (MainActivity) getActivity();
-        mParentFragment = (BaseNavFileFragment) getParentFragment();
-        curPath = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
-        mFileType = OneOSFileType.PRIVATE;
+        mParentFragment = (LocalNavFragment) getParentFragment();
+
+        mSDCardList = SDCardUtils.getSDCardList();
+        if (null == mSDCardList || mSDCardList.size() == 0) {
+            DialogUtils.showNotifyDialog(getActivity(), R.string.tip, R.string.tips_no_sd_card, R.string.ok, null);
+        }
+
+        mFileType = LocalFileType.PRIVATE;
         mParentFragment.addSearchListener(mSearchListener);
 
-        initLoginSession();
-        initAddMenu(view);
         initView(view);
 
         return view;
     }
-
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged(newConfig);
-//        Logged.d(TAG, "On Configuration Changed");
-//        int orientation = this.getResources().getConfiguration().orientation;
-//        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//
-//        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-//
-//        }
-//
-//        mListView.setAdapter(mListAdapter);
-//        mGridView.setAdapter(mGridAdapter);
-//        mListAdapter.notifyDataSetChanged();
-//        mGridAdapter.notifyDataSetChanged();
-//    }
 
     @Override
     public void onResume() {
@@ -300,14 +259,14 @@ public class CloudDirFragment extends BaseCloudFragment {
             @Override
             public void onClick(View view, String path) {
                 if (null == path) { // New Folder Button Clicked
-                    mAddPopView.showPopupDown(view, -1, true);
+                    ToastHelper.showToast("New folder is coming soon");
                 } else {
-                    curPath = path;
+                    curDir = new File(path);
                     autoPullToRefresh();
                 }
             }
         });
-        mPathPanel.showNewFolderButton(mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC);
+        mPathPanel.showNewFolderButton(true);
 
         mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.listview_filelist);
         View mEmptyView = view.findViewById(R.id.layout_empty_list);
@@ -318,7 +277,7 @@ public class CloudDirFragment extends BaseCloudFragment {
             @Override
             public void onPullDownToRefresh(@SuppressWarnings("rawtypes") PullToRefreshBase refreshView) {
                 setMultiModel(false, 0);
-                getOneOSFileList(curPath);
+                getFileList(curDir);
             }
 
             @Override
@@ -327,14 +286,14 @@ public class CloudDirFragment extends BaseCloudFragment {
         });
         mListView = mPullRefreshListView.getRefreshableView();
         registerForContextMenu(mListView);
-        mListAdapter = new OneOSFileListAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
+        mListAdapter = new LocalFileListAdapter(getContext(), mFileList, mSelectedList, new LocalFileListAdapter.OnMultiChooseClickListener() {
             @Override
             public void onClick(View view) {
                 AnimUtils.shortVibrator();
                 setMultiModel(true, (Integer) view.getTag());
                 updateSelectAndManagePanel();
             }
-        }, mLoginSession);
+        });
         mListView.setOnItemClickListener(mFileItemClickListener);
         mListView.setOnItemLongClickListener(mFileItemLongClickListener);
 //        mListView.setOnScrollListener(mScrollListener);
@@ -348,7 +307,7 @@ public class CloudDirFragment extends BaseCloudFragment {
                                                       @Override
                                                       public void onPullDownToRefresh(@SuppressWarnings("rawtypes") PullToRefreshBase refreshView) {
                                                           setMultiModel(false, 0);
-                                                          getOneOSFileList(curPath);
+                                                          getFileList(curDir);
                                                       }
 
                                                       @Override
@@ -359,106 +318,11 @@ public class CloudDirFragment extends BaseCloudFragment {
         );
         mGridView = mPullRefreshGridView.getRefreshableView();
         registerForContextMenu(mGridView);
-        mGridAdapter = new OneOSFileGridAdapter(getContext(), mFileList, mSelectedList, mLoginSession);
+        mGridAdapter = new LocalFileGridAdapter(getContext(), mFileList, mSelectedList);
         mGridView.setOnItemClickListener(mFileItemClickListener);
         mGridView.setOnItemLongClickListener(mFileItemLongClickListener);
 //        mGridView.setOnScrollListener(mScrollListener);
         mGridView.setAdapter(mGridAdapter);
-    }
-
-    private void initAddMenu(final View view) {
-        mAddPopView = new MenuPopupView(getActivity(), Utils.dipToPx(110));
-        mAddPopView.setMenuItems(ACTION_TITLES, null);
-        mAddPopView.setOnMenuClickListener(new MenuPopupView.OnMenuClickListener() {
-            @Override
-            public void onMenuClick(int index, View view) {
-                if (index == 0) {
-
-                } else {
-                    isSelectionLastPosition = true;
-                    OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, mPathPanel, new OneOSFileManage.OnManageCallback() {
-                        @Override
-                        public void onComplete(boolean isSuccess) {
-                            autoPullToRefresh();
-                        }
-                    });
-                    fileManage.manage(FileManageAction.MKDIR, curPath);
-                }
-            }
-        });
-    }
-
-    public void setFileType(OneOSFileType type, String path) {
-        if (this.mFileType != type) {
-            this.mFileType = type;
-            this.curPath = path;
-        }
-    }
-
-    private String getParentPath(String path) {
-        int startIndex = path.lastIndexOf(File.separator) + 1;
-        return path.substring(0, startIndex);
-    }
-
-    private void backToParentDir(String path) {
-        String parentPath = getParentPath(path);
-        Log.d(TAG, "----Parent Path: " + parentPath + "------");
-        isSelectionLastPosition = true;
-        curPath = parentPath;
-        autoPullToRefresh();
-    }
-
-    private boolean tryBackToParentDir() {
-        Log.d(TAG, "=====Current Path: " + curPath + "========");
-        if (mFileType == OneOSFileType.PRIVATE) {
-            if (!curPath.equals(OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR)) {
-                backToParentDir(curPath);
-                return true;
-            }
-        }
-        if (mFileType == OneOSFileType.PUBLIC) {
-            if (!curPath.equals(OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR)) {
-                backToParentDir(curPath);
-                return true;
-            }
-        }
-        if (mFileType == OneOSFileType.RECYCLE) {
-            if (!curPath.equals(OneOSAPIs.ONE_OS_RECYCLE_ROOT_DIR)) {
-                backToParentDir(curPath);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Use to handle parent Activity back action
-     *
-     * @return If consumed returns true, otherwise returns false.
-     */
-    @Override
-    public boolean onBackPressed() {
-        if (getFileAdapter().isMultiChooseModel()) {
-            showSelectAndOperatePanel(false);
-            return true;
-        }
-
-        return tryBackToParentDir();
-    }
-
-    /**
-     * Get current file adapter
-     *
-     * @return
-     */
-    @Override
-    public OneOSFileBaseAdapter getFileAdapter() {
-        if (isListShown) {
-            return mListAdapter;
-        } else {
-            return mGridAdapter;
-        }
     }
 
     protected void autoPullToRefresh() {
@@ -475,59 +339,56 @@ public class CloudDirFragment extends BaseCloudFragment {
         }, Constants.DELAY_TIME_AUTO_REFRESH);
     }
 
-    private void notifyRefreshComplete(boolean isItemChanged) {
-        if (mOrderType == FileOrderType.NAME) {
-            Collections.sort(mFileList, new OneOSFileNameComparator());
+    private void getFileList(File dir) {
+        mFileList.clear();
+        if (dir == null) {
+            mFileList.addAll(mSDCardList);
         } else {
-            Collections.sort(mFileList, new OneOSFileTimeComparator());
-        }
-
-        mPathPanel.updatePath(mFileType, curPath);
-        if (isListShown) {
-            mListAdapter.notifyDataSetChanged(isItemChanged);
-            mPullRefreshListView.onRefreshComplete();
-            if (isSelectionLastPosition) {
-                mListView.setSelectionFromTop(mLastClickPosition, mLastClickItem2Top);
-                isSelectionLastPosition = false;
-            }
-        } else {
-            mGridAdapter.notifyDataSetChanged(isItemChanged);
-            mPullRefreshGridView.onRefreshComplete();
-            if (isSelectionLastPosition) {
-                mGridView.setSelection(mLastClickPosition);
-                // mGridView.setSelectionFromTop(mLastClickPosition, mLastClickItem2Top);
-                isSelectionLastPosition = false;
-            }
-        }
-    }
-
-    private void showOrderLayout(boolean isShown) {
-        if (isShown == mOrderLayout.isShown()) {
-            return;
-        }
-
-        if (isShown) {
-            mOrderLayout.startAnimation(mSlideInAnim);
-            mOrderLayout.setVisibility(View.VISIBLE);
-        } else {
-            mOrderLayout.startAnimation(mSlideOutAnim);
-            mSlideOutAnim.setAnimationListener(new Animation.AnimationListener() {
+            File[] files = dir.listFiles(new FileFilter() {
                 @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    mOrderLayout.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
+                public boolean accept(File f) {
+                    return !f.isHidden();
                 }
             });
+            if (null != files) {
+                List<File> list = Arrays.asList(files);
+                mFileList.addAll(list);
+            }
         }
+        notifyRefreshComplete(true);
+    }
+
+
+    private void notifyRefreshComplete(final boolean isItemChanged) {
+        if (mOrderType == FileOrderType.NAME) {
+            Collections.sort(mFileList, new FileNameComparator());
+        } else {
+            Collections.sort(mFileList, new FileTimeComparator());
+        }
+
+        mPathPanel.updatePath(curDir == null ? null : curDir.getAbsolutePath(), rootPath);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (isListShown) {
+                    mListAdapter.notifyDataSetChanged(isItemChanged);
+                    mPullRefreshListView.onRefreshComplete();
+                    if (isSelectionLastPosition) {
+                        mListView.setSelectionFromTop(mLastClickPosition, mLastClickItem2Top);
+                        isSelectionLastPosition = false;
+                    }
+                } else {
+                    mGridAdapter.notifyDataSetChanged(isItemChanged);
+                    mPullRefreshGridView.onRefreshComplete();
+                    if (isSelectionLastPosition) {
+                        mGridView.setSelection(mLastClickPosition);
+                        // mGridView.setSelectionFromTop(mLastClickPosition, mLastClickItem2Top);
+                        isSelectionLastPosition = false;
+                    }
+                }
+            }
+        }, Constants.DELAY_TIME_AUTO_REFRESH);
     }
 
     private void showSelectAndOperatePanel(boolean isShown) {
@@ -563,70 +424,71 @@ public class CloudDirFragment extends BaseCloudFragment {
         }
     }
 
-    private void getOneOSFileList(String path) {
-        if (!EmptyUtils.isEmpty(mSearchFilter)) {
-            OneOSSearchAPI searchAPI = new OneOSSearchAPI(mLoginSession);
-            searchAPI.setOnFileListListener(new OneOSSearchAPI.OnSearchFileListener() {
-                @Override
-                public void onStart(String url) {
-                }
+    @Override
+    public void setFileType(LocalFileType type, File dir) {
+        if (this.mFileType != type) {
+            this.mFileType = type;
+            this.rootPath = null;
+            if (mFileType == LocalFileType.PRIVATE) {
+                curDir = null;
+            } else {
+                String path = LoginManage.getInstance().getLoginSession().getDownloadPath();
+                curDir = new File(path);
+            }
+        }
+    }
 
-                @Override
-                public void onSuccess(String url, ArrayList<OneOSFile> files) {
-                    mFileList.clear();
-                    if (!EmptyUtils.isEmpty(files)) {
-                        mFileList.addAll(files);
-                    }
+    private void backToParentDir(File dir) {
+        isSelectionLastPosition = true;
+        File parent = dir.getParentFile();
+        Log.d(TAG, "----Parent Path: " + parent.getAbsolutePath() + "------");
+        curDir = parent;
+        for (File f : mSDCardList) {
+            if (parent.equals(f)) {
+                curDir = null;
+                rootPath = null;
+                break;
+            }
+        }
+        autoPullToRefresh();
+    }
 
-                    notifyRefreshComplete(true);
-                }
-
-                @Override
-                public void onFailure(String url, int errorNo, String errorMsg) {
-                    ToastHelper.showToast(errorMsg);
-                    notifyRefreshComplete(true);
-                }
-            });
-            searchAPI.search(mFileType, mOrderType, mSearchFilter);
-            return;
+    private boolean tryBackToParentDir() {
+        Log.d(TAG, "=====Current Path: " + curDir + "========");
+        if (curDir != null) {
+            backToParentDir(curDir);
+            return true;
         }
 
-        if (mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC || mFileType == OneOSFileType.RECYCLE) {
-            if (EmptyUtils.isEmpty(path)) {
-                Log.e(TAG, "Get list srcPath is NULL");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyRefreshComplete(true);
-                    }
-                }, Constants.DELAY_TIME_AUTO_REFRESH);
-                return;
-            }
+        return false;
+    }
 
-            OneOSListDirAPI listDirAPI = new OneOSListDirAPI(mLoginSession, path);
-            listDirAPI.setOnFileListListener(new OneOSListDirAPI.OnFileListListener() {
-                @Override
-                public void onStart(String url) {
-                }
+    /**
+     * Use to handle parent Activity back action
+     *
+     * @return If consumed returns true, otherwise returns false.
+     */
+    @Override
+    public boolean onBackPressed() {
+        if (getFileAdapter().isMultiChooseModel()) {
+            showSelectAndOperatePanel(false);
+            return true;
+        }
 
-                @Override
-                public void onSuccess(String url, String path, ArrayList<OneOSFile> files) {
-                    curPath = path;
-                    mFileList.clear();
-                    if (!EmptyUtils.isEmpty(files)) {
-                        mFileList.addAll(files);
-                    }
+        return tryBackToParentDir();
+    }
 
-                    notifyRefreshComplete(true);
-                }
-
-                @Override
-                public void onFailure(String url, int errorNo, String errorMsg) {
-                    ToastHelper.showToast(errorMsg);
-                    notifyRefreshComplete(true);
-                }
-            });
-            listDirAPI.list();
+    /**
+     * Get current file adapter
+     *
+     * @return
+     */
+    @Override
+    public LocalFileBaseAdapter getFileAdapter() {
+        if (isListShown) {
+            return mListAdapter;
+        } else {
+            return mGridAdapter;
         }
     }
 }
