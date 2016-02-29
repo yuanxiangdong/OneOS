@@ -1,5 +1,8 @@
 package com.eli.oneos.model.oneos.user;
 
+import com.eli.oneos.db.UserInfoKeeper;
+import com.eli.oneos.db.greendao.UserInfo;
+
 /**
  * Singleton Class for manage list information.
  * <p/>
@@ -49,13 +52,16 @@ public class LoginManage {
      */
     public boolean logout() {
         if (isLogin()) {
+            UserInfo info = loginSession.getUserInfo();
+            info.setIsLogout(true);
+            UserInfoKeeper.update(info);
+
             loginSession.setSession(null);
             return true;
         }
 
         return false;
     }
-
 
     public void setLoginSession(LoginSession loginSession) {
         LoginManage.loginSession = loginSession;

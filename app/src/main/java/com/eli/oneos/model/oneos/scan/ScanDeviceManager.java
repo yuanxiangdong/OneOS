@@ -30,10 +30,10 @@ public class ScanDeviceManager {
 
         @Override
         public void onScanOver(Map<String, String> mDeviceMap, boolean isInterrupt, boolean isUdp) {
-            if (isUdp && mDeviceMap.size() == 0) {
-                startTcpScanDevice();
-                return;
-            }
+//            if (isUdp && mDeviceMap.size() == 0) {
+//                startTcpScanDevice();
+//                return;
+//            }
 
             if (null != mCallback) {
                 mCallback.onScanOver(mDeviceMap, isInterrupt, isUdp);

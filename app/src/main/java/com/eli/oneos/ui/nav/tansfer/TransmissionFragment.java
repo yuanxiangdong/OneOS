@@ -16,12 +16,8 @@ import android.widget.TextView;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.adapter.TransmissionAdapter;
-import com.eli.oneos.model.oneos.transfer.DownloadElement;
-import com.eli.oneos.model.oneos.transfer.DownloadManager;
 import com.eli.oneos.model.oneos.transfer.TransferControlListener;
 import com.eli.oneos.model.oneos.transfer.TransferElement;
-import com.eli.oneos.model.oneos.transfer.UploadElement;
-import com.eli.oneos.model.oneos.transfer.UploadManager;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
@@ -33,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Created by gaoyun@eli-tech.com on 2016/2/19.
  */
-public class TransmissionFragment extends BaseTransferFragment implements DownloadManager.OnDownloadCompleteListener, UploadManager.OnUploadCompleteListener {
+public class TransmissionFragment extends BaseTransferFragment {
     private static final String TAG = TransmissionFragment.class.getSimpleName();
     private static final int MSG_REFRESH_UI = 1;
 
@@ -137,16 +133,9 @@ public class TransmissionFragment extends BaseTransferFragment implements Downlo
     private void initTransferService() {
         mTransferService = MyApplication.getTransferService();
         if (mTransferService != null) {
-            if (isDownload) {
-                mTransferService.setOnDownloadCompleteListener(this);
-            } else {
-                mTransferService.setOnUploadCompleteListener(this);
-            }
-            Log.d(TAG, "Set On Download Complete StatusBarListener Success");
-
             startUpdateUIThread();
         } else {
-            Log.e(TAG, "Get download service is null");
+            Log.e(TAG, "Get transfer service is null");
         }
     }
 
@@ -263,21 +252,6 @@ public class TransmissionFragment extends BaseTransferFragment implements Downlo
         }
     }
 
-    /**
-     * Download complete
-     *
-     * @param element
-     */
-    @Override
-    public void downloadComplete(DownloadElement element) {
-
-    }
-
-    @Override
-    public void uploadComplete(UploadElement element) {
-
-    }
-
     public class UIThread implements Runnable {
         @Override
         public void run() {
@@ -306,7 +280,7 @@ public class TransmissionFragment extends BaseTransferFragment implements Downlo
 
     @Override
     public void onMenuClick(int index, View view) {
-        if (mTransferService != null) {
+        if (mTransferService != null && isVisible()) {
             switch (index) {
                 case 0:
                     if (isDownload) {

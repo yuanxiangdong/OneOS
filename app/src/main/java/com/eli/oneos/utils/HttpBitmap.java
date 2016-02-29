@@ -51,7 +51,7 @@ public class HttpBitmap {
                     touchView.onLoadOver(false, mFailBitmap);
                 } else if (imageView instanceof ImageView) {
                     ImageView mView = (ImageView) imageView;
-                    mView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                    mView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                     mView.setImageBitmap(bitmap);
                 }
                 // else if (imageView instanceof TimeImageView) {
@@ -68,7 +68,7 @@ public class HttpBitmap {
                 } else if (imageView instanceof ImageView) {
 //                    Logged.d(TAG, "===>>>>FinalBitmap: Load Picture Success");
                     ImageView mView = (ImageView) imageView;
-                    mView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//                    mView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     mView.setImageBitmap(bitmap);
                 }
                 // else {

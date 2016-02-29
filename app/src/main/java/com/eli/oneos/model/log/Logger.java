@@ -1,4 +1,4 @@
-package com.eli.oneos.model.logger;
+package com.eli.oneos.model.log;
 
 import android.util.Log;
 

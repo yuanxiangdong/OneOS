@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.eli.oneos.R;
 import com.eli.oneos.db.BackupInfoKeeper;
 import com.eli.oneos.db.greendao.BackupInfo;
-import com.eli.oneos.model.logger.Logged;
+import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.model.oneos.backup.info.BackupInfoException;
 import com.eli.oneos.model.oneos.backup.info.BackupInfoManager;
 import com.eli.oneos.model.oneos.backup.info.BackupInfoStep;

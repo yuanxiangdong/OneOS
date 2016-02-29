@@ -103,8 +103,7 @@ public class TcpScanDeviceTask extends AsyncTask<Void, String, String[]> {
         BufferedReader bReader = null;
 
         try {
-            socket.connect(new InetSocketAddress(ip, OneOSAPIs.OneOS_UPLOAD_SOCKET_PORT),
-                    1000);
+            socket.connect(new InetSocketAddress(ip, OneOSAPIs.OneOS_UPLOAD_SOCKET_PORT), 1000);
             socketOutStream = socket.getOutputStream();
             socketOutStream.write(cmd);
 
@@ -114,14 +113,13 @@ public class TcpScanDeviceTask extends AsyncTask<Void, String, String[]> {
                 result = bReader.readLine();
                 if (result != null && result.startsWith("CMD")) {
                     Log.d(TAG, "TCP Scan Result: " + result + "---- IP: " + ip);
-                    mDeviceMap.put(ip, ip);
+                    mDeviceMap.put("", ip);
                 }
                 break;
             }
         } catch (IOException e) {
             // Logged.e(TAG, "TCP Scan Exception: " + e);
         } finally {
-
             try {
                 if (bReader != null) {
                     bReader.close();

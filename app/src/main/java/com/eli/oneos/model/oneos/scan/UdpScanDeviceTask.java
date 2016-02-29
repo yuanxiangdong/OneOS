@@ -75,9 +75,8 @@ public class UdpScanDeviceTask extends AsyncTask<Void, String, String[]> {
             while (!isInterrupt && (System.currentTimeMillis() - start < TIME_SCAN)) {
                 udpSocket.receive(receivePacket);
                 final String ip = receivePacket.getAddress().getHostAddress().toString();
-                if (Utils.isAvaliableIp(ip)) { // Mac: 84:5d:d7:02:00:0d ; Len: 17
-                    String deviceMac = new String(receivePacket.getData()).substring(0, 17)
-                            .toLowerCase();
+                if (Utils.isAvaliableIp(ip)) { // Mac: 84:5D:D7:02:00:0D ; Len: 17
+                    String deviceMac = new String(receivePacket.getData()).substring(0, 17).toUpperCase();
                     Log.d(TAG, "Scanning: IP= " + ip + "  Mac:" + deviceMac);
                     if (!mDeviceMap.containsKey(deviceMac)) {
                         publishProgress(deviceMac, ip);

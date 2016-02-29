@@ -36,7 +36,7 @@
     <com.eli.oneos.widget.FileManagePanel
         android:id="@+id/layout_operate_bottom_panel"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/layout_operate_height"
+        android:layout_height="@dimen/layout_nav_bar_height"
         android:layout_alignParentBottom="true"
         android:visibility="invisible" />
 

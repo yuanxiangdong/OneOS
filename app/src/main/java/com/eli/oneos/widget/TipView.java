@@ -53,7 +53,7 @@ public class TipView {
             mTipsTxt.setVisibility(View.VISIBLE);
         }
         ImageView mImageView = (ImageView) view.findViewById(R.id.iv_tip);
-        mImageView.setImageResource(isPositive ? R.drawable.ic_tip_positive : R.drawable.ic_tip_positive);
+        mImageView.setImageResource(isPositive ? R.drawable.ic_tip_positive : R.drawable.ic_tip_negtive);
 
         mTipPop.setAnimationStyle(R.style.AnimAlphaEnterAndExit);
         mTipPop.setOnDismissListener(listener);
@@ -68,7 +68,7 @@ public class TipView {
 
     private void dismiss() {
         if (mTipPop != null && mTipPop.isShowing()) {
-            mTipPop.dismiss();
+//            mTipPop.dismiss();
         }
     }
 

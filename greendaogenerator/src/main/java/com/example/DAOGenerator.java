@@ -53,6 +53,7 @@ public class DAOGenerator {
         note.addIntProperty("uid");                 // 设备数据库中的ID
         note.addIntProperty("gid");                 // 用户组ID
         note.addLongProperty("time");               // 最后登录时间
+        note.addBooleanProperty("isLogout");        // 是否注销登录
         note.addBooleanProperty("isActive");        // 是否活跃（默认为false）；为false时，登录页面不显示该用户为备选
     }
 

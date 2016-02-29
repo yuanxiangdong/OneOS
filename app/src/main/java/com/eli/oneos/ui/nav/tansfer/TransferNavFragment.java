@@ -17,7 +17,6 @@ import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.MenuPopupView;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,12 +34,12 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
 
     private RadioGroup mUploadOrDownloadGroup;
     private RadioGroup mTransOrCompleteGroup;
-    private RadioButton mTransferBtn, mCompleteBtn;
+    private RadioButton mDownloadBtn, mUploadBtn, mTransferBtn, mCompleteBtn;
 
     private MenuPopupView mMenuView;
 
-    private boolean isDownload;
-    private boolean isTransfer;
+    private boolean isDownload = true;
+    private boolean isTransfer = true;
     private BaseTransferFragment mCurFragment;
     private List<BaseTransferFragment> mFragmentList = new ArrayList<>();
 
@@ -61,6 +60,8 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
     private void initView(View view) {
         mUploadOrDownloadGroup = (RadioGroup) view.findViewById(R.id.segmented_radiogroup);
         mUploadOrDownloadGroup.setOnCheckedChangeListener(this);
+        mDownloadBtn = (RadioButton) view.findViewById(R.id.segmented_download);
+        mUploadBtn = (RadioButton) view.findViewById(R.id.segmented_upload);
 
         mTransOrCompleteGroup = (RadioGroup) view.findViewById(R.id.radiogroup);
         mTransOrCompleteGroup.setOnCheckedChangeListener(this);
@@ -100,37 +101,29 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
         RecordsFragment mUploadedFragment = new RecordsFragment(false);
         mFragmentList.add(mUploadedFragment);
 
-        isDownload = true;
-        isTransfer = true;
         onChangeFragment(isDownload, isTransfer);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mCurFragment.onPause();
+        if (null != mCurFragment) {
+            mCurFragment.onPause();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mCurFragment.onResume();
+        mDownloadBtn.setChecked(isDownload);
+        mUploadBtn.setChecked(!isDownload);
+        mTransferBtn.setChecked(isTransfer);
+        mCompleteBtn.setChecked(!isTransfer);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        try {
-            Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
-            childFragmentManager.setAccessible(true);
-            childFragmentManager.set(this, null);
-
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-
+    public void setTransferUI(boolean isDownload, boolean isTransfer) {
+        this.isDownload = isDownload;
+        this.isTransfer = isTransfer;
     }
 
     @Override
@@ -149,11 +142,10 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
             }
         }
 
-        onChangeRadioBtnText(isDownload);
         onChangeFragment(isDownload, isTransfer);
     }
 
-    public void onChangeRadioBtnText(boolean isDownload) {
+    private void onChangeRadioBtnText(boolean isDownload) {
         if (isDownload) {
             mTransferBtn.setText(R.string.downloading_list);
             mCompleteBtn.setText(R.string.download_record);
@@ -169,7 +161,9 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
      * @param isDownload Download/Upload
      * @param isTransfer Transfer/Complete
      */
-    public void onChangeFragment(boolean isDownload, boolean isTransfer) {
+    private void onChangeFragment(boolean isDownload, boolean isTransfer) {
+        onChangeRadioBtnText(isDownload);
+
         BaseTransferFragment mFragment = mFragmentList.get(getFragmentIndex(isDownload, isTransfer));
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
@@ -195,15 +189,15 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
         transaction.commit();
     }
 
-    private int getFragmentIndex(boolean isDownload, boolean isTranfer) {
+    private int getFragmentIndex(boolean isDownload, boolean isTransfer) {
         if (isDownload) {
-            if (isTranfer) {
+            if (isTransfer) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (isTranfer) {
+            if (isTransfer) {
                 return 2;
             } else {
                 return 3;

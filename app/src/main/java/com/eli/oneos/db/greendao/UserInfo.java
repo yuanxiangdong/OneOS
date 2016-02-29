@@ -17,6 +17,7 @@ public class UserInfo {
     private Integer uid;
     private Integer gid;
     private Long time;
+    private Boolean isLogout;
     private Boolean isActive;
 
     public UserInfo() {
@@ -26,7 +27,7 @@ public class UserInfo {
         this.id = id;
     }
 
-    public UserInfo(Long id, String name, String mac, String pwd, Integer admin, Integer uid, Integer gid, Long time, Boolean isActive) {
+    public UserInfo(Long id, String name, String mac, String pwd, Integer admin, Integer uid, Integer gid, Long time, Boolean isLogout, Boolean isActive) {
         this.id = id;
         this.name = name;
         this.mac = mac;
@@ -35,6 +36,7 @@ public class UserInfo {
         this.uid = uid;
         this.gid = gid;
         this.time = time;
+        this.isLogout = isLogout;
         this.isActive = isActive;
     }
 
@@ -106,6 +108,14 @@ public class UserInfo {
 
     public void setTime(Long time) {
         this.time = time;
+    }
+
+    public Boolean getIsLogout() {
+        return isLogout;
+    }
+
+    public void setIsLogout(Boolean isLogout) {
+        this.isLogout = isLogout;
     }
 
     public Boolean getIsActive() {

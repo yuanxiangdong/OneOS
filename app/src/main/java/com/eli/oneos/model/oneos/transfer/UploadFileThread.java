@@ -1,8 +1,8 @@
 package com.eli.oneos.model.oneos.transfer;
 
-import com.eli.oneos.model.logger.LogLevel;
-import com.eli.oneos.model.logger.Logged;
-import com.eli.oneos.model.logger.Logger;
+import com.eli.oneos.model.log.LogLevel;
+import com.eli.oneos.model.log.Logged;
+import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.api.OneOSUploadFileAPI;
 import com.eli.oneos.model.oneos.backup.file.BackupFileElement;
 import com.eli.oneos.model.oneos.user.LoginSession;

@@ -3,6 +3,8 @@ package com.eli.oneos.model.oneos.transfer;
 import android.util.Log;
 
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.db.TransferHistoryKeeper;
+import com.eli.oneos.db.greendao.TransferHistory;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
@@ -71,9 +73,10 @@ public class UploadManager {
                         if (state == TransferState.COMPLETE) {
                             Log.d(TAG, "upload complete");
                             if (mCompleteListener != null) {
-                                String user = LoginManage.getInstance().getLoginSession().getUserInfo().getName();
-                                Log.e(TAG, "TODO... insert transfer recode..");
-//                                dbManager.insertTransferRecord(element, user);
+                                long uid = LoginManage.getInstance().getLoginSession().getUserInfo().getId();
+                                TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(false), element.getSrcName(),
+                                        element.getSrcPath(), element.getTargetPath(), element.getSize(), 0L, System.currentTimeMillis());
+                                TransferHistoryKeeper.insert(history);
 
                                 mCompleteListener.uploadComplete(element);
                             }

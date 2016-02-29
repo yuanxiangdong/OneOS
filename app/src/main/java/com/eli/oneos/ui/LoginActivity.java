@@ -19,7 +19,6 @@ import com.eli.oneos.db.DeviceInfoKeeper;
 import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
-import com.eli.oneos.model.oneos.api.OneOSGetMacAPI;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
 import com.eli.oneos.model.oneos.scan.OnScanDeviceListener;
 import com.eli.oneos.model.oneos.scan.ScanDeviceManager;
@@ -99,7 +98,7 @@ public class LoginActivity extends BaseActivity {
     private View.OnClickListener onLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            attempLogin();
+            attemptLogin();
         }
     };
     private View.OnClickListener onMoreClickListener = new View.OnClickListener() {
@@ -191,7 +190,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (attempLogin()) {
+                    if (attemptLogin()) {
                         InputMethodUtils.hideKeyboard(LoginActivity.this, mPortTxt);
                     }
                 }
@@ -307,7 +306,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private boolean attempLogin() {
+    private boolean attemptLogin() {
         String user = mUserTxt.getText().toString();
         if (EmptyUtils.isEmpty(user)) {
             AnimUtils.sharkEditText(LoginActivity.this, mUserTxt);
@@ -357,37 +356,6 @@ public class LoginActivity extends BaseActivity {
             public void onSuccess(String url, LoginSession loginSession) {
                 dismissLoading();
                 mLoginSession = loginSession;
-                if (!loginSession.getDeviceInfo().getIsLAN()) {
-                    getDeviceMacAddress();
-                } else {
-                    gotoMainActivity();
-                }
-            }
-
-            @Override
-            public void onFailure(String url, int errorNo, String errorMsg) {
-                dismissLoading();
-                ToastHelper.showToast(errorMsg);
-            }
-        });
-        loginAPI.login();
-    }
-
-    public void getDeviceMacAddress() {
-        OneOSGetMacAPI getMacAPI = new OneOSGetMacAPI(mLoginSession);
-        getMacAPI.setOnGetMacListener(new OneOSGetMacAPI.OnGetMacListener() {
-            @Override
-            public void onStart(String url) {
-                showLoading(R.string.getting_device_mac, false);
-            }
-
-            @Override
-            public void onSuccess(String url, String mac) {
-                dismissLoading();
-
-                UserInfo userInfo = mLoginSession.getUserInfo();
-                userInfo.setMac(mac);
-                UserInfoKeeper.update(userInfo);
                 gotoMainActivity();
             }
 
@@ -397,7 +365,7 @@ public class LoginActivity extends BaseActivity {
                 ToastHelper.showToast(errorMsg);
             }
         });
-        getMacAPI.getMac();
+        loginAPI.login();
     }
 
     private void gotoMainActivity() {

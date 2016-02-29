@@ -53,6 +53,13 @@ public class OneOSFileManageGenerate {
                 }
                 mOptItems.add(OPT_ATTR);
             }
+
+            for (OneOSFile file : selectedList) {
+                if (file.isDirectory()) {
+                    mOptItems.remove(OPT_DOWNLOAD);
+                    break;
+                }
+            }
         }
 
         return mOptItems;

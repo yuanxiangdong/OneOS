@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
@@ -28,6 +29,7 @@ public class MainActivity extends BaseActivity {
 
     private List<BaseNavFragment> mFragmentList = new ArrayList<>();
     private BaseNavFragment mCurNavFragment;
+    private TransferNavFragment mTransferFragment;
     private RadioGroup radioGroup;
     private FragmentManager fragmentManager;
     private int mCurPageIndex = 1;
@@ -127,39 +129,36 @@ public class MainActivity extends BaseActivity {
         CloudNavFragment cloudFragment = new CloudNavFragment();
         mFragmentList.add(cloudFragment);
         mFragmentList.add(cloudFragment);
-        TransferNavFragment transferFragment = new TransferNavFragment();
-        mFragmentList.add(transferFragment);
+        mTransferFragment = new TransferNavFragment();
+        mFragmentList.add(mTransferFragment);
         ToolsFragment toolsFragment = new ToolsFragment();
         mFragmentList.add(toolsFragment);
+
         changFragmentByIndex(mCurPageIndex);
     }
 
     private void changFragmentByIndex(int index) {
         Log.d(TAG, "changFragmentByIndex: " + index);
-
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        BaseNavFragment fragment = getFragmentByIndex(mCurPageIndex);
-
-        if (mCurNavFragment != null) {
-            mCurNavFragment.onPause();
-        }
-
-        if (!fragment.isAdded()) {
-            transaction.add(R.id.content, fragment);
-        } else {
-            fragment.onResume();
-        }
-
-        for (BaseNavFragment ft : mFragmentList) {
-            if (fragment == ft) {
-                transaction.show(ft);
-                mCurNavFragment = fragment;
-            } else {
-                transaction.hide(ft);
+        try {
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            if (mCurNavFragment != null) {
+                mCurNavFragment.onPause();
+                transaction.hide(mCurNavFragment);
             }
-        }
 
-        transaction.commitAllowingStateLoss();
+            BaseNavFragment fragment = getFragmentByIndex(mCurPageIndex);
+            mCurNavFragment = fragment;
+            if (fragment.isAdded()) {
+                fragment.onResume();
+                transaction.show(fragment);
+            } else {
+                transaction.add(R.id.content, fragment);
+            }
+
+            transaction.commitAllowingStateLoss();
+        } catch (Exception e) {
+            Log.e(TAG, "Switch Fragment Exception", e);
+        }
     }
 
     public BaseNavFragment getFragmentByIndex(int index) {
@@ -171,10 +170,14 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean controlActivity(String action) {
         if (action.equals(ACTION_SHOW_TRANSFER_DOWNLOAD)) {
-
+            mTransferFragment.setTransferUI(true, true);
+            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_transfer);
+            radioButton.setChecked(true);
             return true;
         } else if (action.equals(ACTION_SHOW_TRANSFER_UPLOAD)) {
-
+            mTransferFragment.setTransferUI(false, true);
+            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_transfer);
+            radioButton.setChecked(true);
             return true;
         }
 

@@ -29,7 +29,7 @@ import java.util.Map;
 public class LauncherActivity extends BaseActivity {
 
     private CircleProgressBar mProgressBar;
-    private UserInfo lastUserHistory;
+    private UserInfo lastUserInfo;
     private Intent mSendIntent;
     private ScanDeviceManager mScanManager;
     private boolean isLastDeviceExist = false;
@@ -39,6 +39,8 @@ public class LauncherActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_launcher);
+
+        UserInfoKeeper.logUserInfo(); // TODO.. for test
 
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -53,7 +55,7 @@ public class LauncherActivity extends BaseActivity {
             }
         }
 
-        initLastLoginInfo();
+        lastUserInfo = UserInfoKeeper.lastUser();
         initView();
     }
 
@@ -68,11 +70,6 @@ public class LauncherActivity extends BaseActivity {
     private void initView() {
         mProgressBar = (CircleProgressBar) findViewById(R.id.progressBar);
         showAlphaAnim();
-    }
-
-    private void initLastLoginInfo() {
-        lastUserHistory = UserInfoKeeper.lastUser();
-//        lastUserHistory = null; // TODO.. test code
     }
 
     private void showAlphaAnim() {
@@ -99,7 +96,7 @@ public class LauncherActivity extends BaseActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 showAppVersion();
-                if (lastUserHistory == null) {
+                if (lastUserInfo == null || lastUserInfo.getIsLogout()) {
                     gotoLoginActivity();
                 } else {
                     scanningLANDevice();
@@ -162,7 +159,7 @@ public class LauncherActivity extends BaseActivity {
             public void onScanning(String mac, String ip) {
                 if (checkIfLastLoginDevice(mac)) {
                     isLastDeviceExist = true;
-                    doLogin(lastUserHistory.getName(), lastUserHistory.getPwd(), ip, OneOSAPIs.ONE_API_DEFAULT_PORT, mac);
+                    doLogin(lastUserInfo.getName(), lastUserInfo.getPwd(), ip, OneOSAPIs.ONE_API_DEFAULT_PORT, mac);
                     mScanManager.stop();
                     mScanManager = null;
                 }
@@ -179,12 +176,12 @@ public class LauncherActivity extends BaseActivity {
     }
 
     private boolean checkIfLastLoginDevice(String mac) {
-        if (lastUserHistory == null) {
+        if (lastUserInfo == null) {
             return false;
         }
 
         boolean isLast = false;
-        String perferMac = lastUserHistory.getMac();
+        String perferMac = lastUserInfo.getMac();
         if (!EmptyUtils.isEmpty(perferMac)) {
             if (perferMac.equalsIgnoreCase(mac)) {
                 isLast = true;

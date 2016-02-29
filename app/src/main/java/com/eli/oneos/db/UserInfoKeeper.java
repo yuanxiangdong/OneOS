@@ -1,7 +1,11 @@
 package com.eli.oneos.db;
 
+import android.util.Log;
+
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserInfoDao;
+import com.eli.oneos.model.log.LogLevel;
+import com.eli.oneos.model.log.Logger;
 
 import java.util.List;
 
@@ -11,6 +15,15 @@ import de.greenrobot.dao.query.QueryBuilder;
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
 public class UserInfoKeeper {
+
+    public static void logUserInfo() {
+        UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
+        QueryBuilder queryBuilder = dao.queryBuilder();
+        List<UserInfo> list = queryBuilder.list();
+        for (UserInfo info : list) {
+            Log.e("UserInfoKeeper", ">>>>>UserInfo {name=" + info.getName() + ", mac=" + info.getMac() + "}");
+        }
+    }
 
     /**
      * List Active Users Users by ID Desc
@@ -64,6 +77,8 @@ public class UserInfoKeeper {
      */
     public static long insert(UserInfo info) {
         if (info != null) {
+            Logger.p(LogLevel.ERROR, true, "UserInfoKeeper", "Insert New User: name=" + info.getName() + ", mac=" + info.getMac());
+
             UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
             return dao.insert(info);
         }

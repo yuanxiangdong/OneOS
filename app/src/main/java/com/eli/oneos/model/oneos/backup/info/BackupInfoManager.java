@@ -1,6 +1,6 @@
 package com.eli.oneos.model.oneos.backup.info;
 
-import com.eli.oneos.model.logger.Logged;
+import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.model.oneos.backup.info.contact.BackupContactsThread;
 import com.eli.oneos.model.oneos.backup.info.contact.RecoveryContactsThread;
 import com.eli.oneos.model.oneos.backup.info.sms.BackupSMSThread;

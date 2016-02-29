@@ -203,6 +203,11 @@ public class FileUtils {
 
     public static void openOneOSFile(LoginSession loginSession, BaseActivity activity, int position, final ArrayList<OneOSFile> fileList) {
         OneOSFile file = fileList.get(position);
+        if (file.isEncrypt()) {
+            DialogUtils.showNotifyDialog(activity, R.string.tip, R.string.error_open_encrypt_file, R.string.ok, null);
+            return;
+        }
+
         if (file.isPicture()) {
             ArrayList<OneOSFile> picList = new ArrayList<>();
             for (OneOSFile f : fileList) {
@@ -237,6 +242,24 @@ public class FileUtils {
         activity.startActivity(intent);
     }
 
+    public static void openLocalFile(BaseActivity activity, File file) {
+        if (file.exists() && file.isFile()) {
+            try {
+                Intent intent = new Intent();
+                String type = MIMETypeUtils.getMIMEType(file.getName());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                /* intent file MimeType */
+                intent.setDataAndType(Uri.fromFile(file), type);
+                MyApplication.getAppContext().startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+                activity.showTipView(R.string.error_app_not_found_to_open_file, false);
+            }
+        } else {
+            DialogUtils.showNotifyDialog(activity, R.string.tip, R.string.file_not_found, R.string.ok, null);
+        }
+    }
 
     /**
      * Notification system scans the specified file

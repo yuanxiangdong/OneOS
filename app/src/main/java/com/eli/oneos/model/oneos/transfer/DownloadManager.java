@@ -1,8 +1,10 @@
 package com.eli.oneos.model.oneos.transfer;
 
-import com.eli.oneos.model.logger.LogLevel;
-import com.eli.oneos.model.logger.Logged;
-import com.eli.oneos.model.logger.Logger;
+import com.eli.oneos.db.TransferHistoryKeeper;
+import com.eli.oneos.db.greendao.TransferHistory;
+import com.eli.oneos.model.log.LogLevel;
+import com.eli.oneos.model.log.Logged;
+import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.user.LoginManage;
 
 import java.util.ArrayList;
@@ -32,8 +34,11 @@ public class DownloadManager {
                 mElement.setTime(System.currentTimeMillis());
                 TransferState state = mElement.getState();
                 if (state == TransferState.COMPLETE) {
-                    // TODO... Insert Download Records
-                    Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, LOG_TAG, "TODO... Insert Download Records...");
+                    long uid = LoginManage.getInstance().getLoginSession().getUserInfo().getId();
+                    TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(true), mElement.getSrcName(),
+                            mElement.getSrcPath(), mElement.getTargetPath(), mElement.getSize(), 0L, System.currentTimeMillis());
+                    TransferHistoryKeeper.insert(history);
+
                     if (mCompleteListener != null) {
                         mCompleteListener.downloadComplete(mElement);
                     }

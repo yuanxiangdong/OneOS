@@ -1,9 +1,9 @@
 package com.eli.oneos.model.oneos.api;
 
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.model.logger.LogLevel;
-import com.eli.oneos.model.logger.Logged;
-import com.eli.oneos.model.logger.Logger;
+import com.eli.oneos.model.log.LogLevel;
+import com.eli.oneos.model.log.Logged;
+import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.transfer.UploadElement;

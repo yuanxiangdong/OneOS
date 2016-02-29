@@ -12,6 +12,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.db.TransferHistoryKeeper;
 import com.eli.oneos.db.UserSettingsKeeper;
 import com.eli.oneos.model.oneos.upgrade.AppUpgradeManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -211,12 +212,12 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
      * set path of download
      */
     public void setSavePath() {
-//        if (SDCardUtils.checkSDCard()) {
-//            Intent intent = new Intent(this, SetPathActivity.class);
-//            startActivity(intent);
-//        } else {
-//            ToastHelper.showToast(R.string.sdcard_unmounted_exception);
-//        }
+        if (SDCardUtils.checkSDCard()) {
+            Intent intent = new Intent(this, SetPathActivity.class);
+            startActivity(intent);
+        } else {
+            DialogUtils.showNotifyDialog(this, R.string.tip, R.string.sd_state_unmounted, R.string.ok, null);
+        }
     }
 
     /**
@@ -224,12 +225,12 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
      */
     private void cleanRecord() {
         if (isLogin(true)) {
-//            Boolean isClean = dbManager.deleteAllTransferRecord(mUserName);
-//            if (isClean) {
-//                ToastHelper.showToast(R.string.clean_record_success);
-//            } else {
-//                ToastHelper.showToast(R.string.clean_record_failed);
-//            }
+            Boolean isClean = TransferHistoryKeeper.delete(LoginManage.getInstance().getLoginSession().getUserInfo().getId());
+            if (isClean) {
+                ToastHelper.showToast(R.string.clean_record_success);
+            } else {
+                ToastHelper.showToast(R.string.clean_record_failed);
+            }
         }
     }
 

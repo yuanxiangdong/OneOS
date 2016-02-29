@@ -5,9 +5,9 @@ import android.os.Environment;
 
 import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.db.greendao.BackupFile;
-import com.eli.oneos.model.logger.LogLevel;
-import com.eli.oneos.model.logger.Logged;
-import com.eli.oneos.model.logger.Logger;
+import com.eli.oneos.model.log.LogLevel;
+import com.eli.oneos.model.log.Logged;
+import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.backup.BackupPriority;
 import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.backup.RecursiveFileObserver;

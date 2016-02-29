@@ -1,5 +1,7 @@
 package com.eli.oneos.db;
 
+import android.util.Log;
+
 import com.eli.oneos.db.greendao.TransferHistory;
 import com.eli.oneos.db.greendao.TransferHistoryDao;
 
@@ -26,22 +28,24 @@ public class TransferHistoryKeeper {
      *
      * @return transfer list
      */
-    public static List<TransferHistory> all(boolean isDownload) {
+    public static List<TransferHistory> all(long uid, boolean isDownload) {
+        Log.e("TransferHistoryKeeper", ">>>>Query TransferHistory, UID=" + uid + ", Download=" + isDownload);
         TransferHistoryDao dao = DBHelper.getDaoSession().getTransferHistoryDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
+        queryBuilder.where(TransferHistoryDao.Properties.Uid.eq(uid));
         queryBuilder.where(TransferHistoryDao.Properties.Type.eq(getTransferType(isDownload)));
         queryBuilder.orderDesc(TransferHistoryDao.Properties.Time);
 
         return queryBuilder.list();
     }
 
-    public static boolean insert(TransferHistory user) {
-        if (null == user) {
+    public static boolean insert(TransferHistory history) {
+        if (null == history) {
             return false;
         }
 
         TransferHistoryDao dao = DBHelper.getDaoSession().getTransferHistoryDao();
-        dao.insertOrReplace(user);
+        dao.insertOrReplace(history);
         return true;
     }
 
@@ -54,23 +58,23 @@ public class TransferHistoryKeeper {
         return true;
     }
 
-    public static boolean delete(TransferHistory user) {
-        if (null == user) {
+    public static boolean delete(TransferHistory history) {
+        if (null == history) {
             return false;
         }
 
         TransferHistoryDao dao = DBHelper.getDaoSession().getTransferHistoryDao();
-        dao.delete(user);
+        dao.delete(history);
         return true;
     }
 
-    public static boolean update(TransferHistory user) {
-        if (null == user) {
+    public static boolean update(TransferHistory history) {
+        if (null == history) {
             return false;
         }
 
         TransferHistoryDao dao = DBHelper.getDaoSession().getTransferHistoryDao();
-        dao.update(user);
+        dao.update(history);
         return true;
     }
 }
