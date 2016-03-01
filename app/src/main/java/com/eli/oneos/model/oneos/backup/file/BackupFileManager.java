@@ -364,7 +364,7 @@ public class BackupFileManager {
             Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "====Stop Backup====");
             isRunning = false;
             if (backupPhotoThread != null) {
-                backupPhotoThread.stopBackupPhoto();
+                backupPhotoThread.stopUpload();
                 backupPhotoThread = null;
             }
 

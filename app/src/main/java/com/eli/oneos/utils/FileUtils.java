@@ -16,6 +16,7 @@ import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.ui.PictureViewActivity;
 
@@ -23,12 +24,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
 public class FileUtils {
+    public static final String DEFAULT_TIME_FMT = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * get photo date
@@ -94,7 +97,7 @@ public class FileUtils {
 
     public static String getFileTime(File file) {
         long time = file.lastModified();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat(DEFAULT_TIME_FMT);
         String date = format.format(new Date(time));
         return date;
     }
@@ -108,7 +111,7 @@ public class FileUtils {
     }
 
     public static String formatTime(long time) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat(DEFAULT_TIME_FMT);
         String date = format.format(new Date(time));
         return date;
     }
@@ -120,6 +123,24 @@ public class FileUtils {
         SimpleDateFormat format = new SimpleDateFormat(fmt);
         String date = format.format(new Date(time));
         return date;
+    }
+
+    public static long parseFmtTime(String time, String fmt) {
+        if (EmptyUtils.isEmpty(time)) {
+            return 0;
+        }
+        if (EmptyUtils.isEmpty(fmt)) {
+            fmt = DEFAULT_TIME_FMT;
+        }
+        SimpleDateFormat format = new SimpleDateFormat(fmt);
+        try {
+            Date date = format.parse(time);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
     /**
@@ -138,7 +159,7 @@ public class FileUtils {
      * Converted into a standard BeiJing Time, and format["yyyy-MM-dd  HH:mm:ss"] output
      */
     public static String fmtTimeByZone(long time) {
-        return fmtTimeByZone(time, "yyyy-MM-dd  HH:mm:ss");
+        return fmtTimeByZone(time, DEFAULT_TIME_FMT);
     }
 
     /**
@@ -232,17 +253,17 @@ public class FileUtils {
         }
     }
 
-    public static void openLocalFile(BaseActivity activity, int position, final ArrayList<File> fileList) {
-        File file = fileList.get(position);
+    public static void openLocalFile(BaseActivity activity, int position, final ArrayList<LocalFile> fileList) {
+        File file = fileList.get(position).getFile();
 
         if (isPictureFile(file.getName())) {
             ArrayList<File> picList = new ArrayList<>();
-            for (File f : fileList) {
+            for (LocalFile f : fileList) {
                 if (isPictureFile(f.getName())) {
-                    picList.add(f);
+                    picList.add(f.getFile());
                 }
             }
-            openLocalFile(activity, position, picList);
+            openLocalPicture(activity, position, picList);
         } else {
             openLocalFile(activity, file);
         }

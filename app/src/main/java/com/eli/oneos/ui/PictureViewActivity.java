@@ -131,7 +131,7 @@ public class PictureViewActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "OnDestory");
+        Log.d(TAG, "OnDestroy");
     }
 
 }

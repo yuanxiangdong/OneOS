@@ -20,15 +20,13 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
-import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.oneos.OneOSFileManage;
-import com.eli.oneos.model.oneos.OneOSFileType;
-import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
-import com.eli.oneos.model.oneos.adapter.OneOSStickyGridAdapter;
-import com.eli.oneos.model.oneos.adapter.OneOSStickyListAdapter;
-import com.eli.oneos.model.oneos.api.OneOSListDBAPI;
+import com.eli.oneos.model.phone.LocalFile;
+import com.eli.oneos.model.phone.LocalFileManage;
 import com.eli.oneos.model.phone.LocalFileType;
+import com.eli.oneos.model.phone.LocalSortTask;
 import com.eli.oneos.model.phone.adapter.LocalFileBaseAdapter;
+import com.eli.oneos.model.phone.adapter.LocalStickyGridAdapter;
+import com.eli.oneos.model.phone.adapter.LocalStickyListAdapter;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
@@ -40,7 +38,9 @@ import com.eli.oneos.widget.PullToRefreshView;
 import com.eli.oneos.widget.sticky.gridview.StickyGridHeadersView;
 import com.eli.oneos.widget.sticky.listview.StickyListHeadersView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gaoyun@eli-tech.com on 2016/02/29.
@@ -54,10 +54,8 @@ public class LocalDbFragment extends BaseLocalFragment {
     private PullToRefreshView mListPullToRefreshView;
     private PullToRefreshView mGridPullToRefreshView;
     private boolean isPullDownRefresh = true;
-    private OneOSStickyListAdapter mListAdapter;
-    private OneOSStickyGridAdapter mGridAdapter;
-
-    private int mPage = 0, mPages = 0;
+    private LocalStickyListAdapter mListAdapter;
+    private LocalStickyGridAdapter mGridAdapter;
 
     private AdapterView.OnItemClickListener mFileItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -65,11 +63,11 @@ public class LocalDbFragment extends BaseLocalFragment {
             mLastClickPosition = position;
             mLastClickItem2Top = view.getTop();
 
-            OneOSFileBaseAdapter mAdapter = getFileAdapter();
+            LocalFileBaseAdapter mAdapter = getFileAdapter();
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (isMultiMode) {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
-                OneOSFile file = mFileList.get(position);
+                LocalFile file = mFileList.get(position);
                 boolean isSelected = mClickedCheckBox.isChecked();
                 if (isSelected) {
                     mSelectedList.remove(file);
@@ -82,7 +80,7 @@ public class LocalDbFragment extends BaseLocalFragment {
                 updateSelectAndManagePanel();
             } else {
                 isSelectionLastPosition = true;
-                FileUtils.openOneOSFile(mLoginSession, mMainActivity, position, mFileList);
+                FileUtils.openLocalFile(mMainActivity, position, mFileList);
             }
         }
     };
@@ -93,14 +91,14 @@ public class LocalDbFragment extends BaseLocalFragment {
                 position -= 1; // for PullToRefreshView header
             }
 
-            OneOSFileBaseAdapter mAdapter = getFileAdapter();
+            LocalFileBaseAdapter mAdapter = getFileAdapter();
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (!isMultiMode) {
                 setMultiModel(true, position);
                 updateSelectAndManagePanel();
             } else {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
-                OneOSFile file = mFileList.get(position);
+                LocalFile file = mFileList.get(position);
                 boolean isSelected = mClickedCheckBox.isChecked();
                 if (isSelected) {
                     mSelectedList.remove(file);
@@ -136,13 +134,13 @@ public class LocalDbFragment extends BaseLocalFragment {
                 ToastHelper.showToast(R.string.tip_select_file);
             } else {
                 isSelectionLastPosition = true;
-                OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, mOrderLayout, new OneOSFileManage.OnManageCallback() {
+                LocalFileManage fileManage = new LocalFileManage(mMainActivity, mOrderLayout, new LocalFileManage.OnManageCallback() {
                     @Override
                     public void onComplete(boolean isSuccess) {
                         autoPullToRefresh();
                     }
                 });
-                fileManage.manage(mFileType, action, (ArrayList<OneOSFile>) selectedList);
+                fileManage.manage(mFileType, action, (ArrayList<LocalFile>) selectedList);
             }
         }
 
@@ -155,21 +153,14 @@ public class LocalDbFragment extends BaseLocalFragment {
         public void onHeaderRefresh(PullToRefreshView view) {
             isPullDownRefresh = true;
             setMultiModel(false, 0);
-            getOneOSFileList(0);
+            getSortFileList();
         }
     };
     private PullToRefreshView.OnFooterRefreshListener mFooterRefreshListener = new PullToRefreshView.OnFooterRefreshListener() {
         @Override
         public void onFooterRefresh(PullToRefreshView view) {
-            isPullDownRefresh = false;
-            setMultiModel(false, 0);
-            if (mPage < mPages - 1) {
-                getOneOSFileList(++mPage);
-            } else {
-                mMainActivity.showTipView(R.string.all_loaded, true);
-                mListPullToRefreshView.onFooterRefreshComplete();
-                mGridPullToRefreshView.onFooterRefreshComplete();
-            }
+            mMainActivity.showTipView(R.string.all_loaded, true);
+            view.onFooterRefreshComplete();
         }
     };
 
@@ -180,9 +171,8 @@ public class LocalDbFragment extends BaseLocalFragment {
         View view = inflater.inflate(R.layout.fragment_nav_local_db, container, false);
 
         mMainActivity = (MainActivity) getActivity();
-        mParentFragment = (BaseNavFileFragment) getParentFragment();
+        mParentFragment = (LocalNavFragment) getParentFragment();
 
-        initLoginSession();
         initView(view);
 
         return view;
@@ -265,14 +255,14 @@ public class LocalDbFragment extends BaseLocalFragment {
         mListPullToRefreshView.setOnFooterRefreshListener(mFooterRefreshListener);
         View mEmptyView = view.findViewById(R.id.layout_empty_list);
         mListView = (StickyListHeadersView) view.findViewById(R.id.listview_timeline);
-        mListAdapter = new OneOSStickyListAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
+        mListAdapter = new LocalStickyListAdapter(getContext(), mFileList, mSelectedList, new LocalFileBaseAdapter.OnMultiChooseClickListener() {
             @Override
             public void onClick(View view) {
                 AnimUtils.shortVibrator();
                 setMultiModel(true, (Integer) view.getTag());
                 updateSelectAndManagePanel();
             }
-        }, mLoginSession);
+        });
         mListView.setOnItemClickListener(mFileItemClickListener);
         mListView.setOnItemLongClickListener(mFileItemLongClickListener);
         mListView.setFastScrollEnabled(false);
@@ -284,14 +274,14 @@ public class LocalDbFragment extends BaseLocalFragment {
         mGridPullToRefreshView.setOnFooterRefreshListener(mFooterRefreshListener);
         mEmptyView = view.findViewById(R.id.layout_empty_grid);
         mGridView = (StickyGridHeadersView) view.findViewById(R.id.gridview_timeline);
-        mGridAdapter = new OneOSStickyGridAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
+        mGridAdapter = new LocalStickyGridAdapter(getContext(), mFileList, mSelectedList, new LocalFileBaseAdapter.OnMultiChooseClickListener() {
             @Override
             public void onClick(View view) {
                 AnimUtils.shortVibrator();
                 setMultiModel(true, (Integer) view.getTag());
                 updateSelectAndManagePanel();
             }
-        }, mLoginSession);
+        });
         mGridView.setOnItemClickListener(mFileItemClickListener);
         mGridView.setOnItemLongClickListener(mFileItemLongClickListener);
         mGridView.setOnHeaderClickListener(new StickyGridHeadersView.OnHeaderClickListener() {
@@ -314,7 +304,7 @@ public class LocalDbFragment extends BaseLocalFragment {
         mGridView.setAdapter(mGridAdapter);
     }
 
-    public void setFileType(LocalFileType type, String path) {
+    public void setFileType(LocalFileType type, File dir) {
         this.mFileType = type;
         Log.d(TAG, "========Set FileType: " + type);
     }
@@ -364,33 +354,10 @@ public class LocalDbFragment extends BaseLocalFragment {
 
     private void notifyRefreshComplete(boolean isItemChanged) {
 //        if (mOrderType == FileOrderType.NAME) {
-//            Collections.sort(mFileList, new OneOSFileNameComparator());
+//            Collections.sort(mFileList, new FileNameComparator());
 //        } else {
-//            Collections.sort(mFileList, new OneOSFileTimeComparator());
+//            Collections.sort(mFileList, new FileTimeComparator());
 //        }
-
-        ArrayList<String> mSectionLetters = new ArrayList<>();
-        int index = 0;
-        String fmt = getResources().getString(R.string.fmt_time_line);
-        for (OneOSFile file : mFileList) {
-            String letter = FileUtils.formatTime(file.getMonth() * 1000, fmt);
-            if (!mSectionLetters.contains(letter)) {
-                mSectionLetters.add(letter);
-                file.setSection(index);
-                Log.d(TAG, "Add section index = " + index + ", value = " + letter);
-                index++;
-            } else {
-                file.setSection(mSectionLetters.indexOf(letter));
-            }
-        }
-
-        int sec = mSectionLetters.size();
-        String[] sections = new String[sec];
-        for (int i = 0; i < sec; i++) {
-            sections[i] = mSectionLetters.get(i);
-        }
-        mListAdapter.updateSections(sections);
-        mGridAdapter.updateSections(sections);
 
         if (isListShown) {
             mListAdapter.notifyDataSetChanged(isItemChanged);
@@ -477,34 +444,23 @@ public class LocalDbFragment extends BaseLocalFragment {
         }
     }
 
-    private void getOneOSFileList(int page) {
+    private void getSortFileList() {
         Log.d(TAG, "---------File type: " + mFileType);
-        OneOSListDBAPI listDbAPI = new OneOSListDBAPI(mLoginSession, mFileType);
-        listDbAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
+        LocalSortTask task = new LocalSortTask(mMainActivity, mFileType, null, new LocalSortTask.onLocalSortListener() {
             @Override
-            public void onStart(String url) {
+            public void onStart(LocalFileType type) {
             }
 
             @Override
-            public void onSuccess(String url, OneOSFileType type, int total, int pages, int page, ArrayList<OneOSFile> files) {
-                if (page == 0) {
-                    mFileList.clear();
-                }
-                if (!EmptyUtils.isEmpty(files)) {
-                    mFileList.addAll(files);
-                    mPage = page;
-                    mPages = pages;
-                }
-
-                notifyRefreshComplete(true);
-            }
-
-            @Override
-            public void onFailure(String url, int errorNo, String errorMsg) {
-                ToastHelper.showToast(errorMsg);
+            public void onComplete(LocalFileType type, List<LocalFile> fileList, List<String> sectionList) {
+                mFileList.clear();
+                mFileList.addAll(fileList);
+                String[] sections = sectionList.toArray(new String[sectionList.size()]);
+                mListAdapter.updateSections(sections);
+                mGridAdapter.updateSections(sections);
                 notifyRefreshComplete(true);
             }
         });
-        listDbAPI.list(page);
+        task.execute(0);
     }
 }

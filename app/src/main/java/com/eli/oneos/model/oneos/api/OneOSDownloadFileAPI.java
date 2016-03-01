@@ -263,7 +263,18 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             String targetPath = downloadElement.getTargetPath() + File.separator + downloadElement.getFile().getName();
             File file = new File(targetPath);
             if (file.exists()) {
-                file.renameTo(new File((targetPath + System.currentTimeMillis())));
+                String name = file.getName();
+                String newName;
+                int index = name.indexOf(".");
+                if (index >= 0) {
+                    String prefix = name.substring(0, index);
+                    String suffix = name.substring(index, name.length());
+                    newName = prefix + "-" + System.currentTimeMillis() + suffix;
+                } else {
+                    newName = name + "-" + System.currentTimeMillis();
+                }
+
+                file.renameTo(new File(downloadElement.getTargetPath(), newName));
             }
 
             outputFile = new RandomAccessFile(targetPath, "rw");

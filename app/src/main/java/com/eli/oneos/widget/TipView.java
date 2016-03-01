@@ -68,7 +68,7 @@ public class TipView {
 
     private void dismiss() {
         if (mTipPop != null && mTipPop.isShowing()) {
-//            mTipPop.dismiss();
+            mTipPop.dismiss();
         }
     }
 

@@ -30,7 +30,11 @@ public enum LocalFileType {
     /**
      * 安装包
      */
-    APP;
+    APP,
+    /**
+     * 压缩包
+     */
+    ZIP;
 
     public static int getTypeName(LocalFileType type) {
         int name = R.string.file_type_private;

@@ -1,8 +1,10 @@
-package com.eli.oneos.model.oneos;
+package com.eli.oneos.model;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.FileManageAction;
-import com.eli.oneos.model.FileManageItem;
+import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.OneOSFileType;
+import com.eli.oneos.model.phone.LocalFile;
+import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.utils.EmptyUtils;
 
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/20.
  */
-public class OneOSFileManageGenerate {
+public class FileManageItemGenerate {
     private static int OPT_BASE_ID = 0x10000000;
     private static FileManageItem OPT_COPY = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_copy, R.drawable.btn_opt_copy_pressed, R.string.copy_file, FileManageAction.COPY);
     private static FileManageItem OPT_MOVE = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_move, R.drawable.btn_opt_move_pressed, R.string.move_file, FileManageAction.MOVE);
@@ -22,6 +24,7 @@ public class OneOSFileManageGenerate {
     private static FileManageItem OPT_DECRYPT = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_decrypt, R.drawable.btn_opt_decrypt_pressed, R.string.decrypt_file, FileManageAction.DECRYPT);
     private static FileManageItem OPT_ATTR = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.attr_file, FileManageAction.ATTR);
     private static FileManageItem OPT_CLEAN = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_delete, R.drawable.btn_opt_delete_pressed, R.string.clean_recycle_file, FileManageAction.CLEAN_RECYCLE);
+    private static FileManageItem OPT_SHARE = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.share_file, FileManageAction.SHARE);
 
 
     public static ArrayList<FileManageItem> generate(OneOSFileType fileType, ArrayList<OneOSFile> selectedList) {
@@ -65,5 +68,32 @@ public class OneOSFileManageGenerate {
         return mOptItems;
     }
 
+    public static ArrayList<FileManageItem> generate(LocalFileType fileType, ArrayList<LocalFile> selectedList) {
+        if (EmptyUtils.isEmpty(selectedList)) {
+            return null;
+        }
 
+        ArrayList<FileManageItem> mOptItems = new ArrayList<>();
+        mOptItems.add(OPT_COPY);
+        mOptItems.add(OPT_MOVE);
+        if (selectedList.size() <= 1) {
+            mOptItems.add(OPT_RENAME);
+        }
+        mOptItems.add(OPT_DELETE);
+        mOptItems.add(OPT_ATTR);
+
+        boolean hasDir = false;
+        for (LocalFile file : selectedList) {
+            if (file.isDirectory()) {
+                hasDir = true;
+                break;
+            }
+        }
+        if (!hasDir) {
+            mOptItems.add(OPT_SHARE);
+            mOptItems.add(OPT_UPLOAD);
+        }
+
+        return mOptItems;
+    }
 }

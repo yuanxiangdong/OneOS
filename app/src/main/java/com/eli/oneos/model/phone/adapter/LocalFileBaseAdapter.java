@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.eli.oneos.utils.ToastHelper;
+import com.eli.oneos.model.phone.LocalFile;
+import com.eli.oneos.utils.HttpBitmap;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +18,12 @@ public class LocalFileBaseAdapter extends BaseAdapter {
     private static final String TAG = LocalFileBaseAdapter.class.getSimpleName();
 
     public LayoutInflater mInflater;
-    public List<File> mFileList = null;
-    public ArrayList<File> mSelectedList = null;
+    public List<LocalFile> mFileList = null;
+    public ArrayList<LocalFile> mSelectedList = null;
     private boolean isMultiChoose = false;
     public OnMultiChooseClickListener mListener = null;
 
-    public LocalFileBaseAdapter(Context context, List<File> fileList, ArrayList<File> selectedList, OnMultiChooseClickListener listener) {
+    public LocalFileBaseAdapter(Context context, List<LocalFile> fileList, ArrayList<LocalFile> selectedList, OnMultiChooseClickListener listener) {
         this.mInflater = LayoutInflater.from(context);
         this.mListener = listener;
         this.mFileList = fileList;
@@ -85,7 +85,7 @@ public class LocalFileBaseAdapter extends BaseAdapter {
         return this.isMultiChoose;
     }
 
-    public ArrayList<File> getSelectedList() {
+    public ArrayList<LocalFile> getSelectedList() {
         if (isMultiChooseModel()) {
             return mSelectedList;
         }
@@ -111,14 +111,8 @@ public class LocalFileBaseAdapter extends BaseAdapter {
         }
     }
 
-    public void showPicturePreview(ImageView imageView, File file) {
-        ToastHelper.showToast("TODO.. show picture preview");
-
-//        if (!mLoginSession.getUserSettings().getIsPreviewPicOnlyWifi() || isWifiAvailable) {
-//            HttpBitmap.getInstance().display(imageView, OneOSAPIs.genThumbnailUrl(mLoginSession, file));
-//        } else {
-//            imageView.setImageResource(R.drawable.icon_file_pic);
-//        }
+    public void showPicturePreview(ImageView imageView, LocalFile file) {
+        HttpBitmap.getInstance().display(imageView, file.getPath());
     }
 
     public interface OnMultiChooseClickListener {

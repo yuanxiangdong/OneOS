@@ -33,14 +33,14 @@ public class HttpBitmap {
     private void initFinalBitmap() {
         Log.d(TAG, "Init Final Bitmap");
         Context context = MyApplication.getAppContext();
-        final Bitmap mFailBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_view_pic_failed);
+        final Bitmap mFailBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_file_pic);
 
         finalBitmap = FinalBitmap.create(context);
-        // finalBitmap.configLoadfailImage(mFailBitmap);
+        finalBitmap.configLoadfailImage(mFailBitmap);
         // finalBitmap.configLoadingImage(mLoadBitmap);
-        finalBitmap.configBitmapLoadThreadSize(4);
+        finalBitmap.configBitmapLoadThreadSize(3);
         finalBitmap.configDiskCacheSize(1024 * 1024 * 100);
-        finalBitmap.configMemoryCachePercent(0.4f);
+        finalBitmap.configMemoryCachePercent(0.3f);
         finalBitmap.configDisplayer(new Displayer() {
 
             @Override

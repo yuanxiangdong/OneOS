@@ -8,15 +8,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.utils.FileUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LocalFileGridAdapter extends LocalFileBaseAdapter {
 
-    public LocalFileGridAdapter(Context context, List<File> fileList, ArrayList<File> selectedList) {
+    public LocalFileGridAdapter(Context context, List<LocalFile> fileList, ArrayList<LocalFile> selectedList) {
         super(context, fileList, selectedList, null);
     }
 
@@ -57,14 +57,14 @@ public class LocalFileGridAdapter extends LocalFileBaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        File file = mFileList.get(position);
+        LocalFile file = mFileList.get(position);
         holder.mNameTxt.setText(file.getName());
         holder.mIconView.setTag(file.getName());
 
         if (FileUtils.isPictureFile(file.getName())) {
             showPicturePreview(holder.mIconView, file);
         } else {
-            holder.mIconView.setImageResource(FileUtils.fmtFileIcon(file));
+            holder.mIconView.setImageResource(FileUtils.fmtFileIcon(file.getFile()));
         }
 
         if (isMultiChooseModel()) {

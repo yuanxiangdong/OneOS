@@ -5,6 +5,7 @@ import android.view.animation.Animation;
 import android.widget.LinearLayout;
 
 import com.eli.oneos.model.FileOrderType;
+import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.model.phone.adapter.LocalFileBaseAdapter;
 import com.eli.oneos.ui.MainActivity;
@@ -26,8 +27,8 @@ public abstract class BaseLocalFragment extends Fragment {
     protected LinearLayout mOrderLayout;
     protected Animation mSlideInAnim, mSlideOutAnim;
 
-    protected ArrayList<File> mFileList = new ArrayList<>();
-    protected ArrayList<File> mSelectedList = new ArrayList<>();
+    protected ArrayList<LocalFile> mFileList = new ArrayList<>();
+    protected ArrayList<LocalFile> mSelectedList = new ArrayList<>();
 
     protected int mLastClickPosition = 0, mLastClickItem2Top = 0;
     protected boolean isSelectionLastPosition = false;

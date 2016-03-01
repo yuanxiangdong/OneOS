@@ -168,7 +168,7 @@ public class SDCardUtils {
                 if (!result.endsWith("legacy") && file.isDirectory() && file.canRead()
                         && file.canWrite() && !isSymbolicLink(file)) {
                     // Logged.d(TAG_SDCARD, "directory can read can write:" +
-                    // file.getAbsolutePath());
+                    // file.getPath());
                     // 可读可写的文件夹未必是sdcard，我的手机的sdcard下的Android/obb文件夹也可以得到
                     sdcardPaths.add(result);
                 }

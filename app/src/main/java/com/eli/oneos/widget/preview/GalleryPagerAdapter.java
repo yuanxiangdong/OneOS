@@ -78,7 +78,7 @@ public class GalleryPagerAdapter extends BasePagerAdapter {
     }
 
     private String getPictureUri(int position) {
-        String uri = null;
+        String uri;
         if (isLocalPic) {
             Log.d(TAG, "Add Touch Local ImageView Layout");
             File file = (File) mResources.get(position);

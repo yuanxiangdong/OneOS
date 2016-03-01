@@ -10,15 +10,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.utils.FileUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LocalFileListAdapter extends LocalFileBaseAdapter {
 
-    public LocalFileListAdapter(Context context, List<File> fileList, ArrayList<File> selectedList, OnMultiChooseClickListener listener) {
+    public LocalFileListAdapter(Context context, List<LocalFile> fileList, ArrayList<LocalFile> selectedList, OnMultiChooseClickListener listener) {
         super(context, fileList, selectedList, listener);
     }
 
@@ -74,7 +74,7 @@ public class LocalFileListAdapter extends LocalFileBaseAdapter {
         }
         holder.mSelectIBtn.setTag(position); // for get Select Button Index
 
-        File file = mFileList.get(position);
+        LocalFile file = mFileList.get(position);
         holder.mNameTxt.setText(file.getName());
         holder.mIconView.setTag(file.getName());
         holder.mTimeTxt.setText(FileUtils.formatTime(file.lastModified()));
@@ -83,7 +83,7 @@ public class LocalFileListAdapter extends LocalFileBaseAdapter {
         if (FileUtils.isPictureFile(file.getName())) {
             showPicturePreview(holder.mIconView, file);
         } else {
-            holder.mIconView.setImageResource(FileUtils.fmtFileIcon(file));
+            holder.mIconView.setImageResource(FileUtils.fmtFileIcon(file.getFile()));
         }
 
         if (isMultiChooseModel()) {

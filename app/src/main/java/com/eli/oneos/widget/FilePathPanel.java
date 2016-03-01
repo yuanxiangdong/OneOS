@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFileType;
+import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.Utils;
 
@@ -34,6 +35,7 @@ public class FilePathPanel extends RelativeLayout {
 
     private String path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
     private String mSDCardRootDirShownName = null;
+    private String mDownloadRootDirShownName = null;
     private String mPrivateRootDirShownName = null;
     private String mPublicRootDirShownName = null;
     private String mRecycleRootDirShownName = null;
@@ -54,6 +56,7 @@ public class FilePathPanel extends RelativeLayout {
         mPublicRootDirShownName = getResources().getString(R.string.root_dir_name_public);
         mRecycleRootDirShownName = getResources().getString(R.string.root_dir_name_recycle);
         mSDCardRootDirShownName = getResources().getString(R.string.root_dir_name_sdcard);
+        mDownloadRootDirShownName = getResources().getString(R.string.root_dir_name_download);
         pathMaxWidth = Utils.dipToPx(120);
         pathMinWidth = Utils.dipToPx(30);
         pathBtnPadding = Utils.dipToPx(5);
@@ -71,10 +74,16 @@ public class FilePathPanel extends RelativeLayout {
         });
     }
 
-    public void updatePath(String path, String rootPath) {
+    /**
+     * for Local File Path
+     *
+     * @param path
+     * @param rootPath
+     */
+    public void updatePath(LocalFileType type, String path, String rootPath) {
         this.path = path;
         setVisibility(View.VISIBLE);
-        genFilePathLayout(rootPath);
+        genFilePathLayout(type, rootPath);
     }
 
     public void updatePath(OneOSFileType type, String path) {
@@ -189,26 +198,40 @@ public class FilePathPanel extends RelativeLayout {
         }
     }
 
-    private void genFilePathLayout(String rootPath) {
-        Log.i(TAG, "Original Path:" + path);
+    /**
+     * for Local File Path
+     *
+     * @param rootPath
+     */
+    private void genFilePathLayout(LocalFileType type, String rootPath) {
+        Log.d(TAG, "Original Path:" + path + ", Root Path:" + rootPath);
         mPathLayout.removeAllViews();
 
         final String rootStr = rootPath;
-        String rootShownName = mSDCardRootDirShownName;
+        String rootShownName = type == LocalFileType.PRIVATE ? mSDCardRootDirShownName : mDownloadRootDirShownName;
 
         try {
             final boolean hasPrefix = !EmptyUtils.isEmpty(mPrefixName);
             String shownPath;
-            if (null != path) {
+            if (null == path) {
                 if (hasPrefix) {
-                    rootShownName = mPrefixName + File.separator + rootShownName;
+                    shownPath = mPrefixName + File.separator + rootShownName;
+                } else {
+                    shownPath = rootShownName;
                 }
-                shownPath = path.replaceFirst(rootStr, rootShownName + File.separator);
             } else {
-                shownPath = mPrefixName + File.separator;
+                String relativePath = path;
+                if (null != rootPath) {
+                    relativePath = path.replaceFirst(rootStr, "");
+                }
+                Log.d(TAG, "Relative Path:" + relativePath);
+                if (hasPrefix) {
+                    shownPath = mPrefixName + File.separator + rootShownName + relativePath;
+                } else {
+                    shownPath = rootShownName + relativePath;
+                }
             }
-
-            Log.d(TAG, "Add srcPath button:" + shownPath);
+            Log.d(TAG, "Add Path button:" + shownPath);
 
             final String[] pathItems = shownPath.split(File.separator);
             Button[] pathBtn = new Button[pathItems.length];
@@ -243,12 +266,16 @@ public class FilePathPanel extends RelativeLayout {
                                 return;
                             }
                         }
-                        String tarPath = rootStr;
+                        String tarPath = null;
+                        if (null != rootStr) {
+                            tarPath = rootStr + File.separator;
+                        }
+
                         for (; j <= i; j++) {
                             tarPath += pathItems[j] + File.separator;
                         }
 
-                        Log.d(TAG, "Click target srcPath is " + tarPath);
+                        Log.d(TAG, "Click target path is " + tarPath);
                         if (null != mListener) {
                             mListener.onClick(v, tarPath);
                         }

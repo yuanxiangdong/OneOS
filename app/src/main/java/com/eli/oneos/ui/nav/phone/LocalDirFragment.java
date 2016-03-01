@@ -20,6 +20,8 @@ import com.eli.oneos.constant.Constants;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.model.phone.LocalFile;
+import com.eli.oneos.model.phone.LocalFileManage;
 import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.model.phone.adapter.LocalFileBaseAdapter;
 import com.eli.oneos.model.phone.adapter.LocalFileGridAdapter;
@@ -65,6 +67,13 @@ public class LocalDirFragment extends BaseLocalFragment {
     private String rootPath = null;
     private ArrayList<File> mSDCardList = new ArrayList<>();
 
+    private LocalFileManage.OnManageCallback mFileManageCallback = new LocalFileManage.OnManageCallback() {
+        @Override
+        public void onComplete(boolean isSuccess) {
+            autoPullToRefresh();
+        }
+    };
+
     private AdapterView.OnItemClickListener mFileItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -78,7 +87,7 @@ public class LocalDirFragment extends BaseLocalFragment {
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (isMultiMode) {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
-                File file = mFileList.get(position);
+                LocalFile file = mFileList.get(position);
                 boolean isSelected = mClickedCheckBox.isChecked();
                 if (isSelected) {
                     mSelectedList.remove(file);
@@ -90,12 +99,12 @@ public class LocalDirFragment extends BaseLocalFragment {
                 mAdapter.notifyDataSetChanged();
                 updateSelectAndManagePanel();
             } else {
-                File file = mFileList.get(position);
+                LocalFile file = mFileList.get(position);
                 if (file.isDirectory()) {
                     if (null == curDir) {
-                        rootPath = file.getAbsolutePath();
+                        rootPath = file.getFile().getParent();
                     }
-                    curDir = file;
+                    curDir = file.getFile();
                     autoPullToRefresh();
                 } else {
                     isSelectionLastPosition = true;
@@ -118,7 +127,7 @@ public class LocalDirFragment extends BaseLocalFragment {
                 updateSelectAndManagePanel();
             } else {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
-                File file = mFileList.get(position);
+                LocalFile file = mFileList.get(position);
                 boolean isSelected = mClickedCheckBox.isChecked();
                 if (isSelected) {
                     mSelectedList.remove(file);
@@ -155,7 +164,8 @@ public class LocalDirFragment extends BaseLocalFragment {
                 ToastHelper.showToast(R.string.tip_select_file);
             } else {
                 isSelectionLastPosition = true;
-                // TODO.. manage file
+                LocalFileManage fileManage = new LocalFileManage(mMainActivity, mOrderLayout, mFileManageCallback);
+                fileManage.manage(mFileType, action, (ArrayList<LocalFile>) selectedList);
             }
         }
 
@@ -258,11 +268,30 @@ public class LocalDirFragment extends BaseLocalFragment {
         mPathPanel.setOnPathPanelClickListener(new FilePathPanel.OnPathPanelClickListener() {
             @Override
             public void onClick(View view, String path) {
-                if (null == path) { // New Folder Button Clicked
-                    ToastHelper.showToast("New folder is coming soon");
+                if (view.getId() == R.id.ibtn_new_folder) { // New Folder Button Clicked
+                    LocalFileManage localFileManage = new LocalFileManage(mMainActivity, mPathPanel, mFileManageCallback);
+                    localFileManage.manage(FileManageAction.MKDIR, curDir.getAbsolutePath());
                 } else {
-                    curDir = new File(path);
-                    autoPullToRefresh();
+                    Log.d(TAG, ">>>>>Click Path: " + path + ", Root Path:" + rootPath);
+                    if (null == path || rootPath == null) {
+                        curDir = null;
+                        rootPath = null;
+                        autoPullToRefresh();
+                    } else {
+                        File file = new File(path);
+                        if (mFileType == LocalFileType.PRIVATE) {
+                            File root = new File(rootPath);
+                            if (file.equals(root)) {
+                                curDir = null;
+                                rootPath = null;
+                            } else {
+                                curDir = file;
+                            }
+                        } else {
+                            curDir = file;
+                        }
+                        autoPullToRefresh();
+                    }
                 }
             }
         });
@@ -342,8 +371,12 @@ public class LocalDirFragment extends BaseLocalFragment {
     private void getFileList(File dir) {
         mFileList.clear();
         if (dir == null) {
-            mFileList.addAll(mSDCardList);
+            mPathPanel.showNewFolderButton(false);
+            for (File f : mSDCardList) {
+                mFileList.add(new LocalFile(f));
+            }
         } else {
+            mPathPanel.showNewFolderButton(true);
             File[] files = dir.listFiles(new FileFilter() {
                 @Override
                 public boolean accept(File f) {
@@ -352,7 +385,9 @@ public class LocalDirFragment extends BaseLocalFragment {
             });
             if (null != files) {
                 List<File> list = Arrays.asList(files);
-                mFileList.addAll(list);
+                for (File f : list) {
+                    mFileList.add(new LocalFile(f));
+                }
             }
         }
         notifyRefreshComplete(true);
@@ -366,7 +401,7 @@ public class LocalDirFragment extends BaseLocalFragment {
             Collections.sort(mFileList, new FileTimeComparator());
         }
 
-        mPathPanel.updatePath(curDir == null ? null : curDir.getAbsolutePath(), rootPath);
+        mPathPanel.updatePath(mFileType, curDir == null ? null : curDir.getAbsolutePath(), rootPath);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -428,36 +463,52 @@ public class LocalDirFragment extends BaseLocalFragment {
     public void setFileType(LocalFileType type, File dir) {
         if (this.mFileType != type) {
             this.mFileType = type;
-            this.rootPath = null;
             if (mFileType == LocalFileType.PRIVATE) {
-                curDir = null;
+                this.rootPath = null;
+                this.curDir = null;
             } else {
                 String path = LoginManage.getInstance().getLoginSession().getDownloadPath();
-                curDir = new File(path);
+                this.rootPath = path;
+                this.curDir = new File(path);
             }
         }
     }
 
     private void backToParentDir(File dir) {
         isSelectionLastPosition = true;
-        File parent = dir.getParentFile();
-        Log.d(TAG, "----Parent Path: " + parent.getAbsolutePath() + "------");
-        curDir = parent;
         for (File f : mSDCardList) {
-            if (parent.equals(f)) {
+            if (dir.equals(f)) {
                 curDir = null;
                 rootPath = null;
-                break;
+                autoPullToRefresh();
+                return;
             }
         }
+
+        curDir = dir.getParentFile();
+        Log.d(TAG, "----Parent Path: " + curDir.getAbsolutePath() + "------");
+        autoPullToRefresh();
+    }
+
+    private void directBackParentDir(File dir) {
+        isSelectionLastPosition = true;
+        File parent = dir.getParentFile();
+        curDir = parent;
         autoPullToRefresh();
     }
 
     private boolean tryBackToParentDir() {
         Log.d(TAG, "=====Current Path: " + curDir + "========");
-        if (curDir != null) {
-            backToParentDir(curDir);
-            return true;
+        if (mFileType == LocalFileType.PRIVATE) {
+            if (curDir != null) {
+                backToParentDir(curDir);
+                return true;
+            }
+        } else {
+            if (!curDir.getAbsolutePath().equals(rootPath)) {
+                directBackParentDir(curDir);
+                return true;
+            }
         }
 
         return false;

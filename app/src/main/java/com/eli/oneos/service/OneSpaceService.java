@@ -185,8 +185,8 @@ public class OneSpaceService extends Service {
     }
 
     // Upload Operation
-    public long addUploadTask(File file, String savepath) {
-        UploadElement element = new UploadElement(file, savepath);
+    public long addUploadTask(File file, String savePath) {
+        UploadElement element = new UploadElement(file, savePath);
         return mUploadManager.enqueue(element);
     }
 

@@ -60,10 +60,10 @@
 //    }
 //
 //    public void notifyUserLogout() {
-//        stopBackupPhoto();
+//        stopUpload();
 //    }
 //
-//    public void stopBackupPhoto() {
+//    public void stopUpload() {
 //        if (mBackupManager != null) {
 //            mBackupManager.stopBackup();
 //            mBackupManager = null;
@@ -75,7 +75,7 @@
 //    }
 //
 //    public void resetBackupPhoto() {
-//        stopBackupPhoto();
+//        stopUpload();
 //        LoginSession loginSession = LoginManage.getInstance().getLoginSession();
 //        BackupFileKeeper.reset(loginSession.getUserInfo().getId());
 //        startBackupPhoto();
@@ -124,6 +124,6 @@
 //    public void onDestroy() {
 //        super.onDestroy();
 //        Log.d(TAG, "=====Backup Service On Destroy=====");
-//        stopBackupPhoto();
+//        stopUpload();
 //    }
 //}

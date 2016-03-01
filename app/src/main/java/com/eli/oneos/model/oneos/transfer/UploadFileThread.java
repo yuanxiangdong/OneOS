@@ -4,7 +4,6 @@ import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.api.OneOSUploadFileAPI;
-import com.eli.oneos.model.oneos.backup.file.BackupFileElement;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 /**
@@ -15,13 +14,13 @@ import com.eli.oneos.model.oneos.user.LoginSession;
 public class UploadFileThread extends Thread {
     private final String TAG = UploadFileThread.class.getSimpleName();
 
-    private BackupFileElement mElement;
+    private UploadElement mElement;
     private OnUploadResultListener mResultListener = null;
     private OneOSUploadFileAPI.OnUploadFileListener mUploadListener = null;
     private OneOSUploadFileAPI uploadFileAPI;
     private LoginSession mLoginSession;
 
-    public UploadFileThread(BackupFileElement element, LoginSession mLoginSession, OnUploadResultListener mListener) {
+    public UploadFileThread(UploadElement element, LoginSession mLoginSession, OnUploadResultListener mListener) {
         if (mListener == null || mLoginSession == null) {
             Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadResultListener or LoginSession is NULL");
             new Throwable(new NullPointerException("OnUploadResultListener or LoginSession is NULL"));
@@ -31,7 +30,7 @@ public class UploadFileThread extends Thread {
         this.mResultListener = mListener;
     }
 
-    public UploadFileThread(BackupFileElement element, LoginSession mLoginSession, OneOSUploadFileAPI.OnUploadFileListener mListener) {
+    public UploadFileThread(UploadElement element, LoginSession mLoginSession, OneOSUploadFileAPI.OnUploadFileListener mListener) {
         if (mListener == null || mLoginSession == null) {
             Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadFileListener or LoginSession is NULL");
             new Throwable(new NullPointerException("OnUploadFileListener or LoginSession is NULL"));
@@ -68,7 +67,7 @@ public class UploadFileThread extends Thread {
         }
     }
 
-    public void stopBackupPhoto() {
+    public void stopUpload() {
         uploadFileAPI.stopUpload();
         mElement.setState(TransferState.PAUSE);
         interrupt();

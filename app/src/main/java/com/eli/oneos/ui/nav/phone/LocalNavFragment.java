@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileTypeItem;
+import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.widget.FileManagePanel;
@@ -20,7 +21,6 @@ import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.SearchPanel;
 import com.eli.oneos.widget.TypePopupView;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -40,6 +40,7 @@ public class LocalNavFragment extends BaseNavFileFragment {
 
     private ArrayList<FileTypeItem> mFileTypeList = new ArrayList<>();
     private LocalDirFragment mDirFragment;
+    private LocalDbFragment mDbFragment;
     private BaseLocalFragment mCurFragment;
 
     @Override
@@ -80,6 +81,7 @@ public class LocalNavFragment extends BaseNavFileFragment {
 
     private void initFragment() {
         mDirFragment = new LocalDirFragment();
+        mDbFragment = new LocalDbFragment();
         changeFragmentByType(LocalFileType.PRIVATE);
     }
 
@@ -120,8 +122,10 @@ public class LocalNavFragment extends BaseNavFileFragment {
             transaction.hide(mCurFragment);
         }
 
-        if (type == LocalFileType.PRIVATE) {
+        if (type == LocalFileType.PRIVATE || type == LocalFileType.DOWNLOAD) {
             mCurFragment = mDirFragment;
+        } else {
+            mCurFragment = mDbFragment;
         }
 
         mCurFragment.setFileType(type, null);
@@ -184,7 +188,7 @@ public class LocalNavFragment extends BaseNavFileFragment {
      * @param mListener    On file operate listener
      */
     @Override
-    public void updateManageBar(LocalFileType fileType, ArrayList<File> selectedList, FileManagePanel.OnFileManageListener mListener) {
+    public void updateManageBar(LocalFileType fileType, ArrayList<LocalFile> selectedList, FileManagePanel.OnFileManageListener mListener) {
         mManagePanel.setOnOperateListener(mListener);
         mManagePanel.updatePanelItems(fileType, selectedList);
     }
