@@ -114,6 +114,9 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
     @Override
     public void onResume() {
         super.onResume();
+        if (null != mCurFragment) {
+            mCurFragment.onResume();
+        }
         if (isDownload) {
             mUploadOrDownloadGroup.check(mDownloadBtn.getId());
         } else {
@@ -124,20 +127,15 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
         } else {
             mTransOrCompleteGroup.check(mCompleteBtn.getId());
         }
-
-        Log.e(TAG, ">>>>>>> Set RadioGroup");
     }
 
     public void setTransferUI(boolean isDownload, boolean isTransfer) {
         this.isDownload = isDownload;
         this.isTransfer = isTransfer;
-        Log.e(TAG, ">>>>>>> Update Transfer UI");
     }
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        Log.e(TAG, ">>>>>>> RadioGroup CheckedChanged");
-
         if (group.getId() == R.id.segmented_radiogroup) {
             if (checkedId == R.id.segmented_download) {
                 isDownload = true;

@@ -5,6 +5,5 @@ repositories {
 }
 
 dependencies {
-//    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'org.eclipse.jetty.websocket:websocket-client:9.3.7.v20160115'
+    //    compile fileTree(include: ['*.jar'], dir: 'libs')
 }

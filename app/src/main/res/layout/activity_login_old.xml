@@ -33,33 +33,20 @@
                 android:id="@+id/layout_user"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/selector_square_stroke_edittext"
-                android:padding="12dp">
-
-                <TextView
-                    android:id="@+id/txt_name"
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="@string/title_enter_user"
-                    android:textColor="@color/darker"
-                    android:textSize="@dimen/text_size_mid" />
+                android:background="@drawable/selector_square_top_stroke"
+                android:padding="13dp">
 
                 <EditText
                     android:id="@+id/editext_user"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/txt_name"
                     android:background="@color/transparent"
                     android:ellipsize="end"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:hint="@string/hint_enter_user"
                     android:imeOptions="actionNext"
                     android:inputType="textPersonName"
                     android:singleLine="true"
-                    android:textColor="@color/darker"
-                    android:textColorHint="@color/gray"
                     android:textSize="@dimen/text_size_mid" />
 
                 <ImageButton
@@ -67,80 +54,48 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:background="@drawable/selector_button_more"
                     android:clickable="false"
                     android:focusable="false"
                     android:scaleType="centerCrop" />
             </RelativeLayout>
 
-
-            <RelativeLayout
+            <EditText
+                android:id="@+id/editext_pwd"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/selector_square_stroke_edittext"
-                android:padding="12dp">
-
-                <TextView
-                    android:id="@+id/txt_pwd"
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="@string/title_enter_pwd"
-                    android:textColor="@color/darker"
-                    android:textSize="@dimen/text_size_mid" />
-
-                <EditText
-                    android:id="@+id/editext_pwd"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/txt_pwd"
-                    android:background="@null"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:hint="@string/hint_enter_pwd"
-                    android:inputType="textPassword"
-                    android:singleLine="true"
-                    android:textColor="@color/darker"
-                    android:textColorHint="@color/gray"
-                    android:textSize="@dimen/text_size_mid" />
-            </RelativeLayout>
+                android:layout_marginTop="@dimen/common_size_stroke_shrink"
+                android:background="@drawable/selector_square_mid_stroke"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:hint="@string/hint_enter_pwd"
+                android:inputType="textPassword"
+                android:padding="13dp"
+                android:singleLine="true"
+                android:textSize="@dimen/text_size_mid" />
 
             <RelativeLayout
                 android:id="@+id/layout_server"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/selector_square_stroke_edittext"
-                android:padding="12dp">
-
-                <TextView
-                    android:id="@+id/txt_ip"
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="@string/title_select_ip"
-                    android:textColor="@color/darker"
-                    android:textSize="@dimen/text_size_mid" />
+                android:layout_marginTop="@dimen/common_size_stroke_shrink"
+                android:background="@drawable/selector_square_mid_stroke"
+                android:padding="13dp">
 
                 <EditText
                     android:id="@+id/editext_ip"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:layout_toRightOf="@+id/txt_ip"
                     android:background="@android:color/transparent"
                     android:clickable="true"
                     android:digits="0123456789."
                     android:ellipsize="end"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:hint="@string/hint_select_ip"
                     android:inputType="number"
                     android:singleLine="true"
-                    android:textColor="@color/darker"
-                    android:textColorHint="@color/gray"
                     android:textSize="@dimen/text_size_mid" />
 
                 <ImageButton
@@ -155,42 +110,23 @@
                     android:scaleType="centerCrop" />
             </RelativeLayout>
 
-
-            <RelativeLayout
+            <EditText
+                android:id="@+id/editext_port"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/selector_square_stroke_edittext"
-                android:padding="12dp">
-
-                <TextView
-                    android:id="@+id/txt_port"
-                    android:layout_width="65dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="@string/title_enter_port"
-                    android:textColor="@color/darker"
-                    android:textSize="@dimen/text_size_mid" />
-
-                <EditText
-                    android:id="@+id/editext_port"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_toRightOf="@+id/txt_port"
-                    android:background="@null"
-                    android:clickable="true"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:hint="@string/hint_enter_port"
-                    android:imeActionLabel="@string/login"
-                    android:imeOptions="actionDone"
-                    android:inputType="number"
-                    android:singleLine="true"
-                    android:textColor="@color/darker"
-                    android:textColorHint="@color/gray"
-                    android:textSize="@dimen/text_size_mid" />
-            </RelativeLayout>
+                android:layout_centerInParent="true"
+                android:layout_marginTop="@dimen/common_size_stroke_shrink"
+                android:background="@drawable/selector_square_bottom_stroke"
+                android:clickable="true"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:hint="@string/hint_enter_port"
+                android:imeActionLabel="@string/login"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:padding="13dp"
+                android:singleLine="true"
+                android:textSize="@dimen/text_size_mid" />
 
             <Button
                 android:id="@+id/btn_login"

@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ public class SpinnerView {
     private RelativeLayout mBackLayout;
     private OnSpinnerButtonClickListener mOnButtonClickListener;
 
-    public SpinnerView(Context context, int width) {
+    public SpinnerView(Context context, int width, int offset) {
         this.context = context;
         itemList = new ArrayList<String>();
         iconList = new ArrayList<Integer>();
@@ -41,7 +42,7 @@ public class SpinnerView {
 
         mListView = (ListView) view.findViewById(R.id.listview_spinner);
         mListView.setVisibility(View.VISIBLE);
-        mListView.setAdapter(new PopupMenuAdapter());
+        mListView.setAdapter(new PopupMenuAdapter(offset));
         mListView.setFocusableInTouchMode(true);
         mListView.setFocusable(true);
 
@@ -136,6 +137,11 @@ public class SpinnerView {
     }
 
     private final class PopupMenuAdapter extends BaseAdapter {
+        private int offset;
+
+        public PopupMenuAdapter(int offset) {
+            this.offset = offset - Utils.dipToPx(10);
+        }
 
         @Override
         public int getCount() {
@@ -162,6 +168,9 @@ public class SpinnerView {
 
                 holder.mTitleTxt = (TextView) convertView.findViewById(R.id.txt_spinner_title);
                 holder.mRightIBtn = (ImageView) convertView.findViewById(R.id.ibtn_spinner_right);
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(offset, 0, 0, 0);
+                holder.mTitleTxt.setLayoutParams(layoutParams);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }

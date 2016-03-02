@@ -214,7 +214,7 @@ public class LoginActivity extends BaseActivity {
             mUserSpinnerView.dismiss();
         } else {
             if (!EmptyUtils.isEmpty(mHistoryUserList)) {
-                mUserSpinnerView = new SpinnerView(this, view.getWidth());
+                mUserSpinnerView = new SpinnerView(this, view.getWidth(), mUserTxt.getLeft());
                 ArrayList<String> users = new ArrayList<>();
                 ArrayList<Integer> icons = new ArrayList<>();
                 for (UserInfo info : mHistoryUserList) {
@@ -251,7 +251,7 @@ public class LoginActivity extends BaseActivity {
             mDeviceSpinnerView.dismiss();
         } else {
             if (!EmptyUtils.isEmpty(mLANDeviceList) || !EmptyUtils.isEmpty(mHistoryDeviceList)) {
-                mDeviceSpinnerView = new SpinnerView(this, view.getWidth());
+                mDeviceSpinnerView = new SpinnerView(this, view.getWidth(), mUserTxt.getLeft());
                 final ArrayList<DeviceInfo> mDeviceList = new ArrayList<>();
                 ArrayList<String> users = new ArrayList<>();
                 ArrayList<Integer> icons = new ArrayList<>();

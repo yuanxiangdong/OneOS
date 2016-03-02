@@ -34,9 +34,7 @@ public class TransmissionFragment extends BaseTransferFragment {
     private static final String TAG = TransmissionFragment.class.getSimpleName();
     private static final int MSG_REFRESH_UI = 1;
 
-    private boolean isFragmentVisible = true;
     private SwipeListView mListView;
-
     private Thread mThread = null;
     private OneSpaceService mTransferService = null;
     private TransmissionAdapter mAdapter;
@@ -79,18 +77,27 @@ public class TransmissionFragment extends BaseTransferFragment {
     @Override
     public void onStart() {
         super.onStart();
+        startUpdateUIThread();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG, "On Resume");
-        isFragmentVisible = true;
-        startUpdateUIThread();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     private void initView(View view) {
-        View mEmptyView = (View) view.findViewById(R.id.layout_empty);
+        View mEmptyView = view.findViewById(R.id.layout_empty);
         mListView = (SwipeListView) view.findViewById(R.id.list_transfer);
         mListView.setEmptyView(mEmptyView);
         mAdapter = new TransmissionAdapter(getActivity(), mListView.getRightViewWidth());
@@ -122,18 +129,6 @@ public class TransmissionFragment extends BaseTransferFragment {
             }
         });
         mListView.setAdapter(mAdapter);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        isFragmentVisible = false;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        isFragmentVisible = false;
     }
 
     private void initTransferService() {
@@ -261,7 +256,7 @@ public class TransmissionFragment extends BaseTransferFragment {
     public class UIThread implements Runnable {
         @Override
         public void run() {
-            while (isFragmentVisible) {
+            while (true) {
                 try {
                     Thread.sleep(1000); // sleep 1000ms
                     Message message = new Message();
@@ -278,7 +273,9 @@ public class TransmissionFragment extends BaseTransferFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_REFRESH_UI:
-                    refreshTransferView();
+                    if (isVisible()) {
+                        refreshTransferView();
+                    }
             }
             super.handleMessage(msg);
         }

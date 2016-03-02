@@ -40,7 +40,7 @@ public class LauncherActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_launcher);
 
-        UserInfoKeeper.logUserInfo(); // TODO.. for test
+//        UserInfoKeeper.logUserInfo(); // TODO.. for test
 
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -75,7 +75,7 @@ public class LauncherActivity extends BaseActivity {
     private void showAlphaAnim() {
         ImageView mLogoView = (ImageView) findViewById(R.id.iv_welcome_logo);
         AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
-        anim.setDuration(800);
+        anim.setDuration(1000);
         mLogoView.startAnimation(anim);
         anim.setAnimationListener(new Animation.AnimationListener() {
             /**

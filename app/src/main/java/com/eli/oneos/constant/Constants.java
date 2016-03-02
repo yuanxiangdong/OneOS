@@ -11,7 +11,7 @@ import com.eli.oneos.R;
 public class Constants {
     public static final int DELAY_TIME_AUTO_REFRESH = 300;
 
-    public static final String DEFAULT_DOWNLOAD_PATH = "/OneSpace";
+    public static final String DEFAULT_DOWNLOAD_PATH = "/OneSpace/Download";
 
     public static final String BACKUP_FILE_ONEOS_ROOT_DIR_NAME = "/From：" + Build.BRAND + "-" + Build.MODEL + "/";
     public static final String BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM = BACKUP_FILE_ONEOS_ROOT_DIR_NAME + "Album/";

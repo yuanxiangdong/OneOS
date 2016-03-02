@@ -119,36 +119,6 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         String session = loginSession.getSession();
         String srcPath = uploadElement.getSrcPath();
         String targetPath = uploadElement.getTargetPath();
-        boolean isUploadToPrivateDir = uploadElement.isUploadToPrivateDir();
-        long userFreeSpace = -1;
-
-        isUploadToPrivateDir = false; // TODO.. for test
-//        if (isUploadToPrivateDir) {
-//            try {
-//                userFreeSpace = getUserServerFreeSpace(session, loginSession.getUserInfo().getUid(), loginSession.getBaseUrl());
-//                if (userFreeSpace < 0) {
-//                    uploadElement.setState(TransferState.FAILED);
-//                    if (userFreeSpace == -1) {
-//                        uploadElement.setException(TransferException.FAILED_REQUEST_SERVER);
-//                    } else {
-//                        uploadElement.setException(TransferException.SERVER_SPACE_INSUFFICIENT);
-//                    }
-//                    return;
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//                uploadElement.setState(TransferState.FAILED);
-//                uploadElement.setException(TransferException.ENCODING_EXCEPTION);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                uploadElement.setState(TransferState.FAILED);
-//                uploadElement.setException(TransferException.FAILED_REQUEST_SERVER);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                uploadElement.setState(TransferState.FAILED);
-//                uploadElement.setException(TransferException.UNKNOWN_EXCEPTION);
-//            }
-//        }
 
         File uploadFile = new File(srcPath);
         if (!uploadFile.exists()) {
@@ -160,13 +130,6 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
         long fileLen = uploadFile.length();
         long uploadPosition = 0;
-        if (isUploadToPrivateDir && (userFreeSpace <= fileLen - uploadPosition)) {
-            Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "Space Insufficient: File Length = " + fileLen + ", Disk Space = " + userFreeSpace);
-            uploadElement.setState(TransferState.FAILED);
-            uploadElement.setException(TransferException.SERVER_SPACE_INSUFFICIENT);
-            return;
-        }
-
         // Modified to new position, to make sure anim_progress is correct
         uploadElement.setLength(uploadPosition);
         uploadElement.setOffset(uploadPosition);
