@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -49,7 +50,8 @@ public class LoginActivity extends BaseActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     private EditText mUserTxt, mPwdTxt, mPortTxt;
-    private Button mLoginBtn, mMoreUserBtn, mMoreIpBtn;
+    private Button mLoginBtn;
+    private ImageButton mMoreUserBtn, mMoreIpBtn;
     private RelativeLayout mUserLayout, mIPLayout;
     private EditText mIPTxt;
 
@@ -178,13 +180,12 @@ public class LoginActivity extends BaseActivity {
 
     private void initView() {
         TitleBackLayout mTitleLayout = (TitleBackLayout) findViewById(R.id.layout_title);
-        mTitleLayout.setOnClickBack(this);
-        mTitleLayout.setBackTitle(R.string.title_back);
+        mTitleLayout.setBackVisible(false);
         mTitleLayout.setTitle(R.string.title_login);
 
         mUserLayout = (RelativeLayout) findViewById(R.id.layout_user);
         mUserTxt = (EditText) findViewById(R.id.editext_user);
-        mMoreUserBtn = (Button) findViewById(R.id.btn_more_user);
+        mMoreUserBtn = (ImageButton) findViewById(R.id.btn_more_user);
         mMoreUserBtn.setOnClickListener(onMoreClickListener);
         mPwdTxt = (EditText) findViewById(R.id.editext_pwd);
         mPortTxt = (EditText) findViewById(R.id.editext_port);
@@ -202,7 +203,7 @@ public class LoginActivity extends BaseActivity {
         });
         mIPLayout = (RelativeLayout) findViewById(R.id.layout_server);
         mIPTxt = (EditText) findViewById(R.id.editext_ip);
-        mMoreIpBtn = (Button) findViewById(R.id.btn_more_ip);
+        mMoreIpBtn = (ImageButton) findViewById(R.id.btn_more_ip);
         mMoreIpBtn.setOnClickListener(onMoreClickListener);
         mLoginBtn = (Button) findViewById(R.id.btn_login);
         mLoginBtn.setOnClickListener(onLoginClickListener);

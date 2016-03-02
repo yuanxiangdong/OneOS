@@ -78,6 +78,16 @@ public class TitleBackLayout extends LinearLayout {
         mBackTxt.setText(resid);
     }
 
+    public void setBackVisible(boolean visible) {
+        if (visible) {
+            mBackIBtn.setVisibility(View.VISIBLE);
+            mBackTxt.setVisibility(View.VISIBLE);
+        } else {
+            mBackIBtn.setVisibility(View.GONE);
+            mBackTxt.setVisibility(View.GONE);
+        }
+    }
+
     public void setRightButton(int resid) {
         mRightIBtn.setImageResource(resid);
     }

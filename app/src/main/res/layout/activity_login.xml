@@ -49,10 +49,10 @@
                     android:singleLine="true"
                     android:textSize="@dimen/text_size_mid" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btn_more_user"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
                     android:background="@drawable/selector_button_more"
@@ -98,10 +98,10 @@
                     android:singleLine="true"
                     android:textSize="@dimen/text_size_mid" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btn_more_ip"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerInParent="true"
                     android:background="@drawable/selector_button_more"
