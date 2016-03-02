@@ -17,5 +17,6 @@ public enum FileManageAction {
     ENCRYPT,
     DECRYPT,
     CLEAN_RECYCLE,
-    SHARE
+    SHARE,
+    CHMOD
 }

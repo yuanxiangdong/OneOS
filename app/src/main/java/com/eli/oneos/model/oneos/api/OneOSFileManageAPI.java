@@ -101,6 +101,17 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         doManageFiles(params);
     }
 
+    public void chmod(OneOSFile file, String group, String other) {
+        this.action = FileManageAction.CHMOD;
+        AjaxParams params = new AjaxParams();
+        params.put("session", session);
+        params.put("cmd", "chmod");
+        params.put("path", file.getPath());
+        params.put("group", group);
+        params.put("other", other);
+        doManageFiles(params);
+    }
+
     public void move(ArrayList<OneOSFile> delList, String toDir) {
         this.action = FileManageAction.MOVE;
         Log.d(TAG, "Move file to: " + toDir);

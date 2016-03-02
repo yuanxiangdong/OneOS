@@ -99,13 +99,13 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             if (ret) {
                 long size = json.getLong("size");
                 if (size == srcSize) {
-                    Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file does exist on the server: " + path);
+                    Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file exist on server: " + path);
                     return true;
                 }
             }
         } catch (Exception e) {
             // e.printStackTrace();
-            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file does not exist on the server: " + path, e);
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file not exist on server: " + path, e);
         }
 
         return false;

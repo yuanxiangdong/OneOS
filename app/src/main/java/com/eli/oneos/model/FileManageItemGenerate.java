@@ -3,6 +3,7 @@ package com.eli.oneos.model;
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.utils.EmptyUtils;
@@ -25,6 +26,7 @@ public class FileManageItemGenerate {
     private static FileManageItem OPT_ATTR = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.attr_file, FileManageAction.ATTR);
     private static FileManageItem OPT_CLEAN = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_delete, R.drawable.btn_opt_delete_pressed, R.string.clean_recycle_file, FileManageAction.CLEAN_RECYCLE);
     private static FileManageItem OPT_SHARE = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.share_file, FileManageAction.SHARE);
+    private static FileManageItem OPT_CHMOD = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.chmod_file, FileManageAction.CHMOD);
 
 
     public static ArrayList<FileManageItem> generate(OneOSFileType fileType, ArrayList<OneOSFile> selectedList) {
@@ -47,12 +49,16 @@ public class FileManageItemGenerate {
             if (count == 1) {
                 mOptItems.add(OPT_RENAME);
                 OneOSFile file = selectedList.get(0);
-                if (!file.isDirectory()) {
+                int uid = LoginManage.getInstance().getLoginSession().getUserInfo().getUid();
+                if (!file.isDirectory() && file.isOwner(uid)) {
                     if (file.isEncrypt()) {
                         mOptItems.add(OPT_DECRYPT);
                     } else {
                         mOptItems.add(OPT_ENCRYPT);
                     }
+                }
+                if (fileType == OneOSFileType.PUBLIC && file.isOwner(uid)) {
+                    mOptItems.add(OPT_CHMOD);
                 }
                 mOptItems.add(OPT_ATTR);
             }

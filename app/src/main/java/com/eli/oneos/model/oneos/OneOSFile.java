@@ -51,6 +51,42 @@ public class OneOSFile implements Serializable {
         }
     }
 
+    public boolean isOwner(int uid) {
+        return this.uid == uid;
+    }
+
+    public boolean isGroupRead() {
+        if (perm == null || perm.length() != 9) {
+            return false;
+        }
+
+        return perm.charAt(3) == 'r';
+    }
+
+    public boolean isGroupWrite() {
+        if (perm == null || perm.length() != 9) {
+            return false;
+        }
+
+        return perm.charAt(4) == 'w';
+    }
+
+    public boolean isOtherRead() {
+        if (perm == null || perm.length() != 9) {
+            return false;
+        }
+
+        return perm.charAt(6) == 'r';
+    }
+
+    public boolean isOtherWrite() {
+        if (perm == null || perm.length() != 9) {
+            return false;
+        }
+
+        return perm.charAt(7) == 'w';
+    }
+
     public String getPath() {
         return path;
     }

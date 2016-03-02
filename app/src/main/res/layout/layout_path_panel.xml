@@ -17,7 +17,8 @@
             android:id="@+id/layout_file_path"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            android:paddingLeft="3dp" />
     </com.eli.oneos.widget.AutoHorizontalScrollView>
 
     <View

@@ -91,7 +91,7 @@ public class BackupFileManager {
                 BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath());
                 if (null == info) {
                     info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(),
-                            true, BackupType.ALBUM, BackupPriority.MAX, System.currentTimeMillis(), 0L);
+                            true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
                     BackupFileKeeper.insertOrReplace(info);
                     Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Add New Backup Album Dir: " + info.getPath());
                     isNewBackupPath = true;
@@ -104,7 +104,7 @@ public class BackupFileManager {
             BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath());
             if (null == info) {
                 info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath(),
-                        true, BackupType.ALBUM, BackupPriority.MAX, System.currentTimeMillis(), 0L);
+                        true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
                 BackupFileKeeper.insertOrReplace(info);
                 Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Add New Backup Album Dir: " + info.getPath());
                 isNewBackupPath = true;

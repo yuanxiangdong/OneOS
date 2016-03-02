@@ -38,6 +38,6 @@
         android:background="@android:color/transparent"
         android:scaleType="centerInside"
         android:src="@drawable/selector_button_nav_title_search"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
 </RelativeLayout>

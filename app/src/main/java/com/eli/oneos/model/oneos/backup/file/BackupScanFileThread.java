@@ -39,13 +39,13 @@ public class BackupScanFileThread extends Thread {
         boolean isFirstBackup = (lastBackupTime <= 0) ? true : false;
         boolean isBackupAlbum = (info.getType() == BackupType.ALBUM);  // 相册备份
         File backupDir = new File(info.getPath());
-        ArrayList<File> files = new ArrayList<>();
+        ArrayList<File> fileList = new ArrayList<>();
         // 遍历备份目录文件
-        listFiles(files, backupDir, isBackupAlbum, lastBackupTime);
+        listFiles(fileList, backupDir, isBackupAlbum, lastBackupTime);
         ArrayList<BackupFileElement> backupElements = new ArrayList<>();
-        if (null != files) {
-            for (File file : files) {
-                BackupFileElement element = new BackupFileElement(info, file, !isFirstBackup);
+        if (null != fileList) {
+            for (File file : fileList) {
+                BackupFileElement element = new BackupFileElement(info, file, isFirstBackup);
                 backupElements.add(element);
                 Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Add Backup Element: " + element.toString());
             }
@@ -114,7 +114,7 @@ public class BackupScanFileThread extends Thread {
     }
 
     private void listFiles(ArrayList<File> list, File dir, boolean isBackupAlbum, long lastBackupTime) {
-        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "######List: " + dir.getAbsolutePath());
+        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "######List Dir: " + dir.getAbsolutePath() + ", LastTime: " + lastBackupTime);
         if (dir.isDirectory()) {
             File[] files = dir.listFiles(new BackupFileFilter(isBackupAlbum, lastBackupTime));
             if (null != files) {

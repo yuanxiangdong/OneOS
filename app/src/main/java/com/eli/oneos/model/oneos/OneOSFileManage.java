@@ -1,9 +1,13 @@
 package com.eli.oneos.model.oneos;
 
+import android.app.Dialog;
 import android.content.res.Resources;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.eli.oneos.MyApplication;
@@ -63,6 +67,8 @@ public class OneOSFileManage {
                 mActivity.showLoading(R.string.copying_file);
             } else if (action == FileManageAction.MOVE) {
                 mActivity.showLoading(R.string.moving_file);
+            }  else if (action == FileManageAction.CHMOD) {
+                mActivity.showLoading(R.string.chmod_ing_file);
             } else if (action == FileManageAction.CLEAN_RECYCLE) {
                 mActivity.showLoading(R.string.cleaning_recycle);
             }
@@ -115,6 +121,8 @@ public class OneOSFileManage {
                 mActivity.showTipView(R.string.copy_file_success, true);
             } else if (action == FileManageAction.MOVE) {
                 mActivity.showTipView(R.string.move_file_success, true);
+            } else if (action == FileManageAction.CHMOD) {
+                mActivity.showTipView(R.string.chmod_file_success, true);
             } else if (action == FileManageAction.CLEAN_RECYCLE) {
                 mActivity.showTipView(R.string.clean_recycle_success, true);
             }
@@ -126,8 +134,14 @@ public class OneOSFileManage {
 
         @Override
         public void onFailure(String url, FileManageAction action, int errorNo, String errorMsg) {
+            if (action == FileManageAction.ENCRYPT || action == FileManageAction.DECRYPT) {
+                mActivity.showTipView(R.string.error_manage_perm_deny, false);
+            } else {
+                mActivity.showTipView(errorMsg, false);
+            }
+
 //            if (action == FileManageAction.DELETE) {
-            mActivity.showTipView(errorMsg, false);
+//            mActivity.showTipView(errorMsg, false);
 //            }
 
             if (null != callback) {
@@ -243,10 +257,11 @@ public class OneOSFileManage {
                     }
                 }
             });
+        } else if (action == FileManageAction.CHMOD) {
+            chmodFile(selectedList.get(0));
         } else if (action == FileManageAction.DOWNLOAD) {
             downloadFiles();
         }
-
     }
 
     public void manage(FileManageAction action, final String path) {
@@ -278,7 +293,6 @@ public class OneOSFileManage {
                         }
                     });
         }
-
     }
 
     private void downloadFiles() {
@@ -312,6 +326,46 @@ public class OneOSFileManage {
         if (null != callback) {
             callback.onComplete(true);
         }
+    }
+
+    private void chmodFile(final OneOSFile file) {
+        Log.d(TAG, "Chmod File: " + file.getName() + ", Permission: " + file.getPerm());
+        LayoutInflater inflater = mActivity.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_chmod_file, null);
+        final Dialog mDialog = new Dialog(mActivity, R.style.DialogTheme);
+        final CheckBox mGroupReadBox = (CheckBox) dialogView.findViewById(R.id.cb_group_read);
+        mGroupReadBox.setChecked(file.isGroupRead());
+        final CheckBox mGroupWriteBox = (CheckBox) dialogView.findViewById(R.id.cb_group_write);
+        mGroupWriteBox.setChecked(file.isGroupWrite());
+        final CheckBox mOtherReadBox = (CheckBox) dialogView.findViewById(R.id.cb_other_read);
+        mOtherReadBox.setChecked(file.isOtherRead());
+        final CheckBox mOtherWriteBox = (CheckBox) dialogView.findViewById(R.id.cb_other_write);
+        mOtherWriteBox.setChecked(file.isOtherWrite());
+
+        Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
+        positiveBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                boolean isGroupRead = mGroupReadBox.isChecked();
+                boolean isGroupWrite = mGroupWriteBox.isChecked();
+                boolean isOtherRead = mOtherReadBox.isChecked();
+                boolean isOtherWrite = mOtherWriteBox.isChecked();
+                String group = (isGroupRead ? "r" : "-") + (isGroupWrite ? "w" : "-");
+                String other = (isOtherRead ? "r" : "-") + (isOtherWrite ? "w" : "-");
+                fileManageAPI.chmod(file, group, other);
+                mDialog.dismiss();
+            }
+        });
+
+        Button negativeBtn = (Button) dialogView.findViewById(R.id.negative);
+        negativeBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mDialog.dismiss();
+            }
+        });
+
+        mDialog.setContentView(dialogView);
+        mDialog.setCancelable(false);
+        mDialog.show();
     }
 
     public interface OnManageCallback {

@@ -11,7 +11,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.phone.api.LocalFileManageTask;
-import com.eli.oneos.model.phone.api.MkDirAPI;
+import com.eli.oneos.model.phone.api.MakeDirAPI;
 import com.eli.oneos.model.phone.api.ShareFileAPI;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.BaseActivity;
@@ -218,7 +218,7 @@ public class LocalFileManage {
                                     AnimUtils.sharkEditText(mActivity, mContentEditText);
                                 } else {
                                     Log.d(TAG, "MkDir: " + path + ", Name: " + name);
-                                    MkDirAPI mkDirAPI = new MkDirAPI();
+                                    MakeDirAPI mkDirAPI = new MakeDirAPI();
                                     boolean ret = mkDirAPI.mkdir(path + File.separator + name);
                                     listener.onComplete(ret, action, null);
 

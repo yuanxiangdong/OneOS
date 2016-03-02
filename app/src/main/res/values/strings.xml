@@ -8,6 +8,7 @@
     <string name="cancel">取消</string>
     <string name="tip">提示</string>
     <string name="paste">粘贴</string>
+    <string name="modify">修改</string>
     <string name="dialog_continue">继续</string>
     <string name="loading">正在加载&#8230;</string>
     <string name="all_loaded">已加载全部</string>
@@ -62,6 +63,11 @@
     <string name="file_attr_read">可读：</string>
     <string name="file_attr_write">可写：</string>
     <string name="file_attr_time">修改时间：</string>
+    <string name="tip_chmod_file">文件权限</string>
+    <string name="chmod_file_group">同组用户：</string>
+    <string name="chmod_file_other">其他用户：</string>
+    <string name="permission_read">可读</string>
+    <string name="permission_write">可写</string>
     <string name="tip_delete_file">确定删除所选文件？</string>
     <string name="deleting_file">正在删除&#8230;</string>
     <string name="delete_file_success">删除成功</string>
@@ -92,6 +98,7 @@
     <string name="decrypt_file_failed">文件解密失败</string>
     <string name="tip_move_file">移动到&#8230;</string>
     <string name="moving_file">正在移动&#8230;</string>
+    <string name="chmod_ing_file">正在修改&#8230;</string>
     <string name="tip_upload_file">上传到&#8230;</string>
     <string name="move_file_success">文件移动成功</string>
     <string name="move_file_failed">文件移动失败</string>
@@ -102,6 +109,7 @@
     <string name="title_clean_recycle_file">清空回收站</string>
     <string name="tip_clean_recycle_file">清空后，回收站所有文件将被永久删除。</string>
     <string name="cleaning_recycle">正在清空&#8230;</string>
+    <string name="chmod_file_success">修改权限成功</string>
     <string name="clean_recycle_success">清空回收站成功</string>
     <string name="clean_recycle_failed">清空回收站失败</string>
     <string name="share_file_success">分享成功</string>
@@ -149,6 +157,7 @@
     <string name="selected_item">已选择%s项</string>
     <string name="empty_file_list">该目录没有文件</string>
     <string name="error_access_dir_perm_deny">没有权限访问此目录</string>
+    <string name="error_manage_perm_deny">没有权限</string>
     <string name="error_get_file_list">获取文件列表失败</string>
     <string name="fmt_time_line">yyyy年MM月</string>
     <string name="error_open_encrypt_file">很抱歉，无法查看加密文件</string>
@@ -234,7 +243,6 @@
     <string name="about_onespace">关于OneSpace</string>
     <string name="title_onespace_forum">OneSpace 论坛</string>
     <string name="title_onespace_website">OneSpace 官网</string>
-    <string name="title_root_external_sd">修改外置SD卡权限</string>
     <string name="space_total">OneSpace总空间</string>
     <string name="space_user">当前用户空间</string>
     <string name="space_local">SD卡空间</string>

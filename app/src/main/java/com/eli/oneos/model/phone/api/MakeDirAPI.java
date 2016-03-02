@@ -7,8 +7,8 @@ import java.io.File;
 /**
  * Created by gaoyun@eli-tech.com on 2016/3/1.
  */
-public class MkDirAPI {
-    private static final String TAG = MkDirAPI.class.getSimpleName();
+public class MakeDirAPI {
+    private static final String TAG = MakeDirAPI.class.getSimpleName();
 
     public boolean mkdir(String path) {
         if (EmptyUtils.isEmpty(path)) {

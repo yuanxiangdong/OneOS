@@ -295,7 +295,7 @@ public class LocalDirFragment extends BaseLocalFragment {
                 }
             }
         });
-        mPathPanel.showNewFolderButton(true);
+        mPathPanel.showNewFolderButton(false);
 
         mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.listview_filelist);
         View mEmptyView = view.findViewById(R.id.layout_empty_list);
