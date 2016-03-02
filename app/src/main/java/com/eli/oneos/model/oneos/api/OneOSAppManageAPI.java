@@ -14,16 +14,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * OneSpace OS Manage Plugins API
+ * OneSpace OS Manage App API
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/02/23.
  */
-public class OneOSPluginManageAPI extends OneOSBaseAPI {
-    private static final String TAG = OneOSPluginManageAPI.class.getSimpleName();
+public class OneOSAppManageAPI extends OneOSBaseAPI {
+    private static final String TAG = OneOSAppManageAPI.class.getSimpleName();
 
     private OnManagePluginListener listener;
+    private String cmd = null;
 
-    public OneOSPluginManageAPI(LoginSession loginSession) {
+    public OneOSAppManageAPI(LoginSession loginSession) {
         super(loginSession);
     }
 
@@ -31,24 +32,43 @@ public class OneOSPluginManageAPI extends OneOSBaseAPI {
         this.listener = listener;
     }
 
+    public void state(String pack) {
+        this.cmd = "stat";
+        AjaxParams params = new AjaxParams();
+        params.put("pack", pack);
+        params.put("cmd", cmd);
+        doManage(pack, params);
+    }
+
     public void on(String pack) {
-        doManage(pack, "on");
-    }
-
-    public void off(String pack) {
-        doManage(pack, "off");
-    }
-
-    public void delete(String pack) {
-        doManage(pack, "unActive");
-    }
-
-    private void doManage(final String pack, final String cmd) {
-        url = genOneOSAPIUrl(OneOSAPIs.APP_MANAGE);
+        this.cmd = "on";
         AjaxParams params = new AjaxParams();
         params.put("pack", pack);
         params.put("cmd", cmd);
         params.put("session", session);
+        doManage(pack, params);
+    }
+
+    public void off(String pack) {
+        this.cmd = "off";
+        AjaxParams params = new AjaxParams();
+        params.put("pack", pack);
+        params.put("cmd", cmd);
+        params.put("session", session);
+        doManage(pack, params);
+    }
+
+    public void delete(String pack) {
+        this.cmd = "delete";
+        AjaxParams params = new AjaxParams();
+        params.put("pack", pack);
+        params.put("cmd", cmd);
+        params.put("session", session);
+        doManage(pack, params);
+    }
+
+    private void doManage(final String pack, AjaxParams params) {
+        url = genOneOSAPIUrl(OneOSAPIs.APP_MANAGE);
         logHttp(TAG, url, params);
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 
@@ -57,7 +77,7 @@ public class OneOSPluginManageAPI extends OneOSBaseAPI {
                 super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: ErrorNo=" + errorNo + " ; ErrorMsg=" + strMsg);
                 if (listener != null) {
-                    listener.onFailure(url, errorNo, strMsg);
+                    listener.onFailure(url, pack, errorNo, strMsg);
                 }
             }
 
@@ -70,15 +90,20 @@ public class OneOSPluginManageAPI extends OneOSBaseAPI {
                         JSONObject json = new JSONObject(result);
                         boolean ret = json.getBoolean("result");
                         if (ret) {
-                            listener.onSuccess(url, pack, cmd, true);
+                            if (cmd.equals("stat")) {
+                                String state = json.getString("stat");
+                                listener.onSuccess(url, pack, cmd, state.equalsIgnoreCase("on"));
+                            } else {
+                                listener.onSuccess(url, pack, cmd, true);
+                            }
                         } else {
                             int errorNo = json.getInt("errno");
                             String msg = json.has("msg") ? json.getString("msg") : null;
-                            listener.onFailure(url, errorNo, msg);
+                            listener.onFailure(url, pack, errorNo, msg);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        listener.onFailure(url, HttpErrorNo.ERR_JSON_EXCEPTION, context.getResources().getString(R.string.error_json_exception));
+                        listener.onFailure(url, pack, HttpErrorNo.ERR_JSON_EXCEPTION, context.getResources().getString(R.string.error_json_exception));
                     }
                 }
             }
@@ -94,6 +119,6 @@ public class OneOSPluginManageAPI extends OneOSBaseAPI {
 
         void onSuccess(String url, String pack, String cmd, boolean ret);
 
-        void onFailure(String url, int errorNo, String errorMsg);
+        void onFailure(String url, String pack, int errorNo, String errorMsg);
     }
 }

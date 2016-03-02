@@ -1,5 +1,6 @@
 package com.eli.oneos.ui.nav.tansfer;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +43,11 @@ public class RecordsFragment extends BaseTransferFragment {
     private ArrayList<TransferHistory> mHistoryList = new ArrayList<>();
     private LoginManage loginManage;
 
+    @SuppressLint("ValidFragment")
+    public RecordsFragment() {
+    }
+
+    @SuppressLint("ValidFragment")
     public RecordsFragment(boolean isDownload) {
         super(isDownload);
     }

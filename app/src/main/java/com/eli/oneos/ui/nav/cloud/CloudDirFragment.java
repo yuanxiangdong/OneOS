@@ -396,6 +396,9 @@ public class CloudDirFragment extends BaseCloudFragment {
     }
 
     private String getParentPath(String path) {
+        if (path.endsWith(File.separator)) {
+            path = path.substring(0, path.length() - 1);
+        }
         int startIndex = path.lastIndexOf(File.separator) + 1;
         return path.substring(0, startIndex);
     }

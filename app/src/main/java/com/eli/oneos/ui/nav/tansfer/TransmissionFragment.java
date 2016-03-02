@@ -1,5 +1,6 @@
 package com.eli.oneos.ui.nav.tansfer;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -40,6 +41,11 @@ public class TransmissionFragment extends BaseTransferFragment {
     private OneSpaceService mTransferService = null;
     private TransmissionAdapter mAdapter;
 
+    @SuppressLint("ValidFragment")
+    public TransmissionFragment() {
+    }
+
+    @SuppressLint("ValidFragment")
     public TransmissionFragment(boolean isDownload) {
         super(isDownload);
     }

@@ -289,8 +289,16 @@
     <string name="can_not_uninstall">无法卸载</string>
     <string name="app_not_found_exception">未查询到该应用信息</string>
     <string name="confirm_uninstall_plugin">确认卸载&#160;&#160;</string>
+    <string name="uninstalling_plugin">正在卸载&#8230;</string>
+    <string name="opening_plugin">正在打开&#8230;</string>
+    <string name="closing_plugin">正在关闭&#8230;</string>
     <string name="confirm_open_plugin">确认打开&#160;&#160;</string>
     <string name="confirm_close_plugin">确认关闭&#160;&#160;</string>
+    <string name="app_status">状态：&#160;</string>
+    <string name="app_state_getting">正在获取&#8230;</string>
+    <string name="app_state_on">运行中</string>
+    <string name="app_state_off">未运行</string>
+    <string name="app_state_unknown">未知</string>
 
     <!-- Aria Download Activity -->
     <string name="enter_url_hint">HTTP、FTP 或 Magnet</string>

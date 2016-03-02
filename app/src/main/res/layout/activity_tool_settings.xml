@@ -39,8 +39,10 @@
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -49,7 +51,6 @@
                         android:drawableLeft="@drawable/ic_settings_user"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
-                        android:padding="10dp"
                         android:text="@string/current_user"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
@@ -61,8 +62,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginRight="5dp"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="10dp">
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/txt_user"
@@ -99,12 +99,13 @@
                     android:id="@+id/clean"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
                     android:drawableLeft="@drawable/ic_settings_clean"
                     android:drawablePadding="10dp"
                     android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:text="@string/clean_record"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -120,12 +121,13 @@
                     android:id="@+id/savepath"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
                     android:drawableLeft="@drawable/ic_settings_path"
                     android:drawablePadding="10dp"
                     android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:text="@string/set_default_path"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -151,9 +153,11 @@
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:addStatesFromChildren="true"
                     android:background="@drawable/selector_list_trans_to_gray"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:padding="7dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -163,7 +167,6 @@
                         android:drawableLeft="@drawable/ic_settings_network"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
-                        android:padding="10dp"
                         android:text="@string/only_wifi_preview_pic"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
@@ -188,9 +191,11 @@
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:addStatesFromChildren="true"
                     android:background="@drawable/selector_list_trans_to_gray"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:padding="7dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -200,7 +205,6 @@
                         android:drawableLeft="@drawable/ic_settings_tip"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
-                        android:padding="10dp"
                         android:text="@string/not_wifi_download_tips"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
@@ -238,12 +242,13 @@
                     android:id="@+id/server_space"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
                     android:drawableLeft="@drawable/ic_settings_server"
                     android:drawablePadding="10dp"
                     android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:text="@string/space_total"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -258,12 +263,13 @@
                     android:id="@+id/user_space"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
                     android:drawableLeft="@drawable/ic_settings_person"
                     android:drawablePadding="10dp"
                     android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:text="@string/space_user"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -278,12 +284,13 @@
                     android:id="@+id/local_space"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
                     android:drawableLeft="@drawable/ic_settings_local"
                     android:drawablePadding="10dp"
                     android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:text="@string/space_local"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -312,12 +319,13 @@
                     android:id="@+id/forum"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
                     android:drawableLeft="@drawable/ic_settings_forum"
                     android:drawablePadding="10dp"
                     android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:text="@string/title_onespace_forum"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -333,12 +341,13 @@
                     android:id="@+id/about"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
                     android:drawableLeft="@drawable/ic_settings_about"
                     android:drawablePadding="10dp"
                     android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:text="@string/about_onespace"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />

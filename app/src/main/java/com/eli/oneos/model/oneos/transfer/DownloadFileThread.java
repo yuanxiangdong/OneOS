@@ -15,7 +15,6 @@ public class DownloadFileThread extends Thread {
     private static final String TAG = DownloadFileThread.class.getSimpleName();
     private static final boolean IS_LOG = Logged.DOWNLOAD;
 
-    private boolean isInterrupt = false;
     private DownloadElement mElement;
     private LoginSession loginSession = null;
     private OnDownloadResultListener mListener = null;
@@ -61,7 +60,7 @@ public class DownloadFileThread extends Thread {
 
                 @Override
                 public void onComplete(String url, DownloadElement element) {
-                    Logger.p(LogLevel.INFO, IS_LOG, TAG, "Complete Download file: " + element.getSrcPath() + ", state: " + element.getState());
+                    Logger.p(LogLevel.INFO, IS_LOG, TAG, "Download file complete: " + element.getSrcPath() + ", state: " + element.getState());
                     mListener.onResult(element);
                 }
             });
@@ -69,10 +68,12 @@ public class DownloadFileThread extends Thread {
         downloadFileAPI.download();
     }
 
-
     public void stopDownload() {
-        isInterrupt = true;
+        if (null != downloadFileAPI) {
+            downloadFileAPI.stopDownload();
+        }
         mElement.setState(TransferState.PAUSE);
+        interrupt();
         Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Stop download");
     }
 

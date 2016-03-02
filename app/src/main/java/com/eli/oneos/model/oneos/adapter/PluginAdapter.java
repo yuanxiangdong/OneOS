@@ -22,14 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PluginAdapter extends BaseAdapter {
+    private Context context;
     private int rightWidth;
     private LayoutInflater mInflater;
     private List<PluginInfo> mPluginList = new ArrayList<>();
     private OnPluginClickListener listener;
 
     public PluginAdapter(Context context, int rightWidth, List<PluginInfo> mPluginList) {
-        this.rightWidth = rightWidth;
         this.mInflater = LayoutInflater.from(context);
+        this.context = context;
+        this.rightWidth = rightWidth;
         this.mPluginList = mPluginList;
     }
 
@@ -88,7 +90,7 @@ public class PluginAdapter extends BaseAdapter {
         holder.mRightLayout.setLayoutParams(rightLayout);
 
         final PluginInfo info = mPluginList.get(position);
-        holder.mStateBtn.setChecked(info.isOpened());
+        holder.mStateBtn.setChecked(info.isOn());
         holder.mIconImage.setImageResource(getResByName(info.getPack()));
         holder.mNameTxt.setText(info.getName());
         String version = info.getVersion().toLowerCase();
@@ -96,7 +98,18 @@ public class PluginAdapter extends BaseAdapter {
             version = version.substring(1, version.length()).trim();
         }
         holder.mVersionTxt.setText(" ( V " + version + " )");
-        holder.mStatTxt.setText("状态: " + (info.isOpened() ? "运行中" : "未运行"));
+        PluginInfo.State state = info.getStat();
+        int status;
+        if (state == PluginInfo.State.ON) {
+            status = R.string.app_state_on;
+        } else if (state == PluginInfo.State.OFF) {
+            status = R.string.app_state_off;
+        } else if (state == PluginInfo.State.UNKNOWN) {
+            status = R.string.app_state_unknown;
+        } else {
+            status = R.string.app_state_getting;
+        }
+        holder.mStatTxt.setText(context.getResources().getString(R.string.app_status) + context.getResources().getString(status));
 
         if (info.isCanDel()) {
             holder.mTipsTxt.setVisibility(View.GONE);

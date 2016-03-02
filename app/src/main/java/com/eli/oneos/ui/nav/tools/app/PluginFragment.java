@@ -15,8 +15,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.PluginInfo;
 import com.eli.oneos.model.oneos.adapter.PluginAdapter;
-import com.eli.oneos.model.oneos.api.OneOSListPluginAPI;
-import com.eli.oneos.model.oneos.api.OneOSPluginManageAPI;
+import com.eli.oneos.model.oneos.api.OneOSListAppAPI;
+import com.eli.oneos.model.oneos.api.OneOSAppManageAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.ui.BaseActivity;
@@ -40,15 +40,10 @@ public class PluginFragment extends Fragment {
     private LoginSession loginSession;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = (BaseActivity) getActivity();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tool_app, container, false);
 
+        activity = (BaseActivity) getActivity();
         loginSession = LoginManage.getInstance().getLoginSession();
 
         initViews(view);
@@ -110,7 +105,7 @@ public class PluginFragment extends Fragment {
                     case R.id.btn_state:
                         SwitchButton mBtn = (SwitchButton) view;
                         // 屏蔽非主动点击事件
-                        if (info.isOpened() != mBtn.isChecked()) {
+                        if (info.isOn() != mBtn.isChecked()) {
                             if (!LoginManage.getInstance().getLoginSession().isAdmin()) {
                                 ToastHelper.showToast(R.string.please_login_onespace_with_admin);
                                 mAdapter.notifyDataSetChanged();
@@ -129,7 +124,7 @@ public class PluginFragment extends Fragment {
         if (isUninstall) {
             title = getResources().getString(R.string.confirm_uninstall_plugin);
         } else {
-            if (info.isOpened()) {
+            if (info.isOn()) {
                 title = getResources().getString(R.string.confirm_close_plugin);
             } else {
                 title = getResources().getString(R.string.confirm_open_plugin);
@@ -154,14 +149,48 @@ public class PluginFragment extends Fragment {
                 });
     }
 
+    private void getPluginsStatusFromServer() {
+        for (PluginInfo info : mPlugList) {
+            OneOSAppManageAPI manageAPI = new OneOSAppManageAPI(loginSession);
+            manageAPI.setOnManagePluginListener(new OneOSAppManageAPI.OnManagePluginListener() {
+                @Override
+                public void onStart(String url) {
+                }
+
+                @Override
+                public void onSuccess(String url, String pack, String cmd, boolean ret) {
+                    for (PluginInfo plug : mPlugList) {
+                        if (plug.getPack().equals(pack)) {
+                            plug.setStat(ret ? PluginInfo.State.ON : PluginInfo.State.OFF);
+                            break;
+                        }
+                    }
+                    mAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onFailure(String url, String pack, int errorNo, String errorMsg) {
+                    for (PluginInfo plug : mPlugList) {
+                        if (plug.getPack().equals(pack)) {
+                            plug.setStat(PluginInfo.State.UNKNOWN);
+                            break;
+                        }
+                    }
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+            manageAPI.state(info.getPack());
+        }
+    }
+
     private void getPluginsFromServer() {
         if (!LoginManage.getInstance().isLogin()) {
             Log.e(TAG, "Do not Login OneSpace");
             return;
         }
 
-        OneOSListPluginAPI listAppAPI = new OneOSListPluginAPI(loginSession);
-        listAppAPI.setOnListPluginListener(new OneOSListPluginAPI.OnListPluginListener() {
+        OneOSListAppAPI listAppAPI = new OneOSListAppAPI(loginSession);
+        listAppAPI.setOnListPluginListener(new OneOSListAppAPI.OnListPluginListener() {
             @Override
             public void onStart(String url) {
                 activity.showLoading(R.string.getting_app_list);
@@ -176,6 +205,7 @@ public class PluginFragment extends Fragment {
                 mListView.hiddenRight();
                 mAdapter.notifyDataSetChanged();
                 activity.dismissLoading();
+                getPluginsStatusFromServer();
             }
 
             @Override
@@ -186,11 +216,14 @@ public class PluginFragment extends Fragment {
         listAppAPI.list();
     }
 
+    private int loading = 0;
+
     private void doOperatePluginToServer(PluginInfo info, boolean isUninstall) {
-        OneOSPluginManageAPI manageAPI = new OneOSPluginManageAPI(loginSession);
-        manageAPI.setOnManagePluginListener(new OneOSPluginManageAPI.OnManagePluginListener() {
+        OneOSAppManageAPI manageAPI = new OneOSAppManageAPI(loginSession);
+        manageAPI.setOnManagePluginListener(new OneOSAppManageAPI.OnManagePluginListener() {
             @Override
             public void onStart(String url) {
+                activity.showLoading(loading);
             }
 
             @Override
@@ -199,15 +232,18 @@ public class PluginFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(String url, int errorNo, String errorMsg) {
+            public void onFailure(String url, String pack, int errorNo, String errorMsg) {
                 refreshListDelayed();
             }
         });
         if (isUninstall) {
+            loading = R.string.uninstalling_plugin;
             manageAPI.delete(info.getPack());
-        } else if (info.isOpened()) {
+        } else if (info.isOn()) {
+            loading = R.string.closing_plugin;
             manageAPI.off(info.getPack());
         } else {
+            loading = R.string.opening_plugin;
             manageAPI.on(info.getPack());
         }
     }
@@ -218,6 +254,7 @@ public class PluginFragment extends Fragment {
 
             @Override
             public void run() {
+                activity.dismissLoading();
                 getPluginsFromServer();
             }
         }, 2000);

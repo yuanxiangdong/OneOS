@@ -25,6 +25,7 @@ import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.InputMethodUtils;
 import com.eli.oneos.utils.ToastHelper;
+import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.ServerFileTreeView;
 import com.eli.oneos.widget.undobar.UndoBar;
 
@@ -67,7 +68,7 @@ public class OneOSFileManage {
                 mActivity.showLoading(R.string.copying_file);
             } else if (action == FileManageAction.MOVE) {
                 mActivity.showLoading(R.string.moving_file);
-            }  else if (action == FileManageAction.CHMOD) {
+            } else if (action == FileManageAction.CHMOD) {
                 mActivity.showLoading(R.string.chmod_ing_file);
             } else if (action == FileManageAction.CLEAN_RECYCLE) {
                 mActivity.showLoading(R.string.cleaning_recycle);
@@ -260,7 +261,18 @@ public class OneOSFileManage {
         } else if (action == FileManageAction.CHMOD) {
             chmodFile(selectedList.get(0));
         } else if (action == FileManageAction.DOWNLOAD) {
-            downloadFiles();
+            if (!Utils.isWifiAvailable(mActivity) && loginSession.getUserSettings().getIsTipTransferNotWifi()) {
+                DialogUtils.showConfirmDialog(mActivity, R.string.tip, R.string.confirm_download_not_wifi, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                    @Override
+                    public void onClick(boolean isPositiveBtn) {
+                        if (isPositiveBtn) {
+                            downloadFiles();
+                        }
+                    }
+                });
+            } else {
+                downloadFiles();
+            }
         }
     }
 

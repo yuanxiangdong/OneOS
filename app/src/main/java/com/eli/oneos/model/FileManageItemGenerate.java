@@ -23,10 +23,10 @@ public class FileManageItemGenerate {
     private static FileManageItem OPT_UPLOAD = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_upload, R.drawable.btn_opt_upload_pressed, R.string.upload_file, FileManageAction.UPLOAD);
     private static FileManageItem OPT_ENCRYPT = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_encrypt, R.drawable.btn_opt_encrypt_pressed, R.string.encrypt_file, FileManageAction.ENCRYPT);
     private static FileManageItem OPT_DECRYPT = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_decrypt, R.drawable.btn_opt_decrypt_pressed, R.string.decrypt_file, FileManageAction.DECRYPT);
-    private static FileManageItem OPT_ATTR = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.attr_file, FileManageAction.ATTR);
+    private static FileManageItem OPT_ATTR = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_attr, R.drawable.btn_opt_attr_pressed, R.string.attr_file, FileManageAction.ATTR);
     private static FileManageItem OPT_CLEAN = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_delete, R.drawable.btn_opt_delete_pressed, R.string.clean_recycle_file, FileManageAction.CLEAN_RECYCLE);
     private static FileManageItem OPT_SHARE = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.share_file, FileManageAction.SHARE);
-    private static FileManageItem OPT_CHMOD = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.chmod_file, FileManageAction.CHMOD);
+    private static FileManageItem OPT_CHMOD = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_chmod, R.drawable.btn_opt_chmod_pressed, R.string.chmod_file, FileManageAction.CHMOD);
 
 
     public static ArrayList<FileManageItem> generate(OneOSFileType fileType, ArrayList<OneOSFile> selectedList) {

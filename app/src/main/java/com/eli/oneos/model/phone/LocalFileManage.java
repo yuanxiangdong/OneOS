@@ -10,6 +10,7 @@ import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.model.phone.api.LocalFileManageTask;
 import com.eli.oneos.model.phone.api.MakeDirAPI;
 import com.eli.oneos.model.phone.api.ShareFileAPI;
@@ -22,6 +23,7 @@ import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.InputMethodUtils;
 import com.eli.oneos.utils.ToastHelper;
+import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.LocalFileTreeView;
 import com.eli.oneos.widget.ServerFileTreeView;
 import com.eli.oneos.widget.undobar.UndoBar;
@@ -180,14 +182,12 @@ public class LocalFileManage {
             if (!loginManage.isLogin()) {
                 mActivity.showTipView(R.string.please_login_onespace, false);
             } else {
-                ServerFileTreeView fileTreeView = new ServerFileTreeView(mActivity, loginManage.getLoginSession(), R.string.tip_upload_file, R.string.upload_file);
-                fileTreeView.showPopupCenter(mRootView);
-                fileTreeView.setOnPasteListener(new ServerFileTreeView.OnPasteFileListener() {
-                    @Override
-                    public void onPaste(String tarPath) {
-                        uploadFiles(tarPath);
-                    }
-                });
+                LoginSession loginSession = loginManage.getLoginSession();
+                if (!Utils.isWifiAvailable(mActivity) && loginSession.getUserSettings().getIsTipTransferNotWifi()) {
+                    uploadFiles(loginSession);
+                } else {
+                    uploadFiles(loginSession);
+                }
             }
         } else if (action == FileManageAction.ATTR) {
             listener.onComplete(true, action, null);
@@ -233,36 +233,44 @@ public class LocalFileManage {
     }
 
 
-    private void uploadFiles(String toPath) {
-        String names = "";
-        int count = fileList.size() >= 4 ? 4 : fileList.size();
-        for (int i = 0; i < count; i++) {
-            names += fileList.get(i).getName() + " ";
-        }
-        new UndoBar.Builder(mActivity).setMessage(mActivity.getResources().getString(R.string.tip_start_upload) + names)
-                .setListener(new UndoBar.StatusBarListener() {
+    private void uploadFiles(LoginSession loginSession) {
+        ServerFileTreeView fileTreeView = new ServerFileTreeView(mActivity, loginSession, R.string.tip_upload_file, R.string.upload_file);
+        fileTreeView.showPopupCenter(mRootView);
+        fileTreeView.setOnPasteListener(new ServerFileTreeView.OnPasteFileListener() {
+            @Override
+            public void onPaste(String toPath) {
 
-                    @Override
-                    public void onUndo(Parcelable token) {
-                    }
+                String names = "";
+                int count = fileList.size() >= 4 ? 4 : fileList.size();
+                for (int i = 0; i < count; i++) {
+                    names += fileList.get(i).getName() + " ";
+                }
+                new UndoBar.Builder(mActivity).setMessage(mActivity.getResources().getString(R.string.tip_start_upload) + names)
+                        .setListener(new UndoBar.StatusBarListener() {
 
-                    @Override
-                    public void onClick() {
-                        mActivity.controlActivity(MainActivity.ACTION_SHOW_TRANSFER_UPLOAD);
-                    }
+                            @Override
+                            public void onUndo(Parcelable token) {
+                            }
 
-                    @Override
-                    public void onHide() {
-                    }
-                }).show();
-        OneSpaceService service = MyApplication.getTransferService();
-        for (LocalFile file : fileList) {
-            service.addUploadTask(file.getFile(), toPath);
-        }
+                            @Override
+                            public void onClick() {
+                                mActivity.controlActivity(MainActivity.ACTION_SHOW_TRANSFER_UPLOAD);
+                            }
 
-        if (null != callback) {
-            callback.onComplete(true);
-        }
+                            @Override
+                            public void onHide() {
+                            }
+                        }).show();
+                OneSpaceService service = MyApplication.getTransferService();
+                for (LocalFile file : fileList) {
+                    service.addUploadTask(file.getFile(), toPath);
+                }
+
+                if (null != callback) {
+                    callback.onComplete(true);
+                }
+            }
+        });
     }
 
     public interface OnManageCallback {

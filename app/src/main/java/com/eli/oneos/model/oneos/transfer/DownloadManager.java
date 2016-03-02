@@ -44,7 +44,7 @@ public class DownloadManager {
                     }
                     downloadList.remove(mElement);
                 } else {
-                    Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, LOG_TAG, "Download pause or failure");
+                    Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, LOG_TAG, "Download Exception: " + state);
                 }
             }
 

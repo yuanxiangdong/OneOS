@@ -22,12 +22,12 @@ import java.util.ArrayList;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/02/23.
  */
-public class OneOSListPluginAPI extends OneOSBaseAPI {
-    private static final String TAG = OneOSListPluginAPI.class.getSimpleName();
+public class OneOSListAppAPI extends OneOSBaseAPI {
+    private static final String TAG = OneOSListAppAPI.class.getSimpleName();
 
     private OnListPluginListener listener;
 
-    public OneOSListPluginAPI(LoginSession loginSession) {
+    public OneOSListAppAPI(LoginSession loginSession) {
         super(loginSession);
     }
 

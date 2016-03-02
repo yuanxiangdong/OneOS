@@ -1,7 +1,6 @@
 package com.eli.oneos.ui.nav.tansfer;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -115,19 +114,30 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
     @Override
     public void onResume() {
         super.onResume();
-        mDownloadBtn.setChecked(isDownload);
-        mUploadBtn.setChecked(!isDownload);
-        mTransferBtn.setChecked(isTransfer);
-        mCompleteBtn.setChecked(!isTransfer);
+        if (isDownload) {
+            mUploadOrDownloadGroup.check(mDownloadBtn.getId());
+        } else {
+            mUploadOrDownloadGroup.check(mUploadBtn.getId());
+        }
+        if (isTransfer) {
+            mTransOrCompleteGroup.check(mTransferBtn.getId());
+        } else {
+            mTransOrCompleteGroup.check(mCompleteBtn.getId());
+        }
+
+        Log.e(TAG, ">>>>>>> Set RadioGroup");
     }
 
     public void setTransferUI(boolean isDownload, boolean isTransfer) {
         this.isDownload = isDownload;
         this.isTransfer = isTransfer;
+        Log.e(TAG, ">>>>>>> Update Transfer UI");
     }
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
+        Log.e(TAG, ">>>>>>> RadioGroup CheckedChanged");
+
         if (group.getId() == R.id.segmented_radiogroup) {
             if (checkedId == R.id.segmented_download) {
                 isDownload = true;
@@ -169,6 +179,7 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         if (mCurFragment != null) {
             mCurFragment.onPause();
+            transaction.hide(mCurFragment);
         }
 
         if (!mFragment.isAdded()) {
@@ -176,16 +187,8 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
         } else {
             mFragment.onResume();
         }
-
-        for (Fragment fragment : mFragmentList) {
-            if (mFragment == fragment) {
-                transaction.show(fragment);
-                mCurFragment = mFragment;
-            } else {
-                transaction.hide(fragment);
-            }
-        }
-
+        mCurFragment = mFragment;
+        transaction.show(mCurFragment);
         transaction.commit();
     }
 

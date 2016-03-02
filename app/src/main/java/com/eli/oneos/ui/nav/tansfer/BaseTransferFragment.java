@@ -10,6 +10,9 @@ public abstract class BaseTransferFragment extends Fragment {
 
     protected boolean isDownload = true;
 
+    public BaseTransferFragment() {
+    }
+
     public BaseTransferFragment(boolean isDownload) {
         this.isDownload = isDownload;
     }

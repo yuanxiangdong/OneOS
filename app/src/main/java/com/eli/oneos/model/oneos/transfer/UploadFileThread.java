@@ -68,7 +68,9 @@ public class UploadFileThread extends Thread {
     }
 
     public void stopUpload() {
-        uploadFileAPI.stopUpload();
+        if (null != uploadFileAPI) {
+            uploadFileAPI.stopUpload();
+        }
         mElement.setState(TransferState.PAUSE);
         interrupt();
         Logger.p(LogLevel.INFO, Logged.UPLOAD, TAG, "Stop Upload file");
