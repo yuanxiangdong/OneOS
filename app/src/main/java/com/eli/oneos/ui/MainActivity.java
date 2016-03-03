@@ -27,6 +27,7 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String ACTION_SHOW_TRANSFER_DOWNLOAD = "action_show_transfer_download";
     public static final String ACTION_SHOW_TRANSFER_UPLOAD = "action_show_transfer_upload";
+    public static final String ACTION_SHOW_LOCAL_NAV = "action_show_local_nav";
 
     private List<BaseNavFragment> mFragmentList = new ArrayList<>();
     private BaseNavFragment mCurNavFragment;
@@ -179,6 +180,10 @@ public class MainActivity extends BaseActivity {
         } else if (action.equals(ACTION_SHOW_TRANSFER_UPLOAD)) {
             mTransferFragment.setTransferUI(false, true);
             RadioButton radioButton = (RadioButton) findViewById(R.id.radio_transfer);
+            radioButton.setChecked(true);
+            return true;
+        } else if (action.equals(ACTION_SHOW_LOCAL_NAV)) {
+            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_local);
             radioButton.setChecked(true);
             return true;
         }

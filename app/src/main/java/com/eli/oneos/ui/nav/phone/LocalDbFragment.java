@@ -18,8 +18,11 @@ import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
+import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
+import com.eli.oneos.model.FileViewerType;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileManage;
 import com.eli.oneos.model.phone.LocalFileType;
@@ -352,6 +355,10 @@ public class LocalDbFragment extends BaseLocalFragment {
     }
 
     private void notifyRefreshComplete(boolean isItemChanged) {
+        if (LoginManage.getInstance().isLogin()) {
+            UserSettings mUserSettings = LoginManage.getInstance().getLoginSession().getUserSettings();
+            isListShown = FileViewerType.isList(mUserSettings.getFileViewerType());
+        }
 //        if (mOrderType == FileOrderType.NAME) {
 //            Collections.sort(mFileList, new FileNameComparator());
 //        } else {

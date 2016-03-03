@@ -20,6 +20,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
+import com.eli.oneos.model.FileViewerType;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileManage;
 import com.eli.oneos.model.oneos.OneOSFileType;
@@ -343,6 +344,7 @@ public class CloudDbFragment extends BaseCloudFragment {
     }
 
     private void notifyRefreshComplete(boolean isItemChanged) {
+        isListShown = FileViewerType.isList(mUserSettings.getFileViewerType());
 //        if (mOrderType == FileOrderType.NAME) {
 //            Collections.sort(mFileList, new OneOSFileNameComparator());
 //        } else {

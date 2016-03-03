@@ -331,7 +331,7 @@ public class CloudDirFragment extends BaseCloudFragment {
         int order = FileOrderType.isName(mOrderType) ? R.string.file_order_time : R.string.file_order_name;
         int viewer = isListShown ? R.string.file_viewer_grid : R.string.file_viewer_list;
         int[] items = new int[]{order, viewer};
-        mOrderPopView = new MenuPopupView(getActivity(), Utils.dipToPx(130));
+        mOrderPopView = new MenuPopupView(mMainActivity, Utils.dipToPx(130));
         mOrderPopView.setMenuItems(items, null);
         mOrderPopView.setOnMenuClickListener(new MenuPopupView.OnMenuClickListener() {
             @Override
@@ -355,13 +355,13 @@ public class CloudDirFragment extends BaseCloudFragment {
     }
 
     private void initAddMenu(final View view) {
-        mAddPopView = new MenuPopupView(getActivity(), Utils.dipToPx(110));
+        mAddPopView = new MenuPopupView(mMainActivity, Utils.dipToPx(110));
         mAddPopView.setMenuItems(ACTION_TITLES, null);
         mAddPopView.setOnMenuClickListener(new MenuPopupView.OnMenuClickListener() {
             @Override
             public void onMenuClick(int index, View view) {
                 if (index == 0) {
-
+                    mMainActivity.controlActivity(MainActivity.ACTION_SHOW_LOCAL_NAV);
                 } else {
                     isSelectionLastPosition = true;
                     OneOSFileManage fileManage = new OneOSFileManage(mMainActivity, mLoginSession, mPathPanel, new OneOSFileManage.OnManageCallback() {

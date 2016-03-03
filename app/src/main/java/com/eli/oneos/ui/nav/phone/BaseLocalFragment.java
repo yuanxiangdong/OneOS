@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.view.animation.Animation;
 import android.widget.LinearLayout;
 
-import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileType;
