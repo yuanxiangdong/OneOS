@@ -70,10 +70,6 @@ public class MainActivity extends BaseActivity {
         initSystemBarStyle();
 
         initViews();
-        String s = null;
-        if (s.equals("s")) {
-
-        }
     }
 
     @Override

@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -20,8 +19,10 @@ import android.widget.RadioGroup;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.db.UserSettingsKeeper;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
+import com.eli.oneos.model.FileViewerType;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileManage;
 import com.eli.oneos.model.oneos.OneOSFileType;
@@ -64,7 +65,7 @@ public class CloudDirFragment extends BaseCloudFragment {
     private PullToRefreshGridView mPullRefreshGridView;
     private OneOSFileListAdapter mListAdapter;
     private OneOSFileGridAdapter mGridAdapter;
-    private MenuPopupView mAddPopView;
+    private MenuPopupView mAddPopView, mOrderPopView;
 
     private AdapterView.OnItemClickListener mFileItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -166,30 +167,6 @@ public class CloudDirFragment extends BaseCloudFragment {
         public void onDismiss() {
         }
     };
-    private int mFirstVisibleItem = 0;
-    private AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            switch (scrollState) {
-                case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                    // ToastHelper.showToast("停止...");
-//                    showOrderLayout(mFirstVisibleItem == 0);
-                    showOrderLayout(true);
-                    break;
-                case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                    // ToastHelper.showToast("正在滑动...");
-                    break;
-                case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
-                    // ToastHelper.showToast("开始滚动...");
-                    break;
-            }
-        }
-
-        @Override
-        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            mFirstVisibleItem = firstVisibleItem;
-        }
-    };
     private String mSearchFilter = null;
     private SearchPanel.OnSearchActionListener mSearchListener = new SearchPanel.OnSearchActionListener() {
         @Override
@@ -216,35 +193,19 @@ public class CloudDirFragment extends BaseCloudFragment {
 
         View view = inflater.inflate(R.layout.fragment_nav_cloud_dir, container, false);
 
+        initLoginSession();
+
         mMainActivity = (MainActivity) getActivity();
         mParentFragment = (BaseNavFileFragment) getParentFragment();
         curPath = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
         mFileType = OneOSFileType.PRIVATE;
         mParentFragment.addSearchListener(mSearchListener);
 
-        initLoginSession();
         initAddMenu(view);
         initView(view);
 
         return view;
     }
-
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged(newConfig);
-//        Logged.d(TAG, "On Configuration Changed");
-//        int orientation = this.getResources().getConfiguration().orientation;
-//        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//
-//        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-//
-//        }
-//
-//        mListView.setAdapter(mListAdapter);
-//        mGridView.setAdapter(mGridAdapter);
-//        mListAdapter.notifyDataSetChanged();
-//        mGridAdapter.notifyDataSetChanged();
-//    }
 
     @Override
     public void onResume() {
@@ -299,8 +260,10 @@ public class CloudDirFragment extends BaseCloudFragment {
         mPathPanel.setOnPathPanelClickListener(new FilePathPanel.OnPathPanelClickListener() {
             @Override
             public void onClick(View view, String path) {
-                if (null == path) { // New Folder Button Clicked
+                if (view.getId() == R.id.ibtn_new_folder) {
                     mAddPopView.showPopupDown(view, -1, true);
+                } else if (view.getId() == R.id.ibtn_order) {
+                    showOrderPopView(view);
                 } else {
                     curPath = path;
                     autoPullToRefresh();
@@ -337,7 +300,6 @@ public class CloudDirFragment extends BaseCloudFragment {
         }, mLoginSession);
         mListView.setOnItemClickListener(mFileItemClickListener);
         mListView.setOnItemLongClickListener(mFileItemLongClickListener);
-//        mListView.setOnScrollListener(mScrollListener);
         mListView.setAdapter(mListAdapter);
 
         mEmptyView = view.findViewById(R.id.layout_empty_grid);
@@ -362,8 +324,34 @@ public class CloudDirFragment extends BaseCloudFragment {
         mGridAdapter = new OneOSFileGridAdapter(getContext(), mFileList, mSelectedList, mLoginSession);
         mGridView.setOnItemClickListener(mFileItemClickListener);
         mGridView.setOnItemLongClickListener(mFileItemLongClickListener);
-//        mGridView.setOnScrollListener(mScrollListener);
         mGridView.setAdapter(mGridAdapter);
+    }
+
+    private void showOrderPopView(final View view) {
+        int order = FileOrderType.isName(mOrderType) ? R.string.file_order_time : R.string.file_order_name;
+        int viewer = isListShown ? R.string.file_viewer_grid : R.string.file_viewer_list;
+        int[] items = new int[]{order, viewer};
+        mOrderPopView = new MenuPopupView(getActivity(), Utils.dipToPx(130));
+        mOrderPopView.setMenuItems(items, null);
+        mOrderPopView.setOnMenuClickListener(new MenuPopupView.OnMenuClickListener() {
+            @Override
+            public void onMenuClick(int index, View view) {
+                if (index == 0) {
+                    if (mOrderType == FileOrderType.NAME) {
+                        mOrderType = FileOrderType.TIME;
+                    } else {
+                        mOrderType = FileOrderType.NAME;
+                    }
+                    mUserSettings.setFileOrderType(UserSettingsKeeper.getFileOrderTypeID(mOrderType));
+                } else {
+                    isListShown = !isListShown;
+                    mUserSettings.setFileViewerType(UserSettingsKeeper.getFileViewerTypeID(isListShown ? FileViewerType.LIST : FileViewerType.GRID));
+                }
+                UserSettingsKeeper.update(mUserSettings);
+                notifyRefreshComplete(false);
+            }
+        });
+        mOrderPopView.showPopupDown(view, -1, false);
     }
 
     private void initAddMenu(final View view) {
@@ -386,6 +374,16 @@ public class CloudDirFragment extends BaseCloudFragment {
                 }
             }
         });
+    }
+
+    private void switchViewer(boolean isListShown) {
+        if (isListShown) {
+            mPullRefreshGridView.setVisibility(View.GONE);
+            mPullRefreshListView.setVisibility(View.VISIBLE);
+        } else {
+            mPullRefreshListView.setVisibility(View.GONE);
+            mPullRefreshGridView.setVisibility(View.VISIBLE);
+        }
     }
 
     public void setFileType(OneOSFileType type, String path) {
@@ -479,12 +477,16 @@ public class CloudDirFragment extends BaseCloudFragment {
     }
 
     private void notifyRefreshComplete(boolean isItemChanged) {
+        isListShown = FileViewerType.isList(mUserSettings.getFileViewerType());
+        mOrderType = FileOrderType.getType(mUserSettings.getFileOrderType());
+
         if (mOrderType == FileOrderType.NAME) {
             Collections.sort(mFileList, new OneOSFileNameComparator());
         } else {
             Collections.sort(mFileList, new OneOSFileTimeComparator());
         }
 
+        switchViewer(isListShown);
         mPathPanel.updatePath(mFileType, curPath);
         if (isListShown) {
             mListAdapter.notifyDataSetChanged(isItemChanged);

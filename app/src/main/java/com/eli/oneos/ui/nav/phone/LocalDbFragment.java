@@ -172,6 +172,7 @@ public class LocalDbFragment extends BaseLocalFragment {
 
         mMainActivity = (MainActivity) getActivity();
         mParentFragment = (LocalNavFragment) getParentFragment();
+        isListShown = false;
 
         initView(view);
 
@@ -247,8 +248,6 @@ public class LocalDbFragment extends BaseLocalFragment {
                 }
             }
         });
-
-        isListShown = true;
 
         mListPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_list);
         mListPullToRefreshView.setOnHeaderRefreshListener(mHeaderRefreshListener);
@@ -360,12 +359,16 @@ public class LocalDbFragment extends BaseLocalFragment {
 //        }
 
         if (isListShown) {
+            mGridLayout.setVisibility(View.GONE);
+            mListLayout.setVisibility(View.VISIBLE);
             mListAdapter.notifyDataSetChanged(isItemChanged);
             if (isSelectionLastPosition) {
                 mListView.setSelectionFromTop(mLastClickPosition, mLastClickItem2Top);
                 isSelectionLastPosition = false;
             }
         } else {
+            mListLayout.setVisibility(View.GONE);
+            mGridLayout.setVisibility(View.VISIBLE);
             mGridAdapter.notifyDataSetChanged(isItemChanged);
             if (isSelectionLastPosition) {
                 mGridView.setSelection(mLastClickPosition);

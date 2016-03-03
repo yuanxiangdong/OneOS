@@ -68,7 +68,7 @@
             android:layout_height="20dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/selector_button_title_switcher"
+            android:background="@drawable/selector_button_order"
             android:button="@android:color/transparent"
             android:checked="true"
             android:gravity="center"

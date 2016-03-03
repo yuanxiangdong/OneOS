@@ -12,6 +12,8 @@ public class UserSettings {
     private Boolean isPreviewPicOnlyWifi;
     private Boolean isTipTransferNotWifi;
     private Boolean isBackupFileOnlyWifi;
+    private Integer fileOrderType;
+    private Integer fileViewerType;
     private Long time;
 
     public UserSettings() {
@@ -21,13 +23,15 @@ public class UserSettings {
         this.uid = uid;
     }
 
-    public UserSettings(long uid, String downloadPath, Boolean isAutoBackupFile, Boolean isPreviewPicOnlyWifi, Boolean isTipTransferNotWifi, Boolean isBackupFileOnlyWifi, Long time) {
+    public UserSettings(long uid, String downloadPath, Boolean isAutoBackupFile, Boolean isPreviewPicOnlyWifi, Boolean isTipTransferNotWifi, Boolean isBackupFileOnlyWifi, Integer fileOrderType, Integer fileViewerType, Long time) {
         this.uid = uid;
         this.downloadPath = downloadPath;
         this.isAutoBackupFile = isAutoBackupFile;
         this.isPreviewPicOnlyWifi = isPreviewPicOnlyWifi;
         this.isTipTransferNotWifi = isTipTransferNotWifi;
         this.isBackupFileOnlyWifi = isBackupFileOnlyWifi;
+        this.fileOrderType = fileOrderType;
+        this.fileViewerType = fileViewerType;
         this.time = time;
     }
 
@@ -77,6 +81,22 @@ public class UserSettings {
 
     public void setIsBackupFileOnlyWifi(Boolean isBackupFileOnlyWifi) {
         this.isBackupFileOnlyWifi = isBackupFileOnlyWifi;
+    }
+
+    public Integer getFileOrderType() {
+        return fileOrderType;
+    }
+
+    public void setFileOrderType(Integer fileOrderType) {
+        this.fileOrderType = fileOrderType;
+    }
+
+    public Integer getFileViewerType() {
+        return fileViewerType;
+    }
+
+    public void setFileViewerType(Integer fileViewerType) {
+        this.fileViewerType = fileViewerType;
     }
 
     public Long getTime() {

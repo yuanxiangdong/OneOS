@@ -47,6 +47,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/line_list_divider_height"
+                android:layout_marginBottom="@dimen/layout_transfer_radio_group_height"
                 android:background="@color/line_list_view" />
         </LinearLayout>
     </com.eli.oneos.widget.ReboundScrollView>

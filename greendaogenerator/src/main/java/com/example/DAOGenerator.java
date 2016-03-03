@@ -70,6 +70,8 @@ public class DAOGenerator {
         note.addBooleanProperty("isPreviewPicOnlyWifi");    // 仅Wi-Fi环境下显示预览图（默认为true）
         note.addBooleanProperty("isTipTransferNotWifi");    // 非Wi-Fi环境上传/下载文件提示（默认为true）
         note.addBooleanProperty("isBackupFileOnlyWifi");    // 仅Wi-Fi环境下自动备份文件（默认为true）
+        note.addIntProperty("fileOrderType");               // 文件排序类型（默认为0：文件名）
+        note.addIntProperty("fileViewerType");              // 文件视图类型（默认为0：列表）
         note.addLongProperty("time");                       // 最后更新时间
     }
 

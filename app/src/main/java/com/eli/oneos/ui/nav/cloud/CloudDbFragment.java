@@ -179,6 +179,7 @@ public class CloudDbFragment extends BaseCloudFragment {
 
         mMainActivity = (MainActivity) getActivity();
         mParentFragment = (BaseNavFileFragment) getParentFragment();
+        isListShown = false;
 
         initLoginSession();
         initView(view);
@@ -186,28 +187,10 @@ public class CloudDbFragment extends BaseCloudFragment {
         return view;
     }
 
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged(newConfig);
-//        Logged.d(TAG, "On Configuration Changed");
-//        int orientation = this.getResources().getConfiguration().orientation;
-//        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//
-//        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-//
-//        }
-//
-//        mListView.setAdapter(mListAdapter);
-//        mGridView.setAdapter(mGridAdapter);
-//        mListAdapter.notifyDataSetChanged();
-//        mGridAdapter.notifyDataSetChanged();
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG, ">>>>>>>>On Resume>>>>>>>");
-        autoPullToRefresh();
     }
 
     @Override
@@ -255,8 +238,6 @@ public class CloudDbFragment extends BaseCloudFragment {
                 }
             }
         });
-
-        isListShown = true;
 
         mListPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_list);
         mListPullToRefreshView.setOnHeaderRefreshListener(mHeaderRefreshListener);
@@ -315,6 +296,7 @@ public class CloudDbFragment extends BaseCloudFragment {
     public void setFileType(OneOSFileType type, String path) {
         this.mFileType = type;
         Log.d(TAG, "========Set FileType: " + type);
+        autoPullToRefresh();
     }
 
     /**
@@ -391,12 +373,16 @@ public class CloudDbFragment extends BaseCloudFragment {
         mGridAdapter.updateSections(sections);
 
         if (isListShown) {
+            mGridLayout.setVisibility(View.GONE);
+            mListLayout.setVisibility(View.VISIBLE);
             mListAdapter.notifyDataSetChanged(isItemChanged);
             if (isSelectionLastPosition) {
                 mListView.setSelectionFromTop(mLastClickPosition, mLastClickItem2Top);
                 isSelectionLastPosition = false;
             }
         } else {
+            mListLayout.setVisibility(View.GONE);
+            mGridLayout.setVisibility(View.VISIBLE);
             mGridAdapter.notifyDataSetChanged(isItemChanged);
             if (isSelectionLastPosition) {
                 mGridView.setSelection(mLastClickPosition);

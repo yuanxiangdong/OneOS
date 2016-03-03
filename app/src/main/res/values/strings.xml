@@ -153,8 +153,10 @@
     <string name="root_dir_all">全部</string>
     <string name="action_upload_file">上&#160;传&#160;文&#160;件</string>
     <string name="action_new_folder">新建文件夹</string>
-    <string name="file_order_time">时间</string>
-    <string name="file_order_name">文件名</string>
+    <string name="file_order_time">按文件时间排序</string>
+    <string name="file_order_name">按文件名排序</string>
+    <string name="file_viewer_list">文件平铺显示</string>
+    <string name="file_viewer_grid">文件网格显示</string>
 
     <string name="hint_search">请输入要搜索的文件名</string>
     <string name="hint_select_file">请选择文件</string>

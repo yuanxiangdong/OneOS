@@ -3,6 +3,8 @@ package com.eli.oneos.db;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.db.greendao.UserSettingsDao;
+import com.eli.oneos.model.FileOrderType;
+import com.eli.oneos.model.FileViewerType;
 import com.eli.oneos.utils.SDCardUtils;
 
 import de.greenrobot.dao.query.QueryBuilder;
@@ -11,6 +13,22 @@ import de.greenrobot.dao.query.QueryBuilder;
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
 public class UserSettingsKeeper {
+
+    public static int getFileOrderTypeID(FileOrderType type) {
+        if (type == FileOrderType.NAME) {
+            return 0;
+        }
+
+        return 1;
+    }
+
+    public static int getFileViewerTypeID(FileViewerType type) {
+        if (type == FileViewerType.LIST) {
+            return 0;
+        }
+
+        return 1;
+    }
 
     /**
      * Query user settings by ID
@@ -33,8 +51,8 @@ public class UserSettingsKeeper {
      */
     public static UserSettings insertDefault(long uid, String user) {
         String path = SDCardUtils.createDefaultDownloadPath(user);
-        UserSettings settings = new UserSettings(uid, path, false, true, true, true, System.currentTimeMillis());
-
+        UserSettings settings = new UserSettings(uid, path, false, true, true, true, getFileOrderTypeID(FileOrderType.NAME),
+                getFileViewerTypeID(FileViewerType.LIST), System.currentTimeMillis());
         UserSettingsDao dao = DBHelper.getDaoSession().getUserSettingsDao();
         if (dao.insertOrReplace(settings) > 0) {
             return settings;

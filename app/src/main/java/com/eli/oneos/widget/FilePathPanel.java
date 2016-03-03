@@ -30,7 +30,7 @@ public class FilePathPanel extends RelativeLayout {
     private Context mContext;
     private LinearLayout mPathLayout;
     private View mLineView;
-    private ImageButton mNewFolderBtn;
+    private ImageButton mNewFolderBtn, mOrderBtn;
     private OnPathPanelClickListener mListener;
 
     private String path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
@@ -62,9 +62,18 @@ public class FilePathPanel extends RelativeLayout {
         pathBtnPadding = Utils.dipToPx(5);
 
         mPathLayout = (LinearLayout) view.findViewById(R.id.layout_file_path);
-        mLineView = (View) findViewById(R.id.view_path_mid_line);
+        mLineView = findViewById(R.id.view_path_mid_line);
         mNewFolderBtn = (ImageButton) findViewById(R.id.ibtn_new_folder);
         mNewFolderBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    mListener.onClick(v, null);
+                }
+            }
+        });
+        mOrderBtn = (ImageButton) findViewById(R.id.ibtn_order);
+        mOrderBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {

@@ -104,7 +104,12 @@ public class LocalStickyGridAdapter extends LocalFileBaseAdapter implements Stic
             holder = (HeaderViewHolder) convertView.getTag();
         }
 
-        holder.mHeaderTxt.setText(mSectionLetters[mFileList.get(position).getSection()]);
+        if (position < mFileList.size()) {
+            int section = mFileList.get(position).getSection();
+            if (section < mSectionLetters.length) {
+                holder.mHeaderTxt.setText(mSectionLetters[section]);
+            }
+        }
 
         return convertView;
     }
@@ -117,6 +122,9 @@ public class LocalStickyGridAdapter extends LocalFileBaseAdapter implements Stic
     public long getHeaderId(int position) {
         // return the first character of the country as ID because this is what
         // headers are based upon
+        if (position >= mFileList.size()) {
+            return 0;
+        }
         return mFileList.get(position).getSection();
     }
 

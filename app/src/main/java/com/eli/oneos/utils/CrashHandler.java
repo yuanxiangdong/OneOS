@@ -76,6 +76,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         if (ex == null) {
             return false;
         }
+        Log.e(TAG, "UncaughtException", ex);
 
         new Thread() {
             @Override

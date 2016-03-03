@@ -11,5 +11,21 @@ public enum FileOrderType {
     /**
      * order by file time
      */
-    TIME
+    TIME;
+
+    public static boolean isName(FileOrderType type) {
+        return type == NAME;
+    }
+
+    public static boolean isName(int id) {
+        return id == 0;
+    }
+
+    public static FileOrderType getType(int id) {
+        if (isName(id)) {
+            return FileOrderType.NAME;
+        }
+
+        return FileOrderType.TIME;
+    }
 }

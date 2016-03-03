@@ -17,8 +17,11 @@ import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
+import com.eli.oneos.db.UserSettingsKeeper;
+import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
+import com.eli.oneos.model.FileViewerType;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileManage;
@@ -35,9 +38,11 @@ import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.SDCardUtils;
 import com.eli.oneos.utils.ToastHelper;
+import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FilePathPanel;
 import com.eli.oneos.widget.FileSelectPanel;
+import com.eli.oneos.widget.MenuPopupView;
 import com.eli.oneos.widget.SearchPanel;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshBase;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshGridView;
@@ -271,6 +276,8 @@ public class LocalDirFragment extends BaseLocalFragment {
                 if (view.getId() == R.id.ibtn_new_folder) { // New Folder Button Clicked
                     LocalFileManage localFileManage = new LocalFileManage(mMainActivity, mPathPanel, mFileManageCallback);
                     localFileManage.manage(FileManageAction.MKDIR, curDir.getAbsolutePath());
+                } else if (view.getId() == R.id.ibtn_order) {
+                    showOrderPopView(view);
                 } else {
                     Log.d(TAG, ">>>>>Click Path: " + path + ", Root Path:" + rootPath);
                     if (null == path || rootPath == null) {
@@ -354,6 +361,39 @@ public class LocalDirFragment extends BaseLocalFragment {
         mGridView.setAdapter(mGridAdapter);
     }
 
+    private void showOrderPopView(final View view) {
+        int order = FileOrderType.isName(mOrderType) ? R.string.file_order_time : R.string.file_order_name;
+        int viewer = isListShown ? R.string.file_viewer_grid : R.string.file_viewer_list;
+        int[] items = new int[]{order, viewer};
+        MenuPopupView mOrderPopView = new MenuPopupView(getActivity(), Utils.dipToPx(130));
+        mOrderPopView.setMenuItems(items, null);
+        mOrderPopView.setOnMenuClickListener(new MenuPopupView.OnMenuClickListener() {
+            @Override
+            public void onMenuClick(int index, View view) {
+                UserSettings mUserSettings = null;
+                if (LoginManage.getInstance().isLogin()) {
+                    mUserSettings = LoginManage.getInstance().getLoginSession().getUserSettings();
+                }
+                if (index == 0) {
+                    if (mOrderType == FileOrderType.NAME) {
+                        mOrderType = FileOrderType.TIME;
+                    } else {
+                        mOrderType = FileOrderType.NAME;
+                    }
+                } else {
+                    isListShown = !isListShown;
+                }
+                if (null != mUserSettings) {
+                    mUserSettings.setFileOrderType(UserSettingsKeeper.getFileOrderTypeID(mOrderType));
+                    mUserSettings.setFileViewerType(UserSettingsKeeper.getFileViewerTypeID(isListShown ? FileViewerType.LIST : FileViewerType.GRID));
+                    UserSettingsKeeper.update(mUserSettings);
+                }
+                notifyRefreshComplete(false);
+            }
+        });
+        mOrderPopView.showPopupDown(view, -1, false);
+    }
+
     protected void autoPullToRefresh() {
         new Handler().postDelayed(new Runnable() {
 
@@ -393,14 +433,30 @@ public class LocalDirFragment extends BaseLocalFragment {
         notifyRefreshComplete(true);
     }
 
+    private void switchViewer(boolean isListShown) {
+        if (isListShown) {
+            mPullRefreshGridView.setVisibility(View.GONE);
+            mPullRefreshListView.setVisibility(View.VISIBLE);
+        } else {
+            mPullRefreshListView.setVisibility(View.GONE);
+            mPullRefreshGridView.setVisibility(View.VISIBLE);
+        }
+    }
 
     private void notifyRefreshComplete(final boolean isItemChanged) {
+        if (LoginManage.getInstance().isLogin()) {
+            UserSettings mUserSettings = LoginManage.getInstance().getLoginSession().getUserSettings();
+            isListShown = FileViewerType.isList(mUserSettings.getFileViewerType());
+            mOrderType = FileOrderType.getType(mUserSettings.getFileOrderType());
+        }
+
         if (mOrderType == FileOrderType.NAME) {
             Collections.sort(mFileList, new FileNameComparator());
         } else {
             Collections.sort(mFileList, new FileTimeComparator());
         }
 
+        switchViewer(isListShown);
         mPathPanel.updatePath(mFileType, curDir == null ? null : curDir.getAbsolutePath(), rootPath);
         new Handler().postDelayed(new Runnable() {
             @Override

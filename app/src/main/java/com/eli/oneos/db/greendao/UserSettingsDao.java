@@ -29,7 +29,9 @@ public class UserSettingsDao extends AbstractDao<UserSettings, Long> {
         public final static Property IsPreviewPicOnlyWifi = new Property(3, Boolean.class, "isPreviewPicOnlyWifi", false, "IS_PREVIEW_PIC_ONLY_WIFI");
         public final static Property IsTipTransferNotWifi = new Property(4, Boolean.class, "isTipTransferNotWifi", false, "IS_TIP_TRANSFER_NOT_WIFI");
         public final static Property IsBackupFileOnlyWifi = new Property(5, Boolean.class, "isBackupFileOnlyWifi", false, "IS_BACKUP_FILE_ONLY_WIFI");
-        public final static Property Time = new Property(6, Long.class, "time", false, "TIME");
+        public final static Property FileOrderType = new Property(6, Integer.class, "fileOrderType", false, "FILE_ORDER_TYPE");
+        public final static Property FileViewerType = new Property(7, Integer.class, "fileViewerType", false, "FILE_VIEWER_TYPE");
+        public final static Property Time = new Property(8, Long.class, "time", false, "TIME");
     };
 
 
@@ -51,7 +53,9 @@ public class UserSettingsDao extends AbstractDao<UserSettings, Long> {
                 "'IS_PREVIEW_PIC_ONLY_WIFI' INTEGER," + // 3: isPreviewPicOnlyWifi
                 "'IS_TIP_TRANSFER_NOT_WIFI' INTEGER," + // 4: isTipTransferNotWifi
                 "'IS_BACKUP_FILE_ONLY_WIFI' INTEGER," + // 5: isBackupFileOnlyWifi
-                "'TIME' INTEGER);"); // 6: time
+                "'FILE_ORDER_TYPE' INTEGER," + // 6: fileOrderType
+                "'FILE_VIEWER_TYPE' INTEGER," + // 7: fileViewerType
+                "'TIME' INTEGER);"); // 8: time
     }
 
     /** Drops the underlying database table. */
@@ -91,9 +95,19 @@ public class UserSettingsDao extends AbstractDao<UserSettings, Long> {
             stmt.bindLong(6, isBackupFileOnlyWifi ? 1l: 0l);
         }
  
+        Integer fileOrderType = entity.getFileOrderType();
+        if (fileOrderType != null) {
+            stmt.bindLong(7, fileOrderType);
+        }
+ 
+        Integer fileViewerType = entity.getFileViewerType();
+        if (fileViewerType != null) {
+            stmt.bindLong(8, fileViewerType);
+        }
+ 
         Long time = entity.getTime();
         if (time != null) {
-            stmt.bindLong(7, time);
+            stmt.bindLong(9, time);
         }
     }
 
@@ -113,7 +127,9 @@ public class UserSettingsDao extends AbstractDao<UserSettings, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3) != 0, // isPreviewPicOnlyWifi
             cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0, // isTipTransferNotWifi
             cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0, // isBackupFileOnlyWifi
-            cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6) // time
+            cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // fileOrderType
+            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7), // fileViewerType
+            cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8) // time
         );
         return entity;
     }
@@ -127,7 +143,9 @@ public class UserSettingsDao extends AbstractDao<UserSettings, Long> {
         entity.setIsPreviewPicOnlyWifi(cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3) != 0);
         entity.setIsTipTransferNotWifi(cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0);
         entity.setIsBackupFileOnlyWifi(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0);
-        entity.setTime(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
+        entity.setFileOrderType(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
+        entity.setFileViewerType(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
+        entity.setTime(cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8));
      }
     
     /** @inheritdoc */
