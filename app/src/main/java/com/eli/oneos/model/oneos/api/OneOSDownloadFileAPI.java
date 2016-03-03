@@ -260,6 +260,11 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
         RandomAccessFile outputFile = null;
         long curFileLength = downloadElement.getOffset();
         try {
+            File dir = new File(downloadElement.getTargetPath());
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
             String targetPath = downloadElement.getTargetPath() + File.separator + downloadElement.getFile().getName();
             File file = new File(targetPath);
             if (file.exists()) {

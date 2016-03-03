@@ -8,10 +8,11 @@ import android.widget.EditText;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.db.UserSettingsKeeper;
+import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
-import com.eli.oneos.model.phone.api.LocalFileManageTask;
 import com.eli.oneos.model.phone.api.MakeDirAPI;
 import com.eli.oneos.model.phone.api.ShareFileAPI;
 import com.eli.oneos.service.OneSpaceService;
@@ -69,7 +70,7 @@ public class LocalFileManage {
                     mActivity.dismissLoading();
                     // {"result":true, "path":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
                     try {
-                        File file = fileList.get(0).getFile();
+                        final File file = fileList.get(0).getFile();
                         Resources resources = mActivity.getResources();
                         List<String> titleList = new ArrayList<>();
                         List<String> contentList = new ArrayList<>();
@@ -83,7 +84,22 @@ public class LocalFileManage {
                         contentList.add(file.canRead() ? "True" : "False");
                         titleList.add(resources.getString(R.string.file_attr_write));
                         contentList.add(file.canWrite() ? "True" : "False");
-                        DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, R.string.ok, null);
+                        int negId = 0;
+                        if (file.isDirectory() && file.canWrite()) {
+                            LoginManage loginManage = LoginManage.getInstance();
+                            if (loginManage.isLogin()) {
+                                negId = R.string.set_dir_to_download_path;
+                            }
+                        }
+                        DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, R.string.ok,
+                                negId, new DialogUtils.OnDialogClickListener() {
+                                    @Override
+                                    public void onClick(boolean isPositiveBtn) {
+                                        if (!isPositiveBtn) {
+                                            setDownloadPath(file.getAbsolutePath());
+                                        }
+                                    }
+                                });
                     } catch (Exception e) {
                         e.printStackTrace();
                         ToastHelper.showToast(R.string.error_json_exception);
@@ -271,6 +287,25 @@ public class LocalFileManage {
                 }
             }
         });
+    }
+
+    public void setDownloadPath(final String path) {
+        DialogUtils.showConfirmDialog(mActivity, R.string.set_dir_to_download_path, R.string.confirm_set_to_download_path,
+                R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                    @Override
+                    public void onClick(boolean isPositiveBtn) {
+                        if (isPositiveBtn) {
+                            LoginManage loginManage = LoginManage.getInstance();
+                            UserSettings settings = loginManage.getLoginSession().getUserSettings();
+                            settings.setDownloadPath(path);
+                            UserSettingsKeeper.update(settings);
+                            mActivity.showTipView(R.string.setting_success, true);
+                            if (null != callback) {
+                                callback.onComplete(true);
+                            }
+                        }
+                    }
+                });
     }
 
     public interface OnManageCallback {

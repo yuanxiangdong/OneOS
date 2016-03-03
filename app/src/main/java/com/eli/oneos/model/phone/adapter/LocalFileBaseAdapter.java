@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.utils.HttpBitmap;
 
@@ -22,13 +24,17 @@ public class LocalFileBaseAdapter extends BaseAdapter {
     public ArrayList<LocalFile> mSelectedList = null;
     private boolean isMultiChoose = false;
     public OnMultiChooseClickListener mListener = null;
+    public LoginSession loginSession;
 
     public LocalFileBaseAdapter(Context context, List<LocalFile> fileList, ArrayList<LocalFile> selectedList, OnMultiChooseClickListener listener) {
         this.mInflater = LayoutInflater.from(context);
         this.mListener = listener;
         this.mFileList = fileList;
         this.mSelectedList = selectedList;
-
+        LoginManage loginManage = LoginManage.getInstance();
+        if (loginManage.isLogin()) {
+            loginSession = loginManage.getLoginSession();
+        }
         clearSelectedList();
     }
 

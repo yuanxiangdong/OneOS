@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.DeviceInfoKeeper;
 import com.eli.oneos.db.UserInfoKeeper;
@@ -91,8 +92,8 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void onChanged(boolean isAvailable, boolean isWifiAvailable) {
             LoginActivity.this.isWifiAvailable = isWifiAvailable;
-            if (!isWifiAvailable) {
-                ToastHelper.showToast(R.string.wifi_not_available);
+            if (!isAvailable) {
+                DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.network_not_available, R.string.ok, null);
             }
         }
     };
@@ -241,6 +242,7 @@ public class LoginActivity extends BaseActivity {
                         mUserSpinnerView.dismiss();
                     }
                 });
+                InputMethodUtils.hideKeyboard(LoginActivity.this);
                 mUserSpinnerView.showPopupDown(view);
             }
         }
@@ -258,7 +260,7 @@ public class LoginActivity extends BaseActivity {
                 for (DeviceInfo info : mLANDeviceList) {
                     mDeviceList.add(info);
                     users.add(info.getIp());
-                    icons.add(R.drawable.btn_clear);
+                    icons.add(0);
                 }
                 for (DeviceInfo info : mHistoryDeviceList) {
                     mDeviceList.add(info);
@@ -289,6 +291,7 @@ public class LoginActivity extends BaseActivity {
                         mDeviceSpinnerView.dismiss();
                     }
                 });
+                InputMethodUtils.hideKeyboard(LoginActivity.this);
                 mDeviceSpinnerView.showPopupDown(view);
             }
         }
@@ -297,10 +300,13 @@ public class LoginActivity extends BaseActivity {
     private void initLoginHistory() {
         List<UserInfo> userList = UserInfoKeeper.activeUsers();
         if (!EmptyUtils.isEmpty(userList)) {
+            mMoreUserBtn.setVisibility(View.VISIBLE);
             mHistoryUserList.addAll(userList);
             mLastLoginUser = userList.get(0);
             mUserTxt.setText(mLastLoginUser.getName());
             mPwdTxt.setText(mLastLoginUser.getPwd());
+        } else {
+            mMoreUserBtn.setVisibility(View.GONE);
         }
 
         List<DeviceInfo> deviceList = DeviceInfoKeeper.all();
@@ -365,7 +371,11 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFailure(String url, int errorNo, String errorMsg) {
                 dismissLoading();
-                ToastHelper.showToast(errorMsg);
+                if (errorNo == HttpErrorNo.ERR_CONNECT_REFUSED) {
+                    DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.connection_refused, R.string.ok, null);
+                } else {
+                    ToastHelper.showToast(errorMsg);
+                }
             }
         });
         loginAPI.login();
@@ -393,9 +403,9 @@ public class LoginActivity extends BaseActivity {
         }
 
         boolean isLast = false;
-        String perferMac = mLastLoginUser.getMac();
-        if (!EmptyUtils.isEmpty(perferMac)) {
-            if (perferMac.equalsIgnoreCase(mac)) {
+        String lastMac = mLastLoginUser.getMac();
+        if (!EmptyUtils.isEmpty(lastMac)) {
+            if (lastMac.equalsIgnoreCase(mac)) {
                 mIPTxt.setText(ip);
                 mPortTxt.setText(OneOSAPIs.ONE_API_DEFAULT_PORT);
                 isLast = true;

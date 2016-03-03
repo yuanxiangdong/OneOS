@@ -3,7 +3,8 @@
     <dimen name="layout_tool_title_height">44dp</dimen>
     <dimen name="layout_login_padding_left">45dp</dimen>
     <dimen name="layout_login_padding_right">45dp</dimen>
-    <dimen name="layout_login_padding_top">70dp</dimen>
+    <dimen name="layout_login_padding_top">60dp</dimen>
+    <dimen name="layout_login_button_padding_top">100dp</dimen>
     <dimen name="layout_login_padding_bottom">20dp</dimen>
 
     <dimen name="layout_common_button_height">40dp</dimen>

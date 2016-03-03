@@ -12,8 +12,9 @@
     <string name="dialog_continue">继续</string>
     <string name="loading">正在加载&#8230;</string>
     <string name="all_loaded">已加载全部</string>
-    <string name="network_not_available">当前网络不可用，请检查网络连接！</string>
-    <string name="wifi_not_available">当前WiFi不可用，请检查WiFi连接！</string>
+    <string name="connection_refused">无法连接到您的设备，请检查设备和网络状态！</string>
+    <string name="network_not_available">当前网络不可用，请检查网络状态！</string>
+    <string name="wifi_not_available">当前WiFi不可用，请检查WiFi状态！</string>
     <string name="error_json_exception">解析协议出错</string>
     <string name="operate_failed">操作失败</string>
     <string name="app_exception">程序异常</string>
@@ -21,6 +22,7 @@
     <string name="please_login_onespace_with_admin">请使用管理员用户登录OneSpace</string>
     <string name="confirm_download_not_wifi">当前非Wi-Fi网络环境，继续下载将产生数据流量!</string>
     <string name="confirm_upload_not_wifi">当前非Wi-Fi网络环境，继续上传将产生数据流量!</string>
+    <string name="app_exception_to_exit">异常，正在收集信息，3s后退出...</string>
 
     <!-- File Operation -->
     <string name="file_type_private">我的文件</string>
@@ -62,7 +64,7 @@
     <string name="file_attr_gid">GID：</string>
     <string name="file_attr_read">可读：</string>
     <string name="file_attr_write">可写：</string>
-    <string name="file_attr_time">修改时间：</string>
+    <string name="file_attr_time">时间：</string>
     <string name="tip_chmod_file">文件权限</string>
     <string name="chmod_file_group">同组用户：</string>
     <string name="chmod_file_other">其他用户：</string>
@@ -390,7 +392,8 @@
     <string name="recovery_exception_upload">恢复失败，请重新尝试</string>
 
     <!-- SetPath Activity-->
-    <string name="choose_default_path">设置默认下载存储目录</string>
+    <string name="set_dir_to_download_path">设为下载目录</string>
+    <string name="confirm_set_to_download_path">确认设为该下载目录？</string>
     <string name="empty_directory">该目录为空</string>
     <string name="confirm_set_path">确认设置</string>
     <string name="download_path_not_set">尚未设置</string>

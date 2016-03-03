@@ -58,7 +58,7 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
                 new Throwable(new Exception("Insert UserInfo Error"));
                 return;
             } else {
-                userSettings = UserSettingsKeeper.insertDefault(id);
+                userSettings = UserSettingsKeeper.insertDefault(id, user);
             }
         } else {
             userInfo.setPwd(pwd);
@@ -95,9 +95,9 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 
             @Override
-            public void onFailure(Throwable t, int errorNo, String strMsg) {
-                super.onFailure(t, errorNo, strMsg);
-                Log.e(TAG, "Response Data: " + errorNo + " : " + strMsg);
+            public void onFailure(Throwable th, int errorNo, String strMsg) {
+                super.onFailure(th, errorNo, strMsg);
+                errorNo = parseFailure(th, errorNo);
                 if (listener != null) {
                     listener.onFailure(url, errorNo, strMsg);
                 }

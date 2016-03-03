@@ -373,7 +373,7 @@ public class DialogUtils {
     //
 
     public static void showListDialog(Activity activity, List<String> titleList, List<String> contentList, int titleId,
-                                      int posId, final OnDialogClickListener mListener) {
+                                      int posId, int negId, final OnDialogClickListener mListener) {
         if (activity == null || titleList == null) {
             Log.e(TAG, "activity or dialog content is null");
             return;
@@ -395,6 +395,7 @@ public class DialogUtils {
 
         Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
         positiveBtn.setText(posId);
+        positiveBtn.setBackgroundResource(R.drawable.selector_square_bottom_radius_white_trans_gray);
         positiveBtn.setVisibility(View.VISIBLE);
         positiveBtn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -404,6 +405,22 @@ public class DialogUtils {
                 mDialog.dismiss();
             }
         });
+
+        if (negId > 0) {
+            View lineView = dialogView.findViewById(R.id.line_button);
+            lineView.setVisibility(View.VISIBLE);
+            Button negativeBan = (Button) dialogView.findViewById(R.id.negative);
+            negativeBan.setText(negId);
+            negativeBan.setVisibility(View.VISIBLE);
+            negativeBan.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onClick(false);
+                    }
+                    mDialog.dismiss();
+                }
+            });
+        }
 
         mDialog.setContentView(dialogView);
         mDialog.setCancelable(false);

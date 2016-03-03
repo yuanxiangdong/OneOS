@@ -1,12 +1,9 @@
 package com.eli.oneos.model.oneos.user;
 
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.db.UserSettingsKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserSettings;
-import com.eli.oneos.utils.EmptyUtils;
-import com.eli.oneos.utils.SDCardUtils;
 
 /**
  * User Login information
@@ -91,14 +88,7 @@ public class LoginSession {
     }
 
     public String getDownloadPath() {
-        String path = userSettings.getDownloadPath();
-        if (EmptyUtils.isEmpty(path)) {
-            path = SDCardUtils.createDownloadPath();
-            userSettings.setDownloadPath(path);
-            UserSettingsKeeper.update(userSettings);
-        }
-
-        return path;
+        return userSettings.getDownloadPath();
     }
 
     public boolean isLANDevice() {

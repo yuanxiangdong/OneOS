@@ -23,16 +23,17 @@ public class SDCardUtils {
     /**
      * create local download store path
      */
-    public static String createDownloadPath() {
+    public static String createDefaultDownloadPath(String user) {
         String savePath;
+        String path = Constants.DEFAULT_APP_ROOT_DIR_NAME + File.separator + user + Constants.DEFAULT_DOWNLOAD_DIR_NAME;
         if (SDCardUtils.checkSDCard()) {
-            savePath = Environment.getExternalStorageDirectory() + Constants.DEFAULT_DOWNLOAD_PATH;
-            File downLoadPath = new File(savePath);
-            if (!downLoadPath.exists()) {
-                downLoadPath.mkdir();
-            }
+            savePath = Environment.getExternalStorageDirectory() + path;
         } else {
-            savePath = Environment.getDownloadCacheDirectory().getAbsolutePath() + Constants.DEFAULT_DOWNLOAD_PATH;
+            savePath = Environment.getDownloadCacheDirectory().getAbsolutePath() + path;
+        }
+        File dir = new File(savePath);
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
 
         Log.i(TAG_SDCARD, "Create default download path: " + savePath);

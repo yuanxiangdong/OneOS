@@ -8,12 +8,20 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.service.OneSpaceService;
+import com.eli.oneos.ui.BaseActivity;
+import com.eli.oneos.utils.CrashHandler;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class MyApplication extends Application {
     private static final String TAG = MyApplication.class.getSimpleName();
 
     private static Context context = null;
+    private static MyApplication INSTANCE = new MyApplication();
+    private static List<BaseActivity> activityList = new LinkedList();
 
     private static boolean mIsServiceBound = false;
     private static OneSpaceService mTransferService;
@@ -34,11 +42,19 @@ public class MyApplication extends Application {
         }
     };
 
+    public static MyApplication getInstance() {
+        return MyApplication.INSTANCE;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Create MyApplication");
         MyApplication.context = getApplicationContext();
+        if (Logged.CRASH_EXCEPTION) {
+            CrashHandler crashHandler = CrashHandler.getInstance();
+            crashHandler.init(context);
+        }
         bindTransferService();
     }
 
@@ -50,7 +66,9 @@ public class MyApplication extends Application {
     }
 
 
-    /** bind transfer service for download and upload */
+    /**
+     * bind transfer service for download and upload
+     */
     private void bindTransferService() {
         Log.i(TAG, "Bind Transfer Service");
         Intent intent = new Intent(this, OneSpaceService.class);
@@ -78,5 +96,16 @@ public class MyApplication extends Application {
         }
 
         return null;
+    }
+
+    public void addActivity(BaseActivity activity) {
+        activityList.add(activity);
+    }
+
+    public void exit() {
+        for (BaseActivity activity : activityList) {
+            activity.finish();
+        }
+        System.exit(0);
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
+import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.SystemBarManager;
@@ -26,6 +27,7 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApplication.getInstance().addActivity(this);
         mLoadingView = LoadingView.getInstance();
         mTipView = TipView.getInstance();
     }

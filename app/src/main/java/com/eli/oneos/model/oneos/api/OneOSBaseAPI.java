@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.eli.oneos.MyApplication;
+import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.model.oneos.user.LoginSession;
@@ -13,10 +14,13 @@ import net.tsz.afinal.http.AjaxParams;
 
 import org.apache.http.impl.client.BasicCookieStore;
 
+import java.net.ConnectException;
+
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/8.
  */
 public abstract class OneOSBaseAPI {
+    private static final String TAG = OneOSBaseAPI.class.getSimpleName();
     private static final int TIMEOUT = 20 * 1000;
 
     protected Context context = null;
@@ -65,6 +69,17 @@ public abstract class OneOSBaseAPI {
 
     public String genOneOSAPIUrl(String action) {
         return OneOSAPIs.PREFIX_HTTP + ip + ":" + port + action;
+    }
+
+    public int parseFailure(Throwable th, int errorNo) {
+        if (null != th) {
+            Log.e(TAG, "Response Error, No: " + errorNo + "; Exception: " + th);
+            if (th instanceof ConnectException) {
+                errorNo = HttpErrorNo.ERR_CONNECT_REFUSED;
+            }
+        }
+
+        return errorNo;
     }
 
     public void logHttp(String TAG, String url, AjaxParams params) {

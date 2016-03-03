@@ -1,9 +1,12 @@
-package com.eli.oneos.model.phone.api;
+package com.eli.oneos.model.phone;
 
 import android.os.AsyncTask;
 
 import com.eli.oneos.model.FileManageAction;
-import com.eli.oneos.model.phone.LocalFile;
+import com.eli.oneos.model.phone.api.CopyFileAPI;
+import com.eli.oneos.model.phone.api.DeleteFileAPI;
+import com.eli.oneos.model.phone.api.MoveFileAPI;
+import com.eli.oneos.model.phone.api.RenameFileAPI;
 import com.eli.oneos.ui.BaseActivity;
 
 import java.util.ArrayList;

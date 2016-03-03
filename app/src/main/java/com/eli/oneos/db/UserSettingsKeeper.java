@@ -3,6 +3,7 @@ package com.eli.oneos.db;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.db.greendao.UserSettingsDao;
+import com.eli.oneos.utils.SDCardUtils;
 
 import de.greenrobot.dao.query.QueryBuilder;
 
@@ -30,8 +31,9 @@ public class UserSettingsKeeper {
      * @param uid {@link UserInfo}.ID
      * @return {@link UserSettings} or {@code null}
      */
-    public static UserSettings insertDefault(long uid) {
-        UserSettings settings = new UserSettings(uid, null, false, true, true, true, System.currentTimeMillis());
+    public static UserSettings insertDefault(long uid, String user) {
+        String path = SDCardUtils.createDefaultDownloadPath(user);
+        UserSettings settings = new UserSettings(uid, path, false, true, true, true, System.currentTimeMillis());
 
         UserSettingsDao dao = DBHelper.getDaoSession().getUserSettingsDao();
         if (dao.insertOrReplace(settings) > 0) {

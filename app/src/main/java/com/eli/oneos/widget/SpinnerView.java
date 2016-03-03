@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
-import com.eli.oneos.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -140,7 +139,7 @@ public class SpinnerView {
         private int offset;
 
         public PopupMenuAdapter(int offset) {
-            this.offset = offset - Utils.dipToPx(10);
+            this.offset = offset;// - Utils.dipToPx(5);
         }
 
         @Override
@@ -177,14 +176,20 @@ public class SpinnerView {
 
             holder.mTitleTxt.setText(itemList.get(position));
             if (iconList != null && iconList.size() >= position) {
-                holder.mRightIBtn.setImageResource(iconList.get(position));
-                if (mOnButtonClickListener != null) {
-                    holder.mRightIBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mOnButtonClickListener.onClick(v, position);
-                        }
-                    });
+                int icon = iconList.get(position);
+                if (icon > 0) {
+                    holder.mRightIBtn.setVisibility(View.VISIBLE);
+                    holder.mRightIBtn.setImageResource(iconList.get(position));
+                    if (mOnButtonClickListener != null) {
+                        holder.mRightIBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mOnButtonClickListener.onClick(v, position);
+                            }
+                        });
+                    }
+                } else {
+                    holder.mRightIBtn.setVisibility(View.GONE);
                 }
             } else {
                 holder.mRightIBtn.setVisibility(View.GONE);

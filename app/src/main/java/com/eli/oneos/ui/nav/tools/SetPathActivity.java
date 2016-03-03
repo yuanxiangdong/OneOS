@@ -88,7 +88,7 @@ public class SetPathActivity extends BaseActivity implements OnClickListener {
 
     private void initViews() {
         TextView mTitle = (TextView) findViewById(R.id.text_title);
-        mTitle.setText(R.string.choose_default_path);
+        mTitle.setText(R.string.set_dir_to_download_path);
 
         mConfirmBtn = (Button) this.findViewById(R.id.btn_confirm);
         mConfirmBtn.setOnClickListener(this);
@@ -166,7 +166,7 @@ public class SetPathActivity extends BaseActivity implements OnClickListener {
 
     private void setDefaultDownloadPath() {
         if (savePath == null || savePath.length() == 0) {
-            ToastHelper.showToast(R.string.choose_default_path);
+            ToastHelper.showToast(R.string.set_dir_to_download_path);
             return;
         }
 
