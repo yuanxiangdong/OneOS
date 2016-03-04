@@ -6,4 +6,5 @@ package com.eli.oneos.constant;
 public class HttpErrorNo {
     public static final int ERR_JSON_EXCEPTION = 5000;
     public static final int ERR_CONNECT_REFUSED = 5001;
+    public static final int ERR_ONEOS_VERSION = 5002;
 }

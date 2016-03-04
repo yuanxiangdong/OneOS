@@ -72,6 +72,10 @@ public abstract class OneOSBaseAPI {
     }
 
     public int parseFailure(Throwable th, int errorNo) {
+        if (errorNo == 404) {
+            return HttpErrorNo.ERR_ONEOS_VERSION;
+        }
+
         if (null != th) {
             Log.e(TAG, "Response Error, No: " + errorNo + "; Exception: " + th);
             if (th instanceof ConnectException) {

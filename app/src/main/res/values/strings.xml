@@ -14,6 +14,7 @@
     <string name="all_loaded">已加载全部</string>
     <string name="connection_refused">无法连接到您的设备，请检查设备和网络状态！</string>
     <string name="network_not_available">当前网络不可用，请检查网络状态！</string>
+    <string name="oneos_version_mismatch">您的OneSpace系统版本过低，请升级到 OneOS v3.x 版本！</string>
     <string name="wifi_not_available">当前WiFi不可用，请检查WiFi状态！</string>
     <string name="error_json_exception">解析协议出错</string>
     <string name="operate_failed">操作失败</string>
@@ -153,9 +154,9 @@
     <string name="root_dir_all">全部</string>
     <string name="action_upload_file">上&#160;传&#160;文&#160;件</string>
     <string name="action_new_folder">新建文件夹</string>
-    <string name="file_order_time">按文件时间排序</string>
+    <string name="file_order_time">按时间排序</string>
     <string name="file_order_name">按文件名排序</string>
-    <string name="file_viewer_list">文件平铺显示</string>
+    <string name="file_viewer_list">文件列表显示</string>
     <string name="file_viewer_grid">文件网格显示</string>
 
     <string name="hint_search">请输入要搜索的文件名</string>

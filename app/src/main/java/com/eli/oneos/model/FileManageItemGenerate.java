@@ -86,7 +86,6 @@ public class FileManageItemGenerate {
             mOptItems.add(OPT_RENAME);
         }
         mOptItems.add(OPT_DELETE);
-        mOptItems.add(OPT_ATTR);
 
         boolean hasDir = false;
         for (LocalFile file : selectedList) {
@@ -99,6 +98,7 @@ public class FileManageItemGenerate {
             mOptItems.add(OPT_SHARE);
             mOptItems.add(OPT_UPLOAD);
         }
+        mOptItems.add(OPT_ATTR);
 
         return mOptItems;
     }

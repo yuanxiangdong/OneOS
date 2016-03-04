@@ -14,7 +14,6 @@ import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.SDCardUtils;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -187,11 +186,26 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
 
         try {
             HttpPost httpRequest = new HttpPost(url);
-            if (downloadElement.getOffset() >= 0) {
+            if (downloadElement.getOffset() > 0) {
+                String tmpPath = downloadElement.getTargetPath() + File.separator + downloadElement.getTmpName();
+                File tmpFile = new File(tmpPath);
+                if (!tmpFile.exists()) {
+                    Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "Temporary file is missing, reset download offset position");
+                    downloadElement.setOffset(0);
+                } else {
+                    long tmpLen = tmpFile.length();
+                    if (tmpLen != downloadElement.getOffset()) {
+                        Logger.p(LogLevel.WARN, Logged.DOWNLOAD, TAG, "Temporary file length not equals offset position, reset download offset position and delete temporary file");
+                        downloadElement.setOffset(0);
+                        tmpFile.delete();
+                    }
+                }
+
+                Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download offset position: " + downloadElement.getOffset());
                 httpRequest.setHeader("Range", "bytes=" + String.valueOf(downloadElement.getOffset()) + "-");
             } else if (downloadElement.getOffset() < 0) {
-                Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "Error position, position must greater than or equal zero");
-                return;
+                Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "Error offset position: " + downloadElement.getOffset() + ", reset position to 0");
+                downloadElement.setOffset(0);
             }
 
             HttpClient httpClient = new DefaultHttpClient();
@@ -221,17 +235,15 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 downloadElement.setException(TransferException.LOCAL_SPACE_INSUFFICIENT);
                 return;
             }
-            Header header = httpResponse.getFirstHeader("Content-Ranges");
-            if (header != null) {
-                String contentRanges = header.getValue();
-                int last = contentRanges.lastIndexOf('/');
-                String totalString = contentRanges.substring(last + 1, contentRanges.length());
-                fileLength = Long.valueOf(totalString);
-                // Logged.d(LOG_TAG,
-                // "header targetPath=" + header.getTargetPath() + ", value=" +
-                // header.getValue());
-            }
-//                downloadElement.setTotalFileLength(fileLength);
+//            Header header = httpResponse.getFirstHeader("Content-Ranges");
+//            if (header != null) {
+//                String contentRanges = header.getValue();
+//                int last = contentRanges.lastIndexOf('/');
+//                String totalString = contentRanges.substring(last + 1, contentRanges.length());
+//                fileLength = Long.valueOf(totalString);
+//                Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "header name=" + header.getName() + ", value=" + header.getValue());
+//            }
+//            downloadElement.getFile().setSize(fileLength);
 
             // set element download state to start
             downloadElement.setState(TransferState.START);
@@ -258,31 +270,15 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
 
     private void saveData(InputStream input, HttpClient httpClient) {
         RandomAccessFile outputFile = null;
-        long curFileLength = downloadElement.getOffset();
+        long downloadLen = downloadElement.getOffset();
         try {
             File dir = new File(downloadElement.getTargetPath());
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
-            String targetPath = downloadElement.getTargetPath() + File.separator + downloadElement.getFile().getName();
-            File file = new File(targetPath);
-            if (file.exists()) {
-                String name = file.getName();
-                String newName;
-                int index = name.indexOf(".");
-                if (index >= 0) {
-                    String prefix = name.substring(0, index);
-                    String suffix = name.substring(index, name.length());
-                    newName = prefix + "-" + System.currentTimeMillis() + suffix;
-                } else {
-                    newName = name + "-" + System.currentTimeMillis();
-                }
-
-                file.renameTo(new File(downloadElement.getTargetPath(), newName));
-            }
-
-            outputFile = new RandomAccessFile(targetPath, "rw");
+            String tmpPath = downloadElement.getTargetPath() + File.separator + downloadElement.getTmpName();
+            outputFile = new RandomAccessFile(tmpPath, "rw");
             outputFile.seek(downloadElement.getOffset());
             byte[] buffer = new byte[HTTP_BUFFER_SIZE];
             int nRead;
@@ -293,8 +289,8 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                     break;
                 }
                 outputFile.write(buffer, 0, nRead);
-                curFileLength += nRead;
-                downloadElement.setLength(curFileLength);
+                downloadLen += nRead;
+                downloadElement.setLength(downloadLen);
                 callback++;
                 if (null != listener && callback == 32) {
                     // callback every 512KB
@@ -302,16 +298,35 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                     callback = 0;
                 }
             }
+            downloadElement.setOffset(downloadElement.getLength());
 
             if (isInterrupt) {
                 downloadElement.setState(TransferState.PAUSE);
                 Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download interrupt");
             } else {
-                if (downloadElement.getSize() > 0 && curFileLength != downloadElement.getSize()) {
+                if (downloadElement.getSize() > 0 && downloadLen != downloadElement.getSize()) {
                     Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download file length is not equals file real length");
                     downloadElement.setState(TransferState.FAILED);
                     downloadElement.setException(TransferException.UNKNOWN_EXCEPTION);
                 } else {
+                    File targetFile = new File(downloadElement.getTargetPath() + File.separator + downloadElement.getSrcName());
+                    if (targetFile.exists()) { // rename old file
+                        String name = targetFile.getName();
+                        String newName;
+                        int index = name.indexOf(".");
+                        if (index >= 0) {
+                            String prefix = name.substring(0, index);
+                            String suffix = name.substring(index, name.length());
+                            newName = prefix + "-" + System.currentTimeMillis() + suffix;
+                        } else {
+                            newName = name + "-" + System.currentTimeMillis();
+                        }
+
+                        targetFile.renameTo(new File(downloadElement.getTargetPath(), newName));
+                    }
+                    File tmpFile = new File(tmpPath);
+                    tmpFile.renameTo(targetFile);
+
                     downloadElement.setState(TransferState.COMPLETE);
                 }
             }

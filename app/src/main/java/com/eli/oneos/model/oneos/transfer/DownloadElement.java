@@ -11,7 +11,8 @@ public class DownloadElement extends TransferElement {
 
     private OneOSFile file;
     // needs check phone space
-    private boolean check = true;
+    private boolean check = false;
+    private String tmpName = null;
 
     public DownloadElement(OneOSFile file, String downloadPath) {
         this(file, downloadPath, 0);
@@ -21,6 +22,7 @@ public class DownloadElement extends TransferElement {
         this.file = file;
         this.targetPath = downloadPath;
         this.offset = offset;
+        this.tmpName = file.getName() + "." + System.currentTimeMillis() + ".tmp";
     }
 
     /**
@@ -61,6 +63,15 @@ public class DownloadElement extends TransferElement {
         return new File(targetPath + File.separator + getSrcName());
     }
 
+    /**
+     * downloading file temporary name
+     *
+     * @return
+     */
+    public String getTmpName() {
+        return tmpName;
+    }
+
     // ===============getter and setter method======================
     public OneOSFile getFile() {
         return file;
@@ -77,5 +88,6 @@ public class DownloadElement extends TransferElement {
     public void setCheck(boolean check) {
         this.check = check;
     }
+
     // ===============getter and setter method======================
 }

@@ -371,7 +371,9 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFailure(String url, int errorNo, String errorMsg) {
                 dismissLoading();
-                if (errorNo == HttpErrorNo.ERR_CONNECT_REFUSED) {
+                if (errorNo == HttpErrorNo.ERR_ONEOS_VERSION) {
+                    DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.oneos_version_mismatch, R.string.ok, null);
+                } else if (errorNo == HttpErrorNo.ERR_CONNECT_REFUSED) {
                     DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.connection_refused, R.string.ok, null);
                 } else {
                     ToastHelper.showToast(errorMsg);
