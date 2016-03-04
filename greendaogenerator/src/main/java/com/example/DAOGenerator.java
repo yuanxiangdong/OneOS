@@ -118,10 +118,11 @@ public class DAOGenerator {
         note.addIntProperty("type");        // 传输类型： 上传/下载
         note.addStringProperty("name").notNull();           // 文件名
         note.addStringProperty("srcPath").notNull();        // 原文件路径
-        note.addStringProperty("targetPath").notNull();     // 目标文件路径
+        note.addStringProperty("toPath").notNull();         // 目标文件路径
         note.addLongProperty("size");       // 文件大小
+        note.addLongProperty("length");     // 传输大小
         note.addLongProperty("duration");   // 用时（s）
-        note.addLongProperty("time");       // 完成时间
+        note.addLongProperty("time");       // 最后更新时间
+        note.addBooleanProperty("isComplete");              // 是否完成（默认：false）
     }
-
 }

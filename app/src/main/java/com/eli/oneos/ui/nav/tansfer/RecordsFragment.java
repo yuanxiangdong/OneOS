@@ -92,7 +92,7 @@ public class RecordsFragment extends BaseTransferFragment {
                 TransferHistory history = mHistoryList.get(position);
                 String path;
                 if (isDownload) {
-                    path = history.getTargetPath() + File.separator + history.getName();
+                    path = history.getToPath() + File.separator + history.getName();
                 } else {
                     path = history.getSrcPath();
                 }
@@ -163,7 +163,7 @@ public class RecordsFragment extends BaseTransferFragment {
         long uid = loginManage.getLoginSession().getUserInfo().getId();
 
         return new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(isDownload), element.getSrcName(),
-                element.getSrcPath(), element.getTargetPath(), element.getSize(), 0L, System.currentTimeMillis());
+                element.getSrcPath(), element.getTargetPath(), element.getSize(), element.getSize(), 0L, System.currentTimeMillis(), true);
     }
 
     /**
@@ -177,7 +177,7 @@ public class RecordsFragment extends BaseTransferFragment {
         if (loginManage.isLogin() && isVisible()) {
             mHistoryList.clear();
             mAdapter.notifyDataSetChanged();
-            TransferHistoryKeeper.delete(loginManage.getLoginSession().getUserInfo().getId());
+            TransferHistoryKeeper.deleteComplete(loginManage.getLoginSession().getUserInfo().getId());
         }
     }
 

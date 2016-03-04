@@ -28,10 +28,12 @@ public class TransferHistoryDao extends AbstractDao<TransferHistory, Long> {
         public final static Property Type = new Property(2, Integer.class, "type", false, "TYPE");
         public final static Property Name = new Property(3, String.class, "name", false, "NAME");
         public final static Property SrcPath = new Property(4, String.class, "srcPath", false, "SRC_PATH");
-        public final static Property TargetPath = new Property(5, String.class, "targetPath", false, "TARGET_PATH");
+        public final static Property ToPath = new Property(5, String.class, "toPath", false, "TO_PATH");
         public final static Property Size = new Property(6, Long.class, "size", false, "SIZE");
-        public final static Property Duration = new Property(7, Long.class, "duration", false, "DURATION");
-        public final static Property Time = new Property(8, Long.class, "time", false, "TIME");
+        public final static Property Length = new Property(7, Long.class, "length", false, "LENGTH");
+        public final static Property Duration = new Property(8, Long.class, "duration", false, "DURATION");
+        public final static Property Time = new Property(9, Long.class, "time", false, "TIME");
+        public final static Property IsComplete = new Property(10, Boolean.class, "isComplete", false, "IS_COMPLETE");
     };
 
 
@@ -52,10 +54,12 @@ public class TransferHistoryDao extends AbstractDao<TransferHistory, Long> {
                 "'TYPE' INTEGER," + // 2: type
                 "'NAME' TEXT NOT NULL ," + // 3: name
                 "'SRC_PATH' TEXT NOT NULL ," + // 4: srcPath
-                "'TARGET_PATH' TEXT NOT NULL ," + // 5: targetPath
+                "'TO_PATH' TEXT NOT NULL ," + // 5: toPath
                 "'SIZE' INTEGER," + // 6: size
-                "'DURATION' INTEGER," + // 7: duration
-                "'TIME' INTEGER);"); // 8: time
+                "'LENGTH' INTEGER," + // 7: length
+                "'DURATION' INTEGER," + // 8: duration
+                "'TIME' INTEGER," + // 9: time
+                "'IS_COMPLETE' INTEGER);"); // 10: isComplete
     }
 
     /** Drops the underlying database table. */
@@ -85,21 +89,31 @@ public class TransferHistoryDao extends AbstractDao<TransferHistory, Long> {
         }
         stmt.bindString(4, entity.getName());
         stmt.bindString(5, entity.getSrcPath());
-        stmt.bindString(6, entity.getTargetPath());
+        stmt.bindString(6, entity.getToPath());
  
         Long size = entity.getSize();
         if (size != null) {
             stmt.bindLong(7, size);
         }
  
+        Long length = entity.getLength();
+        if (length != null) {
+            stmt.bindLong(8, length);
+        }
+ 
         Long duration = entity.getDuration();
         if (duration != null) {
-            stmt.bindLong(8, duration);
+            stmt.bindLong(9, duration);
         }
  
         Long time = entity.getTime();
         if (time != null) {
-            stmt.bindLong(9, time);
+            stmt.bindLong(10, time);
+        }
+ 
+        Boolean isComplete = entity.getIsComplete();
+        if (isComplete != null) {
+            stmt.bindLong(11, isComplete ? 1l: 0l);
         }
     }
 
@@ -118,10 +132,12 @@ public class TransferHistoryDao extends AbstractDao<TransferHistory, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // type
             cursor.getString(offset + 3), // name
             cursor.getString(offset + 4), // srcPath
-            cursor.getString(offset + 5), // targetPath
+            cursor.getString(offset + 5), // toPath
             cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6), // size
-            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7), // duration
-            cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8) // time
+            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7), // length
+            cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8), // duration
+            cursor.isNull(offset + 9) ? null : cursor.getLong(offset + 9), // time
+            cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0 // isComplete
         );
         return entity;
     }
@@ -134,10 +150,12 @@ public class TransferHistoryDao extends AbstractDao<TransferHistory, Long> {
         entity.setType(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
         entity.setName(cursor.getString(offset + 3));
         entity.setSrcPath(cursor.getString(offset + 4));
-        entity.setTargetPath(cursor.getString(offset + 5));
+        entity.setToPath(cursor.getString(offset + 5));
         entity.setSize(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
-        entity.setDuration(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
-        entity.setTime(cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8));
+        entity.setLength(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
+        entity.setDuration(cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8));
+        entity.setTime(cursor.isNull(offset + 9) ? null : cursor.getLong(offset + 9));
+        entity.setIsComplete(cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0);
      }
     
     /** @inheritdoc */

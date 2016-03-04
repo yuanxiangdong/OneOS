@@ -225,7 +225,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
      */
     private void cleanRecord() {
         if (isLogin(true)) {
-            Boolean isClean = TransferHistoryKeeper.delete(LoginManage.getInstance().getLoginSession().getUserInfo().getId());
+            Boolean isClean = TransferHistoryKeeper.deleteComplete(LoginManage.getInstance().getLoginSession().getUserInfo().getId());
             if (isClean) {
                 ToastHelper.showToast(R.string.clean_record_success);
             } else {

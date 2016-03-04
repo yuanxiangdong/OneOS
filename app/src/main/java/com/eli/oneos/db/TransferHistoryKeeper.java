@@ -49,10 +49,12 @@ public class TransferHistoryKeeper {
         return true;
     }
 
-    public static boolean delete(long uid) {
+    public static boolean deleteComplete(long uid) {
         TransferHistoryDao dao = DBHelper.getDaoSession().getTransferHistoryDao();
         QueryBuilder<TransferHistory> queryBuilder = dao.queryBuilder();
-        DeleteQuery<TransferHistory> deleteQuery = queryBuilder.where(TransferHistoryDao.Properties.Uid.eq(uid)).buildDelete();
+        queryBuilder.where(TransferHistoryDao.Properties.Uid.eq(uid));
+        queryBuilder.where(TransferHistoryDao.Properties.IsComplete.eq(true));
+        DeleteQuery<TransferHistory> deleteQuery = queryBuilder.buildDelete();
         deleteQuery.executeDeleteWithoutDetachingEntities();
 
         return true;
@@ -75,6 +77,12 @@ public class TransferHistoryKeeper {
 
         TransferHistoryDao dao = DBHelper.getDaoSession().getTransferHistoryDao();
         dao.update(history);
+        return true;
+    }
+
+    public static boolean clear() {
+        TransferHistoryDao dao = DBHelper.getDaoSession().getTransferHistoryDao();
+        dao.deleteAll();
         return true;
     }
 }

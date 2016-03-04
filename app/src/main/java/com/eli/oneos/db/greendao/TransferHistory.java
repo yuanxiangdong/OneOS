@@ -14,10 +14,12 @@ public class TransferHistory {
     /** Not-null value. */
     private String srcPath;
     /** Not-null value. */
-    private String targetPath;
+    private String toPath;
     private Long size;
+    private Long length;
     private Long duration;
     private Long time;
+    private Boolean isComplete;
 
     public TransferHistory() {
     }
@@ -26,16 +28,18 @@ public class TransferHistory {
         this.id = id;
     }
 
-    public TransferHistory(Long id, Long uid, Integer type, String name, String srcPath, String targetPath, Long size, Long duration, Long time) {
+    public TransferHistory(Long id, Long uid, Integer type, String name, String srcPath, String toPath, Long size, Long length, Long duration, Long time, Boolean isComplete) {
         this.id = id;
         this.uid = uid;
         this.type = type;
         this.name = name;
         this.srcPath = srcPath;
-        this.targetPath = targetPath;
+        this.toPath = toPath;
         this.size = size;
+        this.length = length;
         this.duration = duration;
         this.time = time;
+        this.isComplete = isComplete;
     }
 
     public Long getId() {
@@ -83,13 +87,13 @@ public class TransferHistory {
     }
 
     /** Not-null value. */
-    public String getTargetPath() {
-        return targetPath;
+    public String getToPath() {
+        return toPath;
     }
 
     /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setTargetPath(String targetPath) {
-        this.targetPath = targetPath;
+    public void setToPath(String toPath) {
+        this.toPath = toPath;
     }
 
     public Long getSize() {
@@ -98,6 +102,14 @@ public class TransferHistory {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    public Long getLength() {
+        return length;
+    }
+
+    public void setLength(Long length) {
+        this.length = length;
     }
 
     public Long getDuration() {
@@ -114,6 +126,14 @@ public class TransferHistory {
 
     public void setTime(Long time) {
         this.time = time;
+    }
+
+    public Boolean getIsComplete() {
+        return isComplete;
+    }
+
+    public void setIsComplete(Boolean isComplete) {
+        this.isComplete = isComplete;
     }
 
 }

@@ -36,7 +36,7 @@ public class DownloadManager {
                 if (state == TransferState.COMPLETE) {
                     long uid = LoginManage.getInstance().getLoginSession().getUserInfo().getId();
                     TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(true), mElement.getSrcName(),
-                            mElement.getSrcPath(), mElement.getTargetPath(), mElement.getSize(), 0L, System.currentTimeMillis());
+                            mElement.getSrcPath(), mElement.getTargetPath(), mElement.getSize(), mElement.getSize(), 0L, System.currentTimeMillis(), true);
                     TransferHistoryKeeper.insert(history);
 
                     if (mCompleteListener != null) {

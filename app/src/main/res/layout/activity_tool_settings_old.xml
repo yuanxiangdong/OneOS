@@ -42,12 +42,14 @@
                     android:layout_marginLeft="5dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
+                        android:drawableLeft="@drawable/ic_settings_user"
+                        android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:text="@string/current_user"
                         android:textColor="@color/darker"
@@ -90,41 +92,42 @@
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/line_settings_weight"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@color/line_settings" />
 
                 <Button
                     android:id="@+id/clean"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
-                    android:drawableRight="@drawable/ic_arrow_right_small"
+                    android:drawableLeft="@drawable/ic_settings_clean"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="10dp"
+                    android:padding="5dp"
                     android:text="@string/clean_record"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
 
+
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/line_settings_weight"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@color/line_settings" />
 
                 <Button
                     android:id="@+id/savepath"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
-                    android:drawableRight="@drawable/ic_arrow_right_small"
+                    android:drawableLeft="@drawable/ic_settings_path"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="10dp"
+                    android:padding="5dp"
                     android:text="@string/set_default_path"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -150,19 +153,19 @@
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:addStatesFromChildren="true"
                     android:background="@drawable/selector_list_trans_to_gray"
                     android:gravity="center_horizontal"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="10dp">
+                    android:padding="7dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
+                        android:drawableLeft="@drawable/ic_settings_network"
+                        android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:text="@string/only_wifi_preview_pic"
                         android:textColor="@color/darker"
@@ -170,36 +173,37 @@
 
                     <com.eli.oneos.widget.SwitchButton
                         android:id="@+id/switch_preview"
-                        android:layout_width="42dp"
-                        android:layout_height="23dp"
+                        android:layout_width="45dp"
+                        android:layout_height="25dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginRight="6dp"
+                        android:layout_marginRight="15dp"
                         android:enabled="false" />
                 </RelativeLayout>
+
 
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/line_settings_weight"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@color/line_settings" />
 
                 <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:addStatesFromChildren="true"
                     android:background="@drawable/selector_list_trans_to_gray"
                     android:gravity="center_horizontal"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="10dp">
+                    android:padding="7dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
+                        android:drawableLeft="@drawable/ic_settings_tip"
+                        android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:text="@string/not_wifi_download_tips"
                         android:textColor="@color/darker"
@@ -207,11 +211,11 @@
 
                     <com.eli.oneos.widget.SwitchButton
                         android:id="@+id/switch_download"
-                        android:layout_width="42dp"
-                        android:layout_height="23dp"
+                        android:layout_width="45dp"
+                        android:layout_height="25dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerInParent="true"
-                        android:layout_marginRight="6dp"
+                        android:layout_marginRight="15dp"
                         android:enabled="false" />
                 </RelativeLayout>
 
@@ -238,13 +242,13 @@
                     android:id="@+id/server_space"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
-                    android:drawableRight="@drawable/ic_arrow_right_small"
+                    android:drawableLeft="@drawable/ic_settings_server"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="10dp"
+                    android:padding="5dp"
                     android:text="@string/space_total"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -252,20 +256,20 @@
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/line_settings_weight"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@color/line_settings" />
 
                 <Button
                     android:id="@+id/user_space"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
-                    android:drawableRight="@drawable/ic_arrow_right_small"
+                    android:drawableLeft="@drawable/ic_settings_person"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="10dp"
+                    android:padding="5dp"
                     android:text="@string/space_user"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -273,20 +277,20 @@
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/line_settings_weight"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@color/line_settings" />
 
                 <Button
                     android:id="@+id/local_space"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
-                    android:drawableRight="@drawable/ic_arrow_right_small"
+                    android:drawableLeft="@drawable/ic_settings_local"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="10dp"
+                    android:padding="5dp"
                     android:text="@string/space_local"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -315,13 +319,13 @@
                     android:id="@+id/forum"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
-                    android:drawableRight="@drawable/ic_arrow_right_small"
+                    android:drawableLeft="@drawable/ic_settings_forum"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="10dp"
+                    android:padding="5dp"
                     android:text="@string/title_onespace_forum"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
@@ -330,20 +334,20 @@
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="@dimen/line_settings_weight"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@color/line_settings" />
 
                 <Button
                     android:id="@+id/about"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:background="@drawable/selector_list_trans_to_gray"
-                    android:drawableRight="@drawable/ic_arrow_right_small"
+                    android:drawableLeft="@drawable/ic_settings_about"
+                    android:drawablePadding="10dp"
+                    android:drawableRight="@drawable/btn_arrow_right"
                     android:gravity="center_vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="10dp"
+                    android:padding="5dp"
                     android:text="@string/about_onespace"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
