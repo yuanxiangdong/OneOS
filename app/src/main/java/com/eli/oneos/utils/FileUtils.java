@@ -276,6 +276,7 @@ public class FileUtils {
         bundle.putBoolean("IsLocalPicture", false);
         bundle.putSerializable("PictureList", picList);
         intent.putExtras(bundle);
+        activity.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
         activity.startActivity(intent);
     }
 
@@ -286,6 +287,7 @@ public class FileUtils {
         bundle.putBoolean("IsLocalPicture", true);
         bundle.putSerializable("PictureList", picList);
         intent.putExtras(bundle);
+        activity.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
         activity.startActivity(intent);
     }
 
