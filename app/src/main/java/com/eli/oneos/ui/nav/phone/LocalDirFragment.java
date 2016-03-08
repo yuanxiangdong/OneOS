@@ -26,6 +26,7 @@ import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileManage;
 import com.eli.oneos.model.phone.LocalFileType;
+import com.eli.oneos.model.phone.LocalSortTask;
 import com.eli.oneos.model.phone.adapter.LocalFileBaseAdapter;
 import com.eli.oneos.model.phone.adapter.LocalFileGridAdapter;
 import com.eli.oneos.model.phone.adapter.LocalFileListAdapter;
@@ -187,6 +188,11 @@ public class LocalDirFragment extends BaseLocalFragment {
 
         @Override
         public void onSearch(String filter) {
+            if (!EmptyUtils.isEmpty(rootPath)) {
+                curDir = new File(rootPath);
+            } else {
+                curDir = null;
+            }
             mSearchFilter = filter;
             autoPullToRefresh();
         }
@@ -408,29 +414,66 @@ public class LocalDirFragment extends BaseLocalFragment {
         }, Constants.DELAY_TIME_AUTO_REFRESH);
     }
 
-    private void getFileList(File dir) {
-        mFileList.clear();
-        if (dir == null) {
-            mPathPanel.showNewFolderButton(false);
-            for (File f : mSDCardList) {
-                mFileList.add(new LocalFile(f));
+    private void searchDownloadDir(List<LocalFile> fileList, File dir) {
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            if (null != files) {
+                for (File file : files) {
+                    searchDownloadDir(fileList, file);
+                }
             }
         } else {
-            mPathPanel.showNewFolderButton(true);
-            File[] files = dir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File f) {
-                    return !f.isHidden();
-                }
-            });
-            if (null != files) {
-                List<File> list = Arrays.asList(files);
-                for (File f : list) {
-                    mFileList.add(new LocalFile(f));
-                }
+            if (dir.getName().contains(mSearchFilter)) {
+                fileList.add(new LocalFile(dir));
             }
         }
-        notifyRefreshComplete(true);
+    }
+
+    private void getFileList(File dir) {
+        mFileList.clear();
+        if (!EmptyUtils.isEmpty(mSearchFilter)) {
+            if (mFileType == LocalFileType.PRIVATE) {
+                LocalSortTask task = new LocalSortTask(mMainActivity, mFileType, mSearchFilter, new LocalSortTask.onLocalSortListener() {
+                    @Override
+                    public void onStart(LocalFileType type) {
+                    }
+
+                    @Override
+                    public void onComplete(LocalFileType type, List<LocalFile> fileList, List<String> sectionList) {
+                        mFileList.addAll(fileList);
+                        notifyRefreshComplete(true);
+                    }
+                });
+                task.execute(0);
+            } else {
+                List<LocalFile> fileList = new ArrayList<>();
+                searchDownloadDir(fileList, curDir);
+                mFileList.addAll(fileList);
+                notifyRefreshComplete(true);
+            }
+        } else {
+            if (dir == null) {
+                mPathPanel.showNewFolderButton(false);
+                for (File f : mSDCardList) {
+                    mFileList.add(new LocalFile(f));
+                }
+            } else {
+                mPathPanel.showNewFolderButton(true);
+                File[] files = dir.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File f) {
+                        return !f.isHidden();
+                    }
+                });
+                if (null != files) {
+                    List<File> list = Arrays.asList(files);
+                    for (File f : list) {
+                        mFileList.add(new LocalFile(f));
+                    }
+                }
+            }
+            notifyRefreshComplete(true);
+        }
     }
 
     private void switchViewer(boolean isListShown) {

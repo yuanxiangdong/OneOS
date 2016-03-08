@@ -22,7 +22,7 @@ import java.util.List;
 public class LocalSortTask extends AsyncTask<Integer, Integer, String[]> {
     private static final String TAG = LocalSortTask.class.getSimpleName();
 
-    private LinkedList<String> mExtensionList = new LinkedList<String>();
+    private LinkedList<String> mExtensionList = null;
     private Activity activity;
     private LocalFileType type = LocalFileType.PICTURE;
     private String filter = null;
@@ -131,7 +131,7 @@ public class LocalSortTask extends AsyncTask<Integer, Integer, String[]> {
                     String path = cursor.getString(column_index);
                     if (path.indexOf(".") > -1) {
                         String extension = path.substring(path.lastIndexOf("."), path.length()).toUpperCase();
-                        if (mExtensionList.contains(extension)) {
+                        if (null == mExtensionList || mExtensionList.contains(extension)) {
                             File file = new File(path);
                             if (file.exists() && file.isFile()) {
                                 if (filter != null && !file.getName().contains(filter)) {
@@ -176,7 +176,11 @@ public class LocalSortTask extends AsyncTask<Integer, Integer, String[]> {
     }
 
     private LinkedList<String> getExtension(LocalFileType type) {
-        mExtensionList.clear();
+        if (type == LocalFileType.PRIVATE || type == LocalFileType.DOWNLOAD) {
+            return null;
+        }
+
+        mExtensionList = new LinkedList<>();
         if (type == LocalFileType.AUDIO) {
             mExtensionList.add(".MP3");
             mExtensionList.add(".WMA");

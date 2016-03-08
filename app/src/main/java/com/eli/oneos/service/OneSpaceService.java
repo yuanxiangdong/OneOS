@@ -98,7 +98,7 @@ public class OneSpaceService extends Service {
 
         mBackupPhotoManager = new BackupFileManager(loginSession, context);
         mBackupPhotoManager.startBackup();
-        Log.d(TAG, "======Start Backup Service=======");
+        Log.d(TAG, "======Start BackupService=======");
     }
 
     public void stopBackupFile() {
@@ -163,7 +163,7 @@ public class OneSpaceService extends Service {
     }
 
     public void pauseDownload() {
-        Log.d("OneSpaceService", "pause activeUsers download");
+        Log.d("OneSpaceService", "pause all download task");
         mDownloadManager.pauseDownload();
     }
 
@@ -172,7 +172,7 @@ public class OneSpaceService extends Service {
     }
 
     public void continueDownload() {
-        Log.d("OneSpaceService", "continue activeUsers download");
+        Log.d("OneSpaceService", "continue all download task");
         mDownloadManager.continueDownload();
     }
 
@@ -200,7 +200,7 @@ public class OneSpaceService extends Service {
     }
 
     public void pauseUpload() {
-        Log.d("OneSpaceService", "pause activeUsers upload");
+        Log.d("OneSpaceService", "pause all upload task");
         mUploadManager.pauseUpload();
     }
 
@@ -210,7 +210,7 @@ public class OneSpaceService extends Service {
     }
 
     public void continueUpload() {
-        Log.d("OneSpaceService", "continue activeUsers  upload");
+        Log.d("OneSpaceService", "continue all upload task");
         mUploadManager.continueUpload();
     }
 
@@ -226,7 +226,7 @@ public class OneSpaceService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(ACTIVITY_SERVICE, "Transfer service destroy.");
+        Log.d(ACTIVITY_SERVICE, "TransferService destroy.");
         mDownloadManager.destroy();
         mUploadManager.destroy();
         stopBackupFile();

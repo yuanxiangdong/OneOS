@@ -1,6 +1,7 @@
 package com.eli.oneos.model.oneos;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 
 public enum OneOSFileType {
     /**
@@ -61,5 +62,18 @@ public enum OneOSFileType {
         }
 
         return name;
+    }
+
+    public static String getRootPath(OneOSFileType type) {
+        String path = null;
+        if (type == OneOSFileType.PRIVATE) {
+            path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
+        } else if (type == OneOSFileType.PUBLIC) {
+            path = OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
+        } else if (type == OneOSFileType.RECYCLE) {
+            path = OneOSAPIs.ONE_OS_RECYCLE_ROOT_DIR;
+        }
+
+        return path;
     }
 }

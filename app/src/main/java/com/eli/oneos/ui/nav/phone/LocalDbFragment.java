@@ -38,6 +38,7 @@ import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.PullToRefreshView;
+import com.eli.oneos.widget.SearchPanel;
 import com.eli.oneos.widget.sticky.gridview.StickyGridHeadersView;
 import com.eli.oneos.widget.sticky.listview.StickyListHeadersView;
 
@@ -166,6 +167,25 @@ public class LocalDbFragment extends BaseLocalFragment {
             view.onFooterRefreshComplete();
         }
     };
+    private String mSearchFilter = null;
+    private SearchPanel.OnSearchActionListener mSearchListener = new SearchPanel.OnSearchActionListener() {
+        @Override
+        public void onVisible(boolean visible) {
+
+        }
+
+        @Override
+        public void onSearch(String filter) {
+            mSearchFilter = filter;
+            autoPullToRefresh();
+        }
+
+        @Override
+        public void onCancel() {
+            mSearchFilter = null;
+            autoPullToRefresh();
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -203,6 +223,9 @@ public class LocalDbFragment extends BaseLocalFragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, ">>>>>>>>On Resume>>>>>>>");
+        if (null != mParentFragment) {
+            mParentFragment.addSearchListener(mSearchListener);
+        }
         autoPullToRefresh();
     }
 
@@ -456,7 +479,7 @@ public class LocalDbFragment extends BaseLocalFragment {
 
     private void getSortFileList() {
         Log.d(TAG, "---------File type: " + mFileType);
-        LocalSortTask task = new LocalSortTask(mMainActivity, mFileType, null, new LocalSortTask.onLocalSortListener() {
+        LocalSortTask task = new LocalSortTask(mMainActivity, mFileType, mSearchFilter, new LocalSortTask.onLocalSortListener() {
             @Override
             public void onStart(LocalFileType type) {
             }

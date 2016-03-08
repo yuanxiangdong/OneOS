@@ -37,7 +37,6 @@
         android:layout_margin="5dp"
         android:background="@android:color/transparent"
         android:scaleType="centerInside"
-        android:src="@drawable/selector_button_nav_title_search"
-        android:visibility="gone" />
+        android:src="@drawable/selector_button_nav_title_search" />
 
 </RelativeLayout>

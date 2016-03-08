@@ -5,7 +5,6 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.user.LoginSession;
@@ -113,7 +112,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
                             // {"errno":-1,"msg":"list error","result":false}
                             // -1=permission deny, -2=argument error, -3=other error
                             int errorNo = json.getInt("errno");
-                            String msg = null;
+                            String msg;
                             if (errorNo == -1) {
                                 msg = context.getResources().getString(R.string.error_access_dir_perm_deny);
                             } else {
@@ -134,17 +133,9 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
         }
     }
 
-    public void search(OneOSFileType fileType, FileOrderType orderType, String pattern) {
-        if (fileType == OneOSFileType.PUBLIC) {
-            this.path = OneOSAPIs.ONE_OS_PUBLIC_ROOT_DIR;
-        } else {
-            this.path = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
-        }
-        if (orderType == FileOrderType.NAME) {
-            this.stype = "targetPath";
-        } else {
-            this.stype = "date";
-        }
+    public void search(OneOSFileType fileType, String pattern) {
+        this.path = OneOSFileType.getRootPath(fileType);
+        this.stype = "name";
         this.pattern = pattern;
 
         search();

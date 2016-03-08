@@ -56,6 +56,8 @@ public class OneOSFileManage {
                 mActivity.showLoading(R.string.getting_file_attr);
             } else if (action == FileManageAction.DELETE) {
                 mActivity.showLoading(R.string.deleting_file);
+            } else if (action == FileManageAction.DELETE_SHIFT) {
+                mActivity.showLoading(R.string.deleting_file);
             } else if (action == FileManageAction.RENAME) {
                 mActivity.showLoading(R.string.renaming_file);
             } else if (action == FileManageAction.MKDIR) {
@@ -77,6 +79,7 @@ public class OneOSFileManage {
 
         @Override
         public void onSuccess(String url, FileManageAction action, String response) {
+            Log.d(TAG, "OnFileManageListener success: Action=" + action + ", Response=" + response);
             if (action == FileManageAction.ATTR) {
                 mActivity.dismissLoading();
                 // {"result":true, "path":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
@@ -109,6 +112,8 @@ public class OneOSFileManage {
                     ToastHelper.showToast(R.string.error_json_exception);
                 }
             } else if (action == FileManageAction.DELETE) {
+                mActivity.showTipView(R.string.delete_file_success, true);
+            } else if (action == FileManageAction.DELETE_SHIFT) {
                 mActivity.showTipView(R.string.delete_file_success, true);
             } else if (action == FileManageAction.RENAME) {
                 mActivity.showTipView(R.string.rename_file_success, true);

@@ -28,6 +28,7 @@ import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSStickyGridAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSStickyListAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListDBAPI;
+import com.eli.oneos.model.oneos.api.OneOSSearchAPI;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
@@ -36,6 +37,7 @@ import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.PullToRefreshView;
+import com.eli.oneos.widget.SearchPanel;
 import com.eli.oneos.widget.sticky.gridview.StickyGridHeadersView;
 import com.eli.oneos.widget.sticky.listview.StickyListHeadersView;
 
@@ -171,6 +173,24 @@ public class CloudDbFragment extends BaseCloudFragment {
             }
         }
     };
+    private String mSearchFilter = null;
+    private SearchPanel.OnSearchActionListener mSearchListener = new SearchPanel.OnSearchActionListener() {
+        @Override
+        public void onVisible(boolean visible) {
+        }
+
+        @Override
+        public void onSearch(String filter) {
+            mSearchFilter = filter;
+            autoPullToRefresh();
+        }
+
+        @Override
+        public void onCancel() {
+            mSearchFilter = null;
+            autoPullToRefresh();
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -192,6 +212,9 @@ public class CloudDbFragment extends BaseCloudFragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, ">>>>>>>>On Resume>>>>>>>");
+        if (null != mParentFragment) {
+            mParentFragment.addSearchListener(mSearchListener);
+        }
     }
 
     @Override
@@ -463,34 +486,69 @@ public class CloudDbFragment extends BaseCloudFragment {
         }
     }
 
+    private void addSearchFilesByType(ArrayList<OneOSFile> files) {
+        String type = OneOSFileType.getServerTypeName(mFileType);
+        for (OneOSFile file : files) {
+            if (file.getType().equalsIgnoreCase(type)) {
+                mFileList.add(file);
+            }
+        }
+    }
+
     private void getOneOSFileList(int page) {
         Log.d(TAG, "---------File type: " + mFileType);
-        OneOSListDBAPI listDbAPI = new OneOSListDBAPI(mLoginSession, mFileType);
-        listDbAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
-            @Override
-            public void onStart(String url) {
-            }
+        if (!EmptyUtils.isEmpty(mSearchFilter)) {
+            OneOSSearchAPI searchAPI = new OneOSSearchAPI(mLoginSession);
+            searchAPI.setOnFileListListener(new OneOSSearchAPI.OnSearchFileListener() {
+                @Override
+                public void onStart(String url) {
+                }
 
-            @Override
-            public void onSuccess(String url, OneOSFileType type, int total, int pages, int page, ArrayList<OneOSFile> files) {
-                if (page == 0) {
+                @Override
+                public void onSuccess(String url, ArrayList<OneOSFile> files) {
                     mFileList.clear();
-                }
-                if (!EmptyUtils.isEmpty(files)) {
-                    mFileList.addAll(files);
-                    mPage = page;
-                    mPages = pages;
+                    if (!EmptyUtils.isEmpty(files)) {
+                        addSearchFilesByType(files);
+                    }
+
+                    notifyRefreshComplete(true);
                 }
 
-                notifyRefreshComplete(true);
-            }
+                @Override
+                public void onFailure(String url, int errorNo, String errorMsg) {
+                    ToastHelper.showToast(errorMsg);
+                    notifyRefreshComplete(true);
+                }
+            });
+            searchAPI.search(mFileType, mSearchFilter);
+        } else {
+            OneOSListDBAPI listDbAPI = new OneOSListDBAPI(mLoginSession, mFileType);
+            listDbAPI.setOnFileListListener(new OneOSListDBAPI.OnFileDBListListener() {
+                @Override
+                public void onStart(String url) {
+                }
 
-            @Override
-            public void onFailure(String url, int errorNo, String errorMsg) {
-                ToastHelper.showToast(errorMsg);
-                notifyRefreshComplete(true);
-            }
-        });
-        listDbAPI.list(page);
+                @Override
+                public void onSuccess(String url, OneOSFileType type, int total, int pages, int page, ArrayList<OneOSFile> files) {
+                    if (page == 0) {
+                        mFileList.clear();
+                    }
+                    if (!EmptyUtils.isEmpty(files)) {
+                        mFileList.addAll(files);
+                        mPage = page;
+                        mPages = pages;
+                    }
+
+                    notifyRefreshComplete(true);
+                }
+
+                @Override
+                public void onFailure(String url, int errorNo, String errorMsg) {
+                    ToastHelper.showToast(errorMsg);
+                    notifyRefreshComplete(true);
+                }
+            });
+            listDbAPI.list(page);
+        }
     }
 }

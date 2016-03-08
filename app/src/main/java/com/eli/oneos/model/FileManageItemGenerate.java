@@ -38,6 +38,7 @@ public class FileManageItemGenerate {
         if (fileType == OneOSFileType.RECYCLE) {
             mOptItems.add(OPT_MOVE);
             mOptItems.add(OPT_DELETE);
+            mOptItems.add(OPT_ATTR);
             mOptItems.add(OPT_CLEAN);
         } else {
             mOptItems.add(OPT_COPY);

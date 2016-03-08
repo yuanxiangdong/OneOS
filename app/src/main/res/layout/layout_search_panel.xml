@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/layout_title_height"
-    android:background="@color/bg_title" >
+    android:background="@color/bg_title">
 
     <com.eli.oneos.widget.ClearEditText
         android:id="@+id/search_edit"
@@ -21,6 +21,7 @@
         android:padding="5dp"
         android:singleLine="true"
         android:textColor="@color/gray"
+        android:textColorHint="@color/gray"
         android:textSize="@dimen/text_size_sm" />
 
     <Button

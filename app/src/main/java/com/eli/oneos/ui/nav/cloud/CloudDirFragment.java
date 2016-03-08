@@ -176,6 +176,7 @@ public class CloudDirFragment extends BaseCloudFragment {
 
         @Override
         public void onSearch(String filter) {
+            curPath = OneOSFileType.getRootPath(mFileType);
             mSearchFilter = filter;
             autoPullToRefresh();
         }
@@ -592,46 +593,45 @@ public class CloudDirFragment extends BaseCloudFragment {
                     notifyRefreshComplete(true);
                 }
             });
-            searchAPI.search(mFileType, mOrderType, mSearchFilter);
-            return;
-        }
+            searchAPI.search(mFileType, mSearchFilter);
+        } else {
+            if (mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC || mFileType == OneOSFileType.RECYCLE) {
+                if (EmptyUtils.isEmpty(path)) {
+                    Log.e(TAG, "Get list srcPath is NULL");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyRefreshComplete(true);
+                        }
+                    }, Constants.DELAY_TIME_AUTO_REFRESH);
+                    return;
+                }
 
-        if (mFileType == OneOSFileType.PRIVATE || mFileType == OneOSFileType.PUBLIC || mFileType == OneOSFileType.RECYCLE) {
-            if (EmptyUtils.isEmpty(path)) {
-                Log.e(TAG, "Get list srcPath is NULL");
-                new Handler().postDelayed(new Runnable() {
+                OneOSListDirAPI listDirAPI = new OneOSListDirAPI(mLoginSession, path);
+                listDirAPI.setOnFileListListener(new OneOSListDirAPI.OnFileListListener() {
                     @Override
-                    public void run() {
+                    public void onStart(String url) {
+                    }
+
+                    @Override
+                    public void onSuccess(String url, String path, ArrayList<OneOSFile> files) {
+                        curPath = path;
+                        mFileList.clear();
+                        if (!EmptyUtils.isEmpty(files)) {
+                            mFileList.addAll(files);
+                        }
+
                         notifyRefreshComplete(true);
                     }
-                }, Constants.DELAY_TIME_AUTO_REFRESH);
-                return;
-            }
 
-            OneOSListDirAPI listDirAPI = new OneOSListDirAPI(mLoginSession, path);
-            listDirAPI.setOnFileListListener(new OneOSListDirAPI.OnFileListListener() {
-                @Override
-                public void onStart(String url) {
-                }
-
-                @Override
-                public void onSuccess(String url, String path, ArrayList<OneOSFile> files) {
-                    curPath = path;
-                    mFileList.clear();
-                    if (!EmptyUtils.isEmpty(files)) {
-                        mFileList.addAll(files);
+                    @Override
+                    public void onFailure(String url, int errorNo, String errorMsg) {
+                        ToastHelper.showToast(errorMsg);
+                        notifyRefreshComplete(true);
                     }
-
-                    notifyRefreshComplete(true);
-                }
-
-                @Override
-                public void onFailure(String url, int errorNo, String errorMsg) {
-                    ToastHelper.showToast(errorMsg);
-                    notifyRefreshComplete(true);
-                }
-            });
-            listDirAPI.list();
+                });
+                listDirAPI.list();
+            }
         }
     }
 }
