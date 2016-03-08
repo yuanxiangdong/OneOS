@@ -28,10 +28,10 @@ public class BackupScanFileThread extends Thread {
         this.mBackupList = mBackupList;
         this.mListener = mScanListener;
         if (EmptyUtils.isEmpty(mBackupList)) {
-            Logger.p(LogLevel.ERROR, Logged.BACKUP_FILE, TAG, "BackupFile List is Empty");
+            Logger.p(LogLevel.ERROR, Logged.BACKUP_ALBUM, TAG, "BackupFile List is Empty");
             isInterrupt = true;
         }
-        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Backup List Size: " + mBackupList.size());
+        Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "Backup List Size: " + mBackupList.size());
     }
 
     private ArrayList<BackupFileElement> scanningBackupFiles(BackupFile info) {
@@ -47,7 +47,7 @@ public class BackupScanFileThread extends Thread {
             for (File file : fileList) {
                 BackupFileElement element = new BackupFileElement(info, file, isFirstBackup);
                 backupElements.add(element);
-                Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Add Backup Element: " + element.toString());
+                Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "Add Backup Element: " + element.toString());
             }
         }
 
@@ -70,7 +70,7 @@ public class BackupScanFileThread extends Thread {
     @Override
     public void run() {
         while (!isInterrupt) {
-            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "======Start Sort Backup Task=====");
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "======Start Sort Backup Task=====");
             Collections.sort(mBackupList, new Comparator<BackupFile>() {
                 @Override
                 public int compare(BackupFile info1, BackupFile info2) {
@@ -83,47 +83,33 @@ public class BackupScanFileThread extends Thread {
                     return 0;
                 }
             });
-            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "======Complete Sort Backup Task=====");
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "======Complete Sort Backup Task=====");
 
-            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, ">>>>>>Start Scanning Directory=====");
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, ">>>>>>Start Scanning Directory=====");
             ArrayList<BackupFileElement> backupElements = new ArrayList<>();
             for (BackupFile info : mBackupList) {
-                Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "------Scanning: " + info.getPath());
+                Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "------Scanning: " + info.getPath());
                 ArrayList<BackupFileElement> files = scanningBackupFiles(info);
                 backupElements.addAll(files);
                 info.setCount(info.getCount() + 1);
             }
-            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, ">>>>>>Complete Scanning Directory: " + backupElements.size());
+            Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, ">>>>>>Complete Scanning Directory: " + backupElements.size());
 
             if (mListener != null) {
                 mListener.onComplete(backupElements);
             }
 
-            if (BackupFileManager.USE_FILE_OBSERVER) {
-                stopBackupThread();
-                break;
-            }
-
-            try {
-                Logger.p(LogLevel.INFO, Logged.BACKUP_FILE, TAG, "======Sleep 10min====");
-                sleep(SCAN_FREQUENCY);
-            } catch (InterruptedException e) {
-                Logger.p(LogLevel.ERROR, Logged.BACKUP_FILE, TAG, "BackupScanFileThread Exception", e);
-            }
+            break;
         }
     }
 
     private void listFiles(ArrayList<File> list, File dir, boolean isBackupAlbum, long lastBackupTime) {
-        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "######List Dir: " + dir.getAbsolutePath() + ", LastTime: " + lastBackupTime);
+        Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "######List Dir: " + dir.getAbsolutePath() + ", LastTime: " + lastBackupTime);
         if (dir.isDirectory()) {
             File[] files = dir.listFiles(new BackupFileFilter(isBackupAlbum, lastBackupTime));
             if (null != files) {
                 for (File file : files) {
-                    if (file.isDirectory()) {
-                        listFiles(list, file, isBackupAlbum, lastBackupTime);
-                    } else {
-                        list.add(file);
-                    }
+                    listFiles(list, file, isBackupAlbum, lastBackupTime);
                 }
             }
         } else {
@@ -131,7 +117,7 @@ public class BackupScanFileThread extends Thread {
         }
     }
 
-    public void stopBackupThread() {
+    public void stopScanThread() {
         this.isInterrupt = true;
         interrupt();
     }

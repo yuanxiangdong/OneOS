@@ -26,12 +26,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BackupFileManager {
-    private static final String TAG = BackupFileManager.class.getSimpleName();
+public class BackupAlbumManager {
+    private static final String TAG = BackupAlbumManager.class.getSimpleName();
+    private static final boolean IS_LOG = Logged.BACKUP_ALBUM;
 
-    public static final boolean USE_FILE_OBSERVER = true;
-
-    private List<BackupFileElement> completeList = Collections.synchronizedList(new ArrayList<BackupFileElement>());
     private BackupScanFileThread mBackupThread = null;
     private List<RecursiveFileObserver> mFileObserverList = new ArrayList<>();
     private HandlerQueueThread handlerQueueThread = null;
@@ -45,7 +43,7 @@ public class BackupFileManager {
         @Override
         public void onComplete(ArrayList<BackupFileElement> mBackupList) {
             addBackupElements(mBackupList);
-            if (USE_FILE_OBSERVER && !EmptyUtils.isEmpty(mFileObserverList)) {
+            if (!EmptyUtils.isEmpty(mFileObserverList)) {
                 for (RecursiveFileObserver observer : mFileObserverList) {
                     observer.startWatching();
                 }
@@ -64,7 +62,7 @@ public class BackupFileManager {
         }
     };
 
-    public BackupFileManager(LoginSession mLoginSession, Context context) {
+    public BackupAlbumManager(LoginSession mLoginSession, Context context) {
         this.mLoginSession = mLoginSession;
         this.context = context;
 
@@ -72,12 +70,10 @@ public class BackupFileManager {
         initBackupPhotoIfNeeds();
 
         handlerQueueThread = new HandlerQueueThread();
-        if (USE_FILE_OBSERVER) {
-            for (BackupFile info : mBackupList) {
-                RecursiveFileObserver mFileObserver = new RecursiveFileObserver(info, info.getPath(),
-                        RecursiveFileObserver.EVENTS_BACKUP_PHOTOS, mObserverListener);
-                mFileObserverList.add(mFileObserver);
-            }
+        for (BackupFile info : mBackupList) {
+            RecursiveFileObserver mFileObserver = new RecursiveFileObserver(info, info.getPath(),
+                    RecursiveFileObserver.EVENTS_BACKUP_PHOTOS, mObserverListener);
+            mFileObserverList.add(mFileObserver);
         }
         mBackupThread = new BackupScanFileThread(mBackupList, mScanListener);
     }
@@ -93,7 +89,7 @@ public class BackupFileManager {
                     info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(),
                             true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
                     BackupFileKeeper.insertOrReplace(info);
-                    Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Add New Backup Album Dir: " + info.getPath());
+                    Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Add New Backup Album Dir: " + info.getPath());
                     isNewBackupPath = true;
                     mBackupList.add(info);
                 }
@@ -106,7 +102,7 @@ public class BackupFileManager {
                 info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath(),
                         true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
                 BackupFileKeeper.insertOrReplace(info);
-                Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Add New Backup Album Dir: " + info.getPath());
+                Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Add New Backup Album Dir: " + info.getPath());
                 isNewBackupPath = true;
                 mBackupList.add(info);
             }
@@ -132,7 +128,7 @@ public class BackupFileManager {
         }
 
         if (mBackupThread != null && mBackupThread.isAlive()) {
-            mBackupThread.stopBackupThread();
+            mBackupThread.stopScanThread();
             mBackupThread = null;
         }
 
@@ -153,11 +149,11 @@ public class BackupFileManager {
 
     private boolean addBackupElements(List<BackupFileElement> mList) {
         if (mList == null) {
-            Logger.p(LogLevel.ERROR, Logged.BACKUP_FILE, TAG, "Backup List is empty, nothing need to add");
+            Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Backup List is empty, nothing need to add");
             return false;
         }
 
-        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "==>>>Add backup list, size: " + mList.size());
+        Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "==>>>Add backup list, size: " + mList.size());
         if (handlerQueueThread != null) {
             if (!handlerQueueThread.isRunning) {
                 handlerQueueThread.start();
@@ -171,11 +167,11 @@ public class BackupFileManager {
 
     private boolean addBackupElement(BackupFileElement mElement) {
         if (mElement == null) {
-            Logger.p(LogLevel.ERROR, Logged.BACKUP_FILE, TAG, "Backup element is empty, nothing need to add");
+            Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Backup element is empty, nothing need to add");
             return false;
         }
 
-        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "==>>>Add backup item: " + mElement.toString());
+        Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "==>>>Add backup item: " + mElement.toString());
         if (handlerQueueThread != null) {
             if (!handlerQueueThread.isRunning) {
                 handlerQueueThread.start();
@@ -197,7 +193,7 @@ public class BackupFileManager {
             @Override
             public void onResult(UploadElement element) {
                 BackupFileElement mElement = (BackupFileElement) element;
-                Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Backup Result: " + mElement.getFile().getName() + ", State: " + mElement.getState() + ", Time: " + System.currentTimeMillis());
+                Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Backup Result: " + mElement.getFile().getName() + ", State: " + mElement.getState() + ", Time: " + System.currentTimeMillis());
 
                 stopCurrentBackupTask();
 
@@ -209,21 +205,20 @@ public class BackupFileManager {
                         if (mLastBackupTime > mElement.getBackupInfo().getTime()) {
                             mElement.getBackupInfo().setTime(mLastBackupTime);
                             if (BackupFileKeeper.update(mElement.getBackupInfo())) {
-                                Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Update Database Last Backup Time Success: " + FileUtils.formatTime(mLastBackupTime));
+                                Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Update Database Last Backup Time Success: " + FileUtils.formatTime(mLastBackupTime));
                             } else {
-                                Logger.p(LogLevel.ERROR, Logged.BACKUP_FILE, TAG, "Update Database Last Backup Time Failed");
+                                Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Update Database Last Backup Time Failed");
                                 return;
                             }
                         }
 
-                        completeList.add(mElement);
                         mBackupList.remove(mElement);
-                        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Backup Complete");
+                        Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Backup Complete");
                     } else {
                         if (mElement.getState() == TransferState.FAILED && mElement.getException() == TransferException.FILE_NOT_FOUND) {
                             mBackupList.remove(mElement);
                         } else {
-                            Logger.p(LogLevel.ERROR, Logged.BACKUP_FILE, TAG, "Backup Failed");
+                            Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Backup Failed");
                             mElement.setState(TransferState.WAIT);
                         }
                     }
@@ -253,7 +248,7 @@ public class BackupFileManager {
                 if (hasBackupTask) {
                     synchronized (this) {
                         try {
-                            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Waiting for Backup task stop: " + System.currentTimeMillis());
+                            Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Waiting for Backup task stop: " + System.currentTimeMillis());
                             this.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -262,7 +257,7 @@ public class BackupFileManager {
                 }
 
                 try {
-                    Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Waiting for Backup List Change: " + System.currentTimeMillis());
+                    Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Waiting for Backup List Change: " + System.currentTimeMillis());
                     synchronized (mBackupList) {
                         mBackupList.wait();
                     }
@@ -276,7 +271,7 @@ public class BackupFileManager {
                     try {
                         sleep(60000); // sleep 60 * 1000 = 60s
                         isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupFileOnlyWifi();
-                        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "----Is Backup Only Wifi: " + isOnlyWifiBackup);
+                        Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "----Is Backup Only Wifi: " + isOnlyWifiBackup);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -284,7 +279,7 @@ public class BackupFileManager {
 
                 for (BackupFileElement element : mBackupList) {
                     if (element.getState() == TransferState.WAIT) {
-                        Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "Start a New Backup Task");
+                        Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Start a New Backup Task");
                         hasBackupTask = true;
                         backupPhotoThread = new UploadFileThread(element, mLoginSession, listener);
                         backupPhotoThread.start();
@@ -361,7 +356,7 @@ public class BackupFileManager {
          * stop backup
          */
         public void stopBackupThread() {
-            Logger.p(LogLevel.DEBUG, Logged.BACKUP_FILE, TAG, "====Stop Backup====");
+            Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "====Stop Backup====");
             isRunning = false;
             if (backupPhotoThread != null) {
                 backupPhotoThread.stopUpload();

@@ -6,6 +6,7 @@ package com.eli.oneos.model.log;
 public class Logged {
     public static boolean CRASH_EXCEPTION = true;
 
+    public static boolean BACKUP_ALBUM = true;
     public static boolean BACKUP_FILE = true;
     public static boolean BACKUP_CONTACTS = true;
     public static boolean BACKUP_SMS = true;

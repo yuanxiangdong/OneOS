@@ -11,7 +11,7 @@
 //
 //import com.eli.oneos.MyApplication;
 //import com.eli.oneos.db.BackupFileKeeper;
-//import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
+//import com.eli.oneos.model.oneos.backup.file.BackupAlbumManager;
 //import com.eli.oneos.model.oneos.user.LoginManage;
 //import com.eli.oneos.model.oneos.user.LoginSession;
 //
@@ -19,7 +19,7 @@
 //    private static final String TAG = BackupService.class.getSimpleName();
 //    private BackupServiceBinder mBinder;
 //    private Context context;
-//    private BackupFileManager mBackupManager;
+//    private BackupAlbumManager mBackupManager;
 //
 //    @Override
 //    public void onCreate() {
@@ -54,7 +54,7 @@
 //            mBackupManager.stopBackup();
 //        }
 //
-//        mBackupManager = new BackupFileManager(loginSession, context);
+//        mBackupManager = new BackupAlbumManager(loginSession, context);
 //        mBackupManager.startBackup();
 //        Log.d(TAG, "======Start Backup Thread");
 //    }

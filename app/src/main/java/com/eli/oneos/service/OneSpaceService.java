@@ -12,7 +12,7 @@ import android.util.Log;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
+import com.eli.oneos.model.oneos.backup.file.BackupAlbumManager;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
 import com.eli.oneos.model.oneos.transfer.DownloadManager;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
@@ -32,7 +32,7 @@ public class OneSpaceService extends Service {
     private ServiceBinder mBinder;
     private DownloadManager mDownloadManager;
     private UploadManager mUploadManager;
-    private BackupFileManager mBackupPhotoManager;
+    private BackupAlbumManager mBackupPhotoManager;
     private List<DownloadManager.OnDownloadCompleteListener> mDownloadCompleteListenerList = new ArrayList<DownloadManager.OnDownloadCompleteListener>();
     private List<UploadManager.OnUploadCompleteListener> mUploadCompleteListenerList = new ArrayList<UploadManager.OnUploadCompleteListener>();
 
@@ -96,7 +96,7 @@ public class OneSpaceService extends Service {
             mBackupPhotoManager.stopBackup();
         }
 
-        mBackupPhotoManager = new BackupFileManager(loginSession, context);
+        mBackupPhotoManager = new BackupAlbumManager(loginSession, context);
         mBackupPhotoManager.startBackup();
         Log.d(TAG, "======Start BackupService=======");
     }

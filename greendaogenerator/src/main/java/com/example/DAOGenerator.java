@@ -67,9 +67,11 @@ public class DAOGenerator {
         note.addLongProperty("uid").notNull().primaryKey(); // 主键，用户信息表中的ID
         note.addStringProperty("downloadPath");             // 下载文件保存路径
         note.addBooleanProperty("isAutoBackupFile");        // 自动备份文件（默认为false）
+        note.addBooleanProperty("isAutoBackupAlbum");       // 自动备份相册（默认为false）
         note.addBooleanProperty("isPreviewPicOnlyWifi");    // 仅Wi-Fi环境下显示预览图（默认为true）
         note.addBooleanProperty("isTipTransferNotWifi");    // 非Wi-Fi环境上传/下载文件提示（默认为true）
         note.addBooleanProperty("isBackupFileOnlyWifi");    // 仅Wi-Fi环境下自动备份文件（默认为true）
+        note.addBooleanProperty("isBackupAlbumOnlyWifi");   // 仅Wi-Fi环境下自动备份相册（默认为true）
         note.addIntProperty("fileOrderType");               // 文件排序类型（默认为0：文件名）
         note.addIntProperty("fileViewerType");              // 文件视图类型（默认为0：列表）
         note.addLongProperty("time");                       // 最后更新时间
@@ -114,15 +116,15 @@ public class DAOGenerator {
     private static void addTransferHistoryTable(Schema schema) {
         Entity note = schema.addEntity("TransferHistory");
         note.addIdProperty().autoincrement();
-        note.addLongProperty("uid");        // 用户信息表中的ID
-        note.addIntProperty("type");        // 传输类型： 上传/下载
+        note.addLongProperty("uid");                        // 用户信息表中的ID
+        note.addIntProperty("type");                        // 传输类型： 上传/下载
         note.addStringProperty("name").notNull();           // 文件名
         note.addStringProperty("srcPath").notNull();        // 原文件路径
         note.addStringProperty("toPath").notNull();         // 目标文件路径
-        note.addLongProperty("size");       // 文件大小
-        note.addLongProperty("length");     // 传输大小
-        note.addLongProperty("duration");   // 用时（s）
-        note.addLongProperty("time");       // 最后更新时间
+        note.addLongProperty("size");                       // 文件大小
+        note.addLongProperty("length");                     // 传输大小
+        note.addLongProperty("duration");                   // 用时（s）
+        note.addLongProperty("time");                       // 最后更新时间
         note.addBooleanProperty("isComplete");              // 是否完成（默认：false）
     }
 }
