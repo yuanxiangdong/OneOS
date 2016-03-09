@@ -9,9 +9,11 @@ public class UserSettings {
     private long uid;
     private String downloadPath;
     private Boolean isAutoBackupFile;
+    private Boolean isAutoBackupAlbum;
     private Boolean isPreviewPicOnlyWifi;
     private Boolean isTipTransferNotWifi;
     private Boolean isBackupFileOnlyWifi;
+    private Boolean isBackupAlbumOnlyWifi;
     private Integer fileOrderType;
     private Integer fileViewerType;
     private Long time;
@@ -23,13 +25,15 @@ public class UserSettings {
         this.uid = uid;
     }
 
-    public UserSettings(long uid, String downloadPath, Boolean isAutoBackupFile, Boolean isPreviewPicOnlyWifi, Boolean isTipTransferNotWifi, Boolean isBackupFileOnlyWifi, Integer fileOrderType, Integer fileViewerType, Long time) {
+    public UserSettings(long uid, String downloadPath, Boolean isAutoBackupFile, Boolean isAutoBackupAlbum, Boolean isPreviewPicOnlyWifi, Boolean isTipTransferNotWifi, Boolean isBackupFileOnlyWifi, Boolean isBackupAlbumOnlyWifi, Integer fileOrderType, Integer fileViewerType, Long time) {
         this.uid = uid;
         this.downloadPath = downloadPath;
         this.isAutoBackupFile = isAutoBackupFile;
+        this.isAutoBackupAlbum = isAutoBackupAlbum;
         this.isPreviewPicOnlyWifi = isPreviewPicOnlyWifi;
         this.isTipTransferNotWifi = isTipTransferNotWifi;
         this.isBackupFileOnlyWifi = isBackupFileOnlyWifi;
+        this.isBackupAlbumOnlyWifi = isBackupAlbumOnlyWifi;
         this.fileOrderType = fileOrderType;
         this.fileViewerType = fileViewerType;
         this.time = time;
@@ -59,6 +63,14 @@ public class UserSettings {
         this.isAutoBackupFile = isAutoBackupFile;
     }
 
+    public Boolean getIsAutoBackupAlbum() {
+        return isAutoBackupAlbum;
+    }
+
+    public void setIsAutoBackupAlbum(Boolean isAutoBackupAlbum) {
+        this.isAutoBackupAlbum = isAutoBackupAlbum;
+    }
+
     public Boolean getIsPreviewPicOnlyWifi() {
         return isPreviewPicOnlyWifi;
     }
@@ -81,6 +93,14 @@ public class UserSettings {
 
     public void setIsBackupFileOnlyWifi(Boolean isBackupFileOnlyWifi) {
         this.isBackupFileOnlyWifi = isBackupFileOnlyWifi;
+    }
+
+    public Boolean getIsBackupAlbumOnlyWifi() {
+        return isBackupAlbumOnlyWifi;
+    }
+
+    public void setIsBackupAlbumOnlyWifi(Boolean isBackupAlbumOnlyWifi) {
+        this.isBackupAlbumOnlyWifi = isBackupAlbumOnlyWifi;
     }
 
     public Integer getFileOrderType() {

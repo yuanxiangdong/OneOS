@@ -147,7 +147,7 @@ public class StickyListHeadersView extends FrameLayout {
 
                 setPadding(mPaddingLeft, mPaddingTop, mPaddingRight, mPaddingBottom);
 
-                // Set clip to padding on the list and reset value to default on
+                // Set clip to padding on the list and resetBackupAlbum value to default on
                 // wrapper
                 mClippingToPadding = a.getBoolean(R.styleable.StickyListHeadersView_android_clipToPadding, true);
                 super.setClipToPadding(true);
@@ -292,7 +292,7 @@ public class StickyListHeadersView extends FrameLayout {
             mHeaderPosition = null;
             mHeaderOffset = null;
 
-            // reset the lastUser clipping length
+            // resetBackupAlbum the lastUser clipping length
             mList.setTopClippingLength(0);
             updateHeaderVisibilities();
         }
@@ -619,7 +619,7 @@ public class StickyListHeadersView extends FrameLayout {
     public void setDrawingListUnderStickyHeader(
             boolean drawingListUnderStickyHeader) {
         mIsDrawingListUnderStickyHeader = drawingListUnderStickyHeader;
-        // reset the lastUser clipping length
+        // resetBackupAlbum the lastUser clipping length
         mList.setTopClippingLength(0);
     }
 

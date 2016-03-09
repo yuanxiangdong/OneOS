@@ -90,7 +90,7 @@ public class DAOGenerator {
         note.addBooleanProperty("auto");                        // 自动备份（默认为true）
         note.addIntProperty("type");                            // 备份类型： 图片/视频、全部
         note.addIntProperty("priority");                        // 备份优先级： 1 > 2 > 3 ...
-        note.addLongProperty("time");                           // 备份时间点
+        note.addLongProperty("time");                           // 备份时间点或上次备份时间
         note.addLongProperty("count");                          // 备份次数
     }
 

@@ -30,7 +30,7 @@ public class BackupAlbumManager {
     private static final String TAG = BackupAlbumManager.class.getSimpleName();
     private static final boolean IS_LOG = Logged.BACKUP_ALBUM;
 
-    private BackupScanFileThread mBackupThread = null;
+    private BackupScanPhotoThread mBackupThread = null;
     private List<RecursiveFileObserver> mFileObserverList = new ArrayList<>();
     private HandlerQueueThread handlerQueueThread = null;
 
@@ -39,7 +39,7 @@ public class BackupAlbumManager {
     private Context context;
     private long mLastBackupTime = 0;
 
-    private BackupScanFileThread.OnScanFileListener mScanListener = new BackupScanFileThread.OnScanFileListener() {
+    private BackupScanPhotoThread.OnScanFileListener mScanListener = new BackupScanPhotoThread.OnScanFileListener() {
         @Override
         public void onComplete(ArrayList<BackupFileElement> mBackupList) {
             addBackupElements(mBackupList);
@@ -66,7 +66,7 @@ public class BackupAlbumManager {
         this.mLoginSession = mLoginSession;
         this.context = context;
 
-        mBackupList = BackupFileKeeper.all(mLoginSession.getUserInfo().getId());
+        mBackupList = BackupFileKeeper.all(mLoginSession.getUserInfo().getId(), BackupType.ALBUM);
         initBackupPhotoIfNeeds();
 
         handlerQueueThread = new HandlerQueueThread();
@@ -75,7 +75,7 @@ public class BackupAlbumManager {
                     RecursiveFileObserver.EVENTS_BACKUP_PHOTOS, mObserverListener);
             mFileObserverList.add(mFileObserver);
         }
-        mBackupThread = new BackupScanFileThread(mBackupList, mScanListener);
+        mBackupThread = new BackupScanPhotoThread(mBackupList, mScanListener);
     }
 
     private boolean initBackupPhotoIfNeeds() {
@@ -84,7 +84,7 @@ public class BackupAlbumManager {
         if (null != mExternalDCIMDir) {
             File mExternalDCIM = new File(mExternalDCIMDir, "DCIM");
             if (null != mExternalDCIM && mExternalDCIM.exists()) {
-                BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath());
+                BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(), BackupType.ALBUM);
                 if (null == info) {
                     info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(),
                             true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
@@ -97,7 +97,7 @@ public class BackupAlbumManager {
         }
         File mInternalDCIMDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         if (null != mInternalDCIMDir && mInternalDCIMDir.exists()) {
-            BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath());
+            BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath(), BackupType.ALBUM);
             if (null == info) {
                 info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath(),
                         true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
@@ -266,11 +266,11 @@ public class BackupAlbumManager {
                 }
 
                 // for control backup only in wifi
-                boolean isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupFileOnlyWifi();
+                boolean isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupAlbumOnlyWifi();
                 while (isOnlyWifiBackup && !Utils.isWifiAvailable(context)) {
                     try {
                         sleep(60000); // sleep 60 * 1000 = 60s
-                        isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupFileOnlyWifi();
+                        isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupAlbumOnlyWifi();
                         Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "----Is Backup Only Wifi: " + isOnlyWifiBackup);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

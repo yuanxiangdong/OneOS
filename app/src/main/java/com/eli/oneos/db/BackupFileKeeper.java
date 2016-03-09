@@ -2,6 +2,7 @@ package com.eli.oneos.db;
 
 import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.db.greendao.BackupFileDao;
+import com.eli.oneos.model.oneos.backup.BackupType;
 
 import java.util.List;
 
@@ -18,10 +19,11 @@ public class BackupFileKeeper {
      * @param uid user ID
      * @return
      */
-    public static List<BackupFile> all(long uid) {
+    public static List<BackupFile> all(long uid, int type) {
         BackupFileDao dao = DBHelper.getDaoSession().getBackupFileDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.where(BackupFileDao.Properties.Uid.eq(uid));
+        queryBuilder.where(BackupFileDao.Properties.Type.eq(type));
 
         return queryBuilder.list();
     }
@@ -33,11 +35,12 @@ public class BackupFileKeeper {
      * @param path backup path
      * @return {@link BackupFile} or {@code null}
      */
-    public static BackupFile getBackupInfo(long uid, String path) {
+    public static BackupFile getBackupInfo(long uid, String path, int type) {
         BackupFileDao dao = DBHelper.getDaoSession().getBackupFileDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.where(BackupFileDao.Properties.Uid.eq(uid));
         queryBuilder.where(BackupFileDao.Properties.Path.eq(path));
+        queryBuilder.where(BackupFileDao.Properties.Type.eq(type));
 
         return (BackupFile) queryBuilder.unique();
     }
@@ -63,10 +66,11 @@ public class BackupFileKeeper {
      * @param uid user ID
      * @return
      */
-    public static boolean reset(long uid) {
+    public static boolean resetBackupAlbum(long uid) {
         BackupFileDao dao = DBHelper.getDaoSession().getBackupFileDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.where(BackupFileDao.Properties.Uid.eq(uid));
+        queryBuilder.where(BackupFileDao.Properties.Type.eq(BackupType.ALBUM));
 
         List<BackupFile> list = queryBuilder.list();
         if (null != list) {
@@ -83,7 +87,7 @@ public class BackupFileKeeper {
      * Delete a user from Database
      *
      * @param info
-     * @return unActive result
+     * @return result
      */
     public static boolean delete(BackupFile info) {
         if (info != null) {
@@ -99,16 +103,16 @@ public class BackupFileKeeper {
     /**
      * Update user information
      *
-     * @param user
+     * @param file
      * @return
      */
-    public static boolean update(BackupFile user) {
-        if (null == user) {
+    public static boolean update(BackupFile file) {
+        if (null == file) {
             return false;
         }
 
         BackupFileDao dao = DBHelper.getDaoSession().getBackupFileDao();
-        dao.update(user);
+        dao.update(file);
         return true;
     }
 }

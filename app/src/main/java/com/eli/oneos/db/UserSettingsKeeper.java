@@ -51,7 +51,7 @@ public class UserSettingsKeeper {
      */
     public static UserSettings insertDefault(long uid, String user) {
         String path = SDCardUtils.createDefaultDownloadPath(user);
-        UserSettings settings = new UserSettings(uid, path, false, true, true, true, getFileOrderTypeID(FileOrderType.NAME),
+        UserSettings settings = new UserSettings(uid, path, false, false, true, true, true, true, getFileOrderTypeID(FileOrderType.NAME),
                 getFileViewerTypeID(FileViewerType.LIST), System.currentTimeMillis());
         UserSettingsDao dao = DBHelper.getDaoSession().getUserSettingsDao();
         if (dao.insertOrReplace(settings) > 0) {

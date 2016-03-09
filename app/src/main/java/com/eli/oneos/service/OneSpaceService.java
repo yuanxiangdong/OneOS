@@ -13,6 +13,7 @@ import com.eli.oneos.MyApplication;
 import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.backup.file.BackupAlbumManager;
+import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
 import com.eli.oneos.model.oneos.transfer.DownloadManager;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
@@ -32,7 +33,8 @@ public class OneSpaceService extends Service {
     private ServiceBinder mBinder;
     private DownloadManager mDownloadManager;
     private UploadManager mUploadManager;
-    private BackupAlbumManager mBackupPhotoManager;
+    private BackupAlbumManager mBackupAlbumManager;
+    private BackupFileManager mBackupFileManager;
     private List<DownloadManager.OnDownloadCompleteListener> mDownloadCompleteListenerList = new ArrayList<DownloadManager.OnDownloadCompleteListener>();
     private List<UploadManager.OnUploadCompleteListener> mUploadCompleteListenerList = new ArrayList<UploadManager.OnUploadCompleteListener>();
 
@@ -85,43 +87,68 @@ public class OneSpaceService extends Service {
     }
 
 
-    // ==========================================Auto Backup file==========================================
+    // ==========================================Auto Backup File==========================================
     public void startBackupFile() {
         LoginSession loginSession = LoginManage.getInstance().getLoginSession();
         if (!loginSession.getUserSettings().getIsAutoBackupFile()) {
-            Log.e(TAG, "Do not open auto backup photo");
+            Log.e(TAG, "Do not open auto backup file");
             return;
         }
-        if (mBackupPhotoManager != null) {
-            mBackupPhotoManager.stopBackup();
+        if (mBackupFileManager != null) {
+            mBackupFileManager.stopBackup();
         }
 
-        mBackupPhotoManager = new BackupAlbumManager(loginSession, context);
-        mBackupPhotoManager.startBackup();
-        Log.d(TAG, "======Start BackupService=======");
+        mBackupFileManager = new BackupFileManager(loginSession, context);
+        mBackupFileManager.startBackup();
+        Log.d(TAG, "======Start BackupFile=======");
     }
 
     public void stopBackupFile() {
-        if (mBackupPhotoManager != null) {
-            mBackupPhotoManager.stopBackup();
-            mBackupPhotoManager = null;
+        if (mBackupFileManager != null) {
+            mBackupFileManager.stopBackup();
+            mBackupFileManager = null;
+        }
+    }
+    // ==========================================Auto Backup File==========================================
+
+
+    // ==========================================Auto Backup Album==========================================
+    public void startBackupAlbum() {
+        LoginSession loginSession = LoginManage.getInstance().getLoginSession();
+        if (!loginSession.getUserSettings().getIsAutoBackupAlbum()) {
+            Log.e(TAG, "Do not open auto backup photo");
+            return;
+        }
+        if (mBackupAlbumManager != null) {
+            mBackupAlbumManager.stopBackup();
+        }
+
+        mBackupAlbumManager = new BackupAlbumManager(loginSession, context);
+        mBackupAlbumManager.startBackup();
+        Log.d(TAG, "======Start BackupAlbum=======");
+    }
+
+    public void stopBackupAlbum() {
+        if (mBackupAlbumManager != null) {
+            mBackupAlbumManager.stopBackup();
+            mBackupAlbumManager = null;
         }
     }
 
     public void resetBackupFile() {
-        stopBackupFile();
+        stopBackupAlbum();
         LoginSession loginSession = LoginManage.getInstance().getLoginSession();
-        BackupFileKeeper.reset(loginSession.getUserInfo().getId());
-        startBackupFile();
+        BackupFileKeeper.resetBackupAlbum(loginSession.getUserInfo().getId());
+        startBackupAlbum();
     }
 
     public int getBackupFileCount() {
-        if (mBackupPhotoManager == null) {
+        if (mBackupAlbumManager == null) {
             return 0;
         }
-        return mBackupPhotoManager.getBackupListSize();
+        return mBackupAlbumManager.getBackupListSize();
     }
-    // ==========================================Auto Backup file==========================================
+    // ==========================================Auto Backup Album==========================================
 
 
     // ========================================Download and Upload file======================================
@@ -229,6 +256,6 @@ public class OneSpaceService extends Service {
         Log.d(ACTIVITY_SERVICE, "TransferService destroy.");
         mDownloadManager.destroy();
         mUploadManager.destroy();
-        stopBackupFile();
+        stopBackupAlbum();
     }
 }

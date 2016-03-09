@@ -113,7 +113,7 @@ class AdapterWrapper extends BaseAdapter implements StickyListHeadersAdapter {
 	private void recycleHeaderIfExists(WrapperView wv) {
 		View header = wv.mHeader;
 		if (header != null) {
-			// reset the headers visibility when adding it to the cache
+			// resetBackupAlbum the headers visibility when adding it to the cache
 			header.setVisibility(View.VISIBLE);
 			mHeaderCache.add(header);
 		}

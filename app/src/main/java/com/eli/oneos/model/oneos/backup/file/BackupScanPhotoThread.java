@@ -16,15 +16,14 @@ import java.util.List;
 /**
  * Created by gaoyun@eli-tech.com on 2016/2/24.
  */
-public class BackupScanFileThread extends Thread {
-    private static final String TAG = BackupScanFileThread.class.getSimpleName();
-    private static final int SCAN_FREQUENCY = 1000 * 60 * 60;
+public class BackupScanPhotoThread extends Thread {
+    private static final String TAG = BackupScanPhotoThread.class.getSimpleName();
 
     private List<BackupFile> mBackupList;
     private OnScanFileListener mListener;
     private boolean isInterrupt = false;
 
-    public BackupScanFileThread(List<BackupFile> mBackupList, OnScanFileListener mScanListener) {
+    public BackupScanPhotoThread(List<BackupFile> mBackupList, OnScanFileListener mScanListener) {
         this.mBackupList = mBackupList;
         this.mListener = mScanListener;
         if (EmptyUtils.isEmpty(mBackupList)) {

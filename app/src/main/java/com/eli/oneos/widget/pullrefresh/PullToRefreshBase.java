@@ -356,7 +356,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					}
 
 					// If we haven't returned by here, then we're not in a state
-					// to pull, so just reset
+					// to pull, so just resetBackupAlbum
 					setState(State.RESET);
 
 					return true;
@@ -784,7 +784,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mIsBeingDragged = false;
 		mLayoutVisibilityChangesEnabled = true;
 
-		// Always reset both layouts, just in case...
+		// Always resetBackupAlbum both layouts, just in case...
 		mHeaderLayout.reset();
 		mFooterLayout.reset();
 

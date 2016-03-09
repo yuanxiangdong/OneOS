@@ -77,7 +77,7 @@
 //    public void resetBackupPhoto() {
 //        stopUpload();
 //        LoginSession loginSession = LoginManage.getInstance().getLoginSession();
-//        BackupFileKeeper.reset(loginSession.getUserInfo().getId());
+//        BackupFileKeeper.resetBackupAlbum(loginSession.getUserInfo().getId());
 //        startBackupPhoto();
 //    }
 //

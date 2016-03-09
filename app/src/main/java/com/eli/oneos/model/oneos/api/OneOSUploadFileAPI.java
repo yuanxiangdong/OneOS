@@ -105,7 +105,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             }
         } catch (Exception e) {
             // e.printStackTrace();
-            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file not exist on server: " + path, e);
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file not exist on server: " + path/*, e*/);
         }
 
         return false;

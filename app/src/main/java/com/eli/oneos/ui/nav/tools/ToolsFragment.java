@@ -231,7 +231,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         }
         mTransferService.cancelDownload();
         mTransferService.cancelUpload();
-        mTransferService.stopBackupFile();
+        mTransferService.stopBackupAlbum();
 
         LoginManage.getInstance().logout();
 

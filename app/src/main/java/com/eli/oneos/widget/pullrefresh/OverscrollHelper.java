@@ -166,7 +166,7 @@ public final class OverscrollHelper {
 			} else if (isTouchEvent && State.OVERSCROLLING == view.getState()) {
 				// This condition means that we were overscrolling from a fling,
 				// but the user has touched the View and is now overscrolling
-				// from touch instead. We need to just reset.
+				// from touch instead. We need to just resetBackupAlbum.
 				view.setState(State.RESET);
 			}
 		}
