@@ -106,6 +106,16 @@ public class BackupFileManager {
         return false;
     }
 
+    public boolean isBackup() {
+        for (BackupFileThread thread : mBackupThreadList) {
+            if (thread.isBackup()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void setOnBackupFileListener(OnBackupFileListener listener) {
         this.listener = listener;
     }
@@ -264,6 +274,10 @@ public class BackupFileManager {
             }
 
             return null;
+        }
+
+        public boolean isBackup() {
+            return hasBackupTask;
         }
     }
 

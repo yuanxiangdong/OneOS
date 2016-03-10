@@ -17,11 +17,14 @@ import android.widget.RadioGroup;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
+import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.db.UserSettingsKeeper;
+import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.FileViewerType;
+import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileManage;
@@ -232,6 +235,18 @@ public class LocalDirFragment extends BaseLocalFragment {
         if (null != mParentFragment) {
             mParentFragment.addSearchListener(mSearchListener);
         }
+
+        List<String> mBackupList = new ArrayList<>();
+        if (LoginManage.getInstance().isLogin()) {
+            List<BackupFile> dbList = BackupFileKeeper.all(LoginManage.getInstance().getLoginSession().getUserInfo().getId(), BackupType.FILE);
+            if (null != dbList) {
+                for (BackupFile file : dbList) {
+                    mBackupList.add(file.getPath());
+                }
+            }
+        }
+        mListAdapter.updateBackupList(mBackupList);
+        mGridAdapter.updateBackupList(mBackupList);
         autoPullToRefresh();
     }
 

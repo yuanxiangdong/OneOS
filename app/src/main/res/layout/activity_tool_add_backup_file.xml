@@ -68,7 +68,8 @@
             android:layout_height="match_parent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/line_list_view"
-            android:dividerHeight="@dimen/line_list_divider_height" />
+            android:dividerHeight="@dimen/line_list_divider_height"
+            android:overScrollMode="never" />
 
         <LinearLayout
             android:id="@+id/layout_empty"

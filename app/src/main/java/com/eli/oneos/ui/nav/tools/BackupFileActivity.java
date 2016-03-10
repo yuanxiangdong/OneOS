@@ -66,7 +66,7 @@ public class BackupFileActivity extends BaseActivity implements OnClickListener 
         initViews();
 
         isFragmentVisible = true;
-//        startUpdateUIThread();
+        startUpdateUIThread();
     }
 
     @Override
@@ -161,26 +161,18 @@ public class BackupFileActivity extends BaseActivity implements OnClickListener 
         }
     }
 
-    private void refreshBackupView(int count) {
-        mProgressTxt.setText(String.valueOf(count));
-        if (count > 0) {
-            // mBgView.setVisibility(View.GONE);
-            mCompleteLayout.setVisibility(View.GONE);
-            // mProgressBar.setVisibility(View.VISIBLE);
-            mProgressLayout.setVisibility(View.VISIBLE);
-            mTitleLayout.setRightButtonVisible(View.GONE);
+    private void refreshBackupView(boolean isBackup) {
+//        mProgressTxt.setText(String.valueOf(count));
+        mProgressLayout.setVisibility(View.GONE);
+        mCompleteLayout.setVisibility(View.VISIBLE);
+        if (isBackup) {
+            mCompleteTipTxt.setText(R.string.syncing);
         } else {
-            // mProgressBar.setVisibility(View.GONE);
-            mProgressLayout.setVisibility(View.GONE);
             if (mSwitchButton.isChecked()) {
                 mCompleteTipTxt.setText(R.string.backup_complete);
-                mTitleLayout.setRightButtonVisible(View.VISIBLE);
             } else {
                 mCompleteTipTxt.setText(R.string.backup_closed);
-                mTitleLayout.setRightButtonVisible(View.GONE);
             }
-            mCompleteLayout.setVisibility(View.VISIBLE);
-            // mBgView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -239,13 +231,8 @@ public class BackupFileActivity extends BaseActivity implements OnClickListener 
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_REFRESH_UI:
-                    int count = mService.getBackupFileCount();
-                    if (count > 0) {
-                        isBackup = true;
-                    } else {
-                        isBackup = false;
-                    }
-                    refreshBackupView(count);
+                    isBackup = mService.isBackupFile();
+                    refreshBackupView(isBackup);
                     break;
                 case MSG_REFRESH_PROGRESS:
                     if (isBackup) {

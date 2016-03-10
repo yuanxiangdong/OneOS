@@ -19,7 +19,9 @@ import android.widget.RadioGroup;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.db.UserSettingsKeeper;
+import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.FileViewerType;
@@ -31,8 +33,10 @@ import com.eli.oneos.model.oneos.adapter.OneOSFileGridAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSFileListAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
 import com.eli.oneos.model.oneos.api.OneOSSearchAPI;
+import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
 import com.eli.oneos.model.oneos.comp.OneOSFileTimeComparator;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.EmptyUtils;
@@ -51,6 +55,7 @@ import com.eli.oneos.widget.pullrefresh.PullToRefreshListView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/13.
