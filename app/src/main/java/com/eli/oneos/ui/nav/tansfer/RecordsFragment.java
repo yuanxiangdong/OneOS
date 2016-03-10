@@ -70,7 +70,7 @@ public class RecordsFragment extends BaseTransferFragment {
     }
 
     private void initView(View view) {
-        View mEmptyView = (View) view.findViewById(R.id.layout_empty);
+        View mEmptyView = view.findViewById(R.id.layout_empty);
         mEmptyTxt = (TextView) view.findViewById(R.id.txt_empty);
         mListView = (SwipeListView) view.findViewById(R.id.list_transfer);
         mListView.setEmptyView(mEmptyView);

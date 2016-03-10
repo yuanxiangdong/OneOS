@@ -11,6 +11,8 @@ import com.eli.oneos.R;
 public class Constants {
     public static final int DELAY_TIME_AUTO_REFRESH = 300;
 
+    public static final int MAX_BACKUP_FILE_COUNT = 5;
+
     public static final String DEFAULT_APP_ROOT_DIR_NAME = "/OneSpace";
     public static final String DEFAULT_DOWNLOAD_DIR_NAME = "/Download";
 

@@ -33,7 +33,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SelectTorrentActivity extends BaseActivity implements OnClickListener {
-    private static final String TAG = "SetPathActivity";
+    private static final String TAG = "SetDownloadPathActivity";
 
     private static final String SUFFIX_TORRENT = ".torrent";
 

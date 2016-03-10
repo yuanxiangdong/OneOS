@@ -41,7 +41,7 @@ public class BackupAlbumManager {
 
     private BackupScanPhotoThread.OnScanFileListener mScanListener = new BackupScanPhotoThread.OnScanFileListener() {
         @Override
-        public void onComplete(ArrayList<BackupFileElement> mBackupList) {
+        public void onComplete(ArrayList<BackupElement> mBackupList) {
             addBackupElements(mBackupList);
             if (!EmptyUtils.isEmpty(mFileObserverList)) {
                 for (RecursiveFileObserver observer : mFileObserverList) {
@@ -55,7 +55,7 @@ public class BackupAlbumManager {
 
         @Override
         public void onAdd(BackupFile backupInfo, File file) {
-            BackupFileElement mElement = new BackupFileElement(backupInfo, file, true);
+            BackupElement mElement = new BackupElement(backupInfo, file, true);
             if (mElement != null) {
                 addBackupElement(mElement);
             }
@@ -88,7 +88,7 @@ public class BackupAlbumManager {
                 if (null == info) {
                     info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(),
                             true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
-                    BackupFileKeeper.insertOrReplace(info);
+                    BackupFileKeeper.insertBackupAlbum(info);
                     Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Add New Backup Album Dir: " + info.getPath());
                     isNewBackupPath = true;
                     mBackupList.add(info);
@@ -101,7 +101,7 @@ public class BackupAlbumManager {
             if (null == info) {
                 info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath(),
                         true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
-                BackupFileKeeper.insertOrReplace(info);
+                BackupFileKeeper.insertBackupAlbum(info);
                 Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Add New Backup Album Dir: " + info.getPath());
                 isNewBackupPath = true;
                 mBackupList.add(info);
@@ -147,7 +147,7 @@ public class BackupAlbumManager {
         }
     }
 
-    private boolean addBackupElements(List<BackupFileElement> mList) {
+    private boolean addBackupElements(List<BackupElement> mList) {
         if (mList == null) {
             Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Backup List is empty, nothing need to add");
             return false;
@@ -165,7 +165,7 @@ public class BackupAlbumManager {
         return false;
     }
 
-    private boolean addBackupElement(BackupFileElement mElement) {
+    private boolean addBackupElement(BackupElement mElement) {
         if (mElement == null) {
             Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Backup element is empty, nothing need to add");
             return false;
@@ -185,14 +185,14 @@ public class BackupAlbumManager {
 
     private class HandlerQueueThread extends Thread {
         private final String TAG = HandlerQueueThread.class.getSimpleName();
-        private List<BackupFileElement> mBackupList = Collections.synchronizedList(new ArrayList<BackupFileElement>());
+        private List<BackupElement> mBackupList = Collections.synchronizedList(new ArrayList<BackupElement>());
         private UploadFileThread backupPhotoThread = null;
         private boolean isRunning = false;
         private boolean hasBackupTask = false;
         private UploadFileThread.OnUploadResultListener listener = new UploadFileThread.OnUploadResultListener() {
             @Override
             public void onResult(UploadElement element) {
-                BackupFileElement mElement = (BackupFileElement) element;
+                BackupElement mElement = (BackupElement) element;
                 Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Backup Result: " + mElement.getFile().getName() + ", State: " + mElement.getState() + ", Time: " + System.currentTimeMillis());
 
                 stopCurrentBackupTask();
@@ -277,7 +277,7 @@ public class BackupAlbumManager {
                     }
                 }
 
-                for (BackupFileElement element : mBackupList) {
+                for (BackupElement element : mBackupList) {
                     if (element.getState() == TransferState.WAIT) {
                         Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Start a New Backup Task");
                         hasBackupTask = true;
@@ -310,7 +310,7 @@ public class BackupAlbumManager {
             }
         }
 
-        public synchronized boolean notifyAddNewBackupItems(List<BackupFileElement> mAddList) {
+        public synchronized boolean notifyAddNewBackupItems(List<BackupElement> mAddList) {
             if (mAddList.size() <= 0) {
                 return false;
             }
@@ -331,7 +331,7 @@ public class BackupAlbumManager {
             return true;
         }
 
-        public synchronized boolean notifyAddNewBackupItem(BackupFileElement mElement) {
+        public synchronized boolean notifyAddNewBackupItem(BackupElement mElement) {
             if (mElement == null) {
                 return false;
             }

@@ -1,5 +1,6 @@
 package com.eli.oneos.ui.nav.tools;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,51 +14,76 @@ import android.widget.TextView;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
-import com.eli.oneos.constant.Constants;
+import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.db.UserSettingsKeeper;
+import com.eli.oneos.db.greendao.BackupFile;
+import com.eli.oneos.db.greendao.UserSettings;
+import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.BaseActivity;
-import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.AnimCircleProgressBar;
 import com.eli.oneos.widget.SwitchButton;
 import com.eli.oneos.widget.TitleBackLayout;
 
-public class BackupPhotoActivity extends BaseActivity implements OnClickListener {
+import java.util.ArrayList;
+import java.util.List;
 
-    private static final String TAG = BackupPhotoActivity.class.getSimpleName();
+public class BackupFileActivity extends BaseActivity implements OnClickListener {
+
+    private static final String TAG = BackupFileActivity.class.getSimpleName();
     private static final int MSG_REFRESH_UI = 1;
     private static final int MSG_REFRESH_PROGRESS = 2;
 
     private SwitchButton mSwitchButton, mCtrlSwitchButton;
     private LinearLayout mProgressLayout, mCompleteLayout;
-    private TextView mProgressTxt, mServerDirTxt, mCompleteTipTxt;
+    private TextView mProgressTxt, mCompleteTipTxt;
+    private TextView mBackupListBtn;
     private AnimCircleProgressBar mProgressBar;
     private TitleBackLayout mTitleLayout;
 
     private LoginSession mLoginSession;
-    private boolean isAutoBackup = false, isWifiBackup = true;
     private boolean isFragmentVisible = true;
     private Thread mThread = null;
 
-    private OneSpaceService mBackupService;
+    private OneSpaceService mService;
+    private UserSettings userSettings;
+    private List<BackupFile> mBackupList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_tool_backup_photo);
+        setContentView(R.layout.activity_tool_backup_file);
         initSystemBarStyle();
 
         mLoginSession = LoginManage.getInstance().getLoginSession();
-        mBackupService = MyApplication.getTransferService();
+        userSettings = mLoginSession.getUserSettings();
+        mService = MyApplication.getTransferService();
 
         initViews();
 
         isFragmentVisible = true;
-        startUpdateUIThread();
+//        startUpdateUIThread();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mBackupList.clear();
+        List<BackupFile> dbList = BackupFileKeeper.all(mLoginSession.getUserInfo().getId(), BackupType.FILE);
+        if (null != dbList) {
+            mBackupList.addAll(dbList);
+        }
+        mBackupListBtn.setText(getString(R.string.backup_file_list) + String.format(getString(R.string.fmt_backup_folder_count), mBackupList.size()));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        isFragmentVisible = false;
     }
 
     /**
@@ -67,9 +93,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
         mTitleLayout = (TitleBackLayout) findViewById(R.id.layout_title);
         mTitleLayout.setOnClickBack(this);
         mTitleLayout.setBackTitle(R.string.title_back);
-        mTitleLayout.setTitle(R.string.title_backup_photo);
-        mTitleLayout.setRightButton(R.drawable.selector_button_title_reset);
-        mTitleLayout.setOnRightClickListener(this);
+        mTitleLayout.setTitle(R.string.title_backup_file);
 
         mProgressLayout = (LinearLayout) findViewById(R.id.layout_progress);
         mCompleteLayout = (LinearLayout) findViewById(R.id.layout_complete);
@@ -77,56 +101,41 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
         mProgressBar = (AnimCircleProgressBar) findViewById(R.id.progressbar);
         mProgressTxt = (TextView) findViewById(R.id.txt_progress);
         mCompleteTipTxt = (TextView) findViewById(R.id.txt_complete_tips);
-        mServerDirTxt = (TextView) findViewById(R.id.txt_server_dir);
+        mBackupListBtn = (TextView) findViewById(R.id.btn_backup_list);
+        mBackupListBtn.setOnClickListener(this);
 
         mSwitchButton = (SwitchButton) findViewById(R.id.btn_auto_backup);
-        if (getLoginStatus()) {
-            String dir = getResources().getString(R.string.backup_dir_shown) + Constants.BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM;
-            mServerDirTxt.setText(dir);
-            mSwitchButton.setEnabled(true);
-            isAutoBackup = LoginManage.getInstance().getLoginSession().getUserSettings().getIsAutoBackupAlbum();
-        } else {
-            mServerDirTxt.setText(R.string.please_login_onespace);
-            mSwitchButton.setEnabled(false);
-        }
-
-        mSwitchButton.setChecked(isAutoBackup);
+        mSwitchButton.setChecked(userSettings.getIsAutoBackupFile());
         mSwitchButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (getLoginStatus()) {
-                    if (isAutoBackup != isChecked) {
+                    if (userSettings.getIsAutoBackupFile() != isChecked) {
                         Log.e(TAG, "-----On Checked Changed-----");
-                        isAutoBackup = isChecked;
-                        mLoginSession.getUserSettings().setIsAutoBackupAlbum(isAutoBackup);
-                        UserSettingsKeeper.update(mLoginSession.getUserSettings());
+                        userSettings.setIsAutoBackupFile(isChecked);
+                        UserSettingsKeeper.update(userSettings);
 
                         if (isChecked) {
-                            Log.d(TAG, "-----Start Backup-----");
-                            mBackupService.startBackupAlbum();
+                            Log.d(TAG, "-----Start Backup File-----");
+                            mService.startBackupFile();
                         } else {
-                            Log.d(TAG, "-----Stop Backup-----");
-                            mBackupService.stopBackupAlbum();
+                            Log.d(TAG, "-----Stop Backup File-----");
+                            mService.stopBackupFile();
                         }
                     }
                 }
-                // else {
-                // mSwitchButton.setChecked(isAutoBackup);
-                // }
             }
         });
 
-        isWifiBackup = mLoginSession.getUserSettings().getIsBackupAlbumOnlyWifi();
         mCtrlSwitchButton = (SwitchButton) findViewById(R.id.btn_wifi_backup);
-        mCtrlSwitchButton.setChecked(isWifiBackup);
+        mCtrlSwitchButton.setChecked(userSettings.getIsBackupFileOnlyWifi());
         mCtrlSwitchButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isWifiBackup = isChecked;
-                mLoginSession.getUserSettings().setIsBackupAlbumOnlyWifi(isWifiBackup);
-                UserSettingsKeeper.update(mLoginSession.getUserSettings());
+                userSettings.setIsBackupFileOnlyWifi(isChecked);
+                UserSettingsKeeper.update(userSettings);
             }
         });
     }
@@ -134,32 +143,13 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.ibtn_title_right:
-                resetBackPhotoDialog();
+            case R.id.btn_backup_list:
+                Intent intent = new Intent(this, BackupFileListActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;
         }
-    }
-
-    private void resetBackPhotoDialog() {
-        DialogUtils.showConfirmDialog(this, R.string.title_reset_backup, R.string.tips_reset_backup, R.string.reset_now,
-                R.string.cancel, new DialogUtils.OnDialogClickListener() {
-
-                    @Override
-                    public void onClick(boolean isPositiveBtn) {
-                        if (isPositiveBtn) {
-                            mBackupService.resetBackupFile();
-                            ToastHelper.showToast(R.string.success_reset_backup);
-                        }
-                    }
-                });
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        isFragmentVisible = false;
     }
 
     private boolean getLoginStatus() {
@@ -249,7 +239,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_REFRESH_UI:
-                    int count = mBackupService.getBackupFileCount();
+                    int count = mService.getBackupFileCount();
                     if (count > 0) {
                         isBackup = true;
                     } else {

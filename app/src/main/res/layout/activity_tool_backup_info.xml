@@ -137,7 +137,7 @@
                 android:layout_below="@+id/arrow_top"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
-                android:text="@string/sync_time"
+                android:text="@string/last_sync_time"
                 android:textColor="@color/darker_gray"
                 android:textSize="@dimen/text_size_mid" />
 

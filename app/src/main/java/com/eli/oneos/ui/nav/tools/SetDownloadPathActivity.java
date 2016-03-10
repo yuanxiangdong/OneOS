@@ -38,8 +38,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public class SetPathActivity extends BaseActivity implements OnClickListener {
-    private static final String TAG = SetPathActivity.class.getSimpleName();
+public class SetDownloadPathActivity extends BaseActivity implements OnClickListener {
+    private static final String TAG = SetDownloadPathActivity.class.getSimpleName();
 
     private ListView mListView;
     private Button mConfirmBtn, mUpBtn;
@@ -59,7 +59,7 @@ public class SetPathActivity extends BaseActivity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_tool_setpath);
+        setContentView(R.layout.activity_tool_set_download_path);
         initSystemBarStyle();
 
         initViews();
@@ -151,7 +151,7 @@ public class SetPathActivity extends BaseActivity implements OnClickListener {
                 new DialogUtils.OnDialogClickListener() {
                     @Override
                     public void onClick(boolean isPositiveBtn) {
-                        SetPathActivity.this.finish();
+                        SetDownloadPathActivity.this.finish();
                     }
                 });
     }
@@ -176,7 +176,7 @@ public class SetPathActivity extends BaseActivity implements OnClickListener {
             userSettings.setDownloadPath(savePath);
             if (UserSettingsKeeper.update(userSettings)) {
                 ToastHelper.showToast(R.string.setting_success);
-                SetPathActivity.this.finish();
+                SetDownloadPathActivity.this.finish();
             } else {
                 ToastHelper.showToast(R.string.setting_failed);
             }
@@ -205,7 +205,7 @@ public class SetPathActivity extends BaseActivity implements OnClickListener {
     @Override
     public void onBackPressed() {
         if (null == curFile) {
-            SetPathActivity.this.finish();
+            SetDownloadPathActivity.this.finish();
         } else {
             savePath = null;
             mAdapter.notifyDataSetInvalidated();

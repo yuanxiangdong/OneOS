@@ -127,7 +127,8 @@ public class LauncherActivity extends BaseActivity {
             @Override
             public void run() {
                 OneSpaceService service = MyApplication.getTransferService();
-                service.startBackupAlbum();
+                service.notifyUserLogin();
+
                 Intent intent = new Intent(LauncherActivity.this, MainActivity.class);
                 if (null != mSendIntent) {
                     intent.putExtra("IntentFilter", mSendIntent);

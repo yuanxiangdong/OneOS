@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -60,7 +59,7 @@ public class RecordAdapter extends BaseAdapter {
         TextView fileName;
         TextView fileTime;
         TextView fileSize;
-        ImageButton deleteBtn;
+        TextView deleteTxt;
     }
 
     @Override
@@ -78,7 +77,7 @@ public class RecordAdapter extends BaseAdapter {
             holder.fileName = (TextView) convertView.findViewById(R.id.file_name);
             holder.fileTime = (TextView) convertView.findViewById(R.id.file_time);
             holder.fileSize = (TextView) convertView.findViewById(R.id.file_size);
-            holder.deleteBtn = (ImageButton) convertView.findViewById(R.id.btn_delete);
+            holder.deleteTxt = (TextView) convertView.findViewById(R.id.txt_delete);
 
             convertView.setTag(holder);
         } else {
@@ -97,7 +96,7 @@ public class RecordAdapter extends BaseAdapter {
         holder.fileTime.setText(FileUtils.formatTime(history.getTime()));
         holder.fileSize.setText(FileUtils.fmtFileSize(history.getSize()));
         holder.fileIcon.setImageResource(FileUtils.fmtFileIcon(name));
-        holder.deleteBtn.setOnClickListener(new OnClickListener() {
+        holder.deleteTxt.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {

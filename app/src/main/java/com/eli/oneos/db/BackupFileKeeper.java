@@ -1,5 +1,6 @@
 package com.eli.oneos.db;
 
+import com.eli.oneos.constant.Constants;
 import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.db.greendao.BackupFileDao;
 import com.eli.oneos.model.oneos.backup.BackupType;
@@ -49,15 +50,32 @@ public class BackupFileKeeper {
      * Insert a user into Database if it does not exist or replace it.
      *
      * @param info
-     * @return insertOrReplace result
+     * @return insertBackupAlbum result
      */
-    public static boolean insertOrReplace(BackupFile info) {
+    public static boolean insertBackupAlbum(BackupFile info) {
         if (info != null) {
             BackupFileDao dao = DBHelper.getDaoSession().getBackupFileDao();
             return dao.insertOrReplace(info) > 0;
         }
 
         return false;
+    }
+
+    public static long insertBackupFile(BackupFile info) {
+        if (null == info) {
+            return -1;
+        }
+        int maxCount = Constants.MAX_BACKUP_FILE_COUNT;
+        BackupFileDao dao = DBHelper.getDaoSession().getBackupFileDao();
+        QueryBuilder queryBuilder = dao.queryBuilder();
+        queryBuilder.where(BackupFileDao.Properties.Uid.eq(info.getUid()));
+        queryBuilder.where(BackupFileDao.Properties.Type.eq(BackupType.FILE));
+        int count = queryBuilder.list().size();
+        if (count >= maxCount) {
+            return -1;
+        }
+
+        return dao.insertOrReplace(info);
     }
 
     /**

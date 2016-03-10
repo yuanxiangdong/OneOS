@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.db.BackupFileKeeper;
+import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.backup.file.BackupAlbumManager;
 import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
@@ -86,6 +87,17 @@ public class OneSpaceService extends Service {
         }
     }
 
+    public void notifyUserLogin() {
+        startBackupAlbum();
+        startBackupFile();
+    }
+
+    public void notifyUserLogout() {
+        cancelDownload();
+        cancelUpload();
+        stopBackupAlbum();
+        stopBackupFile();
+    }
 
     // ==========================================Auto Backup File==========================================
     public void startBackupFile() {
@@ -101,6 +113,28 @@ public class OneSpaceService extends Service {
         mBackupFileManager = new BackupFileManager(loginSession, context);
         mBackupFileManager.startBackup();
         Log.d(TAG, "======Start BackupFile=======");
+    }
+
+    public void addOnBackupFileListener(BackupFileManager.OnBackupFileListener listener) {
+        if (null != mBackupFileManager) {
+            mBackupFileManager.setOnBackupFileListener(listener);
+        }
+    }
+
+    public boolean deleteBackupFile(BackupFile file) {
+        if (null != mBackupFileManager) {
+            return mBackupFileManager.deleteBackupFile(file);
+        }
+
+        return false;
+    }
+
+    public boolean addBackupFile(BackupFile file) {
+        if (null != mBackupFileManager) {
+            return mBackupFileManager.addBackupFile(file);
+        }
+
+        return false;
     }
 
     public void stopBackupFile() {
@@ -152,28 +186,6 @@ public class OneSpaceService extends Service {
 
 
     // ========================================Download and Upload file======================================
-
-    /**
-     * set on download complete listener
-     */
-    public boolean setOnDownloadCompleteListener(DownloadManager.OnDownloadCompleteListener listener) {
-        if (!mDownloadCompleteListenerList.contains(listener)) {
-            return mDownloadCompleteListenerList.add(listener);
-        }
-
-        return true;
-    }
-
-    /**
-     * set on upload complete listener
-     */
-    public boolean setOnUploadCompleteListener(UploadManager.OnUploadCompleteListener listener) {
-        if (!mUploadCompleteListenerList.contains(listener)) {
-            return mUploadCompleteListenerList.add(listener);
-        }
-        return true;
-    }
-
     // Download Operation
     public long addDownloadTask(OneOSFile file, String savePath) {
         DownloadElement element = new DownloadElement(file, savePath);
@@ -247,6 +259,27 @@ public class OneSpaceService extends Service {
 
     public void cancelUpload() {
         mUploadManager.removeUpload();
+    }
+
+    /**
+     * set on download complete listener
+     */
+    public boolean setOnDownloadCompleteListener(DownloadManager.OnDownloadCompleteListener listener) {
+        if (!mDownloadCompleteListenerList.contains(listener)) {
+            return mDownloadCompleteListenerList.add(listener);
+        }
+
+        return true;
+    }
+
+    /**
+     * set on upload complete listener
+     */
+    public boolean setOnUploadCompleteListener(UploadManager.OnUploadCompleteListener listener) {
+        if (!mUploadCompleteListenerList.contains(listener)) {
+            return mUploadCompleteListenerList.add(listener);
+        }
+        return true;
     }
     // ========================================Download and Upload file======================================
 

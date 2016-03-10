@@ -39,15 +39,16 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
 
     private static final int TOOL_SETTING = R.string.tool_setting;
     private static final int TOOL_BACKUP_PHOTO = R.string.tool_backup_photo;
+    private static final int TOOL_BACKUP_FILE = R.string.tool_backup_file;
     private static final int TOOL_SYNC_CONTACT = R.string.tool_sync_contact;
     private static final int TOOL_SYNC_SMS = R.string.tool_sync_sms;
     private static final int TOOL_APP = R.string.tool_app;
     private static final int TOOL_OFFLINE = R.string.tool_offline;
     private static final int TOOL_POWER = R.string.tool_power;
     private static final int TOOL_CHANGE_USER = R.string.tool_changer_user;
-    private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_SETTING, TOOL_BACKUP_PHOTO, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_OFFLINE, TOOL_APP,
+    private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_SETTING, TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_OFFLINE, TOOL_APP,
             TOOL_POWER, TOOL_CHANGE_USER};
-    private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_setting, R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_contact,
+    private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_setting, R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_contact,
             R.drawable.icon_tools_sms, R.drawable.icon_tools_offline, R.drawable.icon_tools_app, R.drawable.icon_tools_power,
             R.drawable.icon_tools_change_user};
 
@@ -128,6 +129,12 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             }
         } else if (tool == TOOL_BACKUP_PHOTO) {
             intent = new Intent(getActivity(), BackupPhotoActivity.class);
+        } else if (tool == TOOL_BACKUP_FILE) {
+            if (isLogin()) {
+                intent = new Intent(getActivity(), BackupFileActivity.class);
+            } else {
+                ToastHelper.showToast(R.string.please_login_onespace);
+            }
         } else if (tool == TOOL_POWER) {
             if (isLogin() && LoginManage.getInstance().getLoginSession().isAdmin()) {
                 showPowerView(arg1);
@@ -229,10 +236,8 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             ToastHelper.showToast(R.string.app_exception);
             return;
         }
-        mTransferService.cancelDownload();
-        mTransferService.cancelUpload();
-        mTransferService.stopBackupAlbum();
 
+        mTransferService.notifyUserLogout();
         LoginManage.getInstance().logout();
 
         Intent intent = new Intent(getActivity(), LoginActivity.class);

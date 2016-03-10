@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.PopupWindow;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
@@ -88,6 +89,11 @@ public class BaseActivity extends FragmentActivity {
     public void showTipView(int msgId, boolean isPositive) {
         dismissLoading();
         mTipView.show(this, mRootView, msgId, isPositive);
+    }
+
+    public void showTipView(int msgId, boolean isPositive, PopupWindow.OnDismissListener listener) {
+        dismissLoading();
+        mTipView.show(this, mRootView, msgId, isPositive, listener);
     }
 
     public void showTipView(String msg, boolean isPositive) {

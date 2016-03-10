@@ -213,7 +213,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
      */
     public void setSavePath() {
         if (SDCardUtils.checkSDCard()) {
-            Intent intent = new Intent(this, SetPathActivity.class);
+            Intent intent = new Intent(this, SetDownloadPathActivity.class);
             startActivity(intent);
         } else {
             DialogUtils.showNotifyDialog(this, R.string.tip, R.string.sd_state_unmounted, R.string.ok, null);

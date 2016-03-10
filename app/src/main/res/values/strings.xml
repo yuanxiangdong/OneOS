@@ -9,6 +9,7 @@
     <string name="tip">提示</string>
     <string name="paste">粘贴</string>
     <string name="modify">修改</string>
+    <string name="delete">删除</string>
     <string name="dialog_continue">继续</string>
     <string name="loading">正在加载&#8230;</string>
     <string name="all_loaded">已加载全部</string>
@@ -213,6 +214,7 @@
     <!-- Tools Fragment -->
     <string name="tool_setting">设置</string>
     <string name="tool_backup_photo">相册备份</string>
+    <string name="tool_backup_file">文件备份</string>
     <string name="tool_sync_contact">通讯录备份</string>
     <string name="tool_sync_sms">短信备份</string>
     <string name="tool_app">应用管理</string>
@@ -363,9 +365,29 @@
     <string name="reset_now">立即重置</string>
     <string name="auto_backup_only_wifi">仅在Wi-Fi环境下备份</string>
 
+    <!-- Backup File Activity -->
+    <string name="title_backup_file">文件备份</string>
+    <string name="auto_backup_file">自动备份文件</string>
+    <string name="backup_file_list">自动备份的目录</string>
+    <string name="fmt_backup_folder_count">&#160;（%d&#160;个文件夹）</string>
+    <string name="tips_empty_backup_file">没有需要备份的文件夹</string>
+    <string name="title_backup_file_list">自动备份的文件夹</string>
+    <string name="title_add_backup_file">添加自动备份文件夹</string>
+    <string name="add_backup_file">确认备份该文件夹</string>
+    <string name="confirm_add_backup">确认添加备份</string>
+    <string name="continue_add_backup">继续添加</string>
+    <string name="error_fmt_add_backup_dir_count">最多可以添加%d个备份文件夹</string>
+    <string name="tips_add_backup_dir_repeat">继续添加该目录可能会导致文件重复备份</string>
+    <string name="tips_add_backup_album_repeat">如果已经打开自动备份照片，继续添加该目录可能会导致文件重复备份</string>
+    <string name="error_backup_dir_exist">该目录已添加备份</string>
+    <string name="error_backup_without_read_permission">没有读权限，无法备份此目录</string>
+    <string name="delete_backup_file">删除备份目录</string>
+    <string name="tips_confirm_delete_backup_dir">确认删除此备份目录？</string>
+    <string name="is_backup">正在备份：</string>
+
     <!--Backup Contacts and SMS-->
     <string name="title_sync_contacts">通讯录备份</string>
-    <string name="sync_time">上次备份时间：</string>
+    <string name="last_sync_time">上次备份时间：</string>
     <string name="sync_contacts_to_server">备份通讯录到设备</string>
     <string name="recover_contacts_to_phone">恢复通讯录到手机</string>
     <string name="title_sync_sms">短信备份</string>

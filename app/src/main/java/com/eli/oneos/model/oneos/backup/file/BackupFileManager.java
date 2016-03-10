@@ -27,6 +27,22 @@ public class BackupFileManager {
     private Context context;
     private LoginSession mLoginSession = null;
     private List<BackupFileThread> mBackupThreadList = new ArrayList<>();
+    private OnBackupFileListener listener;
+    private OnBackupFileListener callback = new OnBackupFileListener() {
+        @Override
+        public void onBackup(BackupFile backupFile, File file) {
+            if (null != listener) {
+                listener.onBackup(backupFile, file);
+            }
+        }
+
+        @Override
+        public void onStop(BackupFile backupFile) {
+            if (null != listener) {
+                listener.onStop(backupFile);
+            }
+        }
+    };
 
     public BackupFileManager(LoginSession mLoginSession, Context context) {
         this.mLoginSession = mLoginSession;
@@ -34,14 +50,9 @@ public class BackupFileManager {
 
         List<BackupFile> backupDirList = BackupFileKeeper.all(mLoginSession.getUserInfo().getId(), BackupType.FILE);
 
-//        File mInternalDCIMDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-//        BackupFile info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath(),
-//                true, BackupType.FILE, BackupPriority.MAX, 0L, 0L);
-//        backupDirList.add(info);
-
         if (null != backupDirList) {
             for (BackupFile file : backupDirList) {
-                BackupFileThread thread = new BackupFileThread(file);
+                BackupFileThread thread = new BackupFileThread(file, callback);
                 mBackupThreadList.add(thread);
             }
         }
@@ -54,32 +65,39 @@ public class BackupFileManager {
     }
 
     public void stopBackup() {
-        for (BackupFileThread thread : mBackupThreadList) {
+        Iterator<BackupFileThread> iterator = mBackupThreadList.iterator();
+        while (iterator.hasNext()) {
+            BackupFileThread thread = iterator.next();
             if (thread.isAlive()) {
                 thread.stopBackup();
             }
+            iterator.remove();
         }
     }
 
     public boolean addBackupFile(BackupFile file) {
         for (BackupFileThread thread : mBackupThreadList) {
-            if (thread.getBackupFile().getPath().equals(file.getPath())) {
+            if (thread.getBackupFile() == file || thread.getBackupFile().getId() == file.getId()) {
+                Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Add Item is exist: " + file.getPath());
                 return false;
             }
         }
 
-        BackupFileThread thread = new BackupFileThread(file);
+        BackupFileThread thread = new BackupFileThread(file, callback);
         mBackupThreadList.add(thread);
         thread.start();
         return true;
     }
 
-    public boolean removeBackupFile(BackupFile file) {
-        for (BackupFileThread thread : mBackupThreadList) {
-            if (thread.getBackupFile().getPath().equals(file.getPath())) {
+    public boolean deleteBackupFile(BackupFile file) {
+        Iterator<BackupFileThread> iterator = mBackupThreadList.iterator();
+        while (iterator.hasNext()) {
+            BackupFileThread thread = iterator.next();
+            if (thread.getBackupFile() == file || thread.getBackupFile().getId() == file.getId()) {
                 if (thread.isAlive()) {
                     thread.stopBackup();
                 }
+                iterator.remove();
 
                 return true;
             }
@@ -88,31 +106,40 @@ public class BackupFileManager {
         return false;
     }
 
+    public void setOnBackupFileListener(OnBackupFileListener listener) {
+        this.listener = listener;
+    }
+
     private class BackupFileThread extends Thread {
         private final String TAG = BackupFileThread.class.getSimpleName();
         private BackupFile backupFile;
         // 扫描备份失败的文件和新增加的文件列表
-        private List<BackupFileElement> mAdditionalList = Collections.synchronizedList(new ArrayList<BackupFileElement>());
+        private List<BackupElement> mAdditionalList = Collections.synchronizedList(new ArrayList<BackupElement>());
         private OneOSUploadFileAPI uploadFileAPI;
         private boolean hasBackupTask = false;
+        private OnBackupFileListener listener;
         private RecursiveFileObserver mFileObserver;
         private RecursiveFileObserver.OnObserverCallback mObserverListener = new RecursiveFileObserver.OnObserverCallback() {
             @Override
             public void onAdd(BackupFile backupInfo, File file) {
-                BackupFileElement element = new BackupFileElement(backupInfo, file, true);
+                BackupElement element = new BackupElement(backupInfo, file, true);
                 notifyAddNewBackupItem(element);
             }
         };
 
-        public BackupFileThread(BackupFile file) {
+        public BackupFileThread(BackupFile file, OnBackupFileListener listener) {
             if (null == file) {
                 new Throwable(new NullPointerException("BackupFile can not be null"));
             }
             this.backupFile = file;
+            this.listener = listener;
         }
 
-        private boolean doUploadFile(BackupFileElement element) {
+        private boolean doUploadFile(BackupElement element) {
             Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Upload File: " + element.getSrcPath());
+            if (null != this.listener) {
+                this.listener.onBackup(element.getBackupInfo(), element.getFile());
+            }
             uploadFileAPI = new OneOSUploadFileAPI(mLoginSession, element);
             boolean result = uploadFileAPI.upload();
             uploadFileAPI = null;
@@ -143,7 +170,7 @@ public class BackupFileManager {
                         scanningAndBackupFiles(file);
                     }
                 } else {
-                    BackupFileElement element = new BackupFileElement(backupFile, dir, true);
+                    BackupElement element = new BackupElement(backupFile, dir, true);
                     if (!doUploadFile(element)) {
                         mAdditionalList.add(element);
                         Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Add to Additional List");
@@ -166,7 +193,7 @@ public class BackupFileManager {
                 Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Start upload AdditionalList files: " + mAdditionalList.size());
                 if (!EmptyUtils.isEmpty(mAdditionalList)) {
                     hasBackupTask = true;
-                    Iterator<BackupFileElement> iterator = mAdditionalList.iterator();
+                    Iterator<BackupElement> iterator = mAdditionalList.iterator();
                     while (!isInterrupted() && iterator.hasNext()) {
                         if (!doUploadFile(iterator.next())) {
                             iterator.remove();
@@ -176,6 +203,11 @@ public class BackupFileManager {
                 }
                 Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Upload AdditionalList files complete");
                 hasBackupTask = false;
+                backupFile.setTime(System.currentTimeMillis());
+                BackupFileKeeper.update(backupFile);
+                if (null != listener) {
+                    listener.onStop(backupFile);
+                }
 
                 try {
                     Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Waiting for AdditionalList Changed...");
@@ -188,7 +220,7 @@ public class BackupFileManager {
             }
         }
 
-        public synchronized boolean notifyAddNewBackupItem(BackupFileElement mElement) {
+        public synchronized boolean notifyAddNewBackupItem(BackupElement mElement) {
             if (mElement == null) {
                 return false;
             }
@@ -215,7 +247,9 @@ public class BackupFileManager {
         public void stopBackup() {
             Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "====Stop Backup====");
             interrupt();
-            mFileObserver.stopWatching();
+            if (null != mFileObserver) {
+                mFileObserver.stopWatching();
+            }
             if (uploadFileAPI != null) {
                 uploadFileAPI.stopUpload();
                 uploadFileAPI = null;
@@ -225,11 +259,17 @@ public class BackupFileManager {
         }
 
         public BackupFile getBackupFile() {
-            if (isInterrupted()) {
+            if (!isInterrupted()) {
                 return backupFile;
             }
 
             return null;
         }
+    }
+
+    public interface OnBackupFileListener {
+        void onBackup(BackupFile backupFile, File file);
+
+        void onStop(BackupFile backupFile);
     }
 }

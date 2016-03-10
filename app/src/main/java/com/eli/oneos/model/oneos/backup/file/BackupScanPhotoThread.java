@@ -33,7 +33,7 @@ public class BackupScanPhotoThread extends Thread {
         Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "Backup List Size: " + mBackupList.size());
     }
 
-    private ArrayList<BackupFileElement> scanningBackupFiles(BackupFile info) {
+    private ArrayList<BackupElement> scanningBackupFiles(BackupFile info) {
         final long lastBackupTime = info.getTime();
         boolean isFirstBackup = (lastBackupTime <= 0) ? true : false;
         boolean isBackupAlbum = (info.getType() == BackupType.ALBUM);  // 相册备份
@@ -41,18 +41,18 @@ public class BackupScanPhotoThread extends Thread {
         ArrayList<File> fileList = new ArrayList<>();
         // 遍历备份目录文件
         listFiles(fileList, backupDir, isBackupAlbum, lastBackupTime);
-        ArrayList<BackupFileElement> backupElements = new ArrayList<>();
+        ArrayList<BackupElement> backupElements = new ArrayList<>();
         if (null != fileList) {
             for (File file : fileList) {
-                BackupFileElement element = new BackupFileElement(info, file, isFirstBackup);
+                BackupElement element = new BackupElement(info, file, isFirstBackup);
                 backupElements.add(element);
                 Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "Add Backup Element: " + element.toString());
             }
         }
 
-        Collections.sort(backupElements, new Comparator<BackupFileElement>() {
+        Collections.sort(backupElements, new Comparator<BackupElement>() {
             @Override
-            public int compare(BackupFileElement elem1, BackupFileElement elem2) {
+            public int compare(BackupElement elem1, BackupElement elem2) {
                 if (elem1.getFile().lastModified() > elem2.getFile().lastModified()) {
                     return 1;
                 } else if (elem1.getFile().lastModified() < elem2.getFile().lastModified()) {
@@ -85,10 +85,10 @@ public class BackupScanPhotoThread extends Thread {
             Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "======Complete Sort Backup Task=====");
 
             Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, ">>>>>>Start Scanning Directory=====");
-            ArrayList<BackupFileElement> backupElements = new ArrayList<>();
+            ArrayList<BackupElement> backupElements = new ArrayList<>();
             for (BackupFile info : mBackupList) {
                 Logger.p(LogLevel.DEBUG, Logged.BACKUP_ALBUM, TAG, "------Scanning: " + info.getPath());
-                ArrayList<BackupFileElement> files = scanningBackupFiles(info);
+                ArrayList<BackupElement> files = scanningBackupFiles(info);
                 backupElements.addAll(files);
                 info.setCount(info.getCount() + 1);
             }
@@ -122,6 +122,6 @@ public class BackupScanPhotoThread extends Thread {
     }
 
     public interface OnScanFileListener {
-        void onComplete(ArrayList<BackupFileElement> backupList);
+        void onComplete(ArrayList<BackupElement> backupList);
     }
 }

@@ -39,6 +39,10 @@ public class TipView {
         show(context, parent, msg, isPositive, null);
     }
 
+    public void show(Context context, View parent, int msgId, boolean isPositive, PopupWindow.OnDismissListener listener) {
+        show(context, parent, context.getResources().getString(msgId), isPositive, listener);
+    }
+
     public void show(Context context, View parent, String msg, boolean isPositive, PopupWindow.OnDismissListener listener) {
         if (context == null) {
             return;
