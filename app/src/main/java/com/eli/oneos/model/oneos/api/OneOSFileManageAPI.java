@@ -149,6 +149,17 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         doManageFiles(params);
     }
 
+    public void rename(String path, String newName) {
+        this.action = FileManageAction.RENAME;
+        AjaxParams params = new AjaxParams();
+        params.put("session", session);
+        params.put("cmd", "rename");
+        params.put("path", path);
+        params.put("newname", newName);
+
+        doManageFiles(params);
+    }
+
     public void mkdir(String path, String newName) {
         this.action = FileManageAction.MKDIR;
 

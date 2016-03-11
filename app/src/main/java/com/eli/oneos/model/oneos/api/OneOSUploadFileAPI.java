@@ -58,11 +58,19 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             listener.onStart(url, uploadElement);
         }
 
-        if (!uploadElement.isCheck() ||
-                !checkExist(uploadElement.getTargetPath() + uploadElement.getSrcName(), uploadElement.getSize())) {
-            doUpload();
+
+        if (uploadElement.isCheck()) {
+            int check = checkExist(uploadElement.getTargetPath() + uploadElement.getSrcName(), uploadElement.getSize());
+            if (check == 1) {
+                uploadElement.setState(TransferState.COMPLETE);
+            } else if (check == -1) {
+                duplicateRename(uploadElement.getTargetPath() + uploadElement.getSrcName(), uploadElement.getSrcName());
+            } else {
+                doUpload();
+            }
+
         } else {
-            uploadElement.setState(TransferState.COMPLETE);
+            doUpload();
         }
 
         if (null != listener) {
@@ -70,6 +78,52 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         }
 
         return uploadElement.getState() == TransferState.COMPLETE;
+    }
+
+    int count = 1;
+    int index = 1;
+
+    private void duplicateRename(final String path, final String srcName) {
+        String newName = genDuplicateName(srcName, index);
+        AjaxParams params = new AjaxParams();
+        params.put("session", session);
+        params.put("cmd", "rename");
+        params.put("path", path);
+        params.put("newname", newName);
+
+        String url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
+        logHttp(TAG, url, params);
+        try {
+            String result = (String) finalHttp.postSync(url, params);
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "File Attr: " + result);
+            JSONObject json = new JSONObject(result);
+            boolean ret = json.getBoolean("result");
+            if (ret) {
+                Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename Success");
+                doUpload();
+            } else {
+                Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename Failed");
+                if (count <= 10) {
+                    count++;
+                    index = (int) Math.pow(2, count);
+                    duplicateRename(path, srcName);
+                } else {
+                    Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename " + count + " Times, Skip...");
+                }
+            }
+        } catch (Exception e) {
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file not exist on server: " + path/*, e*/);
+        }
+    }
+
+    private String genDuplicateName(String srcName, int index) {
+        int pos = srcName.lastIndexOf(".");
+        if (pos == -1) {
+            return srcName + "_" + index;
+        }
+
+        String name = srcName.substring(0, pos);
+        return name + "_" + index + srcName.substring(pos, srcName.length());
     }
 
     public void stopUpload() {
@@ -82,10 +136,10 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
      *
      * @param path    file server path
      * @param srcSize
-     * @return true if exist, otherwise false
+     * @return 1: exist and do not needs to upload; -1: needs rename old file then upload; 0: file do not exist
      */
-    private boolean checkExist(String path, long srcSize) {
-        url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
+    private int checkExist(String path, long srcSize) {
+        String url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "attributes");
@@ -100,7 +154,9 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                 long size = json.getLong("size");
                 if (size == srcSize) {
                     Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file exist on server: " + path);
-                    return true;
+                    return 1; // exist and do not needs to upload
+                } else {
+                    return -1; // needs rename old file
                 }
             }
         } catch (Exception e) {
@@ -108,7 +164,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file not exist on server: " + path/*, e*/);
         }
 
-        return false;
+        return 0; // file do not exist
     }
 
     private void doUpload() {
