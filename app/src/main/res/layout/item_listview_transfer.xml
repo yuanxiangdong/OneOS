@@ -94,15 +94,16 @@
         android:orientation="horizontal"
         android:padding="0dp">
 
-        <ImageButton
-            android:id="@+id/btn_delete"
+        <TextView
+            android:id="@+id/txt_delete"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/bg_uninstall_app"
+            android:background="@color/red"
             android:focusable="false"
             android:gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_btn_delete" />
+            android:text="@string/delete"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_mid" />
     </LinearLayout>
 
 </LinearLayout>

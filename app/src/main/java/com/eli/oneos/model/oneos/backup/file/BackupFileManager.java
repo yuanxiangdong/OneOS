@@ -169,9 +169,9 @@ public class BackupFileManager {
         }
 
         private boolean doUploadFile(BackupElement element) {
-            Logger.p(LogLevel.ERROR, IS_LOG, TAG, ">>>>>>> Ask for consume upload: " + this.getId());
+//            Logger.p(LogLevel.ERROR, IS_LOG, TAG, ">>>>>>> Ask for consume upload: " + this.getId());
             consume();
-            Logger.p(LogLevel.ERROR, IS_LOG, TAG, ">>>>>>> Consume upload count: " + this.getId());
+//            Logger.p(LogLevel.ERROR, IS_LOG, TAG, ">>>>>>> Consume upload count: " + this.getId());
             // for control backup only in wifi
             boolean isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupFileOnlyWifi();
             while (isOnlyWifiBackup && !Utils.isWifiAvailable(context)) {
@@ -192,7 +192,7 @@ public class BackupFileManager {
             uploadFileAPI = new OneOSUploadFileAPI(mLoginSession, element);
             boolean result = uploadFileAPI.upload();
             uploadFileAPI = null;
-            Logger.p(LogLevel.ERROR, IS_LOG, TAG, "<<<<<<< Return upload: " + this.getId());
+//            Logger.p(LogLevel.ERROR, IS_LOG, TAG, "<<<<<<< Return upload: " + this.getId());
             produce();
             if (result) {
                 Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Backup File Success: " + element.getSrcPath());
@@ -239,6 +239,7 @@ public class BackupFileManager {
 
         @Override
         public void run() {
+            hasBackupTask = true;
             backupFile.setCount(backupFile.getCount() + 1);
             Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Start scanning and upload file: " + backupFile.getPath());
             scanningAndBackupFiles(new File(backupFile.getPath()));
@@ -289,12 +290,9 @@ public class BackupFileManager {
             }
 
             synchronized (mAdditionalList) {
-                int curSize = mAdditionalList.size();
                 if (mAdditionalList.add(mElement)) {
-                    if (curSize <= 0) {
-                        if (!hasBackupTask) {
-                            mAdditionalList.notify();
-                        }
+                    if (!hasBackupTask) {
+                        mAdditionalList.notify();
                     }
                 } else {
                     return false;

@@ -369,7 +369,7 @@
     <string name="title_backup_file">文件备份</string>
     <string name="auto_backup_file">自动备份文件</string>
     <string name="backup_file_list">自动备份的目录</string>
-    <string name="fmt_backup_folder_count">&#160;（%d&#160;个文件夹）</string>
+    <string name="fmt_backup_folder_count">&#160;(%d个文件夹)</string>
     <string name="tips_empty_backup_file">没有需要备份的文件夹</string>
     <string name="title_backup_file_list">自动备份的文件夹</string>
     <string name="title_add_backup_file">添加自动备份文件夹</string>

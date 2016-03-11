@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.adapter.TransmissionAdapter;
+import com.eli.oneos.model.oneos.transfer.DownloadElement;
 import com.eli.oneos.model.oneos.transfer.TransferControlListener;
 import com.eli.oneos.model.oneos.transfer.TransferElement;
 import com.eli.oneos.service.OneSpaceService;
@@ -185,7 +186,8 @@ public class TransmissionFragment extends BaseTransferFragment {
                 mTransferService.cancelDownload(mElement.getSrcPath());
                 mListView.hiddenRight();
                 if (checkBox.isChecked()) {
-                    File file = new File(mElement.getTargetPath() + File.separator + mElement.getSrcName());
+                    DownloadElement dElement = (DownloadElement) mElement;
+                    File file = new File(mElement.getTargetPath() + File.separator + dElement.getTmpName());
                     if (file.exists()) {
                         if (file.delete()) {
                             Log.d(TAG, "Delete file succeed");
