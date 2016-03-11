@@ -106,7 +106,7 @@ public class OneOSFileManage {
                     contentList.add(json.getString("uid"));
                     titleList.add(resources.getString(R.string.file_attr_gid));
                     contentList.add(json.getString("gid"));
-                    DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, R.string.ok, 0, null);
+                    DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, 0, 0, R.string.ok, null);
                 } catch (Exception e) {
                     e.printStackTrace();
                     ToastHelper.showToast(R.string.error_json_exception);

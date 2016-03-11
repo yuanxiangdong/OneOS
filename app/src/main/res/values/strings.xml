@@ -373,7 +373,7 @@
     <string name="tips_empty_backup_file">没有需要备份的文件夹</string>
     <string name="title_backup_file_list">自动备份的文件夹</string>
     <string name="title_add_backup_file">添加自动备份文件夹</string>
-    <string name="add_backup_file">确认备份该文件夹</string>
+    <string name="confirm_add_backup_file">确认备份该文件夹</string>
     <string name="confirm_add_backup">确认添加备份</string>
     <string name="continue_add_backup">继续添加</string>
     <string name="error_fmt_add_backup_dir_count">最多可以添加%d个备份文件夹</string>
@@ -383,7 +383,10 @@
     <string name="error_backup_without_read_permission">没有读权限，无法备份此目录</string>
     <string name="delete_backup_file">删除备份目录</string>
     <string name="tips_confirm_delete_backup_dir">确认删除此备份目录？</string>
+    <string name="tips_confirm_add_backup_dir">确认自动备份此目录？</string>
     <string name="is_backup">正在备份：</string>
+    <string name="add_backup_file">添加自动备份</string>
+    <string name="cancel_backup_file">取消自动备份</string>
 
     <!--Backup Contacts and SMS-->
     <string name="title_sync_contacts">通讯录备份</string>

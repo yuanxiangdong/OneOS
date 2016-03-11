@@ -78,6 +78,20 @@ public class BackupFileKeeper {
         return dao.insertOrReplace(info);
     }
 
+    public static BackupFile deleteBackupFile(long uid, String path) {
+        BackupFileDao dao = DBHelper.getDaoSession().getBackupFileDao();
+        QueryBuilder queryBuilder = dao.queryBuilder();
+        queryBuilder.where(BackupFileDao.Properties.Uid.eq(uid));
+        queryBuilder.where(BackupFileDao.Properties.Type.eq(BackupType.FILE));
+        queryBuilder.where(BackupFileDao.Properties.Path.eq(path));
+        BackupFile backupFile = (BackupFile) queryBuilder.unique();
+        if (null != backupFile) {
+            dao.delete(backupFile);
+        }
+
+        return backupFile;
+    }
+
     /**
      * Reset Backup by mac and username
      *

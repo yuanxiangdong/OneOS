@@ -21,7 +21,7 @@ public class DownloadManager {
     private List<DownloadElement> completeList = Collections.synchronizedList(new ArrayList<DownloadElement>());
     private List<DownloadElement> downloadList = Collections.synchronizedList(new ArrayList<DownloadElement>());
     //    private DBManager dbManager = null;
-    private OnDownloadCompleteListener mCompleteListener = null;
+    private List<OnDownloadCompleteListener> completeListenerList = new ArrayList<>();
     private DownloadFileThread.OnDownloadResultListener mDownloadResultListener = new DownloadFileThread.OnDownloadResultListener() {
 
         @Override
@@ -38,11 +38,11 @@ public class DownloadManager {
                     TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(true), mElement.getSrcName(),
                             mElement.getSrcPath(), mElement.getTargetPath(), mElement.getSize(), mElement.getSize(), 0L, System.currentTimeMillis(), true);
                     TransferHistoryKeeper.insert(history);
-
-                    if (mCompleteListener != null) {
-                        mCompleteListener.downloadComplete(mElement);
-                    }
                     downloadList.remove(mElement);
+
+                    for (OnDownloadCompleteListener listener : completeListenerList) {
+                        listener.downloadComplete(mElement);
+                    }
                 } else {
                     Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, LOG_TAG, "Download Exception: " + state);
                 }
@@ -79,8 +79,16 @@ public class DownloadManager {
         return INSTANCE;
     }
 
-    public void setOnDownloadCompleteListener(OnDownloadCompleteListener listener) {
-        mCompleteListener = listener;
+    public boolean addDownloadCompleteListener(OnDownloadCompleteListener listener) {
+        if (!completeListenerList.contains(listener)) {
+            return completeListenerList.add(listener);
+        }
+
+        return false;
+    }
+
+    public boolean removeDownloadCompleteListener(OnDownloadCompleteListener listener) {
+        return completeListenerList.remove(listener);
     }
 
     /**

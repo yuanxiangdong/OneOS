@@ -9,6 +9,9 @@ import android.net.NetworkInfo;
 
 import com.eli.oneos.MyApplication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/14.
  */
@@ -16,7 +19,7 @@ public class NetworkStateManager {
 
     private static NetworkStateManager INSTANCE = new NetworkStateManager();
     private static BroadcastReceiver mNetworkReceiver = null;
-    private OnNetworkStateChangedListener listener;
+    private List<OnNetworkStateChangedListener> listenerList = new ArrayList<>();
 
     private NetworkStateManager() {
         mNetworkReceiver = new BroadcastReceiver() {
@@ -28,7 +31,7 @@ public class NetworkStateManager {
                 NetworkInfo wifiNetInfo = mManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
                 boolean isWifiAvailable = wifiNetInfo.isAvailable();
                 boolean isAvailable = isWifiAvailable || mobNetInfo.isAvailable();
-                if (null != listener) {
+                for (OnNetworkStateChangedListener listener : listenerList) {
                     listener.onChanged(isAvailable, isWifiAvailable);
                 }
             }
@@ -52,14 +55,14 @@ public class NetworkStateManager {
         context.unregisterReceiver(mNetworkReceiver);
     }
 
-    public void setOnNetworkStateChangedListener(OnNetworkStateChangedListener listener) {
-        this.listener = listener;
+    public void addNetworkStateChangedListener(OnNetworkStateChangedListener listener) {
+        if (!listenerList.contains(listener)) {
+            listenerList.add(listener);
+        }
     }
 
-    public void removeOnNetworkStateChangedListener(OnNetworkStateChangedListener listener) {
-        if (this.listener == listener) {
-            this.listener = null;
-        }
+    public void removeNetworkStateChangedListener(OnNetworkStateChangedListener listener) {
+        this.listenerList.remove(listener);
     }
 
     public interface OnNetworkStateChangedListener {

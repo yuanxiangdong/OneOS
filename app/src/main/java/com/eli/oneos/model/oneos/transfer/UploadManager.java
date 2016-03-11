@@ -17,7 +17,7 @@ public class UploadManager {
 
     private List<UploadElement> completeList = Collections.synchronizedList(new ArrayList<UploadElement>());
     private List<UploadElement> uploadList = Collections.synchronizedList(new ArrayList<UploadElement>());
-    private OnUploadCompleteListener mCompleteListener = null;
+    private List<OnUploadCompleteListener> completeListenerList = new ArrayList<>();
     private static UploadManager instance = new UploadManager();
     private UploadFileThread.OnUploadResultListener uploadResultListener = new UploadFileThread.OnUploadResultListener() {
 
@@ -36,8 +36,8 @@ public class UploadManager {
                             mElement.getSrcPath(), mElement.getTargetPath(), mElement.getSize(), mElement.getSize(), 0L, System.currentTimeMillis(), true);
                     TransferHistoryKeeper.insert(history);
 
-                    if (mCompleteListener != null) {
-                        mCompleteListener.uploadComplete(mElement);
+                    for (OnUploadCompleteListener listener : completeListenerList) {
+                        listener.uploadComplete(mElement);
                     }
                     uploadList.remove(mElement);
                 } else {
@@ -71,8 +71,17 @@ public class UploadManager {
         return instance;
     }
 
-    public void setOnUploadCompleteListener(OnUploadCompleteListener listener) {
-        mCompleteListener = listener;
+
+    public boolean addUploadCompleteListener(OnUploadCompleteListener listener) {
+        if (!completeListenerList.contains(listener)) {
+            return completeListenerList.add(listener);
+        }
+
+        return false;
+    }
+
+    public boolean removeUploadCompleteListener(OnUploadCompleteListener listener) {
+        return completeListenerList.remove(listener);
     }
 
     /**

@@ -66,14 +66,10 @@ public class LocalFileGridAdapter extends LocalFileBaseAdapter {
         } else {
             int icon;
             if (file.isDirectory()) {
-                if (null != loginSession) {
-                    if (file.getPath().equals(loginSession.getDownloadPath())) {
-                        icon = R.drawable.icon_file_folder_download;
-                    } else if (isBackupDirectory(file.getPath())) {
-                        icon = R.drawable.icon_file_folder_backup;
-                    } else {
-                        icon = R.drawable.icon_file_folder;
-                    }
+                if (file.isDownloadDir()) {
+                    icon = R.drawable.icon_file_folder_download;
+                } else if (file.isBackupDir()) {
+                    icon = R.drawable.icon_file_folder_backup;
                 } else {
                     icon = R.drawable.icon_file_folder;
                 }

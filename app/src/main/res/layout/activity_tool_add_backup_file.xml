@@ -109,7 +109,7 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/selector_button_bg_primary"
         android:enabled="false"
-        android:text="@string/add_backup_file"
+        android:text="@string/confirm_add_backup_file"
         android:textColor="@android:color/white"
         android:textSize="@dimen/text_size_mid" />
 

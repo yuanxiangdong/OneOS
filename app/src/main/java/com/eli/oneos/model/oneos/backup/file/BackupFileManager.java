@@ -12,6 +12,7 @@ import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.backup.RecursiveFileObserver;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
+import com.eli.oneos.utils.Utils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -23,9 +24,11 @@ import java.util.List;
 public class BackupFileManager {
     private static final String TAG = BackupFileManager.class.getSimpleName();
     private static final boolean IS_LOG = Logged.BACKUP_FILE;
+    private static final int MAX_UPLOAD_COUNT = 2;
 
     private Context context;
     private LoginSession mLoginSession = null;
+    private int uploadCount = MAX_UPLOAD_COUNT;
     private List<BackupFileThread> mBackupThreadList = new ArrayList<>();
     private OnBackupFileListener listener;
     private OnBackupFileListener callback = new OnBackupFileListener() {
@@ -120,6 +123,26 @@ public class BackupFileManager {
         this.listener = listener;
     }
 
+    private synchronized void consume() {
+        while (uploadCount <= 0) {
+            try {
+                Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Upload count shortage, waiting...");
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Consume upload count: " + (uploadCount - 1));
+        this.notify();
+        uploadCount--;
+    }
+
+    private synchronized void produce() {
+        Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Produce upload count: " + (uploadCount + 1));
+        uploadCount++;
+        this.notify();
+    }
+
     private class BackupFileThread extends Thread {
         private final String TAG = BackupFileThread.class.getSimpleName();
         private BackupFile backupFile;
@@ -146,6 +169,22 @@ public class BackupFileManager {
         }
 
         private boolean doUploadFile(BackupElement element) {
+            Logger.p(LogLevel.ERROR, IS_LOG, TAG, ">>>>>>> Ask for consume upload: " + this.getId());
+            consume();
+            Logger.p(LogLevel.ERROR, IS_LOG, TAG, ">>>>>>> Consume upload count: " + this.getId());
+            // for control backup only in wifi
+            boolean isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupFileOnlyWifi();
+            while (isOnlyWifiBackup && !Utils.isWifiAvailable(context)) {
+                try {
+                    Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "----Backup only wifi, but current is not, sleep 60s----");
+                    sleep(60000); // sleep 60 * 1000 = 60s
+                    isOnlyWifiBackup = mLoginSession.getUserSettings().getIsBackupFileOnlyWifi();
+                    Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "----Is Backup Only Wifi: " + isOnlyWifiBackup);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Upload File: " + element.getSrcPath());
             if (null != this.listener) {
                 this.listener.onBackup(element.getBackupInfo(), element.getFile());
@@ -153,6 +192,8 @@ public class BackupFileManager {
             uploadFileAPI = new OneOSUploadFileAPI(mLoginSession, element);
             boolean result = uploadFileAPI.upload();
             uploadFileAPI = null;
+            Logger.p(LogLevel.ERROR, IS_LOG, TAG, "<<<<<<< Return upload: " + this.getId());
+            produce();
             if (result) {
                 Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Backup File Success: " + element.getSrcPath());
                 return true;
@@ -185,6 +226,13 @@ public class BackupFileManager {
                         mAdditionalList.add(element);
                         Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Add to Additional List");
                     }
+                    if (!isInterrupted()) {
+                        try {
+                            sleep(20); // sleep 20ms
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         }
@@ -208,6 +256,11 @@ public class BackupFileManager {
                         if (!doUploadFile(iterator.next())) {
                             iterator.remove();
                             Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Remove Additional Element");
+                        }
+                        try {
+                            sleep(20); // sleep 20ms
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
                 }

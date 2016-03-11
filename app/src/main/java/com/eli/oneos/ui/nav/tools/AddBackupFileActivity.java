@@ -141,7 +141,7 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_confirm:
-                setDefaultDownloadPath();
+                addBackupFile();
                 break;
             case R.id.btn_up:
                 onBackPressed();
@@ -205,7 +205,7 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
                 });
     }
 
-    private void setDefaultDownloadPath() {
+    private void addBackupFile() {
         File file = new File(selectPath);
         if (file.canRead()) {
             File mDCIMDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
@@ -375,10 +375,6 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
             return isSelected;
         }
 
-        public void setIsSelected(HashMap<Integer, Boolean> isSelected) {
-            this.isSelected = isSelected;
-        }
-
         /**
          * init date of isSelected
          */
@@ -391,19 +387,16 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
 
         @Override
         public int getCount() {
-            // TODO Auto-generated method stub
             return mList.size();
         }
 
         @Override
         public Object getItem(int position) {
-            // TODO Auto-generated method stub
             return position;
         }
 
         @Override
         public long getItemId(int position) {
-            // TODO Auto-generated method stub
             return position;
         }
 

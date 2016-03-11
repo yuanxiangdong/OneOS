@@ -78,21 +78,17 @@ public class LocalFileListAdapter extends LocalFileBaseAdapter {
         holder.mNameTxt.setText(file.getName());
         holder.mIconView.setTag(file.getName());
         holder.mTimeTxt.setText(FileUtils.formatTime(file.lastModified()));
-        holder.mSizeTxt.setText(FileUtils.fmtFileSize(file.length()));
+        holder.mSizeTxt.setText(file.isDirectory() ? "" : FileUtils.fmtFileSize(file.length()));
 
         if (FileUtils.isPictureFile(file.getName())) {
             showPicturePreview(holder.mIconView, file);
         } else {
             int icon;
             if (file.isDirectory()) {
-                if (null != loginSession) {
-                    if (file.getPath().equals(loginSession.getDownloadPath())) {
-                        icon = R.drawable.icon_file_folder_download;
-                    } else if (isBackupDirectory(file.getPath())) {
-                        icon = R.drawable.icon_file_folder_backup;
-                    } else {
-                        icon = R.drawable.icon_file_folder;
-                    }
+                if (file.isDownloadDir()) {
+                    icon = R.drawable.icon_file_folder_download;
+                } else if (file.isBackupDir()) {
+                    icon = R.drawable.icon_file_folder_backup;
                 } else {
                     icon = R.drawable.icon_file_folder;
                 }

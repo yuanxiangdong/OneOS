@@ -22,7 +22,6 @@ public class LocalFileBaseAdapter extends BaseAdapter {
     public LayoutInflater mInflater;
     public List<LocalFile> mFileList = null;
     public ArrayList<LocalFile> mSelectedList = null;
-    public ArrayList<String> mBackupList = new ArrayList<>();
     private boolean isMultiChoose = false;
     public OnMultiChooseClickListener mListener = null;
     public LoginSession loginSession;
@@ -116,25 +115,6 @@ public class LocalFileBaseAdapter extends BaseAdapter {
                 mSelectedList.addAll(mFileList);
             }
         }
-    }
-
-    public void updateBackupList(List<String> list) {
-        mBackupList.clear();
-        if (null != list) {
-            mBackupList.addAll(list);
-        }
-    }
-
-    public boolean isBackupDirectory(String path) {
-        if (null != mBackupList) {
-            for (String s : mBackupList) {
-                if (s.equals(path)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     public void showPicturePreview(ImageView imageView, LocalFile file) {

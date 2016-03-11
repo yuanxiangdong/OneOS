@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -373,7 +374,7 @@ public class DialogUtils {
     //
 
     public static void showListDialog(Activity activity, List<String> titleList, List<String> contentList, int titleId,
-                                      int posId, int negId, final OnDialogClickListener mListener) {
+                                      int topId, int midId, int negId, final OnMultiDialogClickListener mListener) {
         if (activity == null || titleList == null) {
             Log.e(TAG, "activity or dialog content is null");
             return;
@@ -393,34 +394,46 @@ public class DialogUtils {
         mAdapter.notifyDataSetChanged();
         // setListViewVisibleLines(activity, mListView, 6);
 
-        Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
-        positiveBtn.setText(posId);
-        positiveBtn.setBackgroundResource(R.drawable.selector_square_bottom_radius_white_trans_gray);
-        positiveBtn.setVisibility(View.VISIBLE);
-        positiveBtn.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onClick(true);
-                }
-                mDialog.dismiss();
-            }
-        });
-
-        if (negId > 0) {
-            View lineView = dialogView.findViewById(R.id.line_button);
-            lineView.setVisibility(View.VISIBLE);
-            Button negativeBan = (Button) dialogView.findViewById(R.id.negative);
-            negativeBan.setText(negId);
-            negativeBan.setVisibility(View.VISIBLE);
-            negativeBan.setOnClickListener(new OnClickListener() {
+        if (topId > 0) {
+            LinearLayout layout = (LinearLayout) dialogView.findViewById(R.id.layout_multi_top);
+            layout.setVisibility(View.VISIBLE);
+            Button mBtn = (Button) dialogView.findViewById(R.id.btn_multi_top);
+            mBtn.setText(topId);
+            mBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     if (mListener != null) {
-                        mListener.onClick(false);
+                        mListener.onClick(2);
                     }
                     mDialog.dismiss();
                 }
             });
         }
+
+        if (midId > 0) {
+            LinearLayout layout = (LinearLayout) dialogView.findViewById(R.id.layout_multi_mid);
+            layout.setVisibility(View.VISIBLE);
+            Button mBtn = (Button) dialogView.findViewById(R.id.btn_multi_mid);
+            mBtn.setText(midId);
+            mBtn.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onClick(1);
+                    }
+                    mDialog.dismiss();
+                }
+            });
+        }
+
+        Button negativeBan = (Button) dialogView.findViewById(R.id.btn_negative);
+        negativeBan.setText(negId);
+        negativeBan.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onClick(0);
+                }
+                mDialog.dismiss();
+            }
+        });
 
         mDialog.setContentView(dialogView);
         mDialog.setCancelable(false);
@@ -466,6 +479,10 @@ public class DialogUtils {
          * @param isPositiveBtn if true is positive button clicked, else is negative button clicked
          */
         void onClick(boolean isPositiveBtn);
+    }
+
+    public interface OnMultiDialogClickListener {
+        void onClick(int index);
     }
 
     public interface OnEditDialogClickListener {

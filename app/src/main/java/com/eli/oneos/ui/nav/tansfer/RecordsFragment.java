@@ -42,6 +42,37 @@ public class RecordsFragment extends BaseTransferFragment {
     private TextView mEmptyTxt;
     private ArrayList<TransferHistory> mHistoryList = new ArrayList<>();
     private LoginManage loginManage;
+    private DownloadManager.OnDownloadCompleteListener downloadCompleteListener = new DownloadManager.OnDownloadCompleteListener() {
+        @Override
+        public void downloadComplete(DownloadElement element) {
+            Log.d(TAG, "---Download Complete: " + element.getSrcPath());
+            if (loginManage.isLogin()) {
+                final TransferHistory history = genTransferHistory(element, true);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mHistoryList.add(0, history);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+    };
+    private UploadManager.OnUploadCompleteListener uploadCompleteListener = new UploadManager.OnUploadCompleteListener() {
+        @Override
+        public void uploadComplete(UploadElement element) {
+            if (loginManage.isLogin()) {
+                final TransferHistory history = genTransferHistory(element, false);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mHistoryList.add(0, history);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+    };
 
     @SuppressLint("ValidFragment")
     public RecordsFragment() {
@@ -67,6 +98,15 @@ public class RecordsFragment extends BaseTransferFragment {
     public void onResume() {
         super.onResume();
         initTransferHistory();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mTransferService != null) {
+            mTransferService.removeDownloadCompleteListener(downloadCompleteListener);
+            mTransferService.removeUploadCompleteListener(uploadCompleteListener);
+        }
     }
 
     private void initView(View view) {
@@ -121,38 +161,9 @@ public class RecordsFragment extends BaseTransferFragment {
         mTransferService = MyApplication.getTransferService();
         if (mTransferService != null) {
             if (isDownload) {
-                mTransferService.setOnDownloadCompleteListener(new DownloadManager.OnDownloadCompleteListener() {
-                    @Override
-                    public void downloadComplete(DownloadElement element) {
-                        Log.d(TAG, "---Download Complete: " + element.getSrcPath());
-                        if (loginManage.isLogin()) {
-                            final TransferHistory history = genTransferHistory(element, true);
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mHistoryList.add(0, history);
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            });
-                        }
-                    }
-                });
+                mTransferService.addDownloadCompleteListener(downloadCompleteListener);
             } else {
-                mTransferService.setOnUploadCompleteListener(new UploadManager.OnUploadCompleteListener() {
-                    @Override
-                    public void uploadComplete(UploadElement element) {
-                        if (loginManage.isLogin()) {
-                            final TransferHistory history = genTransferHistory(element, false);
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mHistoryList.add(0, history);
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            });
-                        }
-                    }
-                });
+                mTransferService.addUploadCompleteListener(uploadCompleteListener);
             }
         } else {
             Log.e(TAG, "Get transfer service is null");

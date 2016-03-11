@@ -21,11 +21,9 @@ import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.model.oneos.transfer.UploadManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
-import com.eli.oneos.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 public class OneSpaceService extends Service {
     private static final String TAG = OneSpaceService.class.getSimpleName();
@@ -36,8 +34,6 @@ public class OneSpaceService extends Service {
     private UploadManager mUploadManager;
     private BackupAlbumManager mBackupAlbumManager;
     private BackupFileManager mBackupFileManager;
-    private List<DownloadManager.OnDownloadCompleteListener> mDownloadCompleteListenerList = new ArrayList<DownloadManager.OnDownloadCompleteListener>();
-    private List<UploadManager.OnUploadCompleteListener> mUploadCompleteListenerList = new ArrayList<UploadManager.OnUploadCompleteListener>();
 
     @Override
     public void onCreate() {
@@ -46,26 +42,15 @@ public class OneSpaceService extends Service {
 
         mDownloadManager = DownloadManager.getInstance();
         mUploadManager = UploadManager.getInstance();
-        mDownloadManager.setOnDownloadCompleteListener(new DownloadManager.OnDownloadCompleteListener() {
+    }
 
-            @Override
-            public void downloadComplete(DownloadElement element) {
-                FileUtils.requestScanFile(element.getDownloadFile());
-
-                for (DownloadManager.OnDownloadCompleteListener listener : mDownloadCompleteListenerList) {
-                    listener.downloadComplete(element);
-                }
-            }
-        });
-        mUploadManager.setOnUploadCompleteListener(new UploadManager.OnUploadCompleteListener() {
-
-            @Override
-            public void uploadComplete(UploadElement element) {
-                for (UploadManager.OnUploadCompleteListener listener : mUploadCompleteListenerList) {
-                    listener.uploadComplete(element);
-                }
-            }
-        });
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(ACTIVITY_SERVICE, "OneSpaceService destroy.");
+        mDownloadManager.destroy();
+        mUploadManager.destroy();
+        stopBackupAlbum();
     }
 
     @Override
@@ -106,13 +91,12 @@ public class OneSpaceService extends Service {
             Log.e(TAG, "Do not open auto backup file");
             return;
         }
-        if (mBackupFileManager != null) {
-            mBackupFileManager.stopBackup();
-        }
 
-        mBackupFileManager = new BackupFileManager(loginSession, context);
-        mBackupFileManager.startBackup();
-        Log.d(TAG, "======Start BackupFile=======");
+        if (mBackupFileManager == null) {
+            mBackupFileManager = new BackupFileManager(loginSession, context);
+            mBackupFileManager.startBackup();
+            Log.d(TAG, "======Start BackupFile=======");
+        }
     }
 
     public void addOnBackupFileListener(BackupFileManager.OnBackupFileListener listener) {
@@ -177,7 +161,7 @@ public class OneSpaceService extends Service {
         }
     }
 
-    public void resetBackupFile() {
+    public void resetBackupAlbum() {
         stopBackupAlbum();
         LoginSession loginSession = LoginManage.getInstance().getLoginSession();
         BackupFileKeeper.resetBackupAlbum(loginSession.getUserInfo().getId());
@@ -270,33 +254,47 @@ public class OneSpaceService extends Service {
     }
 
     /**
-     * set on download complete listener
+     * add download complete listener
      */
-    public boolean setOnDownloadCompleteListener(DownloadManager.OnDownloadCompleteListener listener) {
-        if (!mDownloadCompleteListenerList.contains(listener)) {
-            return mDownloadCompleteListenerList.add(listener);
+    public boolean addDownloadCompleteListener(DownloadManager.OnDownloadCompleteListener listener) {
+        if (null != mDownloadManager) {
+            return mDownloadManager.addDownloadCompleteListener(listener);
         }
 
         return true;
     }
 
     /**
-     * set on upload complete listener
+     * remove download complete listener
      */
-    public boolean setOnUploadCompleteListener(UploadManager.OnUploadCompleteListener listener) {
-        if (!mUploadCompleteListenerList.contains(listener)) {
-            return mUploadCompleteListenerList.add(listener);
+    public boolean removeDownloadCompleteListener(DownloadManager.OnDownloadCompleteListener listener) {
+        if (null != mDownloadManager) {
+            return mDownloadManager.removeDownloadCompleteListener(listener);
         }
+
+        return true;
+    }
+
+    /**
+     * add upload complete listener
+     */
+    public boolean addUploadCompleteListener(UploadManager.OnUploadCompleteListener listener) {
+        if (null != mUploadManager) {
+            return mUploadManager.addUploadCompleteListener(listener);
+        }
+
+        return true;
+    }
+
+    /**
+     * remove upload complete listener
+     */
+    public boolean removeUploadCompleteListener(UploadManager.OnUploadCompleteListener listener) {
+        if (null != mUploadManager) {
+            return mUploadManager.removeUploadCompleteListener(listener);
+        }
+
         return true;
     }
     // ========================================Download and Upload file======================================
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(ACTIVITY_SERVICE, "TransferService destroy.");
-        mDownloadManager.destroy();
-        mUploadManager.destroy();
-        stopBackupAlbum();
-    }
 }

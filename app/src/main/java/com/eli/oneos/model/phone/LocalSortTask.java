@@ -159,18 +159,20 @@ public class LocalSortTask extends AsyncTask<Integer, Integer, String[]> {
                 }
             }
 
-            Collections.sort(mFileList, new FileDateComparator());
-            String tmpDate = "";
-            int section = -1;
-            for (int i = 0; i < mFileList.size(); i++) {
-                LocalFile file = mFileList.get(i);
-                String date = FileUtils.fmtTimeByZone(file.getDate() / 1000, fmtDate);
-                if (!tmpDate.equals(date)) {
-                    tmpDate = date;
-                    section++;
-                    mSectionList.add(date);
+            if (type != LocalFileType.PRIVATE && type != LocalFileType.DOWNLOAD) {
+                Collections.sort(mFileList, new FileDateComparator());
+                String tmpDate = "";
+                int section = -1;
+                for (int i = 0; i < mFileList.size(); i++) {
+                    LocalFile file = mFileList.get(i);
+                    String date = FileUtils.fmtTimeByZone(file.getDate() / 1000, fmtDate);
+                    if (!tmpDate.equals(date)) {
+                        tmpDate = date;
+                        section++;
+                        mSectionList.add(date);
+                    }
+                    file.setSection(section);
                 }
-                file.setSection(section);
             }
         }
     }

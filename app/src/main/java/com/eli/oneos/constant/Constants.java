@@ -17,8 +17,8 @@ public class Constants {
     public static final String DEFAULT_DOWNLOAD_DIR_NAME = "/Download";
 
     public static final String BACKUP_FILE_ONEOS_ROOT_DIR_NAME = "/From：" + Build.BRAND + "-" + Build.MODEL + "/";
-    public static final String BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM = BACKUP_FILE_ONEOS_ROOT_DIR_NAME + "Album/";
-    public static final String BACKUP_FILE_ONEOS_ROOT_DIR_NAME_FILES = BACKUP_FILE_ONEOS_ROOT_DIR_NAME + "Files/";
+    public static final String BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM = BACKUP_FILE_ONEOS_ROOT_DIR_NAME + "Album";
+    public static final String BACKUP_FILE_ONEOS_ROOT_DIR_NAME_FILES = BACKUP_FILE_ONEOS_ROOT_DIR_NAME + "Files";
 
     public static final String BACKUP_INFO_ONEOS_ROOT_DIR = "/";
     public static final String BACKUP_CONTACTS_FILE_NAME = ".contactsfromandroid.vcf";

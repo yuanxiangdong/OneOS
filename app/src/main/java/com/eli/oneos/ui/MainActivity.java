@@ -76,14 +76,14 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        NetworkStateManager.getInstance().setOnNetworkStateChangedListener(mNetworkListener);
+        NetworkStateManager.getInstance().addNetworkStateChangedListener(mNetworkListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "on destroy.");
-        NetworkStateManager.getInstance().removeOnNetworkStateChangedListener(mNetworkListener);
+        NetworkStateManager.getInstance().removeNetworkStateChangedListener(mNetworkListener);
     }
 
     @Override

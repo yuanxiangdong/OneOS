@@ -14,6 +14,10 @@ public class LocalFile implements Serializable {
     private int section = 0;
     // photo date time
     private long date = 0;
+    // weather is download directory
+    private boolean isDownloadDir = false;
+    // weather is backup directory
+    private boolean isBackupDir = false;
 
     public LocalFile(File file) {
         this.file = file;
@@ -71,5 +75,21 @@ public class LocalFile implements Serializable {
 
     public void setDate(long date) {
         this.date = date;
+    }
+
+    public boolean isDownloadDir() {
+        return isDownloadDir;
+    }
+
+    public void setIsDownloadDir(boolean isDownload) {
+        this.isDownloadDir = isDownload;
+    }
+
+    public boolean isBackupDir() {
+        return isBackupDir;
+    }
+
+    public void setIsBackupDir(boolean isBackup) {
+        this.isBackupDir = isBackup;
     }
 }

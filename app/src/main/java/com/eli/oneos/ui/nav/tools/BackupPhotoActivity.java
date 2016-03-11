@@ -149,7 +149,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
                     @Override
                     public void onClick(boolean isPositiveBtn) {
                         if (isPositiveBtn) {
-                            mBackupService.resetBackupFile();
+                            mBackupService.resetBackupAlbum();
                             ToastHelper.showToast(R.string.success_reset_backup);
                         }
                     }

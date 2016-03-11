@@ -151,7 +151,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        NetworkStateManager.getInstance().setOnNetworkStateChangedListener(mNetworkListener);
+        NetworkStateManager.getInstance().addNetworkStateChangedListener(mNetworkListener);
         mScanManager.start();
     }
 
@@ -175,7 +175,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NetworkStateManager.getInstance().removeOnNetworkStateChangedListener(mNetworkListener);
+        NetworkStateManager.getInstance().removeNetworkStateChangedListener(mNetworkListener);
         mScanManager.stop();
     }
 

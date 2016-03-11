@@ -1,6 +1,7 @@
 package com.eli.oneos.model.phone;
 
 import android.content.res.Resources;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
@@ -8,9 +9,13 @@ import android.widget.EditText;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.db.UserSettingsKeeper;
+import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.FileManageAction;
+import com.eli.oneos.model.oneos.backup.BackupPriority;
+import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.model.phone.api.MakeDirAPI;
@@ -23,6 +28,7 @@ import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.InputMethodUtils;
+import com.eli.oneos.utils.SDCardUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.LocalFileTreeView;
@@ -70,7 +76,8 @@ public class LocalFileManage {
                     mActivity.dismissLoading();
                     // {"result":true, "path":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
                     try {
-                        final File file = fileList.get(0).getFile();
+                        final LocalFile lFile = fileList.get(0);
+                        final File file = lFile.getFile();
                         Resources resources = mActivity.getResources();
                         List<String> titleList = new ArrayList<>();
                         List<String> contentList = new ArrayList<>();
@@ -84,19 +91,34 @@ public class LocalFileManage {
                         contentList.add(file.canRead() ? "True" : "False");
                         titleList.add(resources.getString(R.string.file_attr_write));
                         contentList.add(file.canWrite() ? "True" : "False");
-                        int negId = 0;
-                        if (file.isDirectory() && file.canWrite()) {
-                            LoginManage loginManage = LoginManage.getInstance();
-                            if (loginManage.isLogin()) {
-                                negId = R.string.set_dir_to_download_path;
+
+                        final LoginManage loginManage = LoginManage.getInstance();
+                        int topId = 0;
+                        if (loginManage.isLogin()) {
+                            if (file.isDirectory()) {
+                                if (lFile.isBackupDir()) {
+                                    topId = R.string.cancel_backup_file;
+                                } else if (file.canRead()) {
+                                    topId = R.string.add_backup_file;
+                                }
                             }
                         }
-                        DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, R.string.ok,
-                                negId, new DialogUtils.OnDialogClickListener() {
+
+                        int midId = 0;
+                        if (loginManage.isLogin()) {
+                            if (file.isDirectory() && !lFile.isDownloadDir() && file.canWrite()) {
+                                midId = R.string.set_dir_to_download_path;
+                            }
+                        }
+
+                        DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, topId, midId, R.string.ok,
+                                new DialogUtils.OnMultiDialogClickListener() {
                                     @Override
-                                    public void onClick(boolean isPositiveBtn) {
-                                        if (!isPositiveBtn) {
+                                    public void onClick(int index) {
+                                        if (index == 1) {
                                             setDownloadPath(file.getAbsolutePath());
+                                        } else if (index == 2) {
+                                            addOrRemoveBackup(lFile);
                                         }
                                     }
                                 });
@@ -306,6 +328,102 @@ public class LocalFileManage {
                         }
                     }
                 });
+    }
+
+    public void addOrRemoveBackup(final LocalFile lFile) {
+        final boolean isDelete = lFile.isBackupDir();
+        final File file = lFile.getFile();
+        final OneSpaceService service = MyApplication.getTransferService();
+        final long uid = LoginManage.getInstance().getLoginSession().getUserInfo().getId();
+        final String path = file.getAbsolutePath();
+        if (isDelete) {
+            DialogUtils.showConfirmDialog(mActivity, R.string.delete_backup_file, R.string.tips_confirm_delete_backup_dir,
+                    R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                        @Override
+                        public void onClick(boolean isPositiveBtn) {
+                            BackupFile backupFile = BackupFileKeeper.deleteBackupFile(uid, path);
+                            if (null != backupFile) {
+                                service.deleteBackupFile(backupFile);
+                                mActivity.showTipView(R.string.setting_success, true);
+                            } else {
+                                mActivity.showTipView(R.string.setting_failed, false);
+                            }
+                            if (null != callback) {
+                                callback.onComplete(true);
+                            }
+                        }
+                    });
+        } else {
+            if (file.canRead()) {
+                File mDCIMDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                if (file.equals(mDCIMDir)) {
+                    confirmBackupRepeat(service, uid, path, true);
+                    return;
+                }
+
+                mDCIMDir = SDCardUtils.getExternalSDCard();
+                if (null != mDCIMDir) {
+                    File mExternalDCIM = new File(mDCIMDir, "DCIM");
+                    if (file.equals(mExternalDCIM)) {
+                        confirmBackupRepeat(service, uid, path, true);
+                        return;
+                    }
+                }
+
+                List<BackupFile> dbList = BackupFileKeeper.all(LoginManage.getInstance().getLoginSession().getUserInfo().getId(), BackupType.FILE);
+                if (null != dbList) {
+                    for (BackupFile backupFile : dbList) {
+                        String p = backupFile.getPath();
+                        if (p.equals(path)) {
+                            DialogUtils.showNotifyDialog(mActivity, R.string.tip, R.string.error_backup_dir_exist, R.string.ok, null);
+                            return;
+                        }
+
+                        if (p.startsWith(path) || path.startsWith(p)) {
+                            confirmBackupRepeat(service, uid, path, false);
+                            return;
+                        }
+                    }
+                }
+
+                DialogUtils.showConfirmDialog(mActivity, R.string.confirm_add_backup, R.string.tips_confirm_add_backup_dir,
+                        R.string.continue_add_backup, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                            @Override
+                            public void onClick(boolean isPositiveBtn) {
+                                if (isPositiveBtn) {
+                                    addBackupFile(service, uid, path);
+                                }
+                            }
+                        });
+            }
+        }
+    }
+
+    private void confirmBackupRepeat(final OneSpaceService service, final long uid, final String path, boolean isAlbum) {
+        DialogUtils.showConfirmDialog(mActivity, R.string.confirm_add_backup, isAlbum ? R.string.tips_add_backup_album_repeat : R.string.tips_add_backup_dir_repeat,
+                R.string.continue_add_backup, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                    @Override
+                    public void onClick(boolean isPositiveBtn) {
+                        if (isPositiveBtn) {
+                            addBackupFile(service, uid, path);
+                        }
+                    }
+                });
+    }
+
+    private void addBackupFile(OneSpaceService service, long uid, String path) {
+        final BackupFile backupFile = new BackupFile(null, uid, path, true, BackupType.FILE, BackupPriority.MID, 0L, 0L);
+        long id = BackupFileKeeper.insertBackupFile(backupFile);
+        if (id > 0) {
+            backupFile.setId(id);
+            service.addBackupFile(backupFile);
+            mActivity.showTipView(R.string.setting_success, true);
+        } else {
+            mActivity.showTipView(R.string.setting_failed, false);
+        }
+        if (null != callback) {
+            callback.onComplete(true);
+        }
     }
 
     public interface OnManageCallback {

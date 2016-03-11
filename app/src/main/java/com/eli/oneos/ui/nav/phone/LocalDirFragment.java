@@ -75,6 +75,7 @@ public class LocalDirFragment extends BaseLocalFragment {
     private File curDir = null;
     private String rootPath = null;
     private ArrayList<File> mSDCardList = new ArrayList<>();
+    private List<String> mBackupList = new ArrayList<>();
 
     private LocalFileManage.OnManageCallback mFileManageCallback = new LocalFileManage.OnManageCallback() {
         @Override
@@ -235,18 +236,6 @@ public class LocalDirFragment extends BaseLocalFragment {
         if (null != mParentFragment) {
             mParentFragment.addSearchListener(mSearchListener);
         }
-
-        List<String> mBackupList = new ArrayList<>();
-        if (LoginManage.getInstance().isLogin()) {
-            List<BackupFile> dbList = BackupFileKeeper.all(LoginManage.getInstance().getLoginSession().getUserInfo().getId(), BackupType.FILE);
-            if (null != dbList) {
-                for (BackupFile file : dbList) {
-                    mBackupList.add(file.getPath());
-                }
-            }
-        }
-        mListAdapter.updateBackupList(mBackupList);
-        mGridAdapter.updateBackupList(mBackupList);
         autoPullToRefresh();
     }
 
@@ -481,9 +470,27 @@ public class LocalDirFragment extends BaseLocalFragment {
                     }
                 });
                 if (null != files) {
+                    mBackupList.clear();
+                    if (LoginManage.getInstance().isLogin()) {
+                        List<BackupFile> dbList = BackupFileKeeper.all(LoginManage.getInstance().getLoginSession().getUserInfo().getId(), BackupType.FILE);
+                        if (null != dbList) {
+                            for (BackupFile file : dbList) {
+                                mBackupList.add(file.getPath());
+                            }
+                        }
+                    }
+
+                    boolean isLogin = LoginManage.getInstance().isLogin();
+                    String downloadPath = null;
+                    if (isLogin) {
+                        downloadPath = LoginManage.getInstance().getLoginSession().getDownloadPath();
+                    }
                     List<File> list = Arrays.asList(files);
                     for (File f : list) {
-                        mFileList.add(new LocalFile(f));
+                        LocalFile file = new LocalFile(f);
+                        file.setIsBackupDir(isBackupDirectory(f));
+                        file.setIsDownloadDir(downloadPath != null && f.getAbsolutePath().equals(downloadPath));
+                        mFileList.add(file);
                     }
                 }
             }
@@ -655,5 +662,17 @@ public class LocalDirFragment extends BaseLocalFragment {
         } else {
             return mGridAdapter;
         }
+    }
+
+    public boolean isBackupDirectory(File file) {
+        if (null != mBackupList) {
+            for (String s : mBackupList) {
+                if (s.equals(file.getPath())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
