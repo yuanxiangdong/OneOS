@@ -88,16 +88,16 @@ public class LocalNavFragment extends BaseNavFileFragment {
     private void initTypeView() {
         FileTypeItem privateItem = new FileTypeItem(R.string.file_type_private, R.drawable.btn_file_type_private, R.drawable.btn_file_type_private_pressed, LocalFileType.PRIVATE);
         mFileTypeList.add(privateItem);
-        FileTypeItem docItem = new FileTypeItem(R.string.file_type_doc, R.drawable.btn_file_type_doc, R.drawable.btn_file_type_doc_pressed, LocalFileType.DOC);
-        mFileTypeList.add(docItem);
-        FileTypeItem picItem = new FileTypeItem(R.string.file_type_pic, R.drawable.btn_file_type_pic, R.drawable.btn_file_type_pic_pressed, LocalFileType.PICTURE);
-        mFileTypeList.add(picItem);
         FileTypeItem audioItem = new FileTypeItem(R.string.file_type_audio, R.drawable.btn_file_type_audio, R.drawable.btn_file_type_audio_pressed, LocalFileType.AUDIO);
         mFileTypeList.add(audioItem);
         FileTypeItem videoItem = new FileTypeItem(R.string.file_type_video, R.drawable.btn_file_type_video, R.drawable.btn_file_type_video_pressed, LocalFileType.VIDEO);
         mFileTypeList.add(videoItem);
         FileTypeItem appItem = new FileTypeItem(R.string.file_type_app, R.drawable.btn_file_type_app, R.drawable.btn_file_type_app_pressed, LocalFileType.APP);
         mFileTypeList.add(appItem);
+        FileTypeItem docItem = new FileTypeItem(R.string.file_type_doc, R.drawable.btn_file_type_doc, R.drawable.btn_file_type_doc_pressed, LocalFileType.DOC);
+        mFileTypeList.add(docItem);
+        FileTypeItem picItem = new FileTypeItem(R.string.file_type_pic, R.drawable.btn_file_type_pic, R.drawable.btn_file_type_pic_pressed, LocalFileType.PICTURE);
+        mFileTypeList.add(picItem);
         FileTypeItem downloadItem = new FileTypeItem(R.string.file_type_download, R.drawable.btn_file_type_download, R.drawable.btn_file_type_download_pressed, LocalFileType.DOWNLOAD);
         mFileTypeList.add(downloadItem);
 

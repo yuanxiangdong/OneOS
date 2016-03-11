@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/iv_icon"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:scaleType="centerInside" />
 
     <TextView
@@ -19,9 +19,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:padding="5dp"
         android:singleLine="true"
-        android:textColor="@color/selector_gray_to_primary"
+        android:textColor="@color/gray"
         android:textSize="@dimen/text_size_min" />
 
 </LinearLayout>
