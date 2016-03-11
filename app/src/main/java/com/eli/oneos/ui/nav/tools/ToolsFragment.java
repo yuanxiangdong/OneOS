@@ -48,7 +48,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     private static final int TOOL_CHANGE_USER = R.string.tool_changer_user;
     private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_SETTING, TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_OFFLINE, TOOL_APP,
             TOOL_POWER, TOOL_CHANGE_USER};
-    private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_setting, R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_contact,
+    private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_setting, R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_backup_file, R.drawable.icon_tools_contact,
             R.drawable.icon_tools_sms, R.drawable.icon_tools_offline, R.drawable.icon_tools_app, R.drawable.icon_tools_power,
             R.drawable.icon_tools_change_user};
 

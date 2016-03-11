@@ -4,24 +4,26 @@
     android:layout_height="wrap_content"
     android:addStatesFromChildren="true"
     android:background="@drawable/selector_list_trans_to_gray"
-    android:padding="10dp">
+    android:padding="5dp">
 
     <ImageView
         android:id="@+id/tool_icon"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
-        android:scaleType="centerCrop" />
+        android:src="@drawable/icon_tools_change_user"
+        android:scaleType="centerInside" />
 
     <TextView
         android:id="@+id/tool_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/tool_icon"
         android:singleLine="true"
+        android:text="xxxxxxxx"
         android:textColor="@color/darker"
         android:textSize="@dimen/text_size_mid" />
 
