@@ -9,7 +9,7 @@ import com.eli.oneos.R;
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
 public class Constants {
-    public static final int DELAY_TIME_AUTO_REFRESH = 300;
+    public static final int DELAY_TIME_AUTO_REFRESH = 350;
 
     public static final int MAX_BACKUP_FILE_COUNT = 5;
 
