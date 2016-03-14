@@ -30,6 +30,7 @@
         android:layout_toLeftOf="@+id/view_path_mid_line"
         android:layout_toRightOf="@+id/view_order_line"
         android:drawingCacheQuality="low"
+        android:overScrollMode="never"
         android:scrollbars="none">
 
         <LinearLayout

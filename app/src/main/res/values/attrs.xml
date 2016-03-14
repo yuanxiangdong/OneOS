@@ -56,4 +56,14 @@
         <!-- 圆形区域向里缩进的距离 -->
         <attr name="inside_interval" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="ImageCheckBox">
+
+        <!-- 是否选中 -->
+        <attr name="checked" format="boolean" />
+        <!-- checked background resource id -->
+        <attr name="checkedResId" format="integer" />
+        <!-- unchecked background resource id -->
+        <attr name="uncheckedResId" format="integer" />
+    </declare-styleable>
 </resources>

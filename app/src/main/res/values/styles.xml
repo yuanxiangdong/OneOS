@@ -25,7 +25,7 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:background">@android:color/transparent</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1.0</item>
         <item name="android:layout_height">@dimen/layout_nav_bar_height</item>
         <item name="android:layout_marginTop">0dp</item>

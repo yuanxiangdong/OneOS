@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
 
                 <LinearLayout
@@ -75,13 +75,13 @@
 
             <com.eli.oneos.widget.CircleStateProgressBar
                 android:id="@+id/progress"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
                 android:layout_marginRight="5dp"
                 progress:MaxProgress="100"
-                progress:borderWidth="3dp"
+                progress:borderWidth="2dp"
                 progress:stateShow="true" />
         </RelativeLayout>
     </LinearLayout>

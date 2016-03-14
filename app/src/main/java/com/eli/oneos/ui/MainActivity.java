@@ -6,8 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.LinearLayout;
 
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -19,6 +18,7 @@ import com.eli.oneos.ui.nav.tansfer.TransferNavFragment;
 import com.eli.oneos.ui.nav.tools.ToolsFragment;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
+import com.eli.oneos.widget.ImageCheckBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,9 @@ public class MainActivity extends BaseActivity {
     private List<BaseNavFragment> mFragmentList = new ArrayList<>();
     private BaseNavFragment mCurNavFragment;
     private TransferNavFragment mTransferFragment;
-    private RadioGroup radioGroup;
+    //    private RadioGroup radioGroup;
+    private LinearLayout mNavLayout;
+    private ImageCheckBox mLocalBox, mCloudBox, mTransferBox, mToolsBox;
     private FragmentManager fragmentManager;
     private int mCurPageIndex = 1;
 
@@ -60,6 +62,32 @@ public class MainActivity extends BaseActivity {
             if (mCurNavFragment != null) {
                 mCurNavFragment.onNetworkChanged(isAvailable, isWifiAvailable);
             }
+        }
+    };
+    private ImageCheckBox.OnImageCheckedChangedListener listener = new ImageCheckBox.OnImageCheckedChangedListener() {
+
+        @Override
+        public void onChecked(ImageCheckBox imageView, boolean checked) {
+            updateImageCheckBoxGroup(imageView);
+
+            switch (imageView.getId()) {
+                case R.id.ib_local:
+                    mCurPageIndex = 0;
+                    break;
+                case R.id.ib_cloud:
+                    mCurPageIndex = 1;
+                    break;
+                case R.id.ib_transfer:
+                    mCurPageIndex = 2;
+                    break;
+                case R.id.ib_tools:
+                    mCurPageIndex = 3;
+                    break;
+                default:
+                    break;
+            }
+            Log.d(TAG, "onCheckedChanged: " + mCurPageIndex);
+            changFragmentByIndex(mCurPageIndex);
         }
     };
 
@@ -100,31 +128,40 @@ public class MainActivity extends BaseActivity {
      */
     private void initViews() {
         mRootView = findViewById(R.id.layout_root);
-        radioGroup = (RadioGroup) findViewById(R.id.radiogroup);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                switch (checkedId) {
-                    case R.id.radio_local:
-                        mCurPageIndex = 0;
-                        break;
-                    case R.id.radio_cloud:
-                        mCurPageIndex = 1;
-                        break;
-                    case R.id.radio_transfer:
-                        mCurPageIndex = 2;
-                        break;
-                    case R.id.radio_tool:
-                        mCurPageIndex = 3;
-                        break;
-                    default:
-                        break;
-                }
-                Log.d(TAG, "onCheckedChanged: " + mCurPageIndex);
-                changFragmentByIndex(mCurPageIndex);
-            }
-        });
+//        radioGroup = (RadioGroup) findViewById(R.id.radiogroup);
+//        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//
+//                switch (checkedId) {
+//                    case R.id.radio_local:
+//                        mCurPageIndex = 0;
+//                        break;
+//                    case R.id.radio_cloud:
+//                        mCurPageIndex = 1;
+//                        break;
+//                    case R.id.radio_transfer:
+//                        mCurPageIndex = 2;
+//                        break;
+//                    case R.id.radio_tool:
+//                        mCurPageIndex = 3;
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                Log.d(TAG, "onCheckedChanged: " + mCurPageIndex);
+//                changFragmentByIndex(mCurPageIndex);
+//            }
+//        });
+        mNavLayout = (LinearLayout) findViewById(R.id.layout_nav);
+        mLocalBox = (ImageCheckBox) findViewById(R.id.ib_local);
+        mLocalBox.setOnImageCheckedChangedListener(listener);
+        mCloudBox = (ImageCheckBox) findViewById(R.id.ib_cloud);
+        mCloudBox.setOnImageCheckedChangedListener(listener);
+        mTransferBox = (ImageCheckBox) findViewById(R.id.ib_transfer);
+        mTransferBox.setOnImageCheckedChangedListener(listener);
+        mToolsBox = (ImageCheckBox) findViewById(R.id.ib_tools);
+        mToolsBox.setOnImageCheckedChangedListener(listener);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -140,20 +177,30 @@ public class MainActivity extends BaseActivity {
         changFragmentByIndex(mCurPageIndex);
     }
 
+    private void updateImageCheckBoxGroup(ImageCheckBox imageView) {
+        mLocalBox.setChecked(false);
+        mCloudBox.setChecked(false);
+        mTransferBox.setChecked(false);
+        mToolsBox.setChecked(false);
+        imageView.setChecked(true);
+    }
+
     private void changFragmentByIndex(int index) {
         Log.d(TAG, "changFragmentByIndex: " + index);
         try {
+            BaseNavFragment fragment = getFragmentByIndex(mCurPageIndex);
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            if (mCurNavFragment != null) {
+            if (mCurNavFragment != null && fragment != mCurNavFragment) {
                 mCurNavFragment.onPause();
                 transaction.hide(mCurNavFragment);
             }
 
-            BaseNavFragment fragment = getFragmentByIndex(mCurPageIndex);
             mCurNavFragment = fragment;
             if (fragment.isAdded()) {
-                fragment.onResume();
-                transaction.show(fragment);
+                if (!fragment.isVisible()) {
+                    fragment.onResume();
+                    transaction.show(fragment);
+                }
             } else {
                 transaction.add(R.id.content, fragment);
             }
@@ -174,17 +221,20 @@ public class MainActivity extends BaseActivity {
     public boolean controlActivity(String action) {
         if (action.equals(ACTION_SHOW_TRANSFER_DOWNLOAD)) {
             mTransferFragment.setTransferUI(true, true);
-            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_transfer);
-            radioButton.setChecked(true);
+//            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_transfer);
+//            radioButton.setChecked(true);
+            listener.onChecked(mTransferBox, true);
             return true;
         } else if (action.equals(ACTION_SHOW_TRANSFER_UPLOAD)) {
             mTransferFragment.setTransferUI(false, true);
-            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_transfer);
-            radioButton.setChecked(true);
+//            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_transfer);
+//            radioButton.setChecked(true);
+            listener.onChecked(mTransferBox, true);
             return true;
         } else if (action.equals(ACTION_SHOW_LOCAL_NAV)) {
-            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_local);
-            radioButton.setChecked(true);
+//            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_local);
+//            radioButton.setChecked(true);
+            listener.onChecked(mLocalBox, true);
             return true;
         }
 
@@ -192,10 +242,10 @@ public class MainActivity extends BaseActivity {
     }
 
     public void showNavBar() {
-        radioGroup.setVisibility(View.VISIBLE);
+        mNavLayout.setVisibility(View.VISIBLE);
     }
 
     public void hideNavBar(boolean isGone) {
-        radioGroup.setVisibility(isGone ? View.GONE : View.INVISIBLE);
+        mNavLayout.setVisibility(isGone ? View.GONE : View.INVISIBLE);
     }
 }
