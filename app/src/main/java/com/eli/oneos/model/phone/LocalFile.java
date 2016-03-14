@@ -92,4 +92,18 @@ public class LocalFile implements Serializable {
     public void setIsBackupDir(boolean isBackup) {
         this.isBackupDir = isBackup;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other instanceof LocalFile) {
+            LocalFile file = (LocalFile) other;
+            return this.file.equals(file);
+        }
+
+        return false;
+    }
 }

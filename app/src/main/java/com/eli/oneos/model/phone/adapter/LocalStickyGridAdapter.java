@@ -79,7 +79,7 @@ public class LocalStickyGridAdapter extends LocalFileBaseAdapter implements Stic
 
         if (isMultiChooseModel()) {
             holder.mSelectCb.setVisibility(View.VISIBLE);
-            holder.mSelectCb.setChecked(getSelectedList().contains(file));
+            holder.mSelectCb.setChecked(getSelectedList().contains(localFile));
         } else {
             holder.mSelectCb.setVisibility(View.GONE);
         }

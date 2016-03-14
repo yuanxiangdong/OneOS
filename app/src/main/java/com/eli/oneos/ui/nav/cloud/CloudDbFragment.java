@@ -226,8 +226,8 @@ public class CloudDbFragment extends BaseCloudFragment {
     private void initView(View view) {
         mListLayout = (RelativeLayout) view.findViewById(R.id.include_file_list);
         mGridLayout = (RelativeLayout) view.findViewById(R.id.include_file_grid);
-        mListLayout.setVisibility(View.VISIBLE);
-        mGridLayout.setVisibility(View.GONE);
+//        mListLayout.setVisibility(View.VISIBLE);
+//        mGridLayout.setVisibility(View.GONE);
 
         mSlideInAnim = AnimationUtils.loadAnimation(mMainActivity, R.anim.slide_in_from_top);
         mSlideOutAnim = AnimationUtils.loadAnimation(mMainActivity, R.anim.slide_out_to_top);
@@ -285,7 +285,7 @@ public class CloudDbFragment extends BaseCloudFragment {
         mGridPullToRefreshView = (PullToRefreshView) view.findViewById(R.id.layout_pull_refresh_grid);
         mGridPullToRefreshView.setOnHeaderRefreshListener(mHeaderRefreshListener);
         mGridPullToRefreshView.setOnFooterRefreshListener(mFooterRefreshListener);
-        mEmptyView = view.findViewById(R.id.layout_empty_grid);
+//        mEmptyView = view.findViewById(R.id.layout_empty_grid);
         mGridView = (StickyGridHeadersView) view.findViewById(R.id.gridview_timeline);
         mGridAdapter = new OneOSStickyGridAdapter(getContext(), mFileList, mSelectedList, new OneOSFileBaseAdapter.OnMultiChooseClickListener() {
             @Override

@@ -1,39 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root_file_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!--<com.eli.oneos.widget.pullrefresh.PullToRefreshListView
-        android:id="@+id/listview_filelist"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:cacheColorHint="@android:color/transparent"
-        android:divider="@color/line_list_view"
-        android:dividerHeight="@dimen/list_divider_height"
-        android:fadingEdge="none"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
-        android:listSelector="@android:color/transparent"
-        android:overScrollMode="never" />-->
-
-    <!--<com.eli.oneos.widget.PullToRefreshView
-        android:id="@+id/layout_pull_refresh_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/darker_gray"
-        android:visibility="gone">
-
-        <com.eli.oneos.widget.sticky.listview.StickyListHeadersView
-            android:id="@+id/listview_timeline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:drawSelectorOnTop="true"
-            android:fastScrollEnabled="true"
-            android:overScrollMode="never"
-            android:padding="0dp"
-            android:scrollbarStyle="outsideOverlay" />
-    </com.eli.oneos.widget.PullToRefreshView>-->
 
     <com.eli.oneos.widget.PullToRefreshView
         android:id="@+id/layout_pull_refresh_list"
