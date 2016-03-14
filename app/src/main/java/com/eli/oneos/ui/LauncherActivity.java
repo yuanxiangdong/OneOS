@@ -126,7 +126,7 @@ public class LauncherActivity extends BaseActivity {
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                OneSpaceService service = MyApplication.getTransferService();
+                OneSpaceService service = MyApplication.getService();
                 service.notifyUserLogin();
 
                 Intent intent = new Intent(LauncherActivity.this, MainActivity.class);

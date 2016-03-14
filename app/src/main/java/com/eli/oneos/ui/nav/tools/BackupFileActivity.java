@@ -61,7 +61,7 @@ public class BackupFileActivity extends BaseActivity implements OnClickListener 
 
         mLoginSession = LoginManage.getInstance().getLoginSession();
         userSettings = mLoginSession.getUserSettings();
-        mService = MyApplication.getTransferService();
+        mService = MyApplication.getService();
 
         initViews();
 

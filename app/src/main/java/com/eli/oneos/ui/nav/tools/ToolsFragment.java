@@ -231,7 +231,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
      * login out
      */
     private void doLoginOut() {
-        OneSpaceService mTransferService = MyApplication.getTransferService();
+        OneSpaceService mTransferService = MyApplication.getService();
         if (mTransferService == null) {
             ToastHelper.showToast(R.string.app_exception);
             return;

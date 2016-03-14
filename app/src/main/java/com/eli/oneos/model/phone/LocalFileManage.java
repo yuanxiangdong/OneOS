@@ -299,7 +299,7 @@ public class LocalFileManage {
                             public void onHide() {
                             }
                         }).show();
-                OneSpaceService service = MyApplication.getTransferService();
+                OneSpaceService service = MyApplication.getService();
                 for (LocalFile file : fileList) {
                     service.addUploadTask(file.getFile(), toPath);
                 }
@@ -333,7 +333,7 @@ public class LocalFileManage {
     public void addOrRemoveBackup(final LocalFile lFile) {
         final boolean isDelete = lFile.isBackupDir();
         final File file = lFile.getFile();
-        final OneSpaceService service = MyApplication.getTransferService();
+        final OneSpaceService service = MyApplication.getService();
         final long uid = LoginManage.getInstance().getLoginSession().getUserInfo().getId();
         final String path = file.getAbsolutePath();
         if (isDelete) {

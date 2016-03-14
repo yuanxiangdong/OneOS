@@ -133,7 +133,7 @@ public class TransmissionFragment extends BaseTransferFragment {
     }
 
     private void initTransferService() {
-        mTransferService = MyApplication.getTransferService();
+        mTransferService = MyApplication.getService();
         if (mTransferService != null) {
             startUpdateUIThread();
         } else {

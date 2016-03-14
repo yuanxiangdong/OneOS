@@ -113,6 +113,14 @@ public class OneSpaceService extends Service {
         return false;
     }
 
+    public boolean stopBackupFile(BackupFile file) {
+        if (null != mBackupFileManager) {
+            return mBackupFileManager.stopBackupFile(file);
+        }
+
+        return false;
+    }
+
     public boolean addBackupFile(BackupFile file) {
         if (null != mBackupFileManager) {
             return mBackupFileManager.addBackupFile(file);

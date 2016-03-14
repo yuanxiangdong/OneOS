@@ -55,8 +55,10 @@ public class BackupFileManager {
 
         if (null != backupDirList) {
             for (BackupFile file : backupDirList) {
-                BackupFileThread thread = new BackupFileThread(file, callback);
-                mBackupThreadList.add(thread);
+                if (file.getAuto()) {
+                    BackupFileThread thread = new BackupFileThread(file, callback);
+                    mBackupThreadList.add(thread);
+                }
             }
         }
     }
@@ -90,6 +92,25 @@ public class BackupFileManager {
         mBackupThreadList.add(thread);
         thread.start();
         return true;
+    }
+
+    public boolean stopBackupFile(BackupFile file) {
+        Iterator<BackupFileThread> iterator = mBackupThreadList.iterator();
+        while (iterator.hasNext()) {
+            BackupFileThread thread = iterator.next();
+            BackupFile tFile = thread.getBackupFile();
+            if (tFile == file || tFile.getId() == file.getId()) {
+                tFile.setAuto(false);
+                if (thread.isAlive()) {
+                    thread.stopBackup();
+                }
+                iterator.remove();
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean deleteBackupFile(BackupFile file) {

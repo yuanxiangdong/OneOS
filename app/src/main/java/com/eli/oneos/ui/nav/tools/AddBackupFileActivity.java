@@ -71,7 +71,7 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
 
         initViews();
         mLoginSession = LoginManage.getInstance().getLoginSession();
-        mService = MyApplication.getTransferService();
+        mService = MyApplication.getService();
         mBackupList = BackupFileKeeper.all(mLoginSession.getUserInfo().getId(), BackupType.FILE);
         if (null != mBackupList) {
             for (BackupFile backupFile : mBackupList) {

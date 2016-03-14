@@ -335,7 +335,7 @@ public class OneOSFileManage {
                     }
                 }).show();
         String savePath = LoginManage.getInstance().getLoginSession().getDownloadPath();
-        OneSpaceService service = MyApplication.getTransferService();
+        OneSpaceService service = MyApplication.getService();
         for (OneOSFile file : fileList) {
             service.addDownloadTask(file, savePath);
         }

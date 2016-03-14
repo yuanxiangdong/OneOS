@@ -109,6 +109,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                     duplicateRename(path, srcName);
                 } else {
                     Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename " + count + " Times, Skip...");
+                    uploadElement.setState(TransferState.FAILED);
                 }
             }
         } catch (Exception e) {

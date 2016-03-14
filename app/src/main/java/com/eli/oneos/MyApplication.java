@@ -24,7 +24,7 @@ public class MyApplication extends Application {
     private static List<BaseActivity> activityList = new LinkedList();
 
     private static boolean mIsServiceBound = false;
-    private static OneSpaceService mTransferService;
+    private static OneSpaceService mService;
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -36,7 +36,7 @@ public class MyApplication extends Application {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(TAG, "service connected, get download manager service instance");
             OneSpaceService.ServiceBinder binder = (OneSpaceService.ServiceBinder) service;
-            mTransferService = binder.getService();
+            mService = binder.getService();
 
             mIsServiceBound = true;
         }
@@ -90,9 +90,9 @@ public class MyApplication extends Application {
         return MyApplication.context;
     }
 
-    public static OneSpaceService getTransferService() {
-        if (mIsServiceBound && mTransferService != null) {
-            return mTransferService;
+    public static OneSpaceService getService() {
+        if (mIsServiceBound && mService != null) {
+            return mService;
         }
 
         return null;

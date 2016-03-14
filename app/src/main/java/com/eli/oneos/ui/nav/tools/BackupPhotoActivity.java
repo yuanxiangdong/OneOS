@@ -52,7 +52,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
         initSystemBarStyle();
 
         mLoginSession = LoginManage.getInstance().getLoginSession();
-        mBackupService = MyApplication.getTransferService();
+        mBackupService = MyApplication.getService();
 
         initViews();
 

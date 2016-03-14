@@ -1,19 +1,25 @@
 package com.eli.oneos.model.oneos.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.db.greendao.BackupFile;
+import com.eli.oneos.service.OneSpaceService;
+import com.eli.oneos.ui.BaseActivity;
+import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.FileUtils;
+import com.eli.oneos.widget.SwitchButton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,12 +28,12 @@ import java.util.List;
 public class BackupFileListAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
-    private Context context;
+    private BaseActivity context;
     private List<BackupFile> mList = new ArrayList<>();
     private onDeleteClickListener listener;
     private int rightWidth = 0;
 
-    public BackupFileListAdapter(Context context, List<BackupFile> mRecords, int rightWidth) {
+    public BackupFileListAdapter(BaseActivity context, List<BackupFile> mRecords, int rightWidth) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mList = mRecords;
@@ -62,6 +68,7 @@ public class BackupFileListAdapter extends BaseAdapter {
         TextView mTimeTxt;
         TextView mStateTxt;
         TextView mDeleteTxt;
+        SwitchButton mStateSwitcher;
     }
 
     @Override
@@ -78,6 +85,7 @@ public class BackupFileListAdapter extends BaseAdapter {
             holder.mTimeTxt = (TextView) convertView.findViewById(R.id.txt_time);
             holder.mStateTxt = (TextView) convertView.findViewById(R.id.txt_state);
             holder.mDeleteTxt = (TextView) convertView.findViewById(R.id.txt_delete);
+            holder.mStateSwitcher = (SwitchButton) convertView.findViewById(R.id.sbtn_auto);
 
             convertView.setTag(holder);
         } else {
@@ -90,7 +98,7 @@ public class BackupFileListAdapter extends BaseAdapter {
         LayoutParams rightLayout = new LayoutParams(rightWidth, LayoutParams.MATCH_PARENT);
         holder.mRightLayout.setLayoutParams(rightLayout);
 
-        BackupFile item = mList.get(position);
+        final BackupFile item = mList.get(position);
         holder.mNameTxt.setText(item.getPath());
         holder.mStateTxt.setText(R.string.last_sync_time);
         long time = item.getTime();
@@ -105,8 +113,46 @@ public class BackupFileListAdapter extends BaseAdapter {
             }
         });
         holder.mTimeTxt.setTag(position); // for update status
+        holder.mStateSwitcher.setChecked(item.getAuto());
+        holder.mStateSwitcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked != item.getAuto()) {
+                    showOpenOrCloseBackupDialog(position, isChecked);
+                }
+            }
+        });
 
         return convertView;
+    }
+
+    private void showOpenOrCloseBackupDialog(final int position, final boolean isAuto) {
+        int title = R.string.tips_open_backup_file;
+        if (!isAuto) {
+            title = R.string.tips_close_backup_file;
+        }
+
+        DialogUtils.showConfirmDialog(context, R.string.tip, title, R.string.dialog_continue, R.string.cancel,
+                new DialogUtils.OnDialogClickListener() {
+
+                    @Override
+                    public void onClick(boolean isPositiveBtn) {
+                        if (isPositiveBtn) {
+                            BackupFile info = mList.get(position);
+                            info.setAuto(isAuto);
+                            BackupFileKeeper.update(info);
+                            OneSpaceService service = MyApplication.getService();
+                            if (isAuto) {
+                                service.addBackupFile(info);
+                            } else {
+                                service.stopBackupFile(info);
+                            }
+                            context.showTipView(R.string.setting_success, true);
+                        } else {
+                            notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     public void updateItem(ListView listView, BackupFile backupFile, File file) {

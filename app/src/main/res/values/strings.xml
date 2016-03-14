@@ -387,6 +387,8 @@
     <string name="is_backup">正在备份：</string>
     <string name="add_backup_file">添加自动备份</string>
     <string name="cancel_backup_file">取消自动备份</string>
+    <string name="tips_open_backup_file">确认开启自动备份此目录？</string>
+    <string name="tips_close_backup_file">确认关闭此目录自动备份？</string>
 
     <!--Backup Contacts and SMS-->
     <string name="title_sync_contacts">通讯录备份</string>

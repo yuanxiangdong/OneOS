@@ -167,7 +167,7 @@ public class LoginActivity extends BaseActivity {
         LoginManage loginManager = LoginManage.getInstance();
         loginManager.setLoginSession(mLoginSession);
         if (loginManager.isLogin()) {
-            OneSpaceService service = MyApplication.getTransferService();
+            OneSpaceService service = MyApplication.getService();
             service.notifyUserLogin();
         }
     }

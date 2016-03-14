@@ -69,7 +69,7 @@ public class BackupFileListActivity extends BaseActivity {
         initSystemBarStyle();
 
         mLoginSession = LoginManage.getInstance().getLoginSession();
-        mService = MyApplication.getTransferService();
+        mService = MyApplication.getService();
 
         initViews();
     }
@@ -110,6 +110,7 @@ public class BackupFileListActivity extends BaseActivity {
                 }
             }
         });
+        mRootView = mTitleLayout;
 
         View mEmptyView = findViewById(R.id.layout_empty);
         mListView = (SwipeListView) findViewById(R.id.list_transfer);

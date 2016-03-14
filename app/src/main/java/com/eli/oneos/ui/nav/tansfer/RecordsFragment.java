@@ -158,7 +158,7 @@ public class RecordsFragment extends BaseTransferFragment {
     }
 
     private void initTransferService() {
-        mTransferService = MyApplication.getTransferService();
+        mTransferService = MyApplication.getService();
         if (mTransferService != null) {
             if (isDownload) {
                 mTransferService.addDownloadCompleteListener(downloadCompleteListener);
