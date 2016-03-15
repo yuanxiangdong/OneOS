@@ -21,6 +21,7 @@ import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.model.oneos.transfer.UploadManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.utils.MediaScanner;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class OneSpaceService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(ACTIVITY_SERVICE, "OneSpaceService destroy.");
+        MediaScanner.getInstance().stop();
         mDownloadManager.destroy();
         mUploadManager.destroy();
         stopBackupAlbum();

@@ -6,7 +6,9 @@ import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.utils.MediaScanner;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,6 +42,9 @@ public class DownloadManager {
                     TransferHistoryKeeper.insert(history);
                     downloadList.remove(mElement);
 
+                    MediaScanner.getInstance().scanningFile(mElement.getTargetPath() + File.separator + mElement.getSrcName());
+//                    FileUtils.asyncScanFile(new File(mElement.getTargetPath() + File.separator + mElement.getSrcName()));
+
                     for (OnDownloadCompleteListener listener : completeListenerList) {
                         listener.downloadComplete(mElement);
                     }
@@ -62,9 +67,6 @@ public class DownloadManager {
     private static DownloadManager INSTANCE = new DownloadManager();
 
     private DownloadManager() {
-//        if (dbManager == null) {
-//            dbManager = new DBManager();
-//        }
         if (handlerQueueThread != null && !handlerQueueThread.isRunning) {
             handlerQueueThread.start();
         }
@@ -296,13 +298,13 @@ public class DownloadManager {
             while (isRunning) {
 
                 if (hasDownloadTask) {
-                    synchronized (this) {
-                        try {
+                    try {
+                        synchronized (this) {
                             Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "----waiting for download task stop----: " + this.getClass().getSimpleName());
                             this.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
 
