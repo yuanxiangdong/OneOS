@@ -137,7 +137,29 @@ public class RecordsFragment extends BaseTransferFragment {
                     path = history.getSrcPath();
                 }
                 File file = new File(path);
-                FileUtils.openLocalFile((BaseActivity) getActivity(), file);
+                if (FileUtils.isPictureFile(file.getName())) {
+                    int index = 0;
+                    ArrayList<File> list = new ArrayList<>();
+                    for (int i = 0; i < mHistoryList.size(); i++) {
+                        TransferHistory his = mHistoryList.get(i);
+                        if (FileUtils.isPictureFile(his.getName())) {
+                            String p;
+                            if (isDownload) {
+                                p = his.getToPath() + File.separator + his.getName();
+                            } else {
+                                p = his.getSrcPath();
+                            }
+                            File f = new File(p);
+                            list.add(f);
+                            if (i == position) {
+                                index = list.size() - 1;
+                            }
+                        }
+                    }
+                    FileUtils.openLocalPicture((BaseActivity) getActivity(), index, list);
+                } else {
+                    FileUtils.openLocalFile((BaseActivity) getActivity(), file);
+                }
             }
         });
     }

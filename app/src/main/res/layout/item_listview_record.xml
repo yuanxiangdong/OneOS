@@ -20,7 +20,6 @@
             android:id="@+id/file_icon"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:scaleType="centerInside"
             android:src="@drawable/icon_file_default" />

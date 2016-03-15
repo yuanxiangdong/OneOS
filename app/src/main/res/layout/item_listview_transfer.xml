@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/fileImage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_marginLeft="5dp"
             android:scaleType="centerInside" />
 
@@ -59,7 +59,7 @@
                         android:gravity="center"
                         android:singleLine="true"
                         android:textColor="@color/gray"
-                        android:textSize="@dimen/text_size_sm" />
+                        android:textSize="@dimen/text_size_min" />
 
                     <TextView
                         android:id="@+id/ratio"
@@ -69,14 +69,14 @@
                         android:gravity="center|right"
                         android:singleLine="true"
                         android:textColor="@color/gray"
-                        android:textSize="@dimen/text_size_sm" />
+                        android:textSize="@dimen/text_size_min" />
                 </LinearLayout>
             </RelativeLayout>
 
             <com.eli.oneos.widget.CircleStateProgressBar
                 android:id="@+id/progress"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
                 android:layout_marginRight="5dp"
