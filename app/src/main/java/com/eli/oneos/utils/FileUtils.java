@@ -234,6 +234,9 @@ public class FileUtils {
             for (OneOSFile f : fileList) {
                 if (f.isPicture()) {
                     picList.add(f);
+                    if (f == file) {
+                        position = picList.size() - 1;
+                    }
                 }
             }
             openOneOSPicture(activity, position, picList);
@@ -261,6 +264,9 @@ public class FileUtils {
             for (LocalFile f : fileList) {
                 if (isPictureFile(f.getName())) {
                     picList.add(f.getFile());
+                    if (f.getFile() == file) {
+                        position = picList.size() - 1;
+                    }
                 }
             }
             openLocalPicture(activity, position, picList);

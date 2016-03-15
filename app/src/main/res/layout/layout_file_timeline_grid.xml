@@ -25,7 +25,6 @@
             android:listSelector="@android:color/transparent"
             android:numColumns="4"
             android:overScrollMode="never"
-            android:paddingBottom="10dp"
             android:stretchMode="columnWidth"
             android:verticalSpacing="5dp" />
     </com.eli.oneos.widget.PullToRefreshView>
