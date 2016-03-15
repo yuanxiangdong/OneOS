@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.model.phone.LocalFile;
+import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.utils.HttpBitmap;
 
 import java.util.ArrayList;

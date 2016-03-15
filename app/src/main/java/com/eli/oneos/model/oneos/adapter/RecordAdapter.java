@@ -14,7 +14,9 @@ import android.widget.TextView;
 import com.eli.oneos.R;
 import com.eli.oneos.db.greendao.TransferHistory;
 import com.eli.oneos.utils.FileUtils;
+import com.eli.oneos.utils.HttpBitmap;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class RecordAdapter extends BaseAdapter {
@@ -23,10 +25,12 @@ public class RecordAdapter extends BaseAdapter {
     private ArrayList<TransferHistory> mRecordList = new ArrayList<>();
     private onDeleteClickListener listener;
     private int rightWidth = 0;
+    private boolean isDownload;
 
     public RecordAdapter(Context context, ArrayList<TransferHistory> mRecords, boolean isDownload, int rightWidth) {
         this.mInflater = LayoutInflater.from(context);
         this.mRecordList = mRecords;
+        this.isDownload = isDownload;
         this.rightWidth = rightWidth;
     }
 
@@ -95,7 +99,17 @@ public class RecordAdapter extends BaseAdapter {
         holder.fileName.setText(name);
         holder.fileTime.setText(FileUtils.formatTime(history.getTime()));
         holder.fileSize.setText(FileUtils.fmtFileSize(history.getSize()));
-        holder.fileIcon.setImageResource(FileUtils.fmtFileIcon(name));
+        if (FileUtils.isPictureFile(name)) {
+            String path;
+            if (isDownload) {
+                path = history.getToPath() + File.separator + history.getName();
+            } else {
+                path = history.getSrcPath();
+            }
+            HttpBitmap.getInstance().display(holder.fileIcon, path);
+        } else {
+            holder.fileIcon.setImageResource(FileUtils.fmtFileIcon(name));
+        }
         holder.deleteTxt.setOnClickListener(new OnClickListener() {
 
             @Override
