@@ -89,7 +89,7 @@ public class RecordsFragment extends BaseTransferFragment {
 
         initView(view);
         loginManage = LoginManage.getInstance();
-        initTransferService();
+        initService();
 
         return view;
     }
@@ -179,7 +179,7 @@ public class RecordsFragment extends BaseTransferFragment {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void initTransferService() {
+    private void initService() {
         mTransferService = MyApplication.getService();
         if (mTransferService != null) {
             if (isDownload) {

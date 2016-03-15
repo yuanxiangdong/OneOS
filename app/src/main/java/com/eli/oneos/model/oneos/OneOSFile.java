@@ -47,7 +47,7 @@ public class OneOSFile implements Serializable {
         if (isPublicFile()) {
             return path;
         } else {
-            return "home/" + user + "/" + path;
+            return "home/" + user + path;
         }
     }
 
