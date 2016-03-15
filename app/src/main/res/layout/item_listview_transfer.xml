@@ -18,8 +18,8 @@
             android:id="@+id/fileImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:scaleType="fitCenter" />
+            android:layout_marginLeft="5dp"
+            android:scaleType="centerInside" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
