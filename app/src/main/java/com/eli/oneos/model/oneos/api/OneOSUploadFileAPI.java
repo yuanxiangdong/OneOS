@@ -60,11 +60,11 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
 
         if (uploadElement.isCheck()) {
-            int check = checkExist(uploadElement.getTargetPath() + uploadElement.getSrcName(), uploadElement.getSize());
+            int check = checkExist(uploadElement.getToPath() + uploadElement.getSrcName(), uploadElement.getSize());
             if (check == 1) {
                 uploadElement.setState(TransferState.COMPLETE);
             } else if (check == -1) {
-                duplicateRename(uploadElement.getTargetPath() + uploadElement.getSrcName(), uploadElement.getSrcName());
+                duplicateRename(uploadElement.getToPath() + uploadElement.getSrcName(), uploadElement.getSrcName());
             } else {
                 doUpload();
             }
@@ -175,7 +175,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         uploadElement.setState(TransferState.START);
         String session = loginSession.getSession();
         String srcPath = uploadElement.getSrcPath();
-        String targetPath = uploadElement.getTargetPath();
+        String targetPath = uploadElement.getToPath();
 
         File uploadFile = new File(srcPath);
         if (!uploadFile.exists()) {

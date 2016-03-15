@@ -316,31 +316,27 @@ public class FileUtils {
         }
     }
 
-    /**
-     * Notification system scans the specified file
-     */
-    public static void asyncScanFile(File mFile) {
-        if (mFile == null) {
-            return;
-        }
-
-        try {
-            Intent scanIntent;
-            if (mFile.isDirectory()) {
-                scanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_DIR");
-            } else {
-                scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            }
-            scanIntent.setData(Uri.fromFile(mFile));
-            MyApplication.getAppContext().sendBroadcast(scanIntent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public static void syncScanFile(File file) {
-    }
+//    /**
+//     * Notification system scans the specified file
+//     */
+//    public static void asyncScanFile(File mFile) {
+//        if (mFile == null) {
+//            return;
+//        }
+//
+//        try {
+//            Intent scanIntent;
+//            if (mFile.isDirectory()) {
+//                scanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_DIR");
+//            } else {
+//                scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//            }
+//            scanIntent.setData(Uri.fromFile(mFile));
+//            MyApplication.getAppContext().sendBroadcast(scanIntent);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * encode file to Base64 String

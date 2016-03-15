@@ -37,7 +37,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
      */
     private String path = null;
     /**
-     * order by targetPath or date
+     * order by toPath or date
      */
     private String stype = null;
     /**

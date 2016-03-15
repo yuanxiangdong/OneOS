@@ -187,7 +187,7 @@ public class TransmissionFragment extends BaseTransferFragment {
                 mListView.hiddenRight();
                 if (checkBox.isChecked()) {
                     DownloadElement dElement = (DownloadElement) mElement;
-                    File file = new File(mElement.getTargetPath() + File.separator + dElement.getTmpName());
+                    File file = new File(mElement.getToPath() + File.separator + dElement.getTmpName());
                     if (file.exists()) {
                         if (file.delete()) {
                             Log.d(TAG, "Delete file succeed");

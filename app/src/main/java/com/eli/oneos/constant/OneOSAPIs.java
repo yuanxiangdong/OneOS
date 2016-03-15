@@ -40,7 +40,7 @@ public class OneOSAPIs {
     public static final String APP_MANAGE = ONE_API + "/app/manage";
 
 //    public static String genOpenUrl(LoginSession loginSession, OneOSFile file) {
-//        String srcPath = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getTargetPath()));
+//        String srcPath = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getToPath()));
 //        return loginSession.getBaseUrl() + "/" + path + "&session=" + loginSession.getSession();
 //    }
 

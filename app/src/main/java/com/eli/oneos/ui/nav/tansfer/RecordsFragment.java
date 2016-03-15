@@ -196,7 +196,7 @@ public class RecordsFragment extends BaseTransferFragment {
         long uid = loginManage.getLoginSession().getUserInfo().getId();
 
         return new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(isDownload), element.getSrcName(),
-                element.getSrcPath(), element.getTargetPath(), element.getSize(), element.getSize(), 0L, System.currentTimeMillis(), true);
+                element.getSrcPath(), element.getToPath(), element.getSize(), element.getSize(), 0L, System.currentTimeMillis(), true);
     }
 
     /**

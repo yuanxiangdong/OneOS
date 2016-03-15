@@ -31,7 +31,7 @@ import com.eli.oneos.R;
  * Even though this is a FrameLayout subclass we still consider it a ListView.
  * This is because of 2 reasons:
  * 1. It acts like as ListView.
- * 2. It used to be a ListView subclass and refactoring the targetPath would cause compatibility errors.
+ * 2. It used to be a ListView subclass and refactoring the toPath would cause compatibility errors.
  *
  * @author Emil Sjölander
  */

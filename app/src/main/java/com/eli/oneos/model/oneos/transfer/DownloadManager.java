@@ -37,13 +37,13 @@ public class DownloadManager {
                 TransferState state = mElement.getState();
                 if (state == TransferState.COMPLETE) {
                     long uid = LoginManage.getInstance().getLoginSession().getUserInfo().getId();
-                    TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(true), mElement.getSrcName(),
-                            mElement.getSrcPath(), mElement.getTargetPath(), mElement.getSize(), mElement.getSize(), 0L, System.currentTimeMillis(), true);
+                    TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(true), mElement.getToName(),
+                            mElement.getSrcPath(), mElement.getToPath(), mElement.getSize(), mElement.getSize(), 0L, System.currentTimeMillis(), true);
                     TransferHistoryKeeper.insert(history);
                     downloadList.remove(mElement);
 
-                    MediaScanner.getInstance().scanningFile(mElement.getTargetPath() + File.separator + mElement.getSrcName());
-//                    FileUtils.asyncScanFile(new File(mElement.getTargetPath() + File.separator + mElement.getSrcName()));
+                    MediaScanner.getInstance().scanningFile(mElement.getToPath() + File.separator + mElement.getToName());
+//                    FileUtils.asyncScanFile(new File(mElement.getToPath() + File.separator + mElement.getSrcName()));
 
                     for (OnDownloadCompleteListener listener : completeListenerList) {
                         listener.downloadComplete(mElement);
@@ -122,7 +122,7 @@ public class DownloadManager {
      * it was running, and it will no longer be accessible through the download manager. If there is
      * a downloaded file, partial or complete, it is deleted.
      *
-     * @param fullName file full targetPath at server, uniqueness
+     * @param fullName file full toPath at server, uniqueness
      * @return the id of download actually removed, if remove failed, return -1.
      */
     public int removeDownload(String fullName) {

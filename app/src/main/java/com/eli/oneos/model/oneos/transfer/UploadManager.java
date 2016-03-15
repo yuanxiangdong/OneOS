@@ -33,7 +33,7 @@ public class UploadManager {
                 if (state == TransferState.COMPLETE) {
                     long uid = LoginManage.getInstance().getLoginSession().getUserInfo().getId();
                     TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(false), mElement.getSrcName(),
-                            mElement.getSrcPath(), mElement.getTargetPath(), mElement.getSize(), mElement.getSize(), 0L, System.currentTimeMillis(), true);
+                            mElement.getSrcPath(), mElement.getToPath(), mElement.getSize(), mElement.getSize(), 0L, System.currentTimeMillis(), true);
                     TransferHistoryKeeper.insert(history);
 
                     for (OnUploadCompleteListener listener : completeListenerList) {
@@ -208,7 +208,7 @@ public class UploadManager {
      * the upload manager. If there is a uploaded file, partial or complete, it
      * is deleted.
      *
-     * @param filePath file full targetPath at server, uniqueness
+     * @param filePath file full toPath at server, uniqueness
      * @return the id of upload actually removed, if remove failed, return -1.
      */
     public int removeUpload(String filePath) {

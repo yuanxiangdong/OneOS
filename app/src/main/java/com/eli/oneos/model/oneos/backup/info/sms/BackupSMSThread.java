@@ -97,7 +97,7 @@ public class BackupSMSThread extends Thread {
 
         UploadElement element = new UploadElement();
         element.setFile(file);
-        element.setTargetPath(path);
+        element.setToPath(path);
         element.setOverwrite(true);
 
         OneOSUploadFileAPI uploadAPI = new OneOSUploadFileAPI(loginSession, element);

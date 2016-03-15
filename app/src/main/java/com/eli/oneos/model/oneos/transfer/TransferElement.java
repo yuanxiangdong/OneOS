@@ -17,7 +17,7 @@ public abstract class TransferElement {
     /**
      * Transmission file target path
      */
-    protected String targetPath;
+    protected String toPath;
     /**
      * Source file size
      */
@@ -99,12 +99,12 @@ public abstract class TransferElement {
         this.offset = offset;
     }
 
-    public String getTargetPath() {
-        return targetPath;
+    public String getToPath() {
+        return toPath;
     }
 
-    public void setTargetPath(String targetPath) {
-        this.targetPath = targetPath;
+    public void setToPath(String toPath) {
+        this.toPath = toPath;
     }
 
     /**

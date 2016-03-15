@@ -56,7 +56,7 @@ public class UserInfoKeeper {
     /**
      * Get user from database by user and mac
      *
-     * @param user user targetPath
+     * @param user user toPath
      * @param mac  mac address
      * @return UserInfo or NULL
      */

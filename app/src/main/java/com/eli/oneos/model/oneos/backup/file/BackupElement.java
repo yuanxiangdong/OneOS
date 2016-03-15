@@ -28,12 +28,12 @@ public class BackupElement extends UploadElement {
             String cameraDate = FileUtils.getPhotoDate(file);
             // 相册路径： /来自：MI4/Album/RelativeDir/2015-09/xxx.png
             String toPath = Constants.BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM + relativeDir + File.separator + cameraDate + File.separator;
-            setTargetPath(toPath);
+            setToPath(toPath);
         } else {
             String relativeDir = file.getParent().replaceFirst(backupDir.getParent(), "");
             // 文件路径： /来自：MI4/Files/RelativeDir/xxx.txt
             String toPath = Constants.BACKUP_FILE_ONEOS_ROOT_DIR_NAME_FILES + relativeDir + File.separator;
-            setTargetPath(toPath);
+            setToPath(toPath);
         }
     }
 

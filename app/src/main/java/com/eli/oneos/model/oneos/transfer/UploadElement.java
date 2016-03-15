@@ -17,17 +17,17 @@ public class UploadElement extends TransferElement {
 
     public UploadElement(File file, String uploadPath) {
         this.file = file;
-        this.targetPath = uploadPath;
+        this.toPath = uploadPath;
     }
 
     public UploadElement(File file, String uploadPath, boolean check) {
         this.file = file;
-        this.targetPath = uploadPath;
+        this.toPath = uploadPath;
         this.check = check;
     }
 
     public boolean isUploadToPrivateDir() {
-        return targetPath.startsWith("/");
+        return toPath.startsWith("/");
     }
 
     /**
@@ -66,7 +66,7 @@ public class UploadElement extends TransferElement {
 
     @Override
     public String toString() {
-        return "{src:" + file.getAbsolutePath() + ", target:" + targetPath + ", overwrite:" + overwrite + "}";
+        return "{src:" + file.getAbsolutePath() + ", target:" + toPath + ", overwrite:" + overwrite + "}";
     }
 
     // ===============getter and setter method======================

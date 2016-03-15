@@ -124,7 +124,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 downloadElement.setState(TransferState.FAILED);
                 downloadElement.setException(TransferException.FAILED_REQUEST_SERVER);
                 return;
-            } else if (downloadElement.isCheck() && fileLength > SDCardUtils.getDeviceAvailableSize(downloadElement.getTargetPath())) {
+            } else if (downloadElement.isCheck() && fileLength > SDCardUtils.getDeviceAvailableSize(downloadElement.getToPath())) {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "SD Available Size Insufficient");
                 downloadElement.setState(TransferState.FAILED);
                 downloadElement.setException(TransferException.LOCAL_SPACE_INSUFFICIENT);
@@ -187,7 +187,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
         try {
             HttpPost httpRequest = new HttpPost(url);
             if (downloadElement.getOffset() > 0) {
-                String tmpPath = downloadElement.getTargetPath() + File.separator + downloadElement.getTmpName();
+                String tmpPath = downloadElement.getToPath() + File.separator + downloadElement.getTmpName();
                 File tmpFile = new File(tmpPath);
                 if (!tmpFile.exists()) {
                     Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "Temporary file is missing, resetBackupAlbum download offset position");
@@ -229,7 +229,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 downloadElement.setState(TransferState.FAILED);
                 downloadElement.setException(TransferException.FAILED_REQUEST_SERVER);
                 return;
-            } else if (fileLength > SDCardUtils.getDeviceAvailableSize(downloadElement.getTargetPath())) {
+            } else if (fileLength > SDCardUtils.getDeviceAvailableSize(downloadElement.getToPath())) {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "SDCard Available Size Insufficient");
                 downloadElement.setState(TransferState.FAILED);
                 downloadElement.setException(TransferException.LOCAL_SPACE_INSUFFICIENT);
@@ -272,12 +272,12 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
         RandomAccessFile outputFile = null;
         long downloadLen = downloadElement.getOffset();
         try {
-            File dir = new File(downloadElement.getTargetPath());
+            File dir = new File(downloadElement.getToPath());
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
-            String tmpPath = downloadElement.getTargetPath() + File.separator + downloadElement.getTmpName();
+            String tmpPath = downloadElement.getToPath() + File.separator + downloadElement.getTmpName();
             outputFile = new RandomAccessFile(tmpPath, "rw");
             outputFile.seek(downloadElement.getOffset());
             byte[] buffer = new byte[HTTP_BUFFER_SIZE];
@@ -309,23 +309,25 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                     downloadElement.setState(TransferState.FAILED);
                     downloadElement.setException(TransferException.UNKNOWN_EXCEPTION);
                 } else {
-                    File targetFile = new File(downloadElement.getTargetPath() + File.separator + downloadElement.getSrcName());
-                    if (targetFile.exists()) { // rename old file
-                        String name = targetFile.getName();
-                        String newName;
+                    File toFile = new File(downloadElement.getToPath() + File.separator + downloadElement.getSrcName());
+                    String toName = downloadElement.getSrcName();
+                    int addition = 1;
+                    while (toFile.exists()) {
+                        String name = toFile.getName();
                         int index = name.indexOf(".");
                         if (index >= 0) {
                             String prefix = name.substring(0, index);
                             String suffix = name.substring(index, name.length());
-                            newName = prefix + "-" + System.currentTimeMillis() + suffix;
+                            toName = prefix + "_" + addition + suffix;
                         } else {
-                            newName = name + "-" + System.currentTimeMillis();
+                            toName = name + "_" + addition;
                         }
-
-                        targetFile.renameTo(new File(downloadElement.getTargetPath(), newName));
+                        toFile = new File(downloadElement.getToPath() + File.separator + toName);
+                        addition++;
                     }
+                    downloadElement.setToName(toName);
                     File tmpFile = new File(tmpPath);
-                    tmpFile.renameTo(targetFile);
+                    tmpFile.renameTo(toFile);
 
                     downloadElement.setState(TransferState.COMPLETE);
                 }

@@ -13,7 +13,7 @@ public class OneOSFile implements Serializable {
 
     // for sticky header
     private int section = 0;
-    // {"perm":"rwxr-xr-x","type":"audio","targetPath":"haizeiw .mp3","gid":0,"path":"\/haizeiw .mp3","uid":1001,"time":1187168313,"size":6137050}
+    // {"perm":"rwxr-xr-x","type":"audio","toPath":"haizeiw .mp3","gid":0,"path":"\/haizeiw .mp3","uid":1001,"time":1187168313,"size":6137050}
     private String path = null;
     private String perm = null;
     /**
