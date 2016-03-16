@@ -313,4 +313,14 @@ public class TransmissionFragment extends BaseTransferFragment {
             }
         }
     }
+
+    /**
+     * Auto scroll to top
+     */
+    @Override
+    public void scrollToTop() {
+        if (null != mListView) {
+            mListView.smoothScrollToPosition(0);
+        }
+    }
 }

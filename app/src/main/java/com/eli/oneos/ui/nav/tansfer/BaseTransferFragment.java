@@ -24,4 +24,9 @@ public abstract class BaseTransferFragment extends Fragment {
      * @param view
      */
     public abstract void onMenuClick(int index, View view);
+
+    /**
+     * Auto scroll to top
+     */
+    public abstract void scrollToTop();
 }

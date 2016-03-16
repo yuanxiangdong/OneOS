@@ -183,6 +183,7 @@ public class LoginActivity extends BaseActivity {
         TitleBackLayout mTitleLayout = (TitleBackLayout) findViewById(R.id.layout_title);
         mTitleLayout.setBackVisible(false);
         mTitleLayout.setTitle(R.string.title_login);
+        mRootView = mTitleLayout;
 
         mUserLayout = (RelativeLayout) findViewById(R.id.layout_user);
         mUserTxt = (EditText) findViewById(R.id.editext_user);
@@ -376,7 +377,8 @@ public class LoginActivity extends BaseActivity {
                 } else if (errorNo == HttpErrorNo.ERR_CONNECT_REFUSED) {
                     DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.connection_refused, R.string.ok, null);
                 } else {
-                    ToastHelper.showToast(errorMsg);
+                    showTipView(errorMsg, false);
+//                    ToastHelper.showToast(errorMsg);
                 }
             }
         });
