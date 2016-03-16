@@ -175,7 +175,7 @@ public class AriaStoppedFragment extends Fragment implements MenuPopupView.OnMen
             return;
         }
 
-        DialogUtils.showConfirmDialog(activity, R.string.tip, R.string.confirm_del_stopped_aria, R.string.confirm,
+        DialogUtils.showConfirmDialog(activity, R.string.tips, R.string.confirm_del_stopped_aria, R.string.confirm,
                 R.string.cancel, new DialogUtils.OnDialogClickListener() {
 
                     @Override

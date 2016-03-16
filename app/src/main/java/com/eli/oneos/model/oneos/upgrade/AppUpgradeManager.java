@@ -188,7 +188,7 @@ public class AppUpgradeManager {
         if (Utils.isWifiAvailable(activity)) {
             doDownloadApp();
         } else {
-            DialogUtils.showConfirmDialog(activity, R.string.tip, R.string.confirm_download_not_wifi,
+            DialogUtils.showConfirmDialog(activity, R.string.tips, R.string.confirm_download_not_wifi,
                     R.string.dialog_continue, R.string.cancel, new DialogUtils.OnDialogClickListener() {
 
                         @Override
@@ -204,7 +204,7 @@ public class AppUpgradeManager {
     private void confirmUpdateDialog() {
         Resources resources = activity.getResources();
         String titleStr = activity.getResources().getString(R.string.have_new_version_app) + serverVersion;
-        DialogUtils.showConfirmDialog(activity, resources.getString(R.string.tip), titleStr, resources.getString(R.string.confirm_update_app),
+        DialogUtils.showConfirmDialog(activity, resources.getString(R.string.tips), titleStr, resources.getString(R.string.confirm_update_app),
                 resources.getString(R.string.ignore_update_app), new DialogUtils.OnDialogClickListener() {
 
                     @Override
@@ -218,7 +218,7 @@ public class AppUpgradeManager {
 
     private void confirmCancelDownloadDialog(final ProgressDialog mDialog, final DownloadAppThread mDownloadThread) {
 
-        DialogUtils.showConfirmDialog(activity, R.string.tip, R.string.confirm_cancel_download_app, R.string.interrupt_download,
+        DialogUtils.showConfirmDialog(activity, R.string.tips, R.string.confirm_cancel_download_app, R.string.interrupt_download,
                 R.string.continue_download, new DialogUtils.OnDialogClickListener() {
 
                     @Override

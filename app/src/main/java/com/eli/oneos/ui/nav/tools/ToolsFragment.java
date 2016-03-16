@@ -139,7 +139,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             if (isLogin() && LoginManage.getInstance().getLoginSession().isAdmin()) {
                 showPowerView(arg1);
             } else {
-                DialogUtils.showNotifyDialog(getActivity(), R.string.tip, R.string.please_login_onespace_with_admin, R.string.ok, null);
+                DialogUtils.showNotifyDialog(getActivity(), R.string.tips, R.string.please_login_onespace_with_admin, R.string.ok, null);
             }
         }
 
@@ -174,7 +174,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
 
     private void showPowerDialog(final boolean isPowerOff) {
         int contentRes = isPowerOff ? R.string.confirm_power_off_device : R.string.confirm_reboot_device;
-        DialogUtils.showConfirmDialog(getActivity(), R.string.tip, contentRes, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+        DialogUtils.showConfirmDialog(getActivity(), R.string.tips, contentRes, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
             @Override
             public void onClick(boolean isPositiveBtn) {
                 if (isPositiveBtn) {

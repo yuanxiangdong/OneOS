@@ -62,7 +62,7 @@ public class LocalFileTreeView {
 
         mSDCardList = SDCardUtils.getSDCardList();
         if (null == mSDCardList || mSDCardList.size() == 0) {
-            DialogUtils.showNotifyDialog(mActivity, R.string.tip, R.string.tips_no_sd_card, R.string.ok, null);
+            DialogUtils.showNotifyDialog(mActivity, R.string.tips, R.string.tips_no_sd_card, R.string.ok, null);
         }
 
         pathMaxWidth = Utils.dipToPx(120);

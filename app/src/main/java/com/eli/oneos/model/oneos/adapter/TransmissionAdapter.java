@@ -203,7 +203,7 @@ public class TransmissionAdapter extends BaseAdapter {
         } else if (failedId == TransferException.FAILED_REQUEST_SERVER) {
             failedInfo = context.getResources().getString(R.string.request_server_exception);
         } else if (failedId == TransferException.ENCODING_EXCEPTION) {
-            failedInfo = context.getResources().getString(R.string.encoding_exception);
+            failedInfo = context.getResources().getString(R.string.decoding_exception);
         } else if (failedId == TransferException.IO_EXCEPTION) {
             failedInfo = context.getResources().getString(R.string.io_exception);
         } else if (failedId == TransferException.FILE_NOT_FOUND) {

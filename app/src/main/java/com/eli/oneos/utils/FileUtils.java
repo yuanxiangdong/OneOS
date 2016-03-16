@@ -225,7 +225,7 @@ public class FileUtils {
     public static void openOneOSFile(LoginSession loginSession, BaseActivity activity, int position, final ArrayList<OneOSFile> fileList) {
         OneOSFile file = fileList.get(position);
         if (file.isEncrypt()) {
-            DialogUtils.showNotifyDialog(activity, R.string.tip, R.string.error_open_encrypt_file, R.string.ok, null);
+            DialogUtils.showNotifyDialog(activity, R.string.tips, R.string.error_open_encrypt_file, R.string.ok, null);
             return;
         }
 
@@ -312,7 +312,7 @@ public class FileUtils {
                 activity.showTipView(R.string.error_app_not_found_to_open_file, false);
             }
         } else {
-            DialogUtils.showNotifyDialog(activity, R.string.tip, R.string.file_not_found, R.string.ok, null);
+            DialogUtils.showNotifyDialog(activity, R.string.tips, R.string.file_not_found, R.string.ok, null);
         }
     }
 

@@ -167,7 +167,7 @@ public class LocalFileManage {
         }
 
         if (action == FileManageAction.DELETE) {
-            DialogUtils.showConfirmDialog(mActivity, R.string.tip, R.string.tip_delete_file, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+            DialogUtils.showConfirmDialog(mActivity, R.string.tips, R.string.tip_delete_file, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
                 @Override
                 public void onClick(boolean isPositiveBtn) {
                     if (isPositiveBtn) {
@@ -375,7 +375,7 @@ public class LocalFileManage {
                     for (BackupFile backupFile : dbList) {
                         String p = backupFile.getPath();
                         if (p.equals(path)) {
-                            DialogUtils.showNotifyDialog(mActivity, R.string.tip, R.string.error_backup_dir_exist, R.string.ok, null);
+                            DialogUtils.showNotifyDialog(mActivity, R.string.tips, R.string.error_backup_dir_exist, R.string.ok, null);
                             return;
                         }
 
@@ -386,7 +386,7 @@ public class LocalFileManage {
                     }
                 }
 
-                DialogUtils.showConfirmDialog(mActivity, R.string.confirm_add_backup, R.string.tips_confirm_add_backup_dir,
+                DialogUtils.showConfirmDialog(mActivity, R.string.confirm_backup, R.string.tips_confirm_add_backup_dir,
                         R.string.continue_add_backup, R.string.cancel, new DialogUtils.OnDialogClickListener() {
                             @Override
                             public void onClick(boolean isPositiveBtn) {
@@ -400,7 +400,7 @@ public class LocalFileManage {
     }
 
     private void confirmBackupRepeat(final OneSpaceService service, final long uid, final String path, boolean isAlbum) {
-        DialogUtils.showConfirmDialog(mActivity, R.string.confirm_add_backup, isAlbum ? R.string.tips_add_backup_album_repeat : R.string.tips_add_backup_dir_repeat,
+        DialogUtils.showConfirmDialog(mActivity, R.string.confirm_backup, isAlbum ? R.string.tips_add_backup_album_repeat : R.string.tips_add_backup_dir_repeat,
                 R.string.continue_add_backup, R.string.cancel, new DialogUtils.OnDialogClickListener() {
                     @Override
                     public void onClick(boolean isPositiveBtn) {

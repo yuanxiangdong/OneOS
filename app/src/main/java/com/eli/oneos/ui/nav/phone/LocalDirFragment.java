@@ -219,7 +219,7 @@ public class LocalDirFragment extends BaseLocalFragment {
 
         mSDCardList = SDCardUtils.getSDCardList();
         if (null == mSDCardList || mSDCardList.size() == 0) {
-            DialogUtils.showNotifyDialog(getActivity(), R.string.tip, R.string.tips_no_sd_card, R.string.ok, null);
+            DialogUtils.showNotifyDialog(getActivity(), R.string.tips, R.string.tips_no_sd_card, R.string.ok, null);
         }
 
         mFileType = LocalFileType.PRIVATE;

@@ -179,7 +179,7 @@ public class OneOSFileManage {
         if (action == FileManageAction.ATTR) {
             fileManageAPI.attr(selectedList.get(0));
         } else if (action == FileManageAction.DELETE) {
-            DialogUtils.showConfirmDialog(mActivity, R.string.tip, R.string.tip_delete_file, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+            DialogUtils.showConfirmDialog(mActivity, R.string.tips, R.string.tip_delete_file, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
                 @Override
                 public void onClick(boolean isPositiveBtn) {
                     if (isPositiveBtn) {
@@ -267,7 +267,7 @@ public class OneOSFileManage {
             chmodFile(selectedList.get(0));
         } else if (action == FileManageAction.DOWNLOAD) {
             if (!Utils.isWifiAvailable(mActivity) && loginSession.getUserSettings().getIsTipTransferNotWifi()) {
-                DialogUtils.showConfirmDialog(mActivity, R.string.tip, R.string.confirm_download_not_wifi, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
+                DialogUtils.showConfirmDialog(mActivity, R.string.tips, R.string.confirm_download_not_wifi, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
                     @Override
                     public void onClick(boolean isPositiveBtn) {
                         if (isPositiveBtn) {

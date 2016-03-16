@@ -133,7 +133,7 @@ public class SelectTorrentActivity extends BaseActivity implements OnClickListen
      * Add a dialog box used to confirm the operation
      */
     protected void notifyNoSDCardDialog(final Context context) {
-        DialogUtils.showNotifyDialog(this, R.string.tip, R.string.tips_no_sd_card,
+        DialogUtils.showNotifyDialog(this, R.string.tips, R.string.tips_no_sd_card,
                 R.string.ok, new DialogUtils.OnDialogClickListener() {
                     @Override
                     public void onClick(boolean isPositiveBtn) {

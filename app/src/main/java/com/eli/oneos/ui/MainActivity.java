@@ -46,11 +46,11 @@ public class MainActivity extends BaseActivity {
                 boolean isLANDevice = mLoginManager.getLoginSession().isLANDevice();
                 if (isLANDevice) {
                     if (!isWifiAvailable) {
-                        DialogUtils.showNotifyDialog(MainActivity.this, R.string.tip, R.string.wifi_not_available, R.string.ok, null);
+                        DialogUtils.showNotifyDialog(MainActivity.this, R.string.tips, R.string.wifi_not_available, R.string.ok, null);
                     }
                 } else {
                     if (!isAvailable) {
-                        DialogUtils.showNotifyDialog(MainActivity.this, R.string.tip, R.string.network_not_available, R.string.ok, null);
+                        DialogUtils.showNotifyDialog(MainActivity.this, R.string.tips, R.string.network_not_available, R.string.ok, null);
                     }
                 }
             } else {

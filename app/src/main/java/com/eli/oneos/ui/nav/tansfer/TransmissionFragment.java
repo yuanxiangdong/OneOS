@@ -213,7 +213,7 @@ public class TransmissionFragment extends BaseTransferFragment {
     }
 
     private void confirmCancelUpload(final TransferElement element) {
-        DialogUtils.showConfirmDialog(getActivity(), R.string.tip, R.string.confirm_cancel_upload, R.string.confirm, R.string.cancel,
+        DialogUtils.showConfirmDialog(getActivity(), R.string.tips, R.string.confirm_cancel_upload, R.string.confirm, R.string.cancel,
                 new DialogUtils.OnDialogClickListener() {
 
                     @Override

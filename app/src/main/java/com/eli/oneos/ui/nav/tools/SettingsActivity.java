@@ -216,7 +216,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
             Intent intent = new Intent(this, SetDownloadPathActivity.class);
             startActivity(intent);
         } else {
-            DialogUtils.showNotifyDialog(this, R.string.tip, R.string.sd_state_unmounted, R.string.ok, null);
+            DialogUtils.showNotifyDialog(this, R.string.tips, R.string.sd_state_unmounted, R.string.ok, null);
         }
     }
 

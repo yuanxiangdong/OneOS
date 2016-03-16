@@ -6,7 +6,7 @@
     <string name="ok">OK</string>
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
-    <string name="tip">提示</string>
+    <string name="tips">提示</string>
     <string name="paste">粘贴</string>
     <string name="modify">修改</string>
     <string name="delete">删除</string>
@@ -204,7 +204,7 @@
     <string name="local_space_insufficient">本地空间不足</string>
     <string name="server_space_insufficient">空间不足</string>
     <string name="request_server_exception">请求失败</string>
-    <string name="encoding_exception">解码异常</string>
+    <string name="decoding_exception">解码异常</string>
     <string name="io_exception">读写异常</string>
     <string name="file_not_found">文件不存在</string>
     <string name="touch_file_failed">创建文件失败</string>
@@ -269,7 +269,6 @@
     <string name="interrupt_download">取消下载</string>
     <string name="continue_download">继续下载</string>
     <string name="check_app_version">APP版本检测&#8230;</string>
-    <string name="app_version_low">您的Android APP版本过低，请在: 工具包->设置->关于OneSpace 中更新APP版本！</string>
     <string name="confirm_update_app">立即升级</string>
     <string name="ignore_update_app">下次再说</string>
     <string name="download_new_app">正在下载新版APP</string>
@@ -336,7 +335,7 @@
     <string name="aria_download_piece_length">最小分片大小:</string>
     <string name="aria_download_dir">下载目录:</string>
     <string name="aria_download_size">大小:</string>
-    <string name="aria_download_speed">速度速度:</string>
+    <string name="aria_download_speed">下载速度:</string>
     <string name="aria_download_time">剩余时间:</string>
     <string name="aria_download_connections">连接数:</string>
     <string name="aria_download_peers">分片数:</string>
@@ -376,7 +375,7 @@
     <string name="title_backup_file_list">自动备份的文件夹</string>
     <string name="title_add_backup_file">添加自动备份文件夹</string>
     <string name="confirm_add_backup_file">确认备份该文件夹</string>
-    <string name="confirm_add_backup">确认添加备份</string>
+    <string name="confirm_backup">确认添加备份</string>
     <string name="continue_add_backup">继续添加</string>
     <string name="error_fmt_add_backup_dir_count">最多可以添加%d个备份文件夹</string>
     <string name="tips_add_backup_dir_repeat">继续添加该目录可能会导致文件重复备份</string>

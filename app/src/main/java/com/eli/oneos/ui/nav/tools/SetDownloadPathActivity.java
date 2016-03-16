@@ -147,7 +147,7 @@ public class SetDownloadPathActivity extends BaseActivity implements OnClickList
      */
     protected void notifyNoSDCardDialog(final Context context) {
 
-        DialogUtils.showNotifyDialog(this, R.string.tip, R.string.tips_no_sd_card, R.string.ok,
+        DialogUtils.showNotifyDialog(this, R.string.tips, R.string.tips_no_sd_card, R.string.ok,
                 new DialogUtils.OnDialogClickListener() {
                     @Override
                     public void onClick(boolean isPositiveBtn) {
@@ -181,7 +181,7 @@ public class SetDownloadPathActivity extends BaseActivity implements OnClickList
                 ToastHelper.showToast(R.string.setting_failed);
             }
         } else {
-            DialogUtils.showNotifyDialog(this, R.string.tip, R.string.error_path_without_write_permission, R.string.ok, null);
+            DialogUtils.showNotifyDialog(this, R.string.tips, R.string.error_path_without_write_permission, R.string.ok, null);
         }
     }
 

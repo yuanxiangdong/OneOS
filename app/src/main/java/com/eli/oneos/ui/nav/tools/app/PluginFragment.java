@@ -133,7 +133,7 @@ public class PluginFragment extends Fragment {
         title += " " + info.getName() + " ?";
 
         Resources resources = getResources();
-        DialogUtils.showConfirmDialog(getActivity(), resources.getString(R.string.tip), title,
+        DialogUtils.showConfirmDialog(getActivity(), resources.getString(R.string.tips), title,
                 resources.getString(R.string.confirm), resources.getString(R.string.cancel),
                 new DialogUtils.OnDialogClickListener() {
 

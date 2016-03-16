@@ -93,7 +93,7 @@ public class LoginActivity extends BaseActivity {
         public void onChanged(boolean isAvailable, boolean isWifiAvailable) {
             LoginActivity.this.isWifiAvailable = isWifiAvailable;
             if (!isAvailable) {
-                DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.network_not_available, R.string.ok, null);
+                DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tips, R.string.network_not_available, R.string.ok, null);
             }
         }
     };
@@ -126,7 +126,7 @@ public class LoginActivity extends BaseActivity {
                                         }
                                     });
                         } else {
-                            DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.wifi_not_available, R.string.ok, null);
+                            DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tips, R.string.wifi_not_available, R.string.ok, null);
                         }
                         return;
                     } else {
@@ -373,9 +373,9 @@ public class LoginActivity extends BaseActivity {
             public void onFailure(String url, int errorNo, String errorMsg) {
                 dismissLoading();
                 if (errorNo == HttpErrorNo.ERR_ONEOS_VERSION) {
-                    DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.oneos_version_mismatch, R.string.ok, null);
+                    DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tips, R.string.oneos_version_mismatch, R.string.ok, null);
                 } else if (errorNo == HttpErrorNo.ERR_CONNECT_REFUSED) {
-                    DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tip, R.string.connection_refused, R.string.ok, null);
+                    DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tips, R.string.connection_refused, R.string.ok, null);
                 } else {
                     showTipView(errorMsg, false);
 //                    ToastHelper.showToast(errorMsg);

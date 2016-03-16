@@ -159,7 +159,7 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
      * Add a dialog box used to confirm the operation
      */
     protected void notifyNoSDCardDialog(final Context context) {
-        DialogUtils.showNotifyDialog(this, R.string.tip, R.string.tips_no_sd_card, R.string.ok,
+        DialogUtils.showNotifyDialog(this, R.string.tips, R.string.tips_no_sd_card, R.string.ok,
                 new DialogUtils.OnDialogClickListener() {
                     @Override
                     public void onClick(boolean isPositiveBtn) {
@@ -194,7 +194,7 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
     }
 
     private void confirmBackupRepeat(final String path, boolean isAlbum) {
-        DialogUtils.showConfirmDialog(this, R.string.confirm_add_backup, isAlbum ? R.string.tips_add_backup_album_repeat : R.string.tips_add_backup_dir_repeat,
+        DialogUtils.showConfirmDialog(this, R.string.confirm_backup, isAlbum ? R.string.tips_add_backup_album_repeat : R.string.tips_add_backup_dir_repeat,
                 R.string.continue_add_backup, R.string.cancel, new DialogUtils.OnDialogClickListener() {
                     @Override
                     public void onClick(boolean isPositiveBtn) {
@@ -226,7 +226,7 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
             for (File f : mAddedList) {
                 String path = f.getPath();
                 if (path.equals(selectPath)) {
-                    DialogUtils.showNotifyDialog(this, R.string.tip, R.string.error_backup_dir_exist, R.string.ok, null);
+                    DialogUtils.showNotifyDialog(this, R.string.tips, R.string.error_backup_dir_exist, R.string.ok, null);
                     return;
                 }
 
@@ -238,7 +238,7 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
 
             addBackupFile(selectPath);
         } else {
-            DialogUtils.showNotifyDialog(this, R.string.tip, R.string.error_backup_without_read_permission, R.string.ok, null);
+            DialogUtils.showNotifyDialog(this, R.string.tips, R.string.error_backup_without_read_permission, R.string.ok, null);
         }
     }
 

@@ -102,7 +102,7 @@ public class BackupFileListActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (mBackupList.size() >= Constants.MAX_BACKUP_FILE_COUNT) {
-                    DialogUtils.showNotifyDialog(BackupFileListActivity.this, getString(R.string.tip),
+                    DialogUtils.showNotifyDialog(BackupFileListActivity.this, getString(R.string.tips),
                             String.format(getString(R.string.error_fmt_add_backup_dir_count), Constants.MAX_BACKUP_FILE_COUNT), getString(R.string.ok), null);
                 } else {
                     Intent intent = new Intent(BackupFileListActivity.this, AddBackupFileActivity.class);

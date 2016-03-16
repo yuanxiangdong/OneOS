@@ -132,7 +132,7 @@ public class BackupFileListAdapter extends BaseAdapter {
             title = R.string.tips_close_backup_file;
         }
 
-        DialogUtils.showConfirmDialog(context, R.string.tip, title, R.string.dialog_continue, R.string.cancel,
+        DialogUtils.showConfirmDialog(context, R.string.tips, title, R.string.dialog_continue, R.string.cancel,
                 new DialogUtils.OnDialogClickListener() {
 
                     @Override
