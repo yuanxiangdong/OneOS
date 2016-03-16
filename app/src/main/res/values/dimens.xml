@@ -32,5 +32,6 @@
     <dimen name="layout_operate_height">@dimen/layout_nav_bar_height</dimen>
     <dimen name="layout_select_height">@dimen/layout_title_height</dimen>
     <dimen name="layout_anim_progress_width">230dp</dimen>
+    <dimen name="layout_login_pre_width">60dp</dimen>
 
 </resources>

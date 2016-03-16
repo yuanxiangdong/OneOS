@@ -91,14 +91,14 @@
     <string name="encrypting_file">Encrypting&#8230;</string>
     <string name="tip_encrypt_file">Encrypt file</string>
     <string name="warning_encrypt_file">Warning: please remember the password, otherwise it will not be able to decrypt the file!</string>
-    <string name="hint_encrypt_pwd">Please enter encryption password</string>
-    <string name="hint_confirm_encrypt_pwd">Please confirm encryption password</string>
+    <string name="hint_encrypt_pwd">Please enter password</string>
+    <string name="hint_confirm_encrypt_pwd">Please confirm password</string>
     <string name="error_confirm_pwd">Password does not match</string>
     <string name="encrypt_file_success">File encryption succeed</string>
     <string name="encrypt_file_failed">File encryption failed</string>
     <string name="decrypting_file">Decrypting&#8230;</string>
     <string name="tip_decrypt_file">Decrypt file</string>
-    <string name="hint_decrypt_pwd">Please enter decryption password</string>
+    <string name="hint_decrypt_pwd">Please enter password</string>
     <string name="decrypt_file_success">File decryption succeed</string>
     <string name="decrypt_file_failed">File decryption failed</string>
     <string name="tip_move_file">Move to&#8230;</string>
@@ -131,7 +131,7 @@
     <string name="login">Login</string>
     <string name="title_enter_user">Username</string>
     <string name="title_enter_pwd">Password</string>
-    <string name="title_select_ip">IP Address</string>
+    <string name="title_select_ip">IP</string>
     <string name="title_enter_port">Port</string>
     <string name="hint_enter_user">Please enter username</string>
     <string name="hint_enter_pwd">Please enter password</string>
@@ -170,7 +170,7 @@
     <string name="error_access_dir_perm_deny">No permission to access this directory</string>
     <string name="error_manage_perm_deny">Permission Denied</string>
     <string name="error_get_file_list">Failed to get file list</string>
-    <string name="fmt_time_line">yyyyYearMMMonth</string>
+    <string name="fmt_time_line">yyyy-MM</string>
     <string name="error_open_encrypt_file">Sorry, unable to view encrypted files</string>
     <string name="error_open_encrypt_pic">Sorry, unable to view encrypted pictures</string>
     <string name="error_app_not_found_to_open_file">Can not find an application to open this file</string>
