@@ -23,8 +23,8 @@
     <string name="app_exception">Application Exception</string>
     <string name="please_login_onespace">Please login OneSpace</string>
     <string name="please_login_onespace_with_admin">Please use the administrator user login OneSpace</string>
-    <string name="confirm_download_not_wifi">Confirm download by using non Wi-Fi access!</string>
-    <string name="confirm_upload_not_wifi">Confirm upload by using non Wi-Fi access!</string>
+    <string name="confirm_download_not_wifi">Confirm download by using non WiFi access!</string>
+    <string name="confirm_upload_not_wifi">Confirm upload by using non WiFi access!</string>
     <string name="app_exception_to_exit">crashed, collecting information, exit after 3s...</string>
 
     <!-- File Operation -->
@@ -85,7 +85,7 @@
     <string name="making_folder">Creating&#8230;</string>
     <string name="tip_new_folder">Create folder</string>
     <string name="hint_new_folder">Please enter a folder name</string>
-    <string name="default_new_folder">Create folder</string>
+    <string name="default_new_folder">New folder</string>
     <string name="new_folder_success">Create succeed</string>
     <string name="new_folder_failed">Create failed</string>
     <string name="encrypting_file">Encrypting&#8230;</string>
@@ -188,7 +188,7 @@
     <string name="start_all">Start All</string>
     <string name="pause_all">Pause All</string>
     <string name="delete_all">Delete All</string>
-    <string name="empty_transfer_list">No transfer records</string>
+    <string name="empty_transfer_list">No transmission</string>
     <string name="cancel_and_delete_local">Delete local file</string>
     <string name="confirm_cancel_download">Confirm cancel the download?</string>
     <string name="confirm_cancel_upload">Confirm cancel the upload?</string>
@@ -242,19 +242,19 @@
     <string name="settings">Settings</string>
     <string name="not_login">Not Login</string>
     <string name="current_user">Current User</string>
-    <string name="current_path">Current download path：</string>
+    <string name="current_path">Current Download path：</string>
     <string name="clean_record">Clean Transfer History</string>
     <string name="clean_record_success">Clean succeed</string>
     <string name="clean_record_failed">Clean failed</string>
     <string name="setting_success">Setting succeed</string>
     <string name="setting_failed">Setting failed</string>
     <string name="confirm_clear_record">Confirm clean history?</string>
-    <string name="set_default_path">Set default download path</string>
-    <string name="only_wifi_preview_pic">Preview pictures only in WiFi</string>
-    <string name="not_wifi_download_tips">Non Wi-Fi download/upload tips</string>
-    <string name="about_onespace">About OneSpace</string>
+    <string name="set_default_path">Set Download Path</string>
+    <string name="only_wifi_preview_pic">Preview Pictures only in WiFi</string>
+    <string name="not_wifi_download_tips">Non WiFi Download/Upload Tips</string>
     <string name="title_onespace_forum">OneSpace Forum</string>
     <string name="title_onespace_website">OneSpace Official Website</string>
+    <string name="about_onespace">About OneSpace</string>
     <string name="space_total">OneSpace Total Space</string>
     <string name="space_user">Current User Space</string>
     <string name="space_local">SDCard Space</string>
@@ -278,10 +278,10 @@
     <string name="user_space_info">Your space has been used</string>
     <string name="title_local">SDCard Space</string>
     <string name="title_server">OneSpace Total Space</string>
-    <string name="title_user">当前用户空间</string>
-    <string name="total_space">总&#160;&#160;空&#160;&#160;间:</string>
-    <string name="available_space">Available space:</string>
-    <string name="used_space">Used space:</string>
+    <string name="title_user">Current User Space</string>
+    <string name="total_space">Total:</string>
+    <string name="available_space">Available:</string>
+    <string name="used_space">Used:</string>
     <string name="query_space_failure">Query space failed</string>
     <string name="device_dev_sda">HD A</string>
     <string name="device_dev_sdb">HD B</string>

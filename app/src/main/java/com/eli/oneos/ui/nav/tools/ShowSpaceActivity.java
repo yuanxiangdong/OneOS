@@ -221,7 +221,7 @@ public class ShowSpaceActivity extends BaseActivity {
                     String totalInfo = Formatter.formatFileSize(ShowSpaceActivity.this, total);
                     String freeInfo = Formatter.formatFileSize(ShowSpaceActivity.this, free);
                     String usedInfo = Formatter.formatFileSize(ShowSpaceActivity.this, total - free);
-                    int ratio = 100 - (int) (free * 100 / total);
+                    int ratio = 100 - (total == 0 ? 0 : (int) (free * 100 / total));
                     ratio = ratio > 100 ? 100 : ratio;
                     startProgressAnim(ratio);
                     setDiskSpaceParamter(totalInfo, freeInfo, usedInfo, ratio);
