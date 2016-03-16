@@ -10,6 +10,7 @@
     <string name="paste">粘贴</string>
     <string name="modify">修改</string>
     <string name="delete">删除</string>
+    <string name="open">打开</string>
     <string name="dialog_continue">继续</string>
     <string name="loading">正在加载&#8230;</string>
     <string name="all_loaded">已加载全部</string>
@@ -300,6 +301,7 @@
     <string name="can_not_uninstall">无法卸载</string>
     <string name="app_not_found_exception">未查询到该应用信息</string>
     <string name="confirm_uninstall_plugin">确认卸载&#160;&#160;</string>
+    <string name="uninstall">卸载</string>
     <string name="uninstalling_plugin">正在卸载&#8230;</string>
     <string name="opening_plugin">正在打开&#8230;</string>
     <string name="closing_plugin">正在关闭&#8230;</string>

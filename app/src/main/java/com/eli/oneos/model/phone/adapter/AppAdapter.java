@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -41,19 +40,16 @@ public class AppAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        // TODO Auto-generated method stub
         return mAppList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
 
     @Override
     public long getItemId(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
 
@@ -64,8 +60,8 @@ public class AppAdapter extends BaseAdapter {
         TextView appName;
         TextView appVersion;
         TextView appSize;
-        ImageButton appUninstall;
-        ImageButton appOpen;
+        TextView appUninstall;
+        TextView appOpen;
     }
 
     @Override
@@ -80,18 +76,16 @@ public class AppAdapter extends BaseAdapter {
             holder.appName = (TextView) convertView.findViewById(R.id.app_name);
             holder.appVersion = (TextView) convertView.findViewById(R.id.app_version);
             holder.appSize = (TextView) convertView.findViewById(R.id.app_size);
-            holder.appUninstall = (ImageButton) convertView.findViewById(R.id.app_uninstall);
-            holder.appOpen = (ImageButton) convertView.findViewById(R.id.app_open);
+            holder.appUninstall = (TextView) convertView.findViewById(R.id.app_uninstall);
+            holder.appOpen = (TextView) convertView.findViewById(R.id.app_open);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        LayoutParams leftLayout = new LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        LayoutParams leftLayout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         holder.leftLayout.setLayoutParams(leftLayout);
-        LayoutParams rightLayout = new LayoutParams(rightWidth,
-                LayoutParams.MATCH_PARENT);
+        LayoutParams rightLayout = new LayoutParams(rightWidth, LayoutParams.MATCH_PARENT);
         holder.rightLayout.setLayoutParams(rightLayout);
 
         final AppInfo appInfo = mAppList.get(position);
@@ -103,7 +97,6 @@ public class AppAdapter extends BaseAdapter {
         holder.appUninstall.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 switch (v.getId()) {
                     case R.id.app_uninstall:
                         unInstaller(appInfo.getPkName());

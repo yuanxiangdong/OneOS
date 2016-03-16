@@ -14,6 +14,7 @@
         android:divider="@color/line_list_view"
         android:dividerHeight="@dimen/line_list_divider_height"
         android:listSelector="@android:color/transparent"
+        android:overScrollMode="never"
         SwipeList:Right_Width="140dp" />
 
     <LinearLayout

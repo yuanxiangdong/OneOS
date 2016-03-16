@@ -34,7 +34,7 @@ public class MyApplication extends Application {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d(TAG, "service connected, get download manager service instance");
+            Log.d(TAG, "Service Connected");
             OneSpaceService.ServiceBinder binder = (OneSpaceService.ServiceBinder) service;
             mService = binder.getService();
 
@@ -55,31 +55,30 @@ public class MyApplication extends Application {
             CrashHandler crashHandler = CrashHandler.getInstance();
             crashHandler.init(context);
         }
-        bindTransferService();
+        bindService();
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
         Log.d(TAG, "On Terminate");
-        unBindTrasferService();
+        unbindService();
     }
 
-
     /**
-     * bind transfer service for download and upload
+     * Bind OneSpaceService for download/upload/backup...
      */
-    private void bindTransferService() {
+    private void bindService() {
         Log.i(TAG, "Bind Transfer Service");
         Intent intent = new Intent(this, OneSpaceService.class);
         if (this.bindService(intent, mConnection, Context.BIND_AUTO_CREATE)) {
-            Log.d(TAG, "bind service success");
+            Log.d(TAG, "Bind service success");
         } else {
-            Log.e(TAG, "bind service fialed");
+            Log.e(TAG, "Bind service failure");
         }
     }
 
-    private void unBindTrasferService() {
+    private void unbindService() {
         if (mIsServiceBound) {
             this.unbindService(mConnection);
             mIsServiceBound = false;

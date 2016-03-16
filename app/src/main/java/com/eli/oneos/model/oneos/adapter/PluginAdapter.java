@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -57,8 +56,7 @@ public class PluginAdapter extends BaseAdapter {
         TextView mNameTxt;
         TextView mStatTxt;
         TextView mVersionTxt;
-        TextView mTipsTxt;
-        ImageButton mUninstallBtn;
+        TextView mUninstallTxt;
         // ImageButton mOpenBtn;
         SwitchButton mStateBtn;
     }
@@ -74,9 +72,8 @@ public class PluginAdapter extends BaseAdapter {
             holder.mIconImage = (ImageView) convertView.findViewById(R.id.app_icon);
             holder.mNameTxt = (TextView) convertView.findViewById(R.id.app_name);
             holder.mStatTxt = (TextView) convertView.findViewById(R.id.app_stat);
-            holder.mTipsTxt = (TextView) convertView.findViewById(R.id.txt_tip);
+            holder.mUninstallTxt = (TextView) convertView.findViewById(R.id.app_uninstall);
             holder.mVersionTxt = (TextView) convertView.findViewById(R.id.app_version);
-            holder.mUninstallBtn = (ImageButton) convertView.findViewById(R.id.app_uninstall);
             // holder.mOpenBtn = (ImageButton) convertView.findViewById(R.id.app_open);
             holder.mStateBtn = (SwitchButton) convertView.findViewById(R.id.btn_state);
             convertView.setTag(holder);
@@ -112,9 +109,9 @@ public class PluginAdapter extends BaseAdapter {
         holder.mStatTxt.setText(context.getResources().getString(R.string.app_status) + context.getResources().getString(status));
 
         if (info.isCanDel()) {
-            holder.mTipsTxt.setVisibility(View.GONE);
-            holder.mUninstallBtn.setVisibility(View.VISIBLE);
-            holder.mUninstallBtn.setOnClickListener(new OnClickListener() {
+            holder.mUninstallTxt.setText(R.string.uninstall);
+            holder.mUninstallTxt.setBackgroundColor(context.getResources().getColor(R.color.red));
+            holder.mUninstallTxt.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
@@ -128,8 +125,8 @@ public class PluginAdapter extends BaseAdapter {
                 }
             });
         } else {
-            holder.mUninstallBtn.setVisibility(View.GONE);
-            holder.mTipsTxt.setVisibility(View.VISIBLE);
+            holder.mUninstallTxt.setText(R.string.can_not_uninstall);
+            holder.mUninstallTxt.setBackgroundColor(context.getResources().getColor(R.color.light_gray));
         }
 
         if (info.isCanOff()) {
