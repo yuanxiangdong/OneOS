@@ -92,14 +92,14 @@ public class CloudNavFragment extends BaseNavFileFragment {
     private void initTypeView() {
         FileTypeItem privateItem = new FileTypeItem(R.string.file_type_private, R.drawable.btn_file_type_private, R.drawable.btn_file_type_private_pressed, OneOSFileType.PRIVATE);
         mFileTypeList.add(privateItem);
-        FileTypeItem docItem = new FileTypeItem(R.string.file_type_doc, R.drawable.btn_file_type_doc, R.drawable.btn_file_type_doc_pressed, OneOSFileType.DOC);
-        mFileTypeList.add(docItem);
         FileTypeItem picItem = new FileTypeItem(R.string.file_type_pic, R.drawable.btn_file_type_pic, R.drawable.btn_file_type_pic_pressed, OneOSFileType.PICTURE);
         mFileTypeList.add(picItem);
-        FileTypeItem audioItem = new FileTypeItem(R.string.file_type_audio, R.drawable.btn_file_type_audio, R.drawable.btn_file_type_audio_pressed, OneOSFileType.AUDIO);
-        mFileTypeList.add(audioItem);
         FileTypeItem videoItem = new FileTypeItem(R.string.file_type_video, R.drawable.btn_file_type_video, R.drawable.btn_file_type_video_pressed, OneOSFileType.VIDEO);
         mFileTypeList.add(videoItem);
+        FileTypeItem audioItem = new FileTypeItem(R.string.file_type_audio, R.drawable.btn_file_type_audio, R.drawable.btn_file_type_audio_pressed, OneOSFileType.AUDIO);
+        mFileTypeList.add(audioItem);
+        FileTypeItem docItem = new FileTypeItem(R.string.file_type_doc, R.drawable.btn_file_type_doc, R.drawable.btn_file_type_doc_pressed, OneOSFileType.DOC);
+        mFileTypeList.add(docItem);
         FileTypeItem publicItem = new FileTypeItem(R.string.file_type_public, R.drawable.btn_file_type_public, R.drawable.btn_file_type_public_pressed, OneOSFileType.PUBLIC);
         mFileTypeList.add(publicItem);
         FileTypeItem recycleItem = new FileTypeItem(R.string.file_type_cycle, R.drawable.btn_file_type_recycle, R.drawable.btn_file_type_recycle_pressed, OneOSFileType.RECYCLE);
