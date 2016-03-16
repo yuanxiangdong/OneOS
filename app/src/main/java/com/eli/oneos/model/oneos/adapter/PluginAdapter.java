@@ -174,15 +174,25 @@ public class PluginAdapter extends BaseAdapter {
         } else if (name.equalsIgnoreCase("autoupgrade")) {
             resId = R.drawable.icon_plug_auto_upgrade;
         } else if (name.equalsIgnoreCase("syncthing")) {
-            resId = R.drawable.icon_plug_syncthing;
+            resId = R.drawable.icon_plug_rsync;
         } else if (name.equalsIgnoreCase("BTSync")) {
-            resId = R.drawable.icon_plug_bt_sync;
+            resId = R.drawable.icon_plug_btsync;
         } else if (name.equalsIgnoreCase("ftpd")) {
             resId = R.drawable.icon_plug_ftp;
         } else if (name.equalsIgnoreCase("QQIOT")) {
             resId = R.drawable.icon_plug_qq_iot;
         } else if (name.equalsIgnoreCase("NFS")) {
             resId = R.drawable.icon_plug_nfs;
+        } else if (name.equalsIgnoreCase("Phddns")) {
+            resId = R.drawable.icon_plug_phddns;
+        } else if (name.equalsIgnoreCase("afp")) {
+            resId = R.drawable.icon_plug_afp;
+        } else if (name.equalsIgnoreCase("rsync")) {
+            resId = R.drawable.icon_plug_rsync;
+        } else if (name.equalsIgnoreCase("vsftp")) {
+            resId = R.drawable.icon_plug_ftp;
+        } else if (name.equalsIgnoreCase("note")) {
+            resId = R.drawable.icon_plug_note;
         }
 
         return resId;
