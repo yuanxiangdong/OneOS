@@ -35,7 +35,7 @@ import java.util.List;
 
 public class ToolsFragment extends BaseNavFragment implements OnItemClickListener {
 
-    private static final String TAG = "ToolsActvity";
+    private static final String TAG = ToolsFragment.class.getSimpleName();
 
     private static final int TOOL_SETTING = R.string.tool_setting;
     private static final int TOOL_BACKUP_PHOTO = R.string.tool_backup_photo;
@@ -45,9 +45,9 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     private static final int TOOL_APP = R.string.tool_app;
     private static final int TOOL_OFFLINE = R.string.tool_offline;
     private static final int TOOL_POWER = R.string.tool_power;
-    private static final int TOOL_CHANGE_USER = R.string.tool_changer_user;
+    private static final int TOOL_LOGOUT = R.string.tool_logout;
     private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_SETTING, TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_OFFLINE, TOOL_APP,
-            TOOL_POWER, TOOL_CHANGE_USER};
+            TOOL_POWER, TOOL_LOGOUT};
     private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_setting, R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_backup_file, R.drawable.icon_tools_contact,
             R.drawable.icon_tools_sms, R.drawable.icon_tools_offline, R.drawable.icon_tools_app, R.drawable.icon_tools_power,
             R.drawable.icon_tools_change_user};
@@ -121,7 +121,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             } else {
                 ToastHelper.showToast(R.string.please_login_onespace);
             }
-        } else if (tool == TOOL_CHANGE_USER) {
+        } else if (tool == TOOL_LOGOUT) {
             if (isLogin()) {
                 loginOutDialog();
             } else {
@@ -232,11 +232,6 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
      */
     private void doLoginOut() {
         OneSpaceService mTransferService = MyApplication.getService();
-        if (mTransferService == null) {
-            ToastHelper.showToast(R.string.app_exception);
-            return;
-        }
-
         mTransferService.notifyUserLogout();
         LoginManage.getInstance().logout();
 
@@ -249,7 +244,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
      * dialog of confirm login out
      */
     private void loginOutDialog() {
-        DialogUtils.showConfirmDialog(getActivity(), R.string.confirm_change_user, R.string.warning_change_user, R.string.confirm,
+        DialogUtils.showConfirmDialog(getActivity(), R.string.confirm_logout, R.string.warning_logout, R.string.confirm,
                 R.string.cancel, new DialogUtils.OnDialogClickListener() {
                     @Override
                     public void onClick(boolean isPositiveBtn) {

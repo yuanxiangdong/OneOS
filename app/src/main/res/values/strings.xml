@@ -221,7 +221,7 @@
     <string name="tool_app">应用管理</string>
     <string name="tool_offline">离线下载</string>
     <string name="tool_power">设备电源</string>
-    <string name="tool_changer_user">切换用户</string>
+    <string name="tool_logout">退出登录</string>
 
     <string name="device_power_off">安全关机</string>
     <string name="cancel_opt_power">取&#160;&#160;消</string>
@@ -234,8 +234,8 @@
     <string name="success_reboot_device">OneSpace重启成功</string>
     <string name="failed_power_off_device">OneSpace关闭失败</string>
     <string name="failed_reboot_device">OneSpace重启失败</string>
-    <string name="confirm_change_user">确认切换用户?</string>
-    <string name="warning_change_user">该操作将关闭相册自动同步功能并取消所有正在上传/下载的任务!</string>
+    <string name="confirm_logout">确认退出登录?</string>
+    <string name="warning_logout">该操作将关闭相册自动同步功能并取消所有正在上传/下载的任务!</string>
 
     <!-- Settings Activity -->
     <string name="title_settings">设置</string>

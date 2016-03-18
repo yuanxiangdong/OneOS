@@ -34,8 +34,8 @@ public class SpinnerView {
 
     public SpinnerView(Context context, int width, int offset) {
         this.context = context;
-        itemList = new ArrayList<String>();
-        iconList = new ArrayList<Integer>();
+        itemList = new ArrayList<>();
+        iconList = new ArrayList<>();
 
         View view = LayoutInflater.from(context).inflate(R.layout.layout_spinner_view, null);
 

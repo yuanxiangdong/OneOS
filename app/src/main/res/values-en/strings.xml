@@ -7,7 +7,7 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="tips">Tips</string>
-    <string name="paste">Past</string>
+    <string name="paste">Paste</string>
     <string name="modify">Apply</string>
     <string name="delete">Delete</string>
     <string name="open">Open</string>
@@ -221,7 +221,7 @@
     <string name="tool_app">App Management</string>
     <string name="tool_offline">Aria Download</string>
     <string name="tool_power">OneSpace Power</string>
-    <string name="tool_changer_user">Switch User</string>
+    <string name="tool_logout">Logout</string>
 
     <string name="device_power_off">Power Off</string>
     <string name="cancel_opt_power">Cancel</string>
@@ -234,8 +234,8 @@
     <string name="success_reboot_device">OneSpace reboot succeed</string>
     <string name="failed_power_off_device">OneSpace shutdown failed</string>
     <string name="failed_reboot_device">OneSpace reboot failed</string>
-    <string name="confirm_change_user">Confirm switch user?</string>
-    <string name="warning_change_user">Auto-Backup/Download/Upload will be canceled if you switch user!</string>
+    <string name="confirm_logout">Confirm Logout?</string>
+    <string name="warning_logout">Auto-Backup/Download/Upload will be canceled if you logout!</string>
 
     <!-- Settings Activity -->
     <string name="title_settings">Settings</string>
