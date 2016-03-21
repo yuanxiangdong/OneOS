@@ -70,24 +70,25 @@ public class MainActivity extends BaseActivity {
         public void onChecked(ImageCheckBox imageView, boolean checked) {
             updateImageCheckBoxGroup(imageView);
 
+            int index = 0;
             switch (imageView.getId()) {
                 case R.id.ib_local:
-                    mCurPageIndex = 0;
+                    index = 0;
                     break;
                 case R.id.ib_cloud:
-                    mCurPageIndex = 1;
+                    index = 1;
                     break;
                 case R.id.ib_transfer:
-                    mCurPageIndex = 2;
+                    index = 2;
                     break;
                 case R.id.ib_tools:
-                    mCurPageIndex = 3;
+                    index = 3;
                     break;
                 default:
                     break;
             }
-            Log.d(TAG, "onCheckedChanged: " + mCurPageIndex);
-            changFragmentByIndex(mCurPageIndex);
+            Log.d(TAG, "onCheckedChanged: " + index);
+            changFragmentByIndex(index);
         }
     };
 
@@ -133,24 +134,25 @@ public class MainActivity extends BaseActivity {
 //            @Override
 //            public void onCheckedChanged(RadioGroup group, int checkedId) {
 //
+//                int index = 0;
 //                switch (checkedId) {
 //                    case R.id.radio_local:
-//                        mCurPageIndex = 0;
+//                        index = 0;
 //                        break;
 //                    case R.id.radio_cloud:
-//                        mCurPageIndex = 1;
+//                        index = 1;
 //                        break;
 //                    case R.id.radio_transfer:
-//                        mCurPageIndex = 2;
+//                        index = 2;
 //                        break;
 //                    case R.id.radio_tool:
-//                        mCurPageIndex = 3;
+//                        index = 3;
 //                        break;
 //                    default:
 //                        break;
 //                }
-//                Log.d(TAG, "onCheckedChanged: " + mCurPageIndex);
-//                changFragmentByIndex(mCurPageIndex);
+//                Log.d(TAG, "onCheckedChanged: " + index);
+//                changFragmentByIndex(index);
 //            }
 //        });
         mNavLayout = (LinearLayout) findViewById(R.id.layout_nav);
@@ -188,14 +190,22 @@ public class MainActivity extends BaseActivity {
     private void changFragmentByIndex(int index) {
         Log.d(TAG, "changFragmentByIndex: " + index);
         try {
-            BaseNavFragment fragment = getFragmentByIndex(mCurPageIndex);
+            BaseNavFragment fragment = getFragmentByIndex(index);
             FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+            if (index > mCurPageIndex) {
+                transaction.setCustomAnimations(R.anim.slide_nav_in_from_right, R.anim.slide_nav_out_to_left);
+            } else if (index < mCurPageIndex) {
+                transaction.setCustomAnimations(R.anim.slide_nav_in_from_left, R.anim.slide_nav_out_to_right);
+            }
+
             if (mCurNavFragment != null && fragment != mCurNavFragment) {
                 mCurNavFragment.onPause();
                 transaction.hide(mCurNavFragment);
             }
 
             mCurNavFragment = fragment;
+            mCurPageIndex = index;
             if (fragment.isAdded()) {
                 if (!fragment.isVisible()) {
                     fragment.onResume();
