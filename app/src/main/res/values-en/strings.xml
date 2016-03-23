@@ -18,7 +18,7 @@
     <string name="network_not_available">The network is not available, please check it!</string>
     <string name="oneos_version_mismatch">Your OneSpace version is too low, please upgrade to OneOS v3.x version！</string>
     <string name="wifi_not_available">The WiFi is not available, please check it!</string>
-    <string name="error_json_exception">The analytical protocol error</string>
+    <string name="error_json_exception">Failed to parse protocol</string>
     <string name="operate_failed">Operation failed</string>
     <string name="app_exception">Application Exception</string>
     <string name="please_login_onespace">Please login OneSpace</string>

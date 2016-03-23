@@ -18,7 +18,7 @@
     <string name="network_not_available">当前网络不可用，请检查网络状态！</string>
     <string name="oneos_version_mismatch">您的OneSpace系统版本过低，请升级到 OneOS v3.x 版本！</string>
     <string name="wifi_not_available">当前WiFi不可用，请检查WiFi状态！</string>
-    <string name="error_json_exception">解析协议出错</string>
+    <string name="error_json_exception">协议解析失败</string>
     <string name="operate_failed">操作失败</string>
     <string name="app_exception">程序异常</string>
     <string name="please_login_onespace">请先登录OneSpace</string>
