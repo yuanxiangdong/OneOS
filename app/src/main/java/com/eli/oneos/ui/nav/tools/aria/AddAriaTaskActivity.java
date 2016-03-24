@@ -114,7 +114,7 @@ public class AddAriaTaskActivity extends BaseActivity implements OnClickListener
             mInfo.setAction(AriaCmd.AriaAction.ADD_TORRENT);
             mInfo.setContent(torrentFilePath);
         } else {
-            ToastHelper.showToast(R.string.offline_download_tips);
+            ToastHelper.showToast(R.string.aria_download_tips);
             return;
         }
 

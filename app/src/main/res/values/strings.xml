@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">OneSpace</string>
+    <string name="upload_to_onespace">上传到OneSpace</string>
 
     <!-- Common String-->
     <string name="title_back">返回</string>
@@ -12,8 +13,6 @@
     <string name="delete">删除</string>
     <string name="open">打开</string>
     <string name="dialog_continue">继续</string>
-    <string name="loading">正在加载&#8230;</string>
-    <string name="all_loaded">已加载全部</string>
     <string name="connection_refused">无法连接到您的设备，请检查设备和网络状态！</string>
     <string name="network_not_available">当前网络不可用，请检查网络状态！</string>
     <string name="oneos_version_mismatch">您的OneSpace系统版本过低，请升级到 OneOS v3.x 版本！</string>
@@ -26,6 +25,10 @@
     <string name="confirm_download_not_wifi">当前非Wi-Fi网络环境，继续下载将产生数据流量!</string>
     <string name="confirm_upload_not_wifi">当前非Wi-Fi网络环境，继续上传将产生数据流量!</string>
     <string name="app_exception_to_exit">异常，正在收集信息，3s后退出...</string>
+    <string name="press_again_to_exit">再按一次退出程序</string>
+    <string name="loading">正在加载&#8230;</string>
+    <string name="all_loaded">已加载全部</string>
+    <string name="failed_get_upload_file">获取上传文件路径失败</string>
 
     <!-- File Operation -->
     <string name="file_type_private">我的文件</string>
@@ -219,7 +222,7 @@
     <string name="tool_sync_contact">通讯录备份</string>
     <string name="tool_sync_sms">短信备份</string>
     <string name="tool_app">应用管理</string>
-    <string name="tool_offline">离线下载</string>
+    <string name="tool_aria">Aria下载</string>
     <string name="tool_power">设备电源</string>
     <string name="tool_logout">退出登录</string>
 
@@ -315,18 +318,18 @@
     <!-- Aria Download Activity -->
     <string name="enter_url_hint">HTTP、FTP 或 Magnet</string>
     <string name="select_torrent">选择Torrent</string>
-    <string name="add_aria_download">添加离线下载任务</string>
+    <string name="add_aria_download">添加Aria下载任务</string>
     <string name="download_to_onespace">下载到OneSpace</string>
     <string name="select_torrent_file">请选择种子文件</string>
     <string name="dir_without_torrent">该目录无种子文件</string>
-    <string name="offline_download_tips">请填写需要下载的文件链接或上传种子文件</string>
-    <string name="offline_download_path_tips">离线下载文件将保存在OneSpace公共目录Download中</string>
+    <string name="aria_download_tips">请填写需要下载的文件链接或上传种子文件</string>
+    <string name="aria_download_path_tips">离线下载文件将保存在OneSpace公共目录Download中</string>
     <string name="confirm_del_active_aria">确定删除该离线下载任务？</string>
     <string name="confirm_del_stopped_aria">确定删除该离线下载记录？</string>
     <string name="aria_task_file_list">文件列表</string>
     <string name="aria_task_details">任务详情</string>
-    <string name="title_aria">离线下载</string>
-    <string name="title_aria_task_details">离线任务详情</string>
+    <string name="title_aria">Aria下载</string>
+    <string name="title_aria_task_details">Aria任务详情</string>
     <string name="save_settings">保存设置</string>
     <string name="aria_global_settings">离线下载设置</string>
     <string name="aria_upload_speed_limit">上传速度限制:</string>

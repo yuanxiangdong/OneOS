@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">OneSpace</string>
+    <string name="upload_to_onespace">Upload to OneSpace</string>
 
     <!-- Common String-->
     <string name="title_back">Back</string>
@@ -26,6 +27,8 @@
     <string name="confirm_download_not_wifi">Confirm download by using non WiFi access!</string>
     <string name="confirm_upload_not_wifi">Confirm upload by using non WiFi access!</string>
     <string name="app_exception_to_exit">crashed, collecting information, exit after 3s...</string>
+    <string name="press_again_to_exit">Press again to exit</string>
+    <string name="failed_get_upload_file">Failed to get upload file path</string>
 
     <!-- File Operation -->
     <string name="file_type_private">My Files</string>
@@ -219,7 +222,7 @@
     <string name="tool_sync_contact">Backup Contacts</string>
     <string name="tool_sync_sms">Backup Short Messages</string>
     <string name="tool_app">App Management</string>
-    <string name="tool_offline">Aria Download</string>
+    <string name="tool_aria">Aria Download</string>
     <string name="tool_power">OneSpace Power</string>
     <string name="tool_logout">Logout</string>
 
@@ -319,8 +322,8 @@
     <string name="download_to_onespace">Download to OneSpace</string>
     <string name="select_torrent_file">Please select torrent file</string>
     <string name="dir_without_torrent">Empty directory</string>
-    <string name="offline_download_tips">Please enter a file link or upload a torrent file</string>
-    <string name="offline_download_path_tips">Aria download files will save on public directory under download</string>
+    <string name="aria_download_tips">Please enter a file link or upload a torrent file</string>
+    <string name="aria_download_path_tips">Aria download files will save on public directory under download</string>
     <string name="confirm_del_active_aria">Delete the Aria download task?</string>
     <string name="confirm_del_stopped_aria">Delete the Aria download history?</string>
     <string name="aria_task_file_list">File List</string>

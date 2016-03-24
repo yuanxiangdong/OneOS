@@ -56,6 +56,7 @@ public class LoginActivity extends BaseActivity {
     private RelativeLayout mUserLayout, mIPLayout;
     private EditText mIPTxt;
 
+    private Intent uploadIntent = null;
     private LoginSession mLoginSession;
     private UserInfo mLastLoginUser;
     private List<UserInfo> mHistoryUserList = new ArrayList<UserInfo>();
@@ -144,6 +145,11 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         initSystemBarStyle();
 
+        Intent intent = getIntent();
+        if (null != intent) {
+            uploadIntent = intent.getParcelableExtra(MainActivity.EXTRA_UPLOAD_INTENT);
+        }
+
         initView();
         initLoginHistory();
     }
@@ -216,7 +222,8 @@ public class LoginActivity extends BaseActivity {
             mUserSpinnerView.dismiss();
         } else {
             if (!EmptyUtils.isEmpty(mHistoryUserList)) {
-                mUserSpinnerView = new SpinnerView(this, view.getWidth(), mUserTxt.getLeft());
+                TextView mPreTxt = (TextView) findViewById(R.id.txt_name);
+                mUserSpinnerView = new SpinnerView(this, view.getWidth(), mPreTxt.getWidth());
                 ArrayList<String> users = new ArrayList<>();
                 ArrayList<Integer> icons = new ArrayList<>();
                 for (UserInfo info : mHistoryUserList) {
@@ -387,6 +394,9 @@ public class LoginActivity extends BaseActivity {
 
     private void gotoMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
+        if (null != uploadIntent) {
+            intent.putExtra(MainActivity.EXTRA_UPLOAD_INTENT, uploadIntent);
+        }
         startActivity(intent);
         finish();
     }

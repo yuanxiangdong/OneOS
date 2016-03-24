@@ -34,112 +34,117 @@
         </activity>
         <activity
             android:name="com.eli.oneos.ui.MainActivity"
-            android:label="@string/app_name"
+            android:label="@string/upload_to_onespace"
+            android:launchMode="singleInstance"
             android:theme="@style/FullBleedTheme"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.eli.oneos.ui.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name="com.eli.oneos.ui.PictureViewActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.SettingsActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name="com.eli.oneos.ui.nav.tools.AboutActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name="com.eli.oneos.ui.nav.tools.ShowSpaceActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name="com.eli.oneos.ui.nav.tools.WebViewActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.app.AppsActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.aria.AriaActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.aria.AriaDetailsActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.aria.SelectTorrentActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.aria.AddAriaTaskActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.BackupPhotoActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.BackupFileActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.BackupFileListActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.AddBackupFileActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.BackupInfoActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity
             android:name=".ui.nav.tools.SetDownloadPathActivity"
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
 
         <service android:name=".service.OneSpaceService" />
     </application>

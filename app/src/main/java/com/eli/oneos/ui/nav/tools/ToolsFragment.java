@@ -43,7 +43,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     private static final int TOOL_SYNC_CONTACT = R.string.tool_sync_contact;
     private static final int TOOL_SYNC_SMS = R.string.tool_sync_sms;
     private static final int TOOL_APP = R.string.tool_app;
-    private static final int TOOL_OFFLINE = R.string.tool_offline;
+    private static final int TOOL_OFFLINE = R.string.tool_aria;
     private static final int TOOL_POWER = R.string.tool_power;
     private static final int TOOL_LOGOUT = R.string.tool_logout;
     private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_SETTING, TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_OFFLINE, TOOL_APP,
