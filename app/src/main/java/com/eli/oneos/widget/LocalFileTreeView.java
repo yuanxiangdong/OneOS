@@ -27,7 +27,6 @@ import com.eli.oneos.model.phone.comp.FileNameComparator;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.SDCardUtils;
-import com.eli.oneos.utils.Utils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -49,10 +48,6 @@ public class LocalFileTreeView {
     public PopupListAdapter mAdapter;
     private FilePathPanel mPathPanel;
     private OnPasteFileListener listener;
-    private int pathMaxWidth = 0, pathMinWidth = 0;
-    private String mPrivateRootDirShownName = null;
-    private String mPublicRootDirShownName = null;
-    private String mPrefixShownName = null;
     private ArrayList<File> mSDCardList = new ArrayList<>();
 
     public LocalFileTreeView(BaseActivity context, int mTitleID, int mPositiveID) {
@@ -64,12 +59,6 @@ public class LocalFileTreeView {
         if (null == mSDCardList || mSDCardList.size() == 0) {
             DialogUtils.showNotifyDialog(mActivity, R.string.tips, R.string.tips_no_sd_card, R.string.ok, null);
         }
-
-        pathMaxWidth = Utils.dipToPx(120);
-        pathMinWidth = Utils.dipToPx(40);
-        mPrivateRootDirShownName = context.getResources().getString(R.string.root_dir_name_private);
-        mPublicRootDirShownName = context.getResources().getString(R.string.root_dir_name_public);
-        mPrefixShownName = context.getResources().getString(R.string.root_dir_all);
 
         TextView mTitleTxt = (TextView) view.findViewById(R.id.txt_title);
         mTitleTxt.setText(context.getResources().getString(mTitleID));
@@ -133,6 +122,7 @@ public class LocalFileTreeView {
                 }
             }
         });
+        mPathPanel.showOrderButton(false);
         mPathPanel.showNewFolderButton(false);
 
         TextView mEmptyView = (TextView) view.findViewById(R.id.txt_empty);

@@ -27,25 +27,6 @@ public class CopyFileAPI {
         COPY_ILLEGAL
     }
 
-    public CopyFileException copy(List<LocalFile> copyList, String toPath) {
-        if (null == copyList || null == toPath) {
-            return CopyFileException.FILE_IS_NULL;
-        }
-
-        CopyFileException ex = null;
-        for (LocalFile lf : copyList) {
-            File srcFile = lf.getFile();
-            ex = checkCopy(srcFile, toPath);
-            if (ex != null) {
-                break;
-            }
-
-            ex = copy(srcFile, toPath);
-        }
-
-        return ex;
-    }
-
     private CopyFileException doCopyFile(File srcFile, File toFile) {
         if (toFile.exists()) {
             Log.e(TAG, "target file is exist");
@@ -95,27 +76,8 @@ public class CopyFileAPI {
         return ret;
     }
 
-    private CopyFileException copy(File srcFile, String toPath) {
-        if (srcFile.isDirectory()) {
-            File[] subFiles = srcFile.listFiles();
-            if (null != subFiles) {
-                for (File f : subFiles) {
-                    CopyFileException ex = copy(f, toPath);
-                    if (ex != null) {
-                        return ex;
-                    }
-                }
-            }
-        } else {
-            return doCopyFile(srcFile, new File(toPath, srcFile.getName()));
-        }
-
-        return null;
-    }
-
-
-    private CopyFileException checkCopy(File srcFile, String toPath) {
-        if (null == srcFile || null == toPath) {
+    private CopyFileException checkCopy(File srcFile, File toDir) {
+        if (null == srcFile || null == toDir) {
             Log.e(TAG, "operate file is null");
             return CopyFileException.FILE_IS_NULL; // file is null
         }
@@ -128,7 +90,6 @@ public class CopyFileAPI {
             return CopyFileException.CAN_NOT_READ;
         }
 
-        File toDir = new File(toPath);
         if (!toDir.exists()) {
             if (!toDir.mkdirs()) {
                 Log.e(TAG, "new folder failed");
@@ -140,9 +101,49 @@ public class CopyFileAPI {
             return CopyFileException.CAN_NOT_WRITE;
         }
 
-        if (toPath.contains(srcFile.getAbsolutePath())) {
+        if (toDir.getAbsolutePath().contains(srcFile.getAbsolutePath())) {
             Log.e(TAG, "copy action illegal");
             return CopyFileException.COPY_ILLEGAL;
+        }
+
+        return null;
+    }
+
+    public CopyFileException copy(List<LocalFile> copyList, String toPath) {
+        if (null == copyList || null == toPath) {
+            return CopyFileException.FILE_IS_NULL;
+        }
+
+        File toDir = new File(toPath);
+        CopyFileException ex = null;
+        for (LocalFile lf : copyList) {
+            File srcFile = lf.getFile();
+            ex = checkCopy(srcFile, toDir);
+            if (ex != null) {
+                break;
+            }
+
+            ex = copy(srcFile, toDir);
+        }
+
+        return ex;
+    }
+
+    private CopyFileException copy(File srcFile, File toDir) {
+        if (srcFile.isDirectory()) {
+            toDir = new File(toDir, srcFile.getName());
+            toDir.mkdirs();
+            File[] subFiles = srcFile.listFiles();
+            if (null != subFiles) {
+                for (File f : subFiles) {
+                    CopyFileException ex = copy(f, toDir);
+                    if (ex != null) {
+                        return ex;
+                    }
+                }
+            }
+        } else {
+            return doCopyFile(srcFile, new File(toDir, srcFile.getName()));
         }
 
         return null;

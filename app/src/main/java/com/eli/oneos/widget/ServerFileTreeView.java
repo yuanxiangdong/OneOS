@@ -30,7 +30,6 @@ import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;
-import com.eli.oneos.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +48,6 @@ public class ServerFileTreeView {
     private FilePathPanel mPathPanel;
     private OnPasteFileListener listener;
     private LoginSession mLoginSession;
-    private int pathMaxWidth = 0, pathMinWidth = 0;
     private String mPrivateRootDirShownName = null;
     private String mPublicRootDirShownName = null;
     private String mPrefixShownName = null;
@@ -60,8 +58,6 @@ public class ServerFileTreeView {
 
         View view = LayoutInflater.from(context).inflate(R.layout.layout_popup_file_tree, null);
 
-        pathMaxWidth = Utils.dipToPx(120);
-        pathMinWidth = Utils.dipToPx(40);
         mPrivateRootDirShownName = context.getResources().getString(R.string.root_dir_name_private);
         mPublicRootDirShownName = context.getResources().getString(R.string.root_dir_name_public);
         mPrefixShownName = context.getResources().getString(R.string.root_dir_all);
@@ -115,6 +111,7 @@ public class ServerFileTreeView {
                 }
             }
         });
+        mPathPanel.showOrderButton(false);
         mPathPanel.showNewFolderButton(false);
 
         TextView mEmptyView = (TextView) view.findViewById(R.id.txt_empty);

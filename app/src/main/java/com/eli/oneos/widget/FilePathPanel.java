@@ -29,7 +29,7 @@ public class FilePathPanel extends RelativeLayout {
 
     private Context mContext;
     private LinearLayout mPathLayout;
-    private View mLineView;
+    private View mRightLineView, mLeftLineView;
     private ImageButton mNewFolderBtn, mOrderBtn;
     private OnPathPanelClickListener mListener;
 
@@ -62,7 +62,7 @@ public class FilePathPanel extends RelativeLayout {
         pathBtnPadding = Utils.dipToPx(5);
 
         mPathLayout = (LinearLayout) view.findViewById(R.id.layout_file_path);
-        mLineView = findViewById(R.id.view_path_mid_line);
+        mRightLineView = findViewById(R.id.view_path_mid_line);
         mNewFolderBtn = (ImageButton) findViewById(R.id.ibtn_new_folder);
         mNewFolderBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -72,6 +72,7 @@ public class FilePathPanel extends RelativeLayout {
                 }
             }
         });
+        mLeftLineView = findViewById(R.id.view_order_line);
         mOrderBtn = (ImageButton) findViewById(R.id.ibtn_order);
         mOrderBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -118,7 +119,12 @@ public class FilePathPanel extends RelativeLayout {
 
     public void showNewFolderButton(boolean isShown) {
         mNewFolderBtn.setVisibility(isShown ? View.VISIBLE : View.GONE);
-        mLineView.setVisibility(isShown ? View.VISIBLE : View.GONE);
+        mRightLineView.setVisibility(isShown ? View.VISIBLE : View.GONE);
+    }
+
+    public void showOrderButton(boolean isShown) {
+        mOrderBtn.setVisibility(isShown ? View.VISIBLE : View.GONE);
+        mLeftLineView.setVisibility(isShown ? View.VISIBLE : View.GONE);
     }
 
     public void setOnPathPanelClickListener(OnPathPanelClickListener listener) {
