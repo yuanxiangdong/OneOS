@@ -45,11 +45,12 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     private static final int TOOL_APP = R.string.tool_app;
     private static final int TOOL_OFFLINE = R.string.tool_aria;
     private static final int TOOL_POWER = R.string.tool_power;
+    private static final int TOOL_USER_MANAGEMENT = R.string.tool_user_management;
     private static final int TOOL_LOGOUT = R.string.tool_logout;
     private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_SETTING, TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_OFFLINE, TOOL_APP,
-            TOOL_POWER, TOOL_LOGOUT};
+            TOOL_USER_MANAGEMENT, TOOL_POWER, TOOL_LOGOUT};
     private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_setting, R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_backup_file, R.drawable.icon_tools_contact,
-            R.drawable.icon_tools_sms, R.drawable.icon_tools_offline, R.drawable.icon_tools_app, R.drawable.icon_tools_power,
+            R.drawable.icon_tools_sms, R.drawable.icon_tools_offline, R.drawable.icon_tools_app, R.drawable.icon_tools_user_management, R.drawable.icon_tools_power,
             R.drawable.icon_tools_change_user};
 
     private StickListView mListView;
@@ -134,6 +135,12 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
                 intent = new Intent(getActivity(), BackupFileActivity.class);
             } else {
                 ToastHelper.showToast(R.string.please_login_onespace);
+            }
+        } else if (tool == TOOL_USER_MANAGEMENT) {
+            if (isLogin() && LoginManage.getInstance().getLoginSession().isAdmin()) {
+                intent = new Intent(getActivity(), UserManageActivity.class);
+            } else {
+                DialogUtils.showNotifyDialog(getActivity(), R.string.tips, R.string.please_login_onespace_with_admin, R.string.ok, null);
             }
         } else if (tool == TOOL_POWER) {
             if (isLogin() && LoginManage.getInstance().getLoginSession().isAdmin()) {

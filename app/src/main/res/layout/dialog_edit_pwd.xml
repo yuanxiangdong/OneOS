@@ -23,10 +23,10 @@
             android:id="@+id/txt_tips"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:gravity="center"
             android:textColor="@color/red"
-            android:textSize="@dimen/text_size_sm"
-            android:layout_marginTop="15dp" />
+            android:textSize="@dimen/text_size_sm" />
 
         <EditText
             android:id="@+id/et_pwd"
@@ -35,8 +35,8 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_stroke_top_radius_light_gray"
             android:gravity="center"
-            android:inputType="textPassword"
             android:padding="8dp"
+            android:singleLine="true"
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_size_mid" />
 
@@ -47,8 +47,8 @@
             android:layout_marginTop="@dimen/common_size_stroke_shrink"
             android:background="@drawable/bg_stroke_bottom_radius_light_gray"
             android:gravity="center"
-            android:inputType="textPassword"
             android:padding="8dp"
+            android:singleLine="true"
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_size_mid" />
     </LinearLayout>

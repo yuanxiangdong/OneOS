@@ -145,6 +145,11 @@
             android:label="@string/app_name"
             android:theme="@style/FullBleedTheme"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
+        <activity
+            android:name=".ui.nav.tools.UserManageActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullBleedTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
 
         <service android:name=".service.OneSpaceService" />
     </application>

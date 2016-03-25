@@ -10,6 +10,9 @@
     <string name="tips">提示</string>
     <string name="paste">粘贴</string>
     <string name="modify">修改</string>
+    <string name="modifying">正在修改&#8230;</string>
+    <string name="modify_succeed">修改成功</string>
+    <string name="modify_failed">修改失败</string>
     <string name="delete">删除</string>
     <string name="open">打开</string>
     <string name="dialog_continue">继续</string>
@@ -224,6 +227,7 @@
     <string name="tool_app">应用管理</string>
     <string name="tool_aria">Aria下载</string>
     <string name="tool_power">设备电源</string>
+    <string name="tool_user_management">用户管理</string>
     <string name="tool_logout">退出登录</string>
 
     <string name="device_power_off">安全关机</string>
@@ -433,4 +437,29 @@
     <string name="download_path_not_set">尚未设置</string>
     <string name="error_path_without_write_permission">无法将此目录设置为下载目录</string>
 
+    <!-- User Management -->
+    <string name="title_user_management">用户管理</string>
+    <string name="getting_user_list">获取用户列表&#8230;</string>
+    <string name="get_space_failed">空间获取失败</string>
+    <string name="user_manage_delete">删除</string>
+    <string name="user_manage_password">密码</string>
+    <string name="user_manage_limit">限额</string>
+    <string name="delete_user">删除用户</string>
+    <string name="warning_delete_user">警告：此操作将彻底删除此用户的所有数据</string>
+    <string name="deleting_user">正在删除&#8230;</string>
+    <string name="delete_user_succeed">删除成功</string>
+    <string name="delete_user_failed">删除失败</string>
+    <string name="add_user">添加用户</string>
+    <string name="error_user_name_length">用户名需要至少3个字符</string>
+    <string name="adding_user">正在添加&#8230;</string>
+    <string name="add_user_succeed">添加成功</string>
+    <string name="add_user_failed">添加失败</string>
+    <string name="modify_user_space">修改限额</string>
+    <string name="tips_modify_user_space">请输入限额大小（单位：GB）</string>
+    <string name="tips_invalid_user_space">请输入有效的限额值</string>
+    <string name="reset_user_pwd">重置密码</string>
+    <string name="tips_reset_user_pwd">重置用户的密码为：123456</string>
+    <string name="resetting">正在重置&#8230;</string>
+    <string name="reset_succeed">重置成功</string>
+    <string name="reset_failed">重置失败</string>
 </resources>

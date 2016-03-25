@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,6 +100,19 @@ public class DialogUtils {
         mDialog.show();
     }
 
+    public static void showWarningDialog(Activity activity, int titleId, int contentId,
+                                         int positiveId, int negativeId, final OnDialogClickListener mListener) {
+        try {
+            String title = titleId > 0 ? activity.getResources().getString(titleId) : null;
+            String content = contentId > 0 ? activity.getResources().getString(contentId) : null;
+            String positive = positiveId > 0 ? activity.getResources().getString(positiveId) : null;
+            String negative = negativeId > 0 ? activity.getResources().getString(negativeId) : null;
+            showConfirmDialog(activity, true, title, content, positive, negative, mListener);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Show customized dialog, parameter determines the dialog UI
      *
@@ -115,7 +129,7 @@ public class DialogUtils {
             String content = contentId > 0 ? activity.getResources().getString(contentId) : null;
             String positive = positiveId > 0 ? activity.getResources().getString(positiveId) : null;
             String negative = negativeId > 0 ? activity.getResources().getString(negativeId) : null;
-            showConfirmDialog(activity, title, content, positive, negative, mListener);
+            showConfirmDialog(activity, false, title, content, positive, negative, mListener);
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
@@ -132,6 +146,12 @@ public class DialogUtils {
      */
     public static void showConfirmDialog(Activity activity, String titleTxt, String contentTxt,
                                          String positiveTxt, String negativeTxt, final OnDialogClickListener mListener) {
+        showConfirmDialog(activity, false, titleTxt, contentTxt, positiveTxt, negativeTxt, mListener);
+    }
+
+
+    private static void showConfirmDialog(Activity activity, boolean warning, String titleTxt, String contentTxt,
+                                          String positiveTxt, String negativeTxt, final OnDialogClickListener mListener) {
         if (activity == null || (contentTxt == null && positiveTxt == null)) {
             Log.e(TAG, "activity or dialog content is null");
             return;
@@ -156,6 +176,9 @@ public class DialogUtils {
         if (contentTxt != null) {
             contentTextView.setText(contentTxt);
             contentTextView.setVisibility(View.VISIBLE);
+            if (warning) {
+                contentTextView.setTextColor(activity.getResources().getColor(R.color.red));
+            }
         }
 
         if (positiveTxt != null) {
@@ -296,6 +319,67 @@ public class DialogUtils {
         mDialog.show();
     }
 
+    public static void showAddUserPwdDialog(final Activity activity, int titleId, int hintId, int confirmHintId,
+                                            final int posId, int negId, final OnEditDoubleDialogClickListener mListener) {
+        if (activity == null) {
+            Log.e(TAG, "activity or dialog content is null");
+            return;
+        }
+
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_edit_pwd, null);
+        mDialog = new Dialog(activity, R.style.DialogTheme);
+        TextView titleTextView = (TextView) dialogView.findViewById(R.id.txt_title);
+        TextView tipsTextView = (TextView) dialogView.findViewById(R.id.txt_tips);
+        final EditText userEditText = (EditText) dialogView.findViewById(R.id.et_pwd);
+        final EditText pwdEditText = (EditText) dialogView.findViewById(R.id.et_pwd_confirm);
+
+        titleTextView.setText(titleId);
+        tipsTextView.setVisibility(View.GONE);
+        userEditText.setHint(hintId);
+        InputMethodUtils.showKeyboard(activity, userEditText, 200);
+        pwdEditText.setHint(confirmHintId);
+
+        Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
+        positiveBtn.setText(posId);
+        positiveBtn.setVisibility(View.VISIBLE);
+        positiveBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                String pwd = userEditText.getText().toString();
+                if (EmptyUtils.isEmpty(pwd)) {
+                    AnimUtils.sharkEditText(activity, userEditText);
+                    userEditText.requestFocus();
+                    return;
+                }
+                String cfPwd = pwdEditText.getText().toString();
+                if (EmptyUtils.isEmpty(cfPwd)) {
+                    AnimUtils.sharkEditText(activity, pwdEditText);
+                    pwdEditText.requestFocus();
+                    return;
+                }
+
+                if (mListener != null) {
+                    mListener.onClick(true, userEditText, pwdEditText);
+                }
+            }
+        });
+
+        Button negativeBtn = (Button) dialogView.findViewById(R.id.negative);
+        negativeBtn.setText(negId);
+        negativeBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onClick(false, userEditText, pwdEditText);
+                }
+                mDialog.dismiss();
+            }
+        });
+
+        mDialog.setContentView(dialogView);
+        mDialog.setCancelable(false);
+        mDialog.show();
+    }
+
     public static void showEditPwdDialog(final Activity activity, int titleId, int tipsId, int hintId, int confirmHintId,
                                          final int posId, int negId, final OnEditDialogClickListener mListener) {
         if (activity == null) {
@@ -313,9 +397,11 @@ public class DialogUtils {
 
         titleTextView.setText(titleId);
         tipsTextView.setText(tipsId);
+        pwdEditText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         pwdEditText.setHint(hintId);
         InputMethodUtils.showKeyboard(activity, pwdEditText, 200);
         confirmPwdEditText.setHint(confirmHintId);
+        confirmPwdEditText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
         positiveBtn.setText(posId);
@@ -486,7 +572,11 @@ public class DialogUtils {
     }
 
     public interface OnEditDialogClickListener {
-        void onClick(boolean isPositiveBtn, EditText mContentEditText);
+        void onClick(boolean isPositiveBtn, EditText mEditText);
+    }
+
+    public interface OnEditDoubleDialogClickListener {
+        void onClick(boolean isPositiveBtn, EditText mEditText1, EditText mEditText2);
     }
 
     private static class DialogListAdapter extends BaseAdapter {

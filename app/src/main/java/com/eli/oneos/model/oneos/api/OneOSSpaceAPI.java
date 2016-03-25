@@ -35,6 +35,11 @@ public class OneOSSpaceAPI extends OneOSBaseAPI {
         this.listener = listener;
     }
 
+    public void query(String username) {
+        this.username = username;
+        query(false);
+    }
+
     public void query(final boolean isOneOSSpace) {
         AjaxParams params = new AjaxParams();
         if (isOneOSSpace) {
