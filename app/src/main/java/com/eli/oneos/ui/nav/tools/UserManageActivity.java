@@ -1,9 +1,14 @@
 package com.eli.oneos.ui.nav.tools;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.OneOSUser;
@@ -17,6 +22,7 @@ import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
+import com.eli.oneos.utils.InputMethodUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.SwipeListView;
 import com.eli.oneos.widget.TitleBackLayout;
@@ -127,44 +133,71 @@ public class UserManageActivity extends BaseActivity {
     }
 
     private void showChangedSpaceDialog(final OneOSUser user) {
-        DialogUtils.showEditDialog(this, R.string.modify_user_space, R.string.tips_modify_user_space, 0, R.string.modify,
-                R.string.cancel, new DialogUtils.OnEditDialogClickListener() {
-                    @Override
-                    public void onClick(boolean isPositiveBtn, EditText mEditText) {
-                        String space = mEditText.getText().toString();
-                        if (EmptyUtils.isEmpty(space)) {
-                            AnimUtils.sharkEditText(UserManageActivity.this, mEditText);
-                        } else {
-                            try {
-                                long s = Integer.valueOf(space);
-                                OneOSUserManageAPI manageAPI = new OneOSUserManageAPI(mLoginSession);
-                                manageAPI.setOnUserManageListener(new OneOSUserManageAPI.OnUserManageListener() {
-                                    @Override
-                                    public void onStart(String url) {
-                                        showLoading(R.string.modifying);
-                                    }
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_edit_space, null);
+        final Dialog mDialog = new Dialog(this, R.style.DialogTheme);
+        TextView mTitleTxt = (TextView) dialogView.findViewById(R.id.txt_title);
+        mTitleTxt.setText(R.string.modify_user_space);
+        final EditText mEditText = (EditText) dialogView.findViewById(R.id.et_content);
+        mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        mEditText.setHint(R.string.tips_modify_user_space);
+        int space = (int) (user.getSpace() / 1024 / 1024 / 1024);
+        if (user.getSpace() > 0) {
+            mEditText.setText(String.valueOf(space));
+            mEditText.setSelection(0, mEditText.length());
+        }
+        InputMethodUtils.showKeyboard(this, mEditText, 200);
 
-                                    @Override
-                                    public void onSuccess(String url, String cmd) {
-                                        showTipView(R.string.modify_succeed, true);
-                                        getUserList();
-                                    }
-
-                                    @Override
-                                    public void onFailure(String url, int errorNo, String errorMsg) {
-                                        showTipView(R.string.modify_failed, false);
-                                    }
-                                });
-                                manageAPI.chspace(user.getName(), s);
-                                DialogUtils.dismiss();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                ToastHelper.showToast(R.string.tips_invalid_user_space);
+        Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
+        positiveBtn.setText(R.string.modify);
+        positiveBtn.setVisibility(View.VISIBLE);
+        positiveBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                String space = mEditText.getText().toString();
+                if (EmptyUtils.isEmpty(space)) {
+                    AnimUtils.sharkEditText(UserManageActivity.this, mEditText);
+                } else {
+                    try {
+                        long s = Integer.valueOf(space);
+                        OneOSUserManageAPI manageAPI = new OneOSUserManageAPI(mLoginSession);
+                        manageAPI.setOnUserManageListener(new OneOSUserManageAPI.OnUserManageListener() {
+                            @Override
+                            public void onStart(String url) {
+                                showLoading(R.string.modifying);
                             }
 
-                        }
+                            @Override
+                            public void onSuccess(String url, String cmd) {
+                                showTipView(R.string.modify_succeed, true);
+                                getUserList();
+                            }
+
+                            @Override
+                            public void onFailure(String url, int errorNo, String errorMsg) {
+                                showTipView(R.string.modify_failed, false);
+                            }
+                        });
+                        manageAPI.chspace(user.getName(), s);
+                        mDialog.dismiss();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ToastHelper.showToast(R.string.tips_invalid_user_space);
                     }
-                });
+                }
+            }
+        });
+
+        Button negativeBtn = (Button) dialogView.findViewById(R.id.negative);
+        negativeBtn.setText(R.string.cancel);
+        negativeBtn.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                mDialog.dismiss();
+            }
+        });
+
+        mDialog.setContentView(dialogView);
+        mDialog.setCancelable(false);
+        mDialog.show();
     }
 
     private void showAddUserDialog() {

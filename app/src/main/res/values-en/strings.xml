@@ -444,6 +444,7 @@
     <string name="user_manage_delete">Delete</string>
     <string name="user_manage_password">Password</string>
     <string name="user_manage_limit">Limit</string>
+    <string name="unlimited">unlimited</string>
     <string name="delete_user">Delete User</string>
     <string name="warning_delete_user">Warning：This will completely remove all data of this user</string>
     <string name="deleting_user">Deleting user&#8230;</string>
@@ -455,7 +456,7 @@
     <string name="add_user_succeed">Add succeed</string>
     <string name="add_user_failed">Add failed</string>
     <string name="modify_user_space">Modify User Space</string>
-    <string name="tips_modify_user_space">Please enter user space (Unit：GB)</string>
+    <string name="tips_modify_user_space">Please enter user space</string>
     <string name="tips_invalid_user_space">Please enter a valid limit space</string>
     <string name="reset_user_pwd">Reset Password</string>
     <string name="tips_reset_user_pwd">Reset user password to 123456</string>

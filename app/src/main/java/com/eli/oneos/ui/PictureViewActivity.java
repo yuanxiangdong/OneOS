@@ -12,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -33,7 +32,6 @@ public class PictureViewActivity extends Activity {
     private ArrayList<File> mLocalPicList = new ArrayList<>();
 
     protected LoginSession mLoginSession = null;
-    private MyApplication mApplication = null;
     private TextView mCurTxt, mTotalTxt;
     private HttpBitmap httpBitmap;
     private RelativeLayout mTitleLayout;

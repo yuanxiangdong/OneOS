@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class UserAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
+    private Context context;
     private ArrayList<OneOSUser> mOneOSUserList = new ArrayList<>();
     private int rightWidth = 0;
     private OnClickRightListener mListener;
@@ -34,6 +35,7 @@ public class UserAdapter extends BaseAdapter {
     };
 
     public UserAdapter(Context context, ArrayList<OneOSUser> mOneOSUsers, int rightWidth) {
+        this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mOneOSUserList = mOneOSUsers;
         this.rightWidth = rightWidth;
@@ -119,7 +121,7 @@ public class UserAdapter extends BaseAdapter {
         if (user.getSpace() == user.getUsed() && user.getUsed() == -1) {
             holder.mSpaceTxt.setText(R.string.get_space_failed);
         } else if (user.getSpace() == 0) {
-            holder.mSpaceTxt.setText(FileUtils.fmtFileSize(user.getUsed()));
+            holder.mSpaceTxt.setText(FileUtils.fmtFileSize(user.getUsed()) + " / " + context.getResources().getString(R.string.unlimited));
         } else {
             holder.mSpaceTxt.setText(FileUtils.fmtFileSize(user.getUsed()) + " / " + FileUtils.fmtFileSize(user.getSpace()));
             holder.mProgressBar.setProgress((int) (user.getUsed() * 100 / user.getSpace()));
