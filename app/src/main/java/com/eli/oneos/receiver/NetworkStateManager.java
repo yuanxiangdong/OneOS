@@ -43,6 +43,10 @@ public class NetworkStateManager {
         return NetworkStateManager.INSTANCE;
     }
 
+    public static void onDestroy() {
+        NetworkStateManager.INSTANCE.unregisterNetworkReceiver();
+    }
+
     private void registerNetworkReceiver() {
         Context context = MyApplication.getAppContext();
         IntentFilter filter = new IntentFilter();
@@ -50,9 +54,11 @@ public class NetworkStateManager {
         context.registerReceiver(mNetworkReceiver, filter);
     }
 
-    public void unregisterNetworkReceiver() {
-        Context context = MyApplication.getAppContext();
-        context.unregisterReceiver(mNetworkReceiver);
+    private void unregisterNetworkReceiver() {
+        if (null != mNetworkReceiver) {
+            Context context = MyApplication.getAppContext();
+            context.unregisterReceiver(mNetworkReceiver);
+        }
     }
 
     public void addNetworkStateChangedListener(OnNetworkStateChangedListener listener) {

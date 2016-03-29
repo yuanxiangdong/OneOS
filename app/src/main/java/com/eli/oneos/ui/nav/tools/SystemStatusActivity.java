@@ -1,6 +1,7 @@
 package com.eli.oneos.ui.nav.tools;
 
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
@@ -8,7 +9,6 @@ import com.eli.oneos.model.oneos.api.OneOSSystemInfoAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.ui.BaseActivity;
-import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.widget.TitleBackLayout;
 
 import org.json.JSONObject;
@@ -30,7 +30,7 @@ import lecho.lib.hellocharts.view.LineChartView;
 public class SystemStatusActivity extends BaseActivity {
     private static final String TAG = SystemStatusActivity.class.getSimpleName();
     private static final int MAX_SHOW_COUNT = 10;
-    private static final long MB = 1024 * 1024;
+    private static final long MB_IN_BYTES = 1024 * 1024;
 
     private TitleBackLayout mTitleLayout;
     private LineChartView mCPUChartView, mMemoryChartView, mEth1ChartView, mEth2ChartView;
@@ -279,7 +279,8 @@ public class SystemStatusActivity extends BaseActivity {
                         mMemoryQueue.remove(MAX_SHOW_COUNT - 1);
                         mMemoryQueue.add(0, load);
                         mMemoryLabelTxt.setText(String.format(getResources().getString(R.string.fmt_label_memory),
-                                FileUtils.fmtFileSize(total), (load + "%"), FileUtils.fmtFileSize(free)));
+                                Formatter.formatShortFileSize(SystemStatusActivity.this, total), (load + "%"),
+                                Formatter.formatShortFileSize(SystemStatusActivity.this, free)));
                         updateMemoryChartData();
                     } else if (json.has("net")) {
                         json = json.getJSONObject("net");
@@ -292,11 +293,12 @@ public class SystemStatusActivity extends BaseActivity {
                                 crx = crx > 0 ? crx : 0;
                                 ctx = ctx > 0 ? ctx : 0;
                                 mEth1ReceiveQueue.remove(MAX_SHOW_COUNT - 1);
-                                mEth1ReceiveQueue.add(0, (int) (crx / MB));
+                                mEth1ReceiveQueue.add(0, (int) (crx / MB_IN_BYTES));
                                 mEth1SendQueue.remove(MAX_SHOW_COUNT - 1);
-                                mEth1SendQueue.add(0, (int) (ctx / MB));
+                                mEth1SendQueue.add(0, (int) (ctx / MB_IN_BYTES));
                                 mEth1LabelTxt.setText(String.format(getResources().getString(R.string.fmt_label_eth), "ETH1",
-                                        FileUtils.fmtFileSize(crx), FileUtils.fmtFileSize(ctx)));
+                                        Formatter.formatShortFileSize(SystemStatusActivity.this, crx),
+                                        Formatter.formatShortFileSize(SystemStatusActivity.this, ctx)));
                                 updateEth1ChartData();
                             }
                             lastEth1Rx = rx;
@@ -310,11 +312,12 @@ public class SystemStatusActivity extends BaseActivity {
                                 crx = crx > 0 ? crx : 0;
                                 ctx = ctx > 0 ? ctx : 0;
                                 mEth2ReceiveQueue.remove(MAX_SHOW_COUNT - 1);
-                                mEth2ReceiveQueue.add(0, (int) (crx / MB));
+                                mEth2ReceiveQueue.add(0, (int) (crx / MB_IN_BYTES));
                                 mEth2SendQueue.remove(MAX_SHOW_COUNT - 1);
-                                mEth2SendQueue.add(0, (int) (ctx / MB));
+                                mEth2SendQueue.add(0, (int) (ctx / MB_IN_BYTES));
                                 mEth2LabelTxt.setText(String.format(getResources().getString(R.string.fmt_label_eth), "ETH2",
-                                        FileUtils.fmtFileSize(crx), FileUtils.fmtFileSize(ctx)));
+                                        Formatter.formatShortFileSize(SystemStatusActivity.this, crx),
+                                        Formatter.formatShortFileSize(SystemStatusActivity.this, ctx)));
                                 updateEth2ChartData();
                             }
                             lastEth2Rx = rx;

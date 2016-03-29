@@ -4,15 +4,11 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/title_tools"
-        android:layout_width="fill_parent"
+    <com.eli.oneos.widget.TitleBackLayout
+        android:id="@+id/layout_title"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/layout_title_height"
-        android:background="@color/primary"
-        android:gravity="center"
-        android:text="@string/nav_title_tool"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_size_title" />
+        android:background="@color/bg_title" />
 
     <com.eli.oneos.widget.ReboundScrollView
         android:layout_width="match_parent"

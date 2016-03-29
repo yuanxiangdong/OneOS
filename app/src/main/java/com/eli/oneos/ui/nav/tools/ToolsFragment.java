@@ -29,6 +29,7 @@ import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.PowerPopupView;
 import com.eli.oneos.widget.StickListView;
+import com.eli.oneos.widget.TitleBackLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +49,9 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     private static final int TOOL_USER_MANAGEMENT = R.string.tool_user_management;
     private static final int TOOL_SYSTEM_STATUS = R.string.tool_system_status;
     private static final int TOOL_LOGOUT = R.string.tool_logout;
-    private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_SETTING, TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_OFFLINE, TOOL_APP,
+    private static final int[] TOOL_TITLE_M3X = new int[]{/*TOOL_SETTING, */TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_OFFLINE, TOOL_APP,
             TOOL_USER_MANAGEMENT, TOOL_SYSTEM_STATUS, TOOL_POWER, TOOL_LOGOUT};
-    private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_setting, R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_backup_file, R.drawable.icon_tools_contact,
+    private static final int[] TOOL_ICON_M3X = new int[]{/*R.drawable.icon_tools_setting, */R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_backup_file, R.drawable.icon_tools_contact,
             R.drawable.icon_tools_sms, R.drawable.icon_tools_offline, R.drawable.icon_tools_app, R.drawable.icon_tools_user_management, R.drawable.icon_tools_system_status, R.drawable.icon_tools_power,
             R.drawable.icon_tools_change_user};
 
@@ -92,6 +93,19 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     }
 
     private void initViews(View view) {
+        TitleBackLayout mTitleLayout = (TitleBackLayout) view.findViewById(R.id.layout_title);
+        mTitleLayout.setBackVisible(false);
+        mTitleLayout.setTitle(R.string.nav_title_tool);
+        mTitleLayout.setRightButtonVisible(View.VISIBLE);
+        mTitleLayout.setRightButton(R.drawable.ic_title_settings);
+        mTitleLayout.setOnRightClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         mListView = (StickListView) view.findViewById(R.id.listview_tools);
         mAdapter = new ToolAdapter(getActivity());
         mListView.setAdapter(mAdapter);
