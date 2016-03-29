@@ -228,6 +228,7 @@
     <string name="tool_aria">Aria下载</string>
     <string name="tool_power">设备电源</string>
     <string name="tool_user_management">用户管理</string>
+    <string name="tool_system_status">系统状态</string>
     <string name="tool_logout">退出登录</string>
 
     <string name="device_power_off">安全关机</string>
@@ -463,4 +464,11 @@
     <string name="resetting">正在重置&#8230;</string>
     <string name="reset_succeed">重置成功</string>
     <string name="reset_failed">重置失败</string>
+
+    <!-- System Status Activity -->
+    <string name="title_system_status">系统状态</string>
+    <string name="querying_system_info">正在查询&#8230;</string>
+    <string name="fmt_label_cpu_load" formatted="false">CPU负载（已使用：%4s）</string>
+    <string name="fmt_label_memory" formatted="false">运行内存（总：%s&#160;/&#160;已使用：%s&#160;/&#160;剩余：%s）</string>
+    <string name="fmt_label_eth" formatted="false">有线网卡：%s（接收：%s&#160;/&#160;发送：%s&#160;）</string>
 </resources>
