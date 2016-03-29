@@ -36,6 +36,7 @@ public class OneOSAPIs {
     public static final String SYSTEM_REBOOT = ONE_API + "/sys/reboot";
     public static final String SYSTEM_HALT = ONE_API + "/sys/halt";
     public static final String SYSTEM_HD_SMART = ONE_API + "/sys/hdsmart";
+    public static final String SYSTEM_HD_INFO = ONE_API + "/sys/hdinfo";
     public static final String SYSTEM_INFO = ONE_API + "/sys/info";
 
     public static final String APP_LIST = ONE_API + "/app/list";

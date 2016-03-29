@@ -8,17 +8,19 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.model.oneos.OneOSHardDisk;
+import com.eli.oneos.model.oneos.api.OneOSHDInfoAPI;
 import com.eli.oneos.model.oneos.api.OneOSSpaceAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.SDCardUtils;
 import com.eli.oneos.widget.AnimCircleProgressBar;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import java.io.File;
 import java.util.List;
@@ -26,10 +28,12 @@ import java.util.List;
 public class ShowSpaceActivity extends BaseActivity {
     private static final String TAG = "ShowSpaceActivity";
     private static final float ANIM_DURATION_TIME_BASE = 800;
-    private boolean hasTwoDev = false;
     private long[] devSpaces = new long[4];
     private RadioGroup mRadioGroup;
     private TextView mTitleTxt;
+    private ImageButton mHDInfoIBtn;
+    private OneOSHardDisk hardDisk1, hardDisk2;
+    private String oneOSMode;
 
     public class SpaceType {
         public static final String EXTRA_NAME = "spacetype";
@@ -38,9 +42,9 @@ public class ShowSpaceActivity extends BaseActivity {
         public static final int USER = 2;
     }
 
-    private TextView mTotalText, mUsedText, mAviliableText, mRatioText;
+    private TextView mTotalText, mUsedText, mAvailableText, mRatioText;
     private ImageButton mExitButton;
-    private ProgressBar mLoadingBar;
+    private CircleProgressBar mLoadingBar;
     private AnimCircleProgressBar mCircleBar;
     private int mSpaceType = SpaceType.SERVER;
     private OnClickListener onBackListener = new OnClickListener() {
@@ -93,12 +97,24 @@ public class ShowSpaceActivity extends BaseActivity {
             mTitleTxt.setText(R.string.title_user);
         }
 
+        mHDInfoIBtn = (ImageButton) findViewById(R.id.ibtn_title_hd_info);
+        mHDInfoIBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShowSpaceActivity.this, HardDiskInfoActivity.class);
+                intent.putExtra(HardDiskInfoActivity.EXTRA_HARD_DISK_1, hardDisk1);
+                intent.putExtra(HardDiskInfoActivity.EXTRA_HARD_DISK_2, hardDisk2);
+                intent.putExtra(HardDiskInfoActivity.EXTRA_ONEOS_MODE, oneOSMode);
+                startActivity(intent);
+            }
+        });
+
         mTotalText = (TextView) findViewById(R.id.text_total);
         mUsedText = (TextView) findViewById(R.id.text_used);
-        mAviliableText = (TextView) findViewById(R.id.text_aviliable);
+        mAvailableText = (TextView) findViewById(R.id.text_aviliable);
         mRatioText = (TextView) findViewById(R.id.txt_progress);
 
-        mLoadingBar = (ProgressBar) findViewById(R.id.title_loading);
+        mLoadingBar = (CircleProgressBar) findViewById(R.id.title_loading);
         mCircleBar = (AnimCircleProgressBar) findViewById(R.id.progress_space);
 
         TextView mBackTxt = (TextView) findViewById(R.id.txt_title_back);
@@ -120,9 +136,9 @@ public class ShowSpaceActivity extends BaseActivity {
         });
     }
 
-    private void setDiskSpaceParamter(String totalInfo, String freeInfo, String usedInfo, int ratio) {
+    private void setDiskSpaceParams(String totalInfo, String freeInfo, String usedInfo, int ratio) {
         mTotalText.setText(totalInfo);
-        mAviliableText.setText(freeInfo);
+        mAvailableText.setText(freeInfo);
         mUsedText.setText(usedInfo);
 
         ratio = ((ratio > 100) ? 100 : ratio);
@@ -131,7 +147,7 @@ public class ShowSpaceActivity extends BaseActivity {
 
     private void setDiskSpaceException() {
         mTotalText.setText(R.string.query_space_failure);
-        mAviliableText.setText(R.string.query_space_failure);
+        mAvailableText.setText(R.string.query_space_failure);
         mUsedText.setText(R.string.query_space_failure);
         mRatioText.setText(R.string.query_space_failure);
     }
@@ -171,8 +187,8 @@ public class ShowSpaceActivity extends BaseActivity {
     private void querySdCardSpace() {
         // long free = FileUtils.getSDAvailableSize();
         // long total = FileUtils.getSDTotalSize();
-        long free = -1;
-        long total = -1;
+        long free;
+        long total;
 
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
         free = SDCardUtils.getSDAvailableSize(path);
@@ -185,7 +201,7 @@ public class ShowSpaceActivity extends BaseActivity {
             int ratio = 100 - (int) (free * 100 / total);
             ratio = ratio > 100 ? 100 : ratio;
             startProgressAnim(ratio);
-            setDiskSpaceParamter(Formatter.formatFileSize(this, total), Formatter.formatFileSize(this, free), Formatter.formatFileSize(this, used), ratio);
+            setDiskSpaceParams(Formatter.formatFileSize(this, total), Formatter.formatFileSize(this, free), Formatter.formatFileSize(this, used), ratio);
         }
     }
 
@@ -194,19 +210,29 @@ public class ShowSpaceActivity extends BaseActivity {
         spaceAPI.setOnSpaceListener(new OneOSSpaceAPI.OnSpaceListener() {
             @Override
             public void onStart(String url) {
+                mHDInfoIBtn.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void onSuccess(String url, boolean isOneOSSpace, long total, long free, long total2, long free2) {
-                mLoadingBar.setVisibility(View.GONE);
+            public void onSuccess(String url, boolean isOneOSSpace, OneOSHardDisk hd1, OneOSHardDisk hd2) {
+                hardDisk1 = hd1;
+                hardDisk2 = hd2;
+                long total = hd1.getTotal();
+                long free = hd1.getFree();
+                long used = hd1.getUsed();
+
+                long total2 = -1;
+                long free2 = -1;
+                if (null != hd2) {
+                    total2 = hd2.getTotal();
+                    free2 = hd2.getFree();
+                }
                 if (isOneOSSpace) {
                     if (total2 >= 0 && free2 >= 0) {
-                        hasTwoDev = true;
                         mTitleTxt.setVisibility(View.GONE);
                         mRadioGroup.setVisibility(View.VISIBLE);
                     } else {
-                        hasTwoDev = false;
                         mRadioGroup.setVisibility(View.GONE);
                         mTitleTxt.setVisibility(View.VISIBLE);
                     }
@@ -215,16 +241,26 @@ public class ShowSpaceActivity extends BaseActivity {
                     devSpaces[2] = total2;
                     devSpaces[3] = free2;
                     showDeviceSpace(total, free);
+                    queryHDInfo(hardDisk1, hardDisk2);
                 } else {
+                    mLoadingBar.setVisibility(View.GONE);
                     free = free < 0 ? 0 : free;
 
-                    String totalInfo = Formatter.formatFileSize(ShowSpaceActivity.this, total);
+                    int ratio;
+                    String totalInfo;
                     String freeInfo = Formatter.formatFileSize(ShowSpaceActivity.this, free);
-                    String usedInfo = Formatter.formatFileSize(ShowSpaceActivity.this, total - free);
-                    int ratio = 100 - (total == 0 ? 0 : (int) (free * 100 / total));
-                    ratio = ratio > 100 ? 100 : ratio;
+                    if (total == 0) {
+                        ratio = 0;
+                        totalInfo = getString(R.string.unlimited);
+                        freeInfo = getString(R.string.unlimited);
+                    } else {
+                        ratio = 100 - (int) (free * 100 / total);
+                        totalInfo = Formatter.formatFileSize(ShowSpaceActivity.this, total);
+                        ratio = ratio > 100 ? 100 : ratio;
+                    }
+                    String usedInfo = Formatter.formatFileSize(ShowSpaceActivity.this, used);
                     startProgressAnim(ratio);
-                    setDiskSpaceParamter(totalInfo, freeInfo, usedInfo, ratio);
+                    setDiskSpaceParams(totalInfo, freeInfo, usedInfo, ratio);
                 }
             }
 
@@ -238,6 +274,31 @@ public class ShowSpaceActivity extends BaseActivity {
         spaceAPI.query(isOneOSSpace);
     }
 
+    private void queryHDInfo(OneOSHardDisk hardDisk1, OneOSHardDisk hardDisk2) {
+        OneOSHDInfoAPI hdInfoAPI = new OneOSHDInfoAPI(LoginManage.getInstance().getLoginSession());
+        hdInfoAPI.setOnHDInfoListener(new OneOSHDInfoAPI.OnHDInfoListener() {
+            @Override
+            public void onStart(String url) {
+            }
+
+            @Override
+            public void onSuccess(String url, String model, OneOSHardDisk hd1, OneOSHardDisk hd2) {
+                oneOSMode = model;
+                mLoadingBar.setVisibility(View.GONE);
+                if (hd1 != null || hd2 != null) {
+                    mHDInfoIBtn.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(String url, int errorNo, String errorMsg) {
+                mLoadingBar.setVisibility(View.GONE);
+                mHDInfoIBtn.setVisibility(View.GONE);
+            }
+        });
+        hdInfoAPI.query(hardDisk1, hardDisk2);
+    }
+
     private void showDeviceSpace(long total, long free) {
         free = free < 0 ? 0 : free;
 
@@ -248,7 +309,6 @@ public class ShowSpaceActivity extends BaseActivity {
         int ratio = 100 - (int) (free * 100 / total);
         ratio = ratio > 100 ? 100 : ratio;
         startProgressAnim(ratio);
-        setDiskSpaceParamter(totalInfo, freeInfo, usedInfo, ratio);
+        setDiskSpaceParams(totalInfo, freeInfo, usedInfo, ratio);
     }
-
 }

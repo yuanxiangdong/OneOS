@@ -471,4 +471,14 @@
     <string name="fmt_label_cpu_load" formatted="false">CPU负载（已使用：%4s）</string>
     <string name="fmt_label_memory" formatted="false">运行内存（总：%s&#160;/&#160;已使用：%s&#160;/&#160;剩余：%s）</string>
     <string name="fmt_label_eth" formatted="false">有线网卡：%s（接收：%s&#160;/&#160;发送：%s&#160;）</string>
+
+    <!-- HardDisk Info Activity -->
+    <string name="title_hd_info">硬盘信息</string>
+    <string name="hd_info_tmp">硬盘温度：</string>
+    <string name="hd_info_time">硬盘时长：</string>
+    <string name="hd_info_model">硬盘型号：</string>
+    <string name="hd_info_serial">序列号：</string>
+    <string name="hd_info_capacity">硬盘容量：</string>
+    <string name="fmt_hd_info_tmp" formatted="false">%d&#160;℃</string>
+    <string name="fmt_oneos_mode" formatted="false">当前正在使用模式：%s</string>
 </resources>

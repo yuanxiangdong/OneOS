@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.model.oneos.OneOSHardDisk;
 import com.eli.oneos.model.oneos.OneOSUser;
 import com.eli.oneos.model.oneos.adapter.UserAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListUserAPI;
@@ -307,9 +308,9 @@ public class UserManageActivity extends BaseActivity {
             }
 
             @Override
-            public void onSuccess(String url, boolean isOneOSSpace, long total, long free, long total2, long free2) {
-                user.setSpace(total);
-                user.setUsed(total - free);
+            public void onSuccess(String url, boolean isOneOSSpace, OneOSHardDisk hd1, OneOSHardDisk hd2) {
+                user.setSpace(hd1.getTotal());
+                user.setUsed(hd1.getUsed());
                 mAdapter.notifyDataSetChanged();
             }
 

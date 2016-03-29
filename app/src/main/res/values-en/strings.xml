@@ -471,4 +471,14 @@
     <string name="fmt_label_cpu_load" formatted="false">CPULoad&#160;(Used:%4s)</string>
     <string name="fmt_label_memory" formatted="false">Memory&#160;(Total:%s&#160;/&#160;Used:%s&#160;/&#160;Available:%s)</string>
     <string name="fmt_label_eth" formatted="false">WireNIC：%s&#160;(Receive:%s&#160;/&#160;Send:%s&#160;)</string>
+
+    <!-- HardDisk Info Activity -->
+    <string name="title_hd_info">Hard Disk Information</string>
+    <string name="hd_info_tmp">Temperature:</string>
+    <string name="hd_info_time">Time:</string>
+    <string name="hd_info_model">Model:</string>
+    <string name="hd_info_serial">Serial Num:</string>
+    <string name="hd_info_capacity">Disk Size:</string>
+    <string name="fmt_hd_info_tmp" formatted="false">%d&#160;℃</string>
+    <string name="fmt_oneos_mode" formatted="false">Current Mode：%s</string>
 </resources>

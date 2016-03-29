@@ -5,6 +5,7 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.oneos.OneOSHardDisk;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 
@@ -74,6 +75,10 @@ public class OneOSSpaceAPI extends OneOSBaseAPI {
                             if (isOneOSSpace) {
                                 String spaceStr = json.getString("vfs");
                                 String spaceStr2 = null;
+                                String smart1 = null;
+                                String smart2 = null;
+                                String name1 = null;
+                                String name2 = null;
                                 if (json.has("hds")) {
                                     String hds = json.getString("hds");
                                     if (!EmptyUtils.isEmpty(hds)) {
@@ -88,34 +93,74 @@ public class OneOSSpaceAPI extends OneOSBaseAPI {
                                                     spaceStr2 = vfs;
                                                 }
                                             }
+
+                                            if (hdsJSON.has("smart")) {
+                                                String smart = hdsJSON.getString("smart");
+                                                if (i == 0) {
+                                                    smart1 = smart;
+                                                } else {
+                                                    smart2 = smart;
+                                                }
+                                            }
+
+                                            if (hdsJSON.has("name")) {
+                                                String name = hdsJSON.getString("name");
+                                                if (i == 0) {
+                                                    name1 = name;
+                                                } else {
+                                                    name2 = name;
+                                                }
+                                            }
                                         }
                                     }
                                 }
 
-                                long totalSize = 0, freeSize = 0;
+                                OneOSHardDisk hd1 = new OneOSHardDisk();
+                                hd1.setName(name1);
                                 if (!EmptyUtils.isEmpty(spaceStr) && !spaceStr.equals("{}")) {
+                                    // parse space
                                     json = new JSONObject(spaceStr);
                                     long bavail = json.getLong("bavail");
                                     long blocks = json.getLong("blocks");
                                     long frsize = json.getLong("frsize");
-                                    totalSize = blocks * frsize;
-                                    freeSize = bavail * frsize;
+                                    hd1.setTotal(blocks * frsize);
+                                    hd1.setFree(bavail * frsize);
+                                    hd1.setUsed(hd1.getTotal() - hd1.getFree());
+                                }
+                                if (!EmptyUtils.isEmpty(smart1) && !smart1.equals("{}")) {
+                                    // parse smart
+                                    json = new JSONObject(smart1);
+                                    hd1.setTmp(json.getInt("Temperature_Celsius"));
+                                    hd1.setTime(json.getInt("Power_On_Hours"));
                                 }
 
-                                long totalSize2 = -1, freeSize2 = -1;
+                                OneOSHardDisk hd2 = new OneOSHardDisk();
+                                hd2.setName(name2);
                                 if (!EmptyUtils.isEmpty(spaceStr2) && !spaceStr2.equals("{}")) {
+                                    // parse space
                                     json = new JSONObject(spaceStr2);
                                     long bavail = json.getLong("bavail");
                                     long blocks = json.getLong("blocks");
                                     long frsize = json.getLong("frsize");
-                                    totalSize2 = blocks * frsize;
-                                    freeSize2 = bavail * frsize;
+                                    hd2.setTotal(blocks * frsize);
+                                    hd2.setFree(bavail * frsize);
+                                    hd2.setUsed(hd2.getTotal() - hd2.getFree());
                                 }
-                                listener.onSuccess(url, isOneOSSpace, totalSize, freeSize, totalSize2, freeSize2);
+                                if (!EmptyUtils.isEmpty(smart2) && !smart2.equals("{}")) {
+                                    // parse smart
+                                    json = new JSONObject(smart2);
+                                    hd2.setTmp(json.getInt("Temperature_Celsius"));
+                                    hd2.setTime(json.getInt("Power_On_Hours"));
+                                }
+                                listener.onSuccess(url, isOneOSSpace, hd1, hd2);
                             } else {
+                                OneOSHardDisk hd1 = new OneOSHardDisk();
                                 long space = json.getLong("space") * 1024 * 1024 * 1024;
                                 long used = json.getLong("used");
-                                listener.onSuccess(url, isOneOSSpace, space, space - used, -1, -1);
+                                hd1.setTotal(space);
+                                hd1.setUsed(used);
+                                hd1.setFree(space - used);
+                                listener.onSuccess(url, isOneOSSpace, hd1, null);
                             }
                         } else {
                             // {"errno":-1,"msg":"list error","result":false}
@@ -139,7 +184,7 @@ public class OneOSSpaceAPI extends OneOSBaseAPI {
     public interface OnSpaceListener {
         void onStart(String url);
 
-        void onSuccess(String url, boolean isOneOSSpace, long total, long free, long total2, long free2);
+        void onSuccess(String url, boolean isOneOSSpace, OneOSHardDisk hd1, OneOSHardDisk hd2);
 
         void onFailure(String url, int errorNo, String errorMsg);
     }
