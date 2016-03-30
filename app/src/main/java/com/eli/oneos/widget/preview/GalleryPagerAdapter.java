@@ -37,7 +37,7 @@ import java.util.List;
 public class GalleryPagerAdapter extends BasePagerAdapter {
     private static final String TAG = GalleryPagerAdapter.class.getSimpleName();
 
-    private static final long MAX_PICTURE_SIZE = 1024 * 1024 * 10;
+    private static final long MAX_PICTURE_SIZE = 1024 * 1024 * 20;
 
     private Context mContext;
     private boolean isLocalPic = false;
