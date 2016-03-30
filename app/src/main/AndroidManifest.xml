@@ -35,7 +35,7 @@
         <activity
             android:name="com.eli.oneos.ui.MainActivity"
             android:label="@string/upload_to_onespace"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:theme="@style/FullBleedTheme"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>

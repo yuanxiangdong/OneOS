@@ -5,8 +5,16 @@
 
     <style name="FullScreenTheme" parent="android:Theme.NoTitleBar.Fullscreen"></style>
 
+    <style name="ActivitySlideAnim" mce_bogus="1" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_nav_in_from_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_nav_out_to_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_nav_in_from_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_nav_out_to_right</item>
+    </style>
+
     <style name="FullBleedTheme" parent="android:Theme.Holo.Light.NoActionBar">
         <!-- API 14 theme customizations can go here. -->
+        <item name="android:windowAnimationStyle">@style/ActivitySlideAnim</item>
     </style>
 
     <style name="DialogTheme" parent="android:Theme.Dialog">
