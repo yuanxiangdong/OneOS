@@ -136,7 +136,7 @@
     <string name="title_login">OneSpace登录</string>
     <string name="login">登录</string>
     <string name="title_enter_user">用户名</string>
-    <string name="title_enter_pwd">密&#160;&#160;码</string>
+    <string name="title_enter_pwd">密&#160;&#160;&#160;&#160;码</string>
     <string name="title_select_ip">IP地址</string>
     <string name="title_enter_port">端口号</string>
     <string name="hint_enter_user">请输入用户名</string>
