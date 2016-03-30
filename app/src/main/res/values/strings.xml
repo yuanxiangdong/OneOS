@@ -224,11 +224,12 @@
     <string name="tool_backup_file">文件备份</string>
     <string name="tool_sync_contact">通讯录备份</string>
     <string name="tool_sync_sms">短信备份</string>
+    <string name="tool_user_management">用户管理</string>
+    <string name="tool_hd_info">硬盘信息</string>
     <string name="tool_app">应用管理</string>
     <string name="tool_aria">Aria下载</string>
-    <string name="tool_power">设备电源</string>
-    <string name="tool_user_management">用户管理</string>
     <string name="tool_system_status">系统状态</string>
+    <string name="tool_system_management">系统管理</string>
     <string name="tool_logout">退出登录</string>
 
     <string name="device_power_off">安全关机</string>

@@ -226,8 +226,9 @@
     <string name="tool_sync_sms">Backup Short Messages</string>
     <string name="tool_app">App Management</string>
     <string name="tool_aria">Aria Download</string>
-    <string name="tool_power">OneSpace Power</string>
+    <string name="tool_system_management">System Management</string>
     <string name="tool_user_management">User Management</string>
+    <string name="tool_hd_info">Hard Disk Information</string>
     <string name="tool_system_status">System Status</string>
     <string name="tool_logout">Logout</string>
 

@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eli.oneos.MyApplication;
@@ -43,22 +44,54 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     private static final int TOOL_BACKUP_FILE = R.string.tool_backup_file;
     private static final int TOOL_SYNC_CONTACT = R.string.tool_sync_contact;
     private static final int TOOL_SYNC_SMS = R.string.tool_sync_sms;
-    private static final int TOOL_APP = R.string.tool_app;
-    private static final int TOOL_OFFLINE = R.string.tool_aria;
-    private static final int TOOL_POWER = R.string.tool_power;
     private static final int TOOL_USER_MANAGEMENT = R.string.tool_user_management;
+    private static final int TOOL_HD_INFO = R.string.tool_hd_info;
+    private static final int TOOL_APP = R.string.tool_app;
+    private static final int TOOL_ARIA = R.string.tool_aria;
+    private static final int TOOL_SYSTEM_MANAGEMENT = R.string.tool_system_management;
     private static final int TOOL_SYSTEM_STATUS = R.string.tool_system_status;
     private static final int TOOL_LOGOUT = R.string.tool_logout;
-    private static final int[] TOOL_TITLE_M3X = new int[]{/*TOOL_SETTING, */TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_OFFLINE, TOOL_APP,
-            TOOL_USER_MANAGEMENT, TOOL_SYSTEM_STATUS, TOOL_POWER, TOOL_LOGOUT};
-    private static final int[] TOOL_ICON_M3X = new int[]{/*R.drawable.icon_tools_setting, */R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_backup_file, R.drawable.icon_tools_contact,
-            R.drawable.icon_tools_sms, R.drawable.icon_tools_offline, R.drawable.icon_tools_app, R.drawable.icon_tools_user_management, R.drawable.icon_tools_system_status, R.drawable.icon_tools_power,
-            R.drawable.icon_tools_change_user};
+    private static final int[] TOOL_TITLE_M3X = new int[]{/*TOOL_SETTING, TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT,
+            TOOL_SYNC_SMS,*/ TOOL_USER_MANAGEMENT, TOOL_HD_INFO, TOOL_APP, TOOL_ARIA, TOOL_SYSTEM_MANAGEMENT, TOOL_SYSTEM_STATUS, TOOL_LOGOUT};
+    private static final int[] TOOL_ICON_M3X = new int[]{/*R.drawable.icon_tools_setting, R.drawable.icon_tools_backup_photo,
+            R.drawable.icon_tools_backup_file, R.drawable.icon_tools_contact, R.drawable.icon_tools_sms,*/ R.drawable.icon_tools_user_management,
+            R.drawable.icon_tools_user_management, R.drawable.icon_tools_app, R.drawable.icon_tools_offline, R.drawable.icon_tools_power,
+            R.drawable.icon_tools_system_status, R.drawable.icon_tools_change_user};
 
     private StickListView mListView;
     private ToolAdapter mAdapter;
     private PowerPopupView mPopupView;
     private ArrayList<ToolBar> mToolList = new ArrayList<ToolBar>();
+    private OnClickListener backupListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!isLogin()) {
+                ToastHelper.showToast(R.string.please_login_onespace);
+                return;
+            }
+            Intent intent = null;
+            switch (v.getId()) {
+                case R.id.layout_backup_album:
+                    intent = new Intent(getActivity(), BackupPhotoActivity.class);
+                    break;
+                case R.id.layout_backup_file:
+                    intent = new Intent(getActivity(), BackupFileActivity.class);
+                    break;
+                case R.id.layout_backup_sms:
+                    intent = new Intent(getActivity(), BackupInfoActivity.class);
+                    intent.putExtra(BackupInfoActivity.EXTRA_BACKUP_INFO_TYPE, false);
+                    break;
+                case R.id.layout_backup_contacts:
+                    intent = new Intent(getActivity(), BackupInfoActivity.class);
+                    intent.putExtra(BackupInfoActivity.EXTRA_BACKUP_INFO_TYPE, true);
+                    break;
+            }
+
+            if (null != intent) {
+                startActivity(intent);
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,6 +139,15 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             }
         });
 
+        LinearLayout mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_album);
+        mLayout.setOnClickListener(backupListener);
+        mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_file);
+        mLayout.setOnClickListener(backupListener);
+        mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_contacts);
+        mLayout.setOnClickListener(backupListener);
+        mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_sms);
+        mLayout.setOnClickListener(backupListener);
+
         mListView = (StickListView) view.findViewById(R.id.listview_tools);
         mAdapter = new ToolAdapter(getActivity());
         mListView.setAdapter(mAdapter);
@@ -124,14 +166,28 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             intent = new Intent(getActivity(), AppsActivity.class);
         } else if (tool == TOOL_SETTING) {
             intent = new Intent(getActivity(), SettingsActivity.class);
-        } else if (tool == TOOL_SYNC_CONTACT || tool == TOOL_SYNC_SMS) {
+        }
+        /*else if (tool == TOOL_SYNC_CONTACT || tool == TOOL_SYNC_SMS) {
             if (isLogin()) {
                 intent = new Intent(getActivity(), BackupInfoActivity.class);
                 intent.putExtra(BackupInfoActivity.EXTRA_BACKUP_INFO_TYPE, tool == TOOL_SYNC_CONTACT);
             } else {
                 ToastHelper.showToast(R.string.please_login_onespace);
             }
-        } else if (tool == TOOL_OFFLINE) {
+        } else if (tool == TOOL_BACKUP_PHOTO) {
+            if (isLogin()) {
+                intent = new Intent(getActivity(), BackupPhotoActivity.class);
+            } else {
+                ToastHelper.showToast(R.string.please_login_onespace);
+            }
+        } else if (tool == TOOL_BACKUP_FILE) {
+            if (isLogin()) {
+                intent = new Intent(getActivity(), BackupFileActivity.class);
+            } else {
+                ToastHelper.showToast(R.string.please_login_onespace);
+            }
+        } */
+        else if (tool == TOOL_ARIA) {
             if (isLogin()) {
                 intent = new Intent(getActivity(), AriaActivity.class);
             } else {
@@ -142,14 +198,6 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
                 loginOutDialog();
             } else {
                 doLoginOut();
-            }
-        } else if (tool == TOOL_BACKUP_PHOTO) {
-            intent = new Intent(getActivity(), BackupPhotoActivity.class);
-        } else if (tool == TOOL_BACKUP_FILE) {
-            if (isLogin()) {
-                intent = new Intent(getActivity(), BackupFileActivity.class);
-            } else {
-                ToastHelper.showToast(R.string.please_login_onespace);
             }
         } else if (tool == TOOL_USER_MANAGEMENT) {
             if (isLogin() && LoginManage.getInstance().getLoginSession().isAdmin()) {
@@ -163,11 +211,20 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             } else {
                 ToastHelper.showToast(R.string.please_login_onespace);
             }
-        } else if (tool == TOOL_POWER) {
+        } else if (tool == TOOL_SYSTEM_MANAGEMENT) {
             if (isLogin() && LoginManage.getInstance().getLoginSession().isAdmin()) {
                 showPowerView(arg1);
             } else {
                 DialogUtils.showNotifyDialog(getActivity(), R.string.tips, R.string.please_login_onespace_with_admin, R.string.ok, null);
+            }
+        } else if (tool == TOOL_HD_INFO) {
+            if (isLogin()) {
+                intent = new Intent(getActivity(), ShowSpaceActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt(ShowSpaceActivity.SpaceType.EXTRA_NAME, ShowSpaceActivity.SpaceType.SERVER);
+                intent.putExtras(bundle);
+            } else {
+                ToastHelper.showToast(R.string.please_login_onespace);
             }
         }
 

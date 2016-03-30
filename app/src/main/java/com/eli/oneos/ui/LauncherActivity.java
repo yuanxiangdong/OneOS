@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -74,10 +76,15 @@ public class LauncherActivity extends BaseActivity {
 
     private void showAlphaAnim() {
         ImageView mLogoView = (ImageView) findViewById(R.id.iv_welcome_logo);
-        AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
-        anim.setDuration(1000);
-        mLogoView.startAnimation(anim);
-        anim.setAnimationListener(new Animation.AnimationListener() {
+        AnimationSet animationSet = new AnimationSet(true);
+        AlphaAnimation alphaAnim = new AlphaAnimation(0.0f, 1.0f);
+        alphaAnim.setDuration(1000);
+        animationSet.addAnimation(alphaAnim);
+        ScaleAnimation scaleAnim = new ScaleAnimation(0.5f, 1.0f, 0.5f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        scaleAnim.setDuration(1000);
+        animationSet.addAnimation(scaleAnim);
+        mLogoView.startAnimation(animationSet);
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
             /**
              * <p>Notifies the start of the animation.</p>
              *

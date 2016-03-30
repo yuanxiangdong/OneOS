@@ -226,8 +226,9 @@
     <string name="tool_sync_sms">短信備份</string>
     <string name="tool_app">應用管理</string>
     <string name="tool_aria">Aria下載</string>
-    <string name="tool_power">設備電源</string>
+    <string name="tool_system_management">系統管理</string>
     <string name="tool_user_management">用戶管理</string>
+    <string name="tool_hd_info">硬盤信息</string>
     <string name="tool_system_status">系統狀態</string>
     <string name="tool_logout">退出登錄</string>
 
