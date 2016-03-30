@@ -467,7 +467,7 @@
 
     <!-- System Status Activity -->
     <string name="title_system_status">系统状态</string>
-    <string name="querying_system_info">正在查询&#8230;</string>
+    <string name="querying_info">正在查询&#8230;</string>
     <string name="fmt_label_cpu_load" formatted="false">CPU负载（已使用：%4s）</string>
     <string name="fmt_label_memory" formatted="false">运行内存（总：%s&#160;/&#160;已使用：%s&#160;/&#160;剩余：%s）</string>
     <string name="fmt_label_eth" formatted="false">有线网卡：%s（接收：%s&#160;/&#160;发送：%s&#160;）</string>

@@ -62,7 +62,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/primary"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -95,7 +95,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -128,7 +128,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -161,7 +161,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -194,7 +194,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -228,7 +228,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -265,7 +265,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/primary"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -298,7 +298,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -331,7 +331,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -364,7 +364,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -397,7 +397,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>
@@ -431,7 +431,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_weight="2.0"
                         android:gravity="center|left"
-                        android:text="@string/querying_system_info"
+                        android:text="@string/querying_info"
                         android:textColor="@color/darker"
                         android:textSize="@dimen/text_size_mid" />
                 </LinearLayout>

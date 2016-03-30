@@ -177,134 +177,143 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <LinearLayout
+    <com.eli.oneos.widget.ReboundScrollView
         android:id="@+id/layout_introduction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:scrollbars="none">
 
         <LinearLayout
-            android:id="@+id/layout_total"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <LinearLayout
+                android:id="@+id/layout_total"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/im_total"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@color/light_gray" />
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/total_space"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_mid" />
+
+                <TextView
+                    android:id="@+id/text_total"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/querying_info"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_mid" />
+            </LinearLayout>
 
             <ImageView
-                android:id="@+id/im_total"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:background="@color/light_gray" />
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/line_settings_weight"
+                android:layout_margin="10dp"
+                android:background="@color/line_settings" />
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="@string/total_space"
-                android:textColor="@color/darker"
-                android:textSize="@dimen/text_size_mid" />
-
-            <TextView
-                android:id="@+id/text_total"
-                android:layout_width="80dp"
+            <LinearLayout
+                android:id="@+id/layout_aviliable"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:singleLine="true"
-                android:textColor="@color/darker"
-                android:textSize="@dimen/text_size_mid" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:padding="5dp">
 
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/line_settings_weight"
-            android:layout_margin="10dp"
-            android:background="@color/line_settings" />
+                <ImageView
+                    android:id="@+id/im_aviliable"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@color/primary" />
 
-        <LinearLayout
-            android:id="@+id/layout_aviliable"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/available_space"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_mid" />
+
+                <TextView
+                    android:id="@+id/text_aviliable"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/querying_info"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_mid" />
+            </LinearLayout>
 
             <ImageView
-                android:id="@+id/im_aviliable"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:background="@color/primary" />
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/line_settings_weight"
+                android:layout_margin="10dp"
+                android:background="@color/line_settings" />
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="@string/available_space"
-                android:textColor="@color/darker"
-                android:textSize="@dimen/text_size_mid" />
-
-            <TextView
-                android:id="@+id/text_aviliable"
-                android:layout_width="80dp"
+            <LinearLayout
+                android:id="@+id/layout_used"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:singleLine="true"
-                android:textColor="@color/darker"
-                android:textSize="@dimen/text_size_mid" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:padding="5dp">
 
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/line_settings_weight"
-            android:layout_margin="10dp"
-            android:background="@color/line_settings" />
+                <ImageView
+                    android:id="@+id/im_used"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@color/green" />
 
-        <LinearLayout
-            android:id="@+id/layout_used"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/used_space"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_mid" />
+
+                <TextView
+                    android:id="@+id/text_used"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/querying_info"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_mid" />
+            </LinearLayout>
 
             <ImageView
-                android:id="@+id/im_used"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:background="@color/green" />
-
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="@string/used_space"
-                android:textColor="@color/darker"
-                android:textSize="@dimen/text_size_mid" />
-
-            <TextView
-                android:id="@+id/text_used"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:singleLine="true"
-                android:textColor="@color/darker"
-                android:textSize="@dimen/text_size_mid" />
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/line_settings_weight"
+                android:layout_margin="10dp"
+                android:background="@color/line_settings" />
         </LinearLayout>
-
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/line_settings_weight"
-            android:layout_margin="10dp"
-            android:background="@color/line_settings" />
-    </LinearLayout>
+    </com.eli.oneos.widget.ReboundScrollView>
 </RelativeLayout>

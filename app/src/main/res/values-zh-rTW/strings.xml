@@ -467,7 +467,7 @@
 
     <!-- System Status Activity -->
     <string name="title_system_status">系統狀態</string>
-    <string name="querying_system_info">正在查詢&#8230;</string>
+    <string name="querying_info">正在查詢&#8230;</string>
     <string name="fmt_label_cpu_load" formatted="false">CPU負載（已使用：%4s）</string>
     <string name="fmt_label_memory" formatted="false">運行內存（總：%s&#160;/&#160;已使用：%s&#160;/&#160;剩余：%s）</string>
     <string name="fmt_label_eth" formatted="false">有線網卡：%s（接收：%s&#160;/&#160;發送：%s&#160;）</string>
