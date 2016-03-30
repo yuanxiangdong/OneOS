@@ -60,6 +60,8 @@ public class HardDiskInfoActivity extends BaseActivity {
         LinearLayout mLayout = (LinearLayout) findViewById(R.id.layout_hd1);
         if (null != hardDisk1 && hardDisk1.getModel() != null) {
             mLayout.setVisibility(View.VISIBLE);
+            mTextView = (TextView) findViewById(R.id.txt_hd1_name);
+            mTextView.setText(hardDisk1.getName());
             mTextView = (TextView) findViewById(R.id.txt_hd1_tmp);
             mTextView.setText(String.format(getString(R.string.fmt_hd_info_tmp), hardDisk1.getTmp()));
             mTextView = (TextView) findViewById(R.id.txt_hd1_time);
@@ -74,6 +76,8 @@ public class HardDiskInfoActivity extends BaseActivity {
         mLayout = (LinearLayout) findViewById(R.id.layout_hd2);
         if (null != hardDisk2 && hardDisk2.getModel() != null) {
             mLayout.setVisibility(View.VISIBLE);
+            mTextView = (TextView) findViewById(R.id.txt_hd2_name);
+            mTextView.setText(hardDisk2.getName());
             mTextView = (TextView) findViewById(R.id.txt_hd2_tmp);
             mTextView.setText(String.format(getString(R.string.fmt_hd_info_tmp), hardDisk2.getTmp()));
             mTextView = (TextView) findViewById(R.id.txt_hd2_time);

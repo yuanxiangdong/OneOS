@@ -46,7 +46,38 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
+
+                    <!--<TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:gravity="center|right"
+                        android:text="@string/hd_info_tmp"
+                        android:textColor="@color/darker"
+                        android:textSize="@dimen/text_size_mid" />-->
+
+                    <TextView
+                        android:id="@+id/txt_hd1_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/querying_system_info"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_mid" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/line_dialog_weight"
+                    android:layout_below="@+id/layout_content"
+                    android:background="@color/light_gray" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -79,7 +110,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -112,7 +143,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -145,7 +176,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -179,7 +210,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -207,7 +238,9 @@
                 android:id="@+id/layout_hd2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:background="@drawable/bg_stroke_full_radius_light_gray"
                 android:orientation="vertical"
                 android:visibility="gone">
@@ -216,7 +249,38 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
+
+                    <!--<TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:gravity="center|right"
+                        android:text="@string/hd_info_tmp"
+                        android:textColor="@color/darker"
+                        android:textSize="@dimen/text_size_mid" />-->
+
+                    <TextView
+                        android:id="@+id/txt_hd2_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/querying_system_info"
+                        android:textColor="@color/primary"
+                        android:textSize="@dimen/text_size_mid" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/line_dialog_weight"
+                    android:layout_below="@+id/layout_content"
+                    android:background="@color/light_gray" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -249,7 +313,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -282,7 +346,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -315,7 +379,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -349,7 +413,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
