@@ -16,6 +16,7 @@
     <string name="delete">刪除</string>
     <string name="open">打開</string>
     <string name="dialog_continue">繼續</string>
+    <string name="permission_denied">權限拒絕</string>
     <string name="connection_refused">無法連接到您的設備，請檢查設備和網絡狀態！</string>
     <string name="network_not_available">當前網絡不可用，請檢查網絡狀態！</string>
     <string name="oneos_version_mismatch">您的OneSpace系統版本過低，請升級到 OneOS v3.x 版本！</string>
@@ -465,6 +466,10 @@
     <string name="resetting">正在重置&#8230;</string>
     <string name="reset_succeed">重置成功</string>
     <string name="reset_failed">重置失敗</string>
+    <string name="modify_user_pwd">修改密碼</string>
+    <string name="warning_modify_user_pwd">警告：請牢記您設置的新密碼</string>
+    <string name="enter_new_pwd">請輸入新密碼</string>
+    <string name="confirm_new_pwd">請確認新密碼</string>
 
     <!-- System Status Activity -->
     <string name="title_system_status">系統狀態</string>

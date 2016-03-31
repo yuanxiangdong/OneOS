@@ -397,11 +397,11 @@ public class DialogUtils {
 
         titleTextView.setText(titleId);
         tipsTextView.setText(tipsId);
-        pwdEditText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        pwdEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         pwdEditText.setHint(hintId);
         InputMethodUtils.showKeyboard(activity, pwdEditText, 200);
         confirmPwdEditText.setHint(confirmHintId);
-        confirmPwdEditText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        confirmPwdEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         Button positiveBtn = (Button) dialogView.findViewById(R.id.positive);
         positiveBtn.setText(posId);

@@ -16,6 +16,7 @@
     <string name="delete">Delete</string>
     <string name="open">Open</string>
     <string name="dialog_continue">Continue</string>
+    <string name="permission_denied">Permission Denied</string>
     <string name="loading">Loading&#8230;</string>
     <string name="all_loaded">All Loaded</string>
     <string name="connection_refused">Unable to connect to your OneSpace, please check the device and network status!</string>
@@ -465,6 +466,10 @@
     <string name="resetting">Resetting&#8230;</string>
     <string name="reset_succeed">Reset succeed</string>
     <string name="reset_failed">Reset failed</string>
+    <string name="modify_user_pwd">Modify Password</string>
+    <string name="warning_modify_user_pwd">Warning: Keep in mind that the new password you set</string>
+    <string name="enter_new_pwd">Please enter a new password</string>
+    <string name="confirm_new_pwd">Please confirm the new password</string>
 
     <!-- System Status Activity -->
     <string name="title_system_status">System Status</string>

@@ -27,6 +27,7 @@ public class SwipeListView extends ListView {
     private final int mDuration = 100;
     private final int mDurationStep = 10;
     private boolean mIsShown;
+    private boolean enableSwipe = true;
 
     public SwipeListView(Context context) {
         this(context, null);
@@ -133,11 +134,15 @@ public class SwipeListView extends ListView {
     }
 
     /**
-     * return false, can't move any direction. return true, cant't move vertical, can move
+     * return false, can't move any direction. return true, can't move vertical, can move
      * horizontal. return super.onTouchEvent(ev), can move both.
      */
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        if (!enableSwipe) {
+            return super.onTouchEvent(ev);
+        }
+
         float lastX = ev.getX();
         float lastY = ev.getY();
 
@@ -368,4 +373,14 @@ public class SwipeListView extends ListView {
         this.mRightViewWidth = mRightViewWidth;
     }
 
+    public boolean isEnableSwipe() {
+        return enableSwipe;
+    }
+
+    public void setEnableSwipe(boolean enableSwipe) {
+        this.enableSwipe = enableSwipe;
+        if (!enableSwipe) {
+            hiddenRight();
+        }
+    }
 }

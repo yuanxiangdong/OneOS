@@ -200,10 +200,10 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
                 doLoginOut();
             }
         } else if (tool == TOOL_USER_MANAGEMENT) {
-            if (isLogin() && LoginManage.getInstance().getLoginSession().isAdmin()) {
+            if (isLogin()) {
                 intent = new Intent(getActivity(), UserManageActivity.class);
             } else {
-                DialogUtils.showNotifyDialog(getActivity(), R.string.tips, R.string.please_login_onespace_with_admin, R.string.ok, null);
+                ToastHelper.showToast(R.string.please_login_onespace);
             }
         } else if (tool == TOOL_SYSTEM_STATUS) {
             if (isLogin()) {

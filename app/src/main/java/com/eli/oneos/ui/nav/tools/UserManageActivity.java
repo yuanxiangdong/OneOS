@@ -69,14 +69,16 @@ public class UserManageActivity extends BaseActivity {
         mTitleLayout.setOnClickBack(this);
         mTitleLayout.setBackTitle(R.string.title_back);
         mTitleLayout.setTitle(R.string.title_user_management);
-        mTitleLayout.setRightButton(R.drawable.ic_title_add_user);
-        mTitleLayout.setBackVisible(true);
-        mTitleLayout.setOnRightClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddUserDialog();
-            }
-        });
+        if (mLoginSession.isAdmin()) {
+            mTitleLayout.setRightButton(R.drawable.ic_title_add_user);
+            mTitleLayout.setBackVisible(true);
+            mTitleLayout.setOnRightClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showAddUserDialog();
+                }
+            });
+        }
         mRootView = mTitleLayout;
 
         mListView = (SwipeListView) findViewById(R.id.list_user);
@@ -87,19 +89,34 @@ public class UserManageActivity extends BaseActivity {
                 OneOSUser user = mUserList.get(position);
                 switch (view.getId()) {
                     case R.id.txt_delete_user:
-                        showDeleteUserDialog(user);
+                        if (mLoginSession.isAdmin()) {
+                            showDeleteUserDialog(user);
+                        } else {
+                            DialogUtils.showNotifyDialog(UserManageActivity.this, R.string.permission_denied, R.string.please_login_onespace_with_admin, R.string.ok, null);
+                        }
                         break;
                     case R.id.txt_reset_password:
-                        showResetPwdDialog(user);
+                        if (user.getName().equals(mLoginSession.getUserInfo().getName())) {
+                            showModifyPwdDialog(user);
+                        } else if (mLoginSession.isAdmin()) {
+                            showResetPwdDialog(user);
+                        } else {
+                            DialogUtils.showNotifyDialog(UserManageActivity.this, R.string.permission_denied, R.string.please_login_onespace_with_admin, R.string.ok, null);
+                        }
                         break;
                     case R.id.txt_limit_space:
-                        showChangedSpaceDialog(user);
+                        if (mLoginSession.isAdmin()) {
+                            showChangedSpaceDialog(user);
+                        } else {
+                            DialogUtils.showNotifyDialog(UserManageActivity.this, R.string.permission_denied, R.string.please_login_onespace_with_admin, R.string.ok, null);
+                        }
                         break;
                 }
                 mListView.hiddenRight();
             }
         });
         mListView.setAdapter(mAdapter);
+        // mListView.setEnableSwipe(mLoginSession.isAdmin());
     }
 
     private void showResetPwdDialog(final OneOSUser user) {
@@ -128,6 +145,38 @@ public class UserManageActivity extends BaseActivity {
                                 }
                             });
                             manageAPI.chpwd(user.getName(), "123456");
+                        }
+                    }
+                });
+    }
+
+    private void showModifyPwdDialog(final OneOSUser user) {
+        DialogUtils.showEditPwdDialog(this, R.string.modify_user_pwd, R.string.warning_modify_user_pwd, R.string.enter_new_pwd, R.string.confirm_new_pwd,
+                R.string.modify, R.string.cancel, new DialogUtils.OnEditDialogClickListener() {
+                    @Override
+                    public void onClick(boolean isPositiveBtn, EditText mEditText) {
+                        if (isPositiveBtn) {
+                            String newPwd = mEditText.getText().toString().trim();
+                            OneOSUserManageAPI manageAPI = new OneOSUserManageAPI(mLoginSession);
+                            manageAPI.setOnUserManageListener(new OneOSUserManageAPI.OnUserManageListener() {
+                                @Override
+                                public void onStart(String url) {
+                                    showLoading(R.string.resetting);
+                                }
+
+                                @Override
+                                public void onSuccess(String url, String cmd) {
+                                    showTipView(R.string.reset_succeed, true);
+                                    getUserList();
+                                }
+
+                                @Override
+                                public void onFailure(String url, int errorNo, String errorMsg) {
+                                    showTipView(R.string.reset_failed, false);
+                                }
+                            });
+                            manageAPI.chpwd(user.getName(), newPwd);
+                            DialogUtils.dismiss();
                         }
                     }
                 });
