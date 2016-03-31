@@ -12,22 +12,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by gaoyun@eli-tech.com on 2016/3/31.
- */
-public class UploadManager extends TransferManager<UploadElement> {
-    private static final String TAG = UploadManager.class.getSimpleName();
+public class _UploadManager {
+    private static final String TAG = _UploadManager.class.getSimpleName();
 
-    private static UploadManager Instance = new UploadManager();
+    private List<UploadElement> completeList = Collections.synchronizedList(new ArrayList<UploadElement>());
+    private List<UploadElement> uploadList = Collections.synchronizedList(new ArrayList<UploadElement>());
+    private List<OnUploadCompleteListener> completeListenerList = new ArrayList<>();
+    private static _UploadManager instance = new _UploadManager();
     private UploadFileThread.OnUploadResultListener uploadResultListener = new UploadFileThread.OnUploadResultListener() {
 
         @Override
         public void onResult(UploadElement mElement) {
-            Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Upload Result: " + mElement.getState());
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "Upload Result: " + mElement.getState());
 
             handlerQueueThread.stopCurrentUploadTask();
 
-            synchronized (transferList) {
+            synchronized (uploadList) {
                 mElement.setTime(System.currentTimeMillis());
                 TransferState state = mElement.getState();
                 if (state == TransferState.COMPLETE) {
@@ -35,10 +35,11 @@ public class UploadManager extends TransferManager<UploadElement> {
                     TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(false), mElement.getSrcName(),
                             mElement.getSrcPath(), mElement.getToPath(), mElement.getSize(), mElement.getSize(), 0L, System.currentTimeMillis(), true);
                     TransferHistoryKeeper.insert(history);
-                    transferList.remove(mElement);
 
-                    notifyTransferComplete(mElement);
-                    notifyTransferCount();
+                    for (OnUploadCompleteListener listener : completeListenerList) {
+                        listener.uploadComplete(mElement);
+                    }
+                    uploadList.remove(mElement);
                 } else {
                     Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "Upload pause or failure");
                 }
@@ -53,10 +54,9 @@ public class UploadManager extends TransferManager<UploadElement> {
             handlerQueueThread.notifyNewUploadTask();
         }
     };
-    private HandlerQueueThread handlerQueueThread = new HandlerQueueThread(transferList, uploadResultListener);
+    private HandlerQueueThread handlerQueueThread = new HandlerQueueThread(uploadList, uploadResultListener);
 
-    private UploadManager() {
-        super(false);
+    private _UploadManager() {
         if (handlerQueueThread != null && !handlerQueueThread.isRunning) {
             handlerQueueThread.start();
         }
@@ -65,25 +65,37 @@ public class UploadManager extends TransferManager<UploadElement> {
     /**
      * Singleton instance method
      *
-     * @return {@code UploadManager}
+     * @return singleton instance of class
      */
-    public static UploadManager getInstance() {
-        return Instance;
+    public static _UploadManager getInstance() {
+        return instance;
     }
 
 
+    public boolean addUploadCompleteListener(OnUploadCompleteListener listener) {
+        if (!completeListenerList.contains(listener)) {
+            return completeListenerList.add(listener);
+        }
+
+        return false;
+    }
+
+    public boolean removeUploadCompleteListener(OnUploadCompleteListener listener) {
+        return completeListenerList.remove(listener);
+    }
+
     /**
-     * Enqueue a new download or upload. It will start automatically once the manager is
-     * ready to execute it and connectivity is available.
+     * Enqueue a new upload. The upload will start automatically once the upload
+     * manager is ready to execute it and connectivity is available.
      *
-     * @param element the parameters specifying this task
-     * @return an ID for the task, unique across the system. This ID is used to make future
-     * calls related to this task. If enqueue failed, return -1.
+     * @param element the parameters specifying this upload
+     * @return an ID for the upload, unique across the system. This ID is used
+     * to make future calls related to this upload. If enqueue failed,
+     * return -1.
      */
-    @Override
     public int enqueue(UploadElement element) {
         if (element == null) {
-            Logger.p(LogLevel.ERROR, IS_LOG, TAG, "upload element is null");
+            Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "upload element is null");
             return -1;
         }
 
@@ -91,85 +103,26 @@ public class UploadManager extends TransferManager<UploadElement> {
             handlerQueueThread.start();
         }
 
-        boolean success = transferList.add(element);
+        boolean success = uploadList.add(element);
         if (success) {
-            synchronized (transferList) {
-                transferList.notify();
+            synchronized (uploadList) {
+                uploadList.notify();
             }
-            notifyTransferCount();
-
             return element.hashCode();
         } else {
             return -1;
         }
     }
 
-    /**
-     * Cancel task and remove them from the manager. The task will be stopped if
-     * it was running, and it will no longer be accessible through the manager. If there is
-     * a temporary file, partial or complete, it is deleted.
-     *
-     * @param fullName file full path at server, uniqueness
-     * @return the id of task actually removed, if remove failed, return -1.
-     */
-    @Override
-    public int cancel(String fullName) {
-        UploadElement element = findElement(fullName);
-        if (element != null) {
-            if (element.getState() == TransferState.START) {
-                if (handlerQueueThread != null) {
-                    handlerQueueThread.stopCurrentUploadThread();
-                }
-            }
-            if (transferList.remove(element)) {
-                synchronized (transferList) {
-                    transferList.notify();
-                }
-                notifyTransferCount();
-
-                return element.hashCode();
-            }
-        }
-
-        return -1;
-    }
-
-    /**
-     * Cancel all task and remove them from the manager.
-     *
-     * @return true if succeed, false otherwise.
-     * @see #cancel(String)
-     */
-    @Override
-    public boolean cancel() {
-        if (handlerQueueThread != null) {
-            handlerQueueThread.stopCurrentUploadThread();
-        }
-
-        synchronized (transferList) {
-            transferList.clear();
-        }
-        notifyTransferCount();
-
-        return true;
-    }
-
-    /**
-     * Pause the task, set state to {@link TransferState PAUSE }
-     *
-     * @param fullName
-     * @return true if succeed, false otherwise.
-     */
-    @Override
-    public boolean pause(String fullName) {
-        UploadElement element = findElement(fullName);
+    public boolean pauseUpload(String filePath) {
+        UploadElement element = findElement(filePath);
 
         if (element == null) {
             return false;
         }
 
         boolean isElementStart = (element.getState() == TransferState.START) ? true : false;
-        Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Pause upload: " + fullName + "; state: " + element.getState());
+        Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "Pause upload: " + filePath + "; state: " + element.getState());
         if (isElementStart && handlerQueueThread != null) {
             handlerQueueThread.stopCurrentUploadThread();
         }
@@ -177,31 +130,28 @@ public class UploadManager extends TransferManager<UploadElement> {
         element.setOffset(element.getLength());
         element.setState(TransferState.PAUSE);
         if (isElementStart) {
-            synchronized (transferList) {
-                transferList.notify();
+            synchronized (uploadList) {
+                uploadList.notify();
             }
         }
-
         return true;
     }
 
     /**
-     * Pause all tasks
+     * pause activeUsers upload
      *
-     * @return true if succeed, false otherwise.
-     * @see #pause(String)
+     * @return
      */
-    @Override
-    public boolean pause() {
-        Logger.p(LogLevel.INFO, IS_LOG, TAG, "Pause activeUsers upload");
+    public boolean pauseUpload() {
+        Logger.p(LogLevel.INFO, Logged.UPLOAD, TAG, "Pause activeUsers upload");
 
         if (handlerQueueThread != null) {
             handlerQueueThread.stopCurrentUploadThread();
         }
 
-        if (null != transferList) {
-            synchronized (transferList) {
-                for (UploadElement element : transferList) {
+        if (null != uploadList) {
+            synchronized (uploadList) {
+                for (UploadElement element : uploadList) {
                     element.setOffset(element.getLength());
                     element.setState(TransferState.PAUSE);
                 }
@@ -211,43 +161,28 @@ public class UploadManager extends TransferManager<UploadElement> {
         return true;
     }
 
-    /**
-     * Resume the task, reset state to {@link TransferState WAITING }
-     *
-     * @param fullName file full path at server, uniqueness
-     * @return true if succeed, false otherwise.
-     */
-    @Override
-    public boolean resume(String fullName) {
-        Logger.p(LogLevel.INFO, IS_LOG, TAG, "Continue upload: " + fullName);
+    public boolean continueUpload(String filepath) {
+        Logger.p(LogLevel.INFO, Logged.UPLOAD, TAG, "Continue upload: " + filepath);
 
-        UploadElement element = findElement(fullName);
+        UploadElement element = findElement(filepath);
         if (element == null) {
             return false;
         }
 
         element.setState(TransferState.WAIT);
-        synchronized (transferList) {
-            transferList.notify();
+        synchronized (uploadList) {
+            uploadList.notify();
         }
-
         return true;
     }
 
-    /**
-     * Resume all tasks
-     *
-     * @return true if succeed, false otherwise.
-     * @see #resume(String)
-     */
-    @Override
-    public boolean resume() {
-        Logger.p(LogLevel.INFO, IS_LOG, TAG, "Continue activeUsers upload");
+    public boolean continueUpload() {
+        Logger.p(LogLevel.INFO, Logged.UPLOAD, TAG, "Continue activeUsers upload");
 
         boolean hasTask = false;
-        if (null != transferList) {
-            synchronized (transferList) {
-                for (UploadElement element : transferList) {
+        if (null != uploadList) {
+            synchronized (uploadList) {
+                for (UploadElement element : uploadList) {
                     element.setOffset(element.getLength());
                     if (element.getState() == TransferState.START) {
                         hasTask = true;
@@ -257,8 +192,8 @@ public class UploadManager extends TransferManager<UploadElement> {
                 }
 
                 if (!hasTask) { // notify new task if needs
-                    synchronized (transferList) {
-                        transferList.notify();
+                    synchronized (uploadList) {
+                        uploadList.notify();
                     }
                 }
             }
@@ -268,43 +203,72 @@ public class UploadManager extends TransferManager<UploadElement> {
     }
 
     /**
-     * Get transfer task list
+     * Cancel uploads and remove them from the upload manager. Each upload will
+     * be stopped if it was running, and it will no longer be accessible through
+     * the upload manager. If there is a uploaded file, partial or complete, it
+     * is deleted.
      *
-     * @return transfer list
+     * @param filePath file full toPath at server, uniqueness
+     * @return the id of upload actually removed, if remove failed, return -1.
      */
-    @Override
-    public List<UploadElement> getTransferList() {
-        ArrayList<UploadElement> destList = new ArrayList<UploadElement>(Arrays.asList(new UploadElement[transferList.size()]));
-        synchronized (transferList) {
-            Collections.copy(destList, transferList);
+    public int removeUpload(String filePath) {
+        UploadElement element = findElement(filePath);
+        if (element != null) {
+            if (element.getState() == TransferState.START) {
+                if (handlerQueueThread != null) {
+                    handlerQueueThread.stopCurrentUploadThread();
+                }
+            }
+            if (uploadList.remove(element)) {
+                synchronized (uploadList) {
+                    uploadList.notify();
+                }
+                return element.hashCode();
+            }
         }
 
-        return destList;
+        return -1;
     }
 
-    /**
-     * Destroy transfer manager
-     */
-    @Override
-    public void onDestroy() {
-        notifyTransferCount();
-        handlerQueueThread.stopThread();
+    public boolean removeUpload() {
+        if (handlerQueueThread != null) {
+            handlerQueueThread.stopCurrentUploadThread();
+        }
+
+        synchronized (uploadList) {
+            uploadList.clear();
+        }
+
+        return true;
     }
 
-    /**
-     * Find element from {@code transferList} by file path
-     *
-     * @param fullName
-     * @return Element or {@code null}
-     */
-    @Override
-    public UploadElement findElement(String fullName) {
-        for (UploadElement element : transferList) {
-            if (element.getSrcPath().equals(fullName)) {
+    private UploadElement findElement(String filePath) {
+        for (UploadElement element : uploadList) {
+            if (element.getSrcPath().equals(filePath)) {
                 return element;
             }
         }
         return null;
+    }
+
+    public ArrayList<UploadElement> getUploadList() {
+        ArrayList<UploadElement> destList = new ArrayList<UploadElement>(Arrays.asList(new UploadElement[uploadList.size()]));
+        synchronized (uploadList) {
+            Collections.copy(destList, uploadList);
+        }
+        return destList;
+    }
+
+    public ArrayList<UploadElement> getCompleteList() {
+        ArrayList<UploadElement> destList = new ArrayList<UploadElement>(Arrays.asList(new UploadElement[completeList.size()]));
+        synchronized (completeList) {
+            Collections.copy(destList, completeList);
+        }
+        return destList;
+    }
+
+    public void destroy() {
+        handlerQueueThread.stopThread();
     }
 
     private static class HandlerQueueThread extends Thread {
@@ -333,7 +297,7 @@ public class UploadManager extends TransferManager<UploadElement> {
                 if (hasUploadTask) {
                     synchronized (this) {
                         try {
-                            Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "waiting for upload task stop.");
+                            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "waiting for upload task stop.");
                             wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -342,7 +306,7 @@ public class UploadManager extends TransferManager<UploadElement> {
                 }
 
                 try {
-                    Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "waiting for upload list is changed.");
+                    Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "waiting for upload list is changed.");
                     synchronized (mUploadList) {
                         mUploadList.wait();
                     }
@@ -352,7 +316,7 @@ public class UploadManager extends TransferManager<UploadElement> {
                 synchronized (mUploadList) {
                     for (UploadElement element : mUploadList) {
                         if (element.getState() == TransferState.WAIT) {
-                            Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "start upload task");
+                            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "start upload task");
                             hasUploadTask = true;
                             uploadThread = new UploadFileThread(element, LoginManage.getInstance().getLoginSession(), listener);
                             uploadThread.start();
@@ -367,7 +331,7 @@ public class UploadManager extends TransferManager<UploadElement> {
          * stop current upload thread
          */
         private synchronized void stopCurrentUploadThread() {
-            Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "stop current upload thread");
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "stop current upload thread");
             if (uploadThread != null) {
                 uploadThread.stopUpload();
                 uploadThread = null;
@@ -382,7 +346,7 @@ public class UploadManager extends TransferManager<UploadElement> {
         public synchronized void stopCurrentUploadTask() {
             hasUploadTask = false;
             synchronized (this) {
-                Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "notify new upload task: " + this.getClass().getSimpleName());
+                Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "notify new upload task: " + this.getClass().getSimpleName());
                 this.notify();
             }
         }
@@ -395,7 +359,7 @@ public class UploadManager extends TransferManager<UploadElement> {
 
             synchronized (mUploadList) {
                 mUploadList.notify();
-                Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "notify upload list");
+                Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "notify upload list");
             }
 
         }
@@ -405,5 +369,9 @@ public class UploadManager extends TransferManager<UploadElement> {
             stopCurrentUploadThread();
             interrupt();
         }
+    }
+
+    public interface OnUploadCompleteListener {
+        void uploadComplete(UploadElement element);
     }
 }

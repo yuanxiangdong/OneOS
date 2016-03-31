@@ -2,6 +2,7 @@ package com.eli.oneos.ui;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,17 +10,21 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
 
+import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
+import com.eli.oneos.model.oneos.transfer.TransferManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileManage;
 import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.receiver.NetworkStateManager;
+import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.ui.nav.cloud.CloudNavFragment;
 import com.eli.oneos.ui.nav.phone.LocalNavFragment;
@@ -28,6 +33,7 @@ import com.eli.oneos.ui.nav.tools.ToolsFragment;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;
+import com.eli.oneos.widget.BadgeView;
 import com.eli.oneos.widget.ImageCheckBox;
 
 import java.io.File;
@@ -46,6 +52,7 @@ public class MainActivity extends BaseActivity {
     private TransferNavFragment mTransferFragment;
     //    private RadioGroup radioGroup;
     private LinearLayout mNavLayout;
+    private BadgeView mTransferBadgeView;
     private ImageCheckBox mLocalBox, mCloudBox, mTransferBox, mToolsBox;
     private FragmentManager fragmentManager;
     private int mCurPageIndex = 1;
@@ -103,6 +110,34 @@ public class MainActivity extends BaseActivity {
             changFragmentByIndex(index);
         }
     };
+    private int uploadCount = 0, downloadCount = 0;
+    public TransferManager.OnTransferCountListener transferCountListener = new TransferManager.OnTransferCountListener() {
+        @Override
+        public void onChanged(final boolean isDownload, final int count) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (isDownload) {
+                        downloadCount = count;
+                    } else {
+                        uploadCount = count;
+                    }
+
+                    int total = uploadCount + downloadCount;
+                    if (total > 0) {
+                        if (total > 99) {
+                            mTransferBadgeView.setText("99+");
+                        } else {
+                            mTransferBadgeView.setText(String.valueOf(total));
+                        }
+                        mTransferBadgeView.setVisibility(View.VISIBLE);
+                    } else {
+                        mTransferBadgeView.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +159,11 @@ public class MainActivity extends BaseActivity {
             }
             startActivity(i);
             this.finish();
+        }
+
+        OneSpaceService service = MyApplication.getService();
+        if (null != service) {
+            service.setOnTransferCountListener(transferCountListener);
         }
     }
 
@@ -218,6 +258,14 @@ public class MainActivity extends BaseActivity {
         mTransferBox.setOnImageCheckedChangedListener(listener);
         mToolsBox = (ImageCheckBox) findViewById(R.id.ib_tools);
         mToolsBox.setOnImageCheckedChangedListener(listener);
+
+        mTransferBadgeView = new BadgeView(this);
+        mTransferBadgeView.setText("0");
+        mTransferBadgeView.setBadgeGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+        mTransferBadgeView.setBadgeMargin(15, 2, 0, 0);
+        mTransferBadgeView.setTargetView(mTransferBox);
+        mTransferBadgeView.setTypeface(Typeface.DEFAULT);
+        mTransferBadgeView.setVisibility(View.GONE);
     }
 
     private void initFragment() {

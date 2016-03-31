@@ -31,6 +31,7 @@ import java.util.UUID;
  */
 public class OneOSUploadFileAPI extends OneOSBaseAPI {
     private static final String TAG = OneOSUploadFileAPI.class.getSimpleName();
+    private static final int HTTP_UPLOAD_RENAME_TIMES = 100;
     private static final int HTTP_UPLOAD_RETRY_TIMES = 5;
     private static final int HTTP_BUFFER_SIZE = 1024 * 8;
     /**
@@ -57,7 +58,6 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         if (null != listener) {
             listener.onStart(url, uploadElement);
         }
-
 
         if (uploadElement.isCheck()) {
             int check = checkExist(uploadElement.getToPath() + uploadElement.getSrcName(), uploadElement.getSize());
@@ -103,9 +103,10 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                 doUpload();
             } else {
                 Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename Failed");
-                if (count <= 10) {
+                if (count <= HTTP_UPLOAD_RENAME_TIMES) {
                     count++;
-                    index = (int) Math.pow(2, count);
+                    // index = (int) Math.pow(2, count);
+                    index = count;
                     duplicateRename(path, srcName);
                 } else {
                     Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename " + count + " Times, Skip...");

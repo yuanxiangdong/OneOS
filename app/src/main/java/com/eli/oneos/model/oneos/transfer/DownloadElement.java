@@ -24,7 +24,7 @@ public class DownloadElement extends TransferElement {
         this.file = file;
         this.toPath = downloadPath;
         this.offset = offset;
-        this.tmpName = file.getName() + "." + System.currentTimeMillis() + ".tmp";
+        this.tmpName = "." + file.getName() + "." + System.currentTimeMillis() + ".tmp";
     }
 
     /**

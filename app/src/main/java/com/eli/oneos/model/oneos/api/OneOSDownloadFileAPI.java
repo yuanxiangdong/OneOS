@@ -195,7 +195,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 } else {
                     long tmpLen = tmpFile.length();
                     if (tmpLen != downloadElement.getOffset()) {
-                        Logger.p(LogLevel.WARN, Logged.DOWNLOAD, TAG, "Temporary file length not equals offset position, resetBackupAlbum download offset position and delete temporary file");
+                        Logger.p(LogLevel.WARN, Logged.DOWNLOAD, TAG, "Temporary file length not equals offset position, reset download offset position and delete temporary file");
                         downloadElement.setOffset(0);
                         tmpFile.delete();
                     }
@@ -204,7 +204,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download offset position: " + downloadElement.getOffset());
                 httpRequest.setHeader("Range", "bytes=" + String.valueOf(downloadElement.getOffset()) + "-");
             } else if (downloadElement.getOffset() < 0) {
-                Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "Error offset position: " + downloadElement.getOffset() + ", resetBackupAlbum position to 0");
+                Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "Error offset position: " + downloadElement.getOffset() + ", reset position to 0");
                 downloadElement.setOffset(0);
             }
 

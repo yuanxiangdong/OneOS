@@ -3,6 +3,7 @@ package com.eli.oneos.model.oneos.transfer;
 import com.eli.oneos.db.TransferHistoryKeeper;
 import com.eli.oneos.db.greendao.TransferHistory;
 import com.eli.oneos.model.log.LogLevel;
+import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.utils.MediaScanner;
@@ -14,21 +15,23 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by gaoyun@eli-tech.com on 2016/3/31.
+ * download manager, please call method getInstance get singleton instance
  */
-public class DownloadManager extends TransferManager<DownloadElement> {
-    private static final String LOG_TAG = DownloadManager.class.getSimpleName();
+public class _DownloadManager {
+    private static final String LOG_TAG = _DownloadManager.class.getSimpleName();
 
-    private static DownloadManager INSTANCE = new DownloadManager();
+    private List<DownloadElement> downloadList = Collections.synchronizedList(new ArrayList<DownloadElement>());
+    //    private DBManager dbManager = null;
+    private List<OnDownloadCompleteListener> completeListenerList = new ArrayList<>();
     private DownloadFileThread.OnDownloadResultListener mDownloadResultListener = new DownloadFileThread.OnDownloadResultListener() {
 
         @Override
         public void onResult(DownloadElement mElement) {
-            Logger.p(LogLevel.DEBUG, IS_LOG, LOG_TAG, "Download Result: " + mElement.getState());
+            Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Download Result: " + mElement.getState());
 
             handlerQueueThread.stopCurrentDownloadTask();
 
-            synchronized (transferList) {
+            synchronized (downloadList) {
                 mElement.setTime(System.currentTimeMillis());
                 TransferState state = mElement.getState();
                 if (state == TransferState.COMPLETE) {
@@ -36,14 +39,16 @@ public class DownloadManager extends TransferManager<DownloadElement> {
                     TransferHistory history = new TransferHistory(null, uid, TransferHistoryKeeper.getTransferType(true), mElement.getToName(),
                             mElement.getSrcPath(), mElement.getToPath(), mElement.getSize(), mElement.getSize(), 0L, System.currentTimeMillis(), true);
                     TransferHistoryKeeper.insert(history);
-                    transferList.remove(mElement);
+                    downloadList.remove(mElement);
 
                     MediaScanner.getInstance().scanningFile(mElement.getToPath() + File.separator + mElement.getToName());
+//                    FileUtils.asyncScanFile(new File(mElement.getToPath() + File.separator + mElement.getSrcName()));
 
-                    notifyTransferComplete(mElement);
-                    notifyTransferCount();
+                    for (OnDownloadCompleteListener listener : completeListenerList) {
+                        listener.downloadComplete(mElement);
+                    }
                 } else {
-                    Logger.p(LogLevel.ERROR, IS_LOG, LOG_TAG, "Download Exception: " + state);
+                    Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, LOG_TAG, "Download Exception: " + state);
                 }
             }
 
@@ -56,10 +61,11 @@ public class DownloadManager extends TransferManager<DownloadElement> {
             handlerQueueThread.notifyNewDownloadTask();
         }
     };
-    private HandlerQueueThread handlerQueueThread = new HandlerQueueThread(transferList, mDownloadResultListener);
 
-    private DownloadManager() {
-        super(true);
+    private HandlerQueueThread handlerQueueThread = new HandlerQueueThread(downloadList, mDownloadResultListener);
+    private static _DownloadManager INSTANCE = new _DownloadManager();
+
+    private _DownloadManager() {
         if (handlerQueueThread != null && !handlerQueueThread.isRunning) {
             handlerQueueThread.start();
         }
@@ -68,33 +74,42 @@ public class DownloadManager extends TransferManager<DownloadElement> {
     /**
      * Singleton instance method
      *
-     * @return {@link DownloadManager}
+     * @return singleton instance of class
      */
-    public static DownloadManager getInstance() {
+    public static _DownloadManager getInstance() {
         return INSTANCE;
     }
 
+    public boolean addDownloadCompleteListener(OnDownloadCompleteListener listener) {
+        if (!completeListenerList.contains(listener)) {
+            return completeListenerList.add(listener);
+        }
+
+        return false;
+    }
+
+    public boolean removeDownloadCompleteListener(OnDownloadCompleteListener listener) {
+        return completeListenerList.remove(listener);
+    }
+
     /**
-     * Enqueue a new download or upload. It will start automatically once the manager is
+     * Enqueue a new download. The download will start automatically once the download manager is
      * ready to execute it and connectivity is available.
      *
-     * @param element the parameters specifying this task
-     * @return an ID for the task, unique across the system. This ID is used to make future
-     * calls related to this task. If enqueue failed, return -1.
+     * @param element the parameters specifying this download
+     * @return an ID for the download, unique across the system. This ID is used to make future
+     * calls related to this download. If enqueue failed, return -1.
      */
-    @Override
-    public int enqueue(DownloadElement element) {
+    public synchronized int enqueue(DownloadElement element) {
         if (element == null) {
-            Logger.p(LogLevel.ERROR, IS_LOG, LOG_TAG, "Download element is null");
+            Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, LOG_TAG, "Download element is null");
             return -1;
         }
 
-        if (transferList.add(element)) {
-            synchronized (transferList) {
-                transferList.notify();
+        if (downloadList.add(element)) {
+            synchronized (downloadList) {
+                downloadList.notify();
             }
-            notifyTransferCount();
-
             return element.hashCode();
         } else {
             return -1;
@@ -102,29 +117,26 @@ public class DownloadManager extends TransferManager<DownloadElement> {
     }
 
     /**
-     * Cancel task and remove them from the manager. The task will be stopped if
-     * it was running, and it will no longer be accessible through the manager. If there is
-     * a temporary file, partial or complete, it is deleted.
+     * Cancel downloads and remove them from the download manager. Each download will be stopped if
+     * it was running, and it will no longer be accessible through the download manager. If there is
+     * a downloaded file, partial or complete, it is deleted.
      *
-     * @param fullName file full path at server, uniqueness
-     * @return the id of task actually removed, if remove failed, return -1.
+     * @param fullName file full toPath at server, uniqueness
+     * @return the id of download actually removed, if remove failed, return -1.
      */
-    @Override
-    public int cancel(String fullName) {
+    public int removeDownload(String fullName) {
         DownloadElement element = findElement(fullName);
         if (element != null) {
             boolean isElementStart = element.getState() == TransferState.START ? true : false;
             if (isElementStart && handlerQueueThread != null) {
                 handlerQueueThread.stopCurrentDownloadThread();
             }
-            if (transferList.remove(element)) {
+            if (downloadList.remove(element)) {
                 if (isElementStart) {
-                    synchronized (transferList) {
-                        transferList.notify();
+                    synchronized (downloadList) {
+                        downloadList.notify();
                     }
                 }
-                notifyTransferCount();
-
                 return element.hashCode();
             }
         }
@@ -132,91 +144,22 @@ public class DownloadManager extends TransferManager<DownloadElement> {
         return -1;
     }
 
-    /**
-     * Cancel all task and remove them from the manager.
-     *
-     * @return true if succeed, false otherwise.
-     * @see #cancel(String)
-     */
-    @Override
-    public boolean cancel() {
-        Logger.p(LogLevel.DEBUG, IS_LOG, LOG_TAG, "Remove all download tasks");
+    public boolean removeDownload() {
+        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Remove activeUsers download");
 
         if (handlerQueueThread != null) {
             handlerQueueThread.stopCurrentDownloadThread();
         }
 
-        synchronized (transferList) {
-            transferList.clear();
-        }
-        notifyTransferCount();
-
-        return true;
-    }
-
-    /**
-     * Pause the task, set state to {@link TransferState PAUSE }
-     *
-     * @param fullName
-     * @return true if succeed, false otherwise.
-     */
-    @Override
-    public boolean pause(String fullName) {
-        DownloadElement element = findElement(fullName);
-
-        if (element == null) {
-            return false;
-        }
-
-        boolean isElementStart = (element.getState() == TransferState.START) ? true : false;
-        Logger.p(LogLevel.DEBUG, IS_LOG, LOG_TAG, "Pause download: " + fullName + "; state: " + element.getState());
-        if (isElementStart && handlerQueueThread != null) {
-            handlerQueueThread.stopCurrentDownloadThread();
-        }
-
-        element.setOffset(element.getLength());
-        element.setState(TransferState.PAUSE);
-        if (isElementStart) {
-            synchronized (transferList) {
-                transferList.notify();
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Pause all tasks
-     *
-     * @return true if succeed, false otherwise.
-     * @see #pause(String)
-     */
-    @Override
-    public boolean pause() {
-        if (handlerQueueThread != null) {
-            handlerQueueThread.stopCurrentDownloadThread();
-        }
-
-        if (null != transferList) {
-            synchronized (transferList) {
-                for (DownloadElement element : transferList) {
-                    element.setOffset(element.getLength());
-                    element.setState(TransferState.PAUSE);
-                }
-            }
+        synchronized (downloadList) {
+            downloadList.clear();
         }
 
         return true;
     }
 
-    /**
-     * Resume the task, reset state to {@link TransferState WAITING }
-     *
-     * @param fullName file full path at server, uniqueness
-     * @return true if succeed, false otherwise.
-     */
-    @Override
-    public boolean resume(String fullName) {
-        Logger.p(LogLevel.DEBUG, IS_LOG, LOG_TAG, "Continue download: " + fullName);
+    public boolean continueDownload(String fullName) {
+        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Continue download: " + fullName);
 
         DownloadElement element = findElement(fullName);
         if (element == null) {
@@ -224,26 +167,19 @@ public class DownloadManager extends TransferManager<DownloadElement> {
         }
 
         element.setState(TransferState.WAIT);
-        synchronized (transferList) {
-            transferList.notify();
+        synchronized (downloadList) {
+            downloadList.notify();
         }
         return true;
     }
 
-    /**
-     * Resume all tasks
-     *
-     * @return true if succeed, false otherwise.
-     * @see #resume(String)
-     */
-    @Override
-    public boolean resume() {
-        Logger.p(LogLevel.DEBUG, IS_LOG, LOG_TAG, "Continue activeUsers downloads");
+    public boolean continueDownload() {
+        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Continue activeUsers downloads");
 
         boolean hasTask = false;
-        if (null != transferList) {
-            synchronized (transferList) {
-                for (DownloadElement element : transferList) {
+        if (null != downloadList) {
+            synchronized (downloadList) {
+                for (DownloadElement element : downloadList) {
                     element.setOffset(element.getLength());
                     if (element.getState() == TransferState.START) {
                         hasTask = true;
@@ -253,8 +189,8 @@ public class DownloadManager extends TransferManager<DownloadElement> {
                 }
 
                 if (!hasTask) { // notify new task if needs
-                    synchronized (transferList) {
-                        transferList.notify();
+                    synchronized (downloadList) {
+                        downloadList.notify();
                     }
                 }
             }
@@ -263,46 +199,67 @@ public class DownloadManager extends TransferManager<DownloadElement> {
         return true;
     }
 
-    /**
-     * Get transfer task list
-     *
-     * @return transfer list
-     */
-    @Override
-    public List<DownloadElement> getTransferList() {
-        ArrayList<DownloadElement> destList = new ArrayList<>(Arrays.asList(new DownloadElement[transferList.size()]));
-        synchronized (transferList) {
-            Collections.copy(destList, transferList);
+    public boolean pauseDownload(String fullName) {
+        DownloadElement element = findElement(fullName);
+
+        if (element == null) {
+            return false;
         }
 
+        boolean isElementStart = (element.getState() == TransferState.START) ? true : false;
+        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Pause download: " + fullName + "; state: " + element.getState());
+        if (isElementStart && handlerQueueThread != null) {
+            handlerQueueThread.stopCurrentDownloadThread();
+        }
+
+        element.setOffset(element.getLength());
+        element.setState(TransferState.PAUSE);
+        if (isElementStart) {
+            synchronized (downloadList) {
+                downloadList.notify();
+            }
+        }
+        return true;
+    }
+
+    public boolean pauseDownload() {
+        if (handlerQueueThread != null) {
+            handlerQueueThread.stopCurrentDownloadThread();
+        }
+
+        if (null != downloadList) {
+            synchronized (downloadList) {
+                for (DownloadElement element : downloadList) {
+                    element.setOffset(element.getLength());
+                    element.setState(TransferState.PAUSE);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public ArrayList<DownloadElement> getDownloadList() {
+        ArrayList<DownloadElement> destList = new ArrayList<DownloadElement>(
+                Arrays.asList(new DownloadElement[downloadList.size()]));
+        synchronized (downloadList) {
+            Collections.copy(destList, downloadList);
+        }
         return destList;
     }
 
-    /**
-     * Destroy transfer manager
-     */
-    @Override
-    public void onDestroy() {
-        notifyTransferCount();
-        handlerQueueThread.stopThread();
-    }
-
-    /**
-     * Find element from {@code transferList} by file path
-     *
-     * @param fullName
-     * @return Element or {@code null}
-     */
-    @Override
-    public DownloadElement findElement(String fullName) {
-        for (DownloadElement element : transferList) {
+    private DownloadElement findElement(String fullName) {
+        for (DownloadElement element : downloadList) {
             if (element.getSrcPath().equals(fullName)) {
                 return element;
             }
         }
-        Logger.p(LogLevel.DEBUG, IS_LOG, LOG_TAG, "Can't find element: " + fullName);
-
+        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, LOG_TAG, "Can't find element: " + fullName);
         return null;
+    }
+
+    public void destroy() {
+        handlerQueueThread.stopThread();
     }
 
     private static class HandlerQueueThread extends Thread {
@@ -334,7 +291,7 @@ public class DownloadManager extends TransferManager<DownloadElement> {
                 if (hasDownloadTask) {
                     try {
                         synchronized (this) {
-                            Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "----waiting for download task stop----: " + this.getClass().getSimpleName());
+                            Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "----waiting for download task stop----: " + this.getClass().getSimpleName());
                             this.wait();
                         }
                     } catch (InterruptedException e) {
@@ -343,7 +300,7 @@ public class DownloadManager extends TransferManager<DownloadElement> {
                 }
 
                 try {
-                    Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "-----waiting for download list is changed----");
+                    Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "-----waiting for download list is changed----");
                     synchronized (mDownloadList) {
                         mDownloadList.wait();
                     }
@@ -369,7 +326,7 @@ public class DownloadManager extends TransferManager<DownloadElement> {
          * stop current download thread
          */
         private synchronized void stopCurrentDownloadThread() {
-            Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Stop current download thread");
+            Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Stop current download thread");
             if (downloadThread != null) {
                 downloadThread.stopDownload();
                 downloadThread = null;
@@ -383,7 +340,7 @@ public class DownloadManager extends TransferManager<DownloadElement> {
         public synchronized void stopCurrentDownloadTask() {
             hasDownloadTask = false;
             synchronized (this) {
-                Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Notify new download task: " + this.getClass().getSimpleName());
+                Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Notify new download task: " + this.getClass().getSimpleName());
                 this.notify();
             }
         }
@@ -396,7 +353,7 @@ public class DownloadManager extends TransferManager<DownloadElement> {
 
             synchronized (mDownloadList) {
                 mDownloadList.notify();
-                Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Notify download list");
+                Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Notify download list");
             }
         }
 
@@ -405,5 +362,9 @@ public class DownloadManager extends TransferManager<DownloadElement> {
             stopCurrentDownloadThread();
             interrupt();
         }
+    }
+
+    public interface OnDownloadCompleteListener {
+        void downloadComplete(DownloadElement element);
     }
 }

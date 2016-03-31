@@ -15,10 +15,9 @@ import com.eli.oneos.db.TransferHistoryKeeper;
 import com.eli.oneos.db.greendao.TransferHistory;
 import com.eli.oneos.model.oneos.adapter.RecordAdapter;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
-import com.eli.oneos.model.oneos.transfer.DownloadManager;
 import com.eli.oneos.model.oneos.transfer.TransferElement;
+import com.eli.oneos.model.oneos.transfer.TransferManager;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
-import com.eli.oneos.model.oneos.transfer.UploadManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.BaseActivity;
@@ -42,9 +41,9 @@ public class RecordsFragment extends BaseTransferFragment {
     private TextView mEmptyTxt;
     private ArrayList<TransferHistory> mHistoryList = new ArrayList<>();
     private LoginManage loginManage;
-    private DownloadManager.OnDownloadCompleteListener downloadCompleteListener = new DownloadManager.OnDownloadCompleteListener() {
+    private TransferManager.OnTransferCompleteListener<DownloadElement> downloadCompleteListener = new TransferManager.OnTransferCompleteListener<DownloadElement>() {
         @Override
-        public void downloadComplete(DownloadElement element) {
+        public void onComplete(boolean isDownload, DownloadElement element) {
             Log.d(TAG, "---Download Complete: " + element.getSrcPath());
             if (loginManage.isLogin()) {
                 final TransferHistory history = genTransferHistory(element, true);
@@ -58,9 +57,9 @@ public class RecordsFragment extends BaseTransferFragment {
             }
         }
     };
-    private UploadManager.OnUploadCompleteListener uploadCompleteListener = new UploadManager.OnUploadCompleteListener() {
+    private TransferManager.OnTransferCompleteListener<UploadElement> uploadCompleteListener = new TransferManager.OnTransferCompleteListener<UploadElement>() {
         @Override
-        public void uploadComplete(UploadElement element) {
+        public void onComplete(boolean isDownload, UploadElement element) {
             if (loginManage.isLogin()) {
                 final TransferHistory history = genTransferHistory(element, false);
                 getActivity().runOnUiThread(new Runnable() {

@@ -17,6 +17,7 @@ import com.eli.oneos.model.oneos.backup.file.BackupAlbumManager;
 import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
 import com.eli.oneos.model.oneos.transfer.DownloadManager;
+import com.eli.oneos.model.oneos.transfer.TransferManager;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.model.oneos.transfer.UploadManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -24,7 +25,7 @@ import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.MediaScanner;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 public class OneSpaceService extends Service {
     private static final String TAG = OneSpaceService.class.getSimpleName();
@@ -50,8 +51,8 @@ public class OneSpaceService extends Service {
         super.onDestroy();
         Log.d(ACTIVITY_SERVICE, "OneSpaceService destroy.");
         MediaScanner.getInstance().stop();
-        mDownloadManager.destroy();
-        mUploadManager.destroy();
+        mDownloadManager.onDestroy();
+        mUploadManager.onDestroy();
         stopBackupAlbum();
     }
 
@@ -194,35 +195,35 @@ public class OneSpaceService extends Service {
         return mDownloadManager.enqueue(element);
     }
 
-    public ArrayList<DownloadElement> getDownloadList() {
-        return mDownloadManager.getDownloadList();
+    public List<DownloadElement> getDownloadList() {
+        return mDownloadManager.getTransferList();
     }
 
     public void pauseDownload(String fullName) {
         Log.d("OneSpaceService", "pause download: " + fullName);
-        mDownloadManager.pauseDownload(fullName);
+        mDownloadManager.pause(fullName);
     }
 
     public void pauseDownload() {
         Log.d("OneSpaceService", "pause all download task");
-        mDownloadManager.pauseDownload();
+        mDownloadManager.pause();
     }
 
     public void continueDownload(String fullName) {
-        mDownloadManager.continueDownload(fullName);
+        mDownloadManager.resume(fullName);
     }
 
     public void continueDownload() {
         Log.d("OneSpaceService", "continue all download task");
-        mDownloadManager.continueDownload();
+        mDownloadManager.resume();
     }
 
     public void cancelDownload(String path) {
-        mDownloadManager.removeDownload(path);
+        mDownloadManager.cancel(path);
     }
 
     public void cancelDownload() {
-        mDownloadManager.removeDownload();
+        mDownloadManager.cancel();
     }
 
     // Upload Operation
@@ -231,44 +232,44 @@ public class OneSpaceService extends Service {
         return mUploadManager.enqueue(element);
     }
 
-    public ArrayList<UploadElement> getUploadList() {
-        return mUploadManager.getUploadList();
+    public List<UploadElement> getUploadList() {
+        return mUploadManager.getTransferList();
     }
 
     public void pauseUpload(String filepath) {
         Log.d("OneSpaceService", "pause upload: " + filepath);
-        mUploadManager.pauseUpload(filepath);
+        mUploadManager.pause(filepath);
     }
 
     public void pauseUpload() {
         Log.d("OneSpaceService", "pause all upload task");
-        mUploadManager.pauseUpload();
+        mUploadManager.pause();
     }
 
     public void continueUpload(String filepath) {
         Log.d("OneSpaceService", "continue upload: " + filepath);
-        mUploadManager.continueUpload(filepath);
+        mUploadManager.resume(filepath);
     }
 
     public void continueUpload() {
         Log.d("OneSpaceService", "continue all upload task");
-        mUploadManager.continueUpload();
+        mUploadManager.resume();
     }
 
     public void cancelUpload(String filepath) {
-        mUploadManager.removeUpload(filepath);
+        mUploadManager.cancel(filepath);
     }
 
     public void cancelUpload() {
-        mUploadManager.removeUpload();
+        mUploadManager.cancel();
     }
 
     /**
      * add download complete listener
      */
-    public boolean addDownloadCompleteListener(DownloadManager.OnDownloadCompleteListener listener) {
+    public boolean addDownloadCompleteListener(TransferManager.OnTransferCompleteListener listener) {
         if (null != mDownloadManager) {
-            return mDownloadManager.addDownloadCompleteListener(listener);
+            return mDownloadManager.addTransferCompleteListener(listener);
         }
 
         return true;
@@ -277,9 +278,9 @@ public class OneSpaceService extends Service {
     /**
      * remove download complete listener
      */
-    public boolean removeDownloadCompleteListener(DownloadManager.OnDownloadCompleteListener listener) {
+    public boolean removeDownloadCompleteListener(TransferManager.OnTransferCompleteListener listener) {
         if (null != mDownloadManager) {
-            return mDownloadManager.removeDownloadCompleteListener(listener);
+            return mDownloadManager.removeTransferCompleteListener(listener);
         }
 
         return true;
@@ -288,9 +289,9 @@ public class OneSpaceService extends Service {
     /**
      * add upload complete listener
      */
-    public boolean addUploadCompleteListener(UploadManager.OnUploadCompleteListener listener) {
+    public boolean addUploadCompleteListener(TransferManager.OnTransferCompleteListener listener) {
         if (null != mUploadManager) {
-            return mUploadManager.addUploadCompleteListener(listener);
+            return mUploadManager.addTransferCompleteListener(listener);
         }
 
         return true;
@@ -299,12 +300,23 @@ public class OneSpaceService extends Service {
     /**
      * remove upload complete listener
      */
-    public boolean removeUploadCompleteListener(UploadManager.OnUploadCompleteListener listener) {
+    public boolean removeUploadCompleteListener(TransferManager.OnTransferCompleteListener listener) {
         if (null != mUploadManager) {
-            return mUploadManager.removeUploadCompleteListener(listener);
+            return mUploadManager.removeTransferCompleteListener(listener);
         }
 
         return true;
     }
     // ========================================Download and Upload file======================================
+
+    // =====================================Download and Upload Count Changed================================
+    public void setOnTransferCountListener(TransferManager.OnTransferCountListener listener) {
+        if (null != mDownloadManager) {
+            mDownloadManager.addTransferCountListener(listener);
+        }
+        if (null != mUploadManager) {
+            mUploadManager.addTransferCountListener(listener);
+        }
+    }
+    // =====================================Download and Upload Count Changed=================================
 }
