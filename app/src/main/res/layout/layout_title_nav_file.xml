@@ -30,12 +30,12 @@
 
     <ImageButton
         android:id="@+id/ibtn_nav_title_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/layout_title_button_width"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_margin="5dp"
         android:background="@android:color/transparent"
+        android:padding="5dp"
         android:scaleType="centerInside"
         android:src="@drawable/selector_button_nav_title_search" />
 

@@ -1,6 +1,7 @@
 <resources>
     <dimen name="layout_title_height">44dp</dimen>
     <dimen name="layout_tool_title_height">44dp</dimen>
+    <dimen name="layout_title_button_width">32dp</dimen>
 
     <!-- Login Activity Dimens -->
     <dimen name="layout_login_padding_left">45dp</dimen>

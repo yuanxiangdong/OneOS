@@ -69,7 +69,7 @@ public class UserManageActivity extends BaseActivity {
         mTitleLayout.setOnClickBack(this);
         mTitleLayout.setBackTitle(R.string.title_back);
         mTitleLayout.setTitle(R.string.title_user_management);
-        mTitleLayout.setRightButton(R.drawable.selector_button_title_add);
+        mTitleLayout.setRightButton(R.drawable.ic_title_add_user);
         mTitleLayout.setBackVisible(true);
         mTitleLayout.setOnRightClickListener(new OnClickListener() {
             @Override

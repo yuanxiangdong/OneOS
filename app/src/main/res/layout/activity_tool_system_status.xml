@@ -29,7 +29,7 @@
             <lecho.lib.hellocharts.view.LineChartView
                 android:id="@+id/chart_cpu"
                 android:layout_width="match_parent"
-                android:layout_height="230dp"
+                android:layout_height="210dp"
                 android:layout_marginTop="10dp" />
 
             <TextView
@@ -45,8 +45,8 @@
             <lecho.lib.hellocharts.view.LineChartView
                 android:id="@+id/chart_memory"
                 android:layout_width="match_parent"
-                android:layout_height="230dp"
-                android:layout_marginTop="30dp" />
+                android:layout_height="210dp"
+                android:layout_marginTop="35dp" />
 
             <TextView
                 android:id="@+id/txt_memory_label"
@@ -61,8 +61,8 @@
             <lecho.lib.hellocharts.view.LineChartView
                 android:id="@+id/chart_eth1"
                 android:layout_width="match_parent"
-                android:layout_height="230dp"
-                android:layout_marginTop="30dp" />
+                android:layout_height="210dp"
+                android:layout_marginTop="35dp" />
 
             <TextView
                 android:id="@+id/txt_eth1_label"
@@ -77,8 +77,8 @@
             <lecho.lib.hellocharts.view.LineChartView
                 android:id="@+id/chart_eth2"
                 android:layout_width="match_parent"
-                android:layout_height="230dp"
-                android:layout_marginTop="30dp" />
+                android:layout_height="210dp"
+                android:layout_marginTop="35dp" />
 
             <TextView
                 android:id="@+id/txt_eth2_label"

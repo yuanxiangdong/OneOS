@@ -48,7 +48,7 @@
 
         <ImageButton
             android:id="@+id/btn_add_task"
-            android:layout_width="35dp"
+            android:layout_width="@dimen/layout_title_button_width"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
@@ -59,7 +59,7 @@
 
         <ImageButton
             android:id="@+id/btn_control_task"
-            android:layout_width="35dp"
+            android:layout_width="@dimen/layout_title_button_width"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
