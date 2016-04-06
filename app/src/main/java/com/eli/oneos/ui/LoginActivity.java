@@ -283,7 +283,7 @@ public class LoginActivity extends BaseActivity {
                         if (device.getIsLAN()) {
                             mLANDeviceList.remove(device);
                         } else {
-                            mHistoryUserList.remove(device);
+                            mHistoryDeviceList.remove(device);
                             DeviceInfoKeeper.delete(device);
                         }
 

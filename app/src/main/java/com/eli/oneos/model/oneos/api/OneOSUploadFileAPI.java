@@ -31,13 +31,14 @@ import java.util.UUID;
  */
 public class OneOSUploadFileAPI extends OneOSBaseAPI {
     private static final String TAG = OneOSUploadFileAPI.class.getSimpleName();
+    private static final int HTTP_UPLOAD_TIMEOUT = 30 * 1000;
     private static final int HTTP_UPLOAD_RENAME_TIMES = 100;
     private static final int HTTP_UPLOAD_RETRY_TIMES = 5;
     private static final int HTTP_BUFFER_SIZE = 1024 * 8;
     /**
      * chuck block size: 4mb
      */
-    private static final int HTTP_BLOCK_SIZE = 1024 * 1024 * 4;
+    private static final int HTTP_BLOCK_SIZE = 1024 * 1024 * 2;
 
     private OnUploadFileListener listener;
     private UploadElement uploadElement;
@@ -206,8 +207,8 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             try {
                 URL mUrl = new URL(url);
                 HttpURLConnection conn = (HttpURLConnection) mUrl.openConnection();
-                conn.setReadTimeout(20000);
-                conn.setConnectTimeout(20000);
+                conn.setReadTimeout(HTTP_UPLOAD_TIMEOUT);
+                conn.setConnectTimeout(HTTP_UPLOAD_TIMEOUT);
                 conn.setDoInput(true); // 允许输入流
                 conn.setDoOutput(true); // 允许输出流
                 conn.setUseCaches(false); // 不允许使用缓存

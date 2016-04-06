@@ -14,7 +14,9 @@ import android.widget.TextView;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.db.DeviceInfoKeeper;
 import com.eli.oneos.db.UserInfoKeeper;
+import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
 import com.eli.oneos.model.oneos.scan.OnScanDeviceListener;
@@ -26,6 +28,7 @@ import com.eli.oneos.utils.AppVersionUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
+import java.util.List;
 import java.util.Map;
 
 public class LauncherActivity extends BaseActivity {
@@ -176,6 +179,16 @@ public class LauncherActivity extends BaseActivity {
             @Override
             public void onScanOver(Map<String, String> mDeviceMap, boolean isInterrupt, boolean isUdp) {
                 if (!isLastDeviceExist) {
+                    List<DeviceInfo> mHistoryDeviceList = DeviceInfoKeeper.all();
+                    if (!EmptyUtils.isEmpty(mHistoryDeviceList)) {
+                        for (DeviceInfo info : mHistoryDeviceList) {
+                            if (info.getMac().equals(lastUserInfo.getMac())) {
+                                doLogin(lastUserInfo.getName(), lastUserInfo.getPwd(), info.getIp(), info.getPort(), lastUserInfo.getMac());
+                                return;
+                            }
+                        }
+                    }
+
                     gotoLoginActivity();
                 }
             }
