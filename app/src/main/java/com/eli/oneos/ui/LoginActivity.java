@@ -380,12 +380,11 @@ public class LoginActivity extends BaseActivity {
             public void onFailure(String url, int errorNo, String errorMsg) {
                 dismissLoading();
                 if (errorNo == HttpErrorNo.ERR_ONEOS_VERSION) {
-                    DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tips, R.string.oneos_version_mismatch, R.string.ok, null);
+                    DialogUtils.showNotifyDialog(LoginActivity.this, getString(R.string.tips_title_version_mismatch), errorMsg, getString(R.string.ok), null);
                 } else if (errorNo == HttpErrorNo.ERR_CONNECT_REFUSED) {
                     DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tips, R.string.connection_refused, R.string.ok, null);
                 } else {
                     showTipView(errorMsg, false);
-//                    ToastHelper.showToast(errorMsg);
                 }
             }
         });

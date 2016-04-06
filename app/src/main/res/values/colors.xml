@@ -18,6 +18,7 @@
 
     <!-- Gray selector -->
     <color name="gray_normal">@color/gray</color>
+    <color name="gray_selected">@color/darker_gray</color>
     <color name="gray_pressed">@color/darker_gray</color>
     <color name="gray_disabled">@color/light_gray</color>
     <color name="content_empty">@color/gray</color>

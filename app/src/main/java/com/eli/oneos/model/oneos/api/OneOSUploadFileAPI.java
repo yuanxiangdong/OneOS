@@ -68,7 +68,6 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             } else {
                 doUpload();
             }
-
         } else {
             doUpload();
         }
@@ -84,12 +83,12 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
     int index = 1;
 
     private void duplicateRename(final String path, final String srcName) {
-        String newName = genDuplicateName(srcName, index);
+//        String newName = genDuplicateName(srcName, index);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "rename");
         params.put("path", path);
-        params.put("newname", newName);
+        // params.put("newname", "");
 
         String url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
         logHttp(TAG, url, params);
@@ -118,15 +117,15 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         }
     }
 
-    private String genDuplicateName(String srcName, int index) {
-        int pos = srcName.lastIndexOf(".");
-        if (pos == -1) {
-            return srcName + "_" + index;
-        }
-
-        String name = srcName.substring(0, pos);
-        return name + "_" + index + srcName.substring(pos, srcName.length());
-    }
+//    private String genDuplicateName(String srcName, int index) {
+//        int pos = srcName.lastIndexOf(".");
+//        if (pos == -1) {
+//            return srcName + "_" + index;
+//        }
+//
+//        String name = srcName.substring(0, pos);
+//        return name + "_" + index + srcName.substring(pos, srcName.length());
+//    }
 
     public void stopUpload() {
         isInterrupt = true;

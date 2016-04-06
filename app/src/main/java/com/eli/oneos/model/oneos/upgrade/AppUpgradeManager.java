@@ -44,12 +44,13 @@ import java.util.regex.Pattern;
 public class AppUpgradeManager {
     private static final String TAG = AppUpgradeManager.class.getSimpleName();
 
-    private static final String URL_VERSION = "http://onespace.cc/download/ver.json";
+    private static final String URL_VERSION = "http://onespace.cc/download/oneos/ver.json";
+    private static final String ANDROID_VERSION_NAME = "android";
     // private static final String URL_APK = "http://onespace.cc/download/";
 
     // private static final int MSG_GET_CURRENT_VERSION = 0x01;
     // private static final int MSG_GET_SERVER_VERSION = 0x02;
-    private static final int MSG_DONWLOAD_APP_OVER = 0x03;
+    private static final int MSG_DOWNLOAD_APP_OVER = 0x03;
     private static final int MSG_CHECK_UPGRADE_OVER = 0x04;
 
     private OnUpgradeListener listener;
@@ -71,7 +72,7 @@ public class AppUpgradeManager {
                 // case MSG_GET_SERVER_VERSION:
                 // isNeedsToUpgrade();
                 // break;
-                case MSG_DONWLOAD_APP_OVER:
+                case MSG_DOWNLOAD_APP_OVER:
                     doInstallApp();
                     break;
                 case MSG_CHECK_UPGRADE_OVER:
@@ -232,7 +233,7 @@ public class AppUpgradeManager {
                 });
     }
 
-    // version formate is [xx.xx.xx.xx xx]
+    // version format is [xx.xx.xx.xx xx]
     private int covertVersionToNumber(String version) throws NumberFormatException {
         String regEx = "[^.0-9]";
         Pattern pattern = Pattern.compile(regEx);
@@ -243,8 +244,8 @@ public class AppUpgradeManager {
         int ver = 0;
         for (int i = 0; i < nums.length; i++) {
             // Logged.d(TAG, "Version Num string " + i + ": " + nums[i]);
-            int leverl = 4 - i - 1;
-            ver += Integer.valueOf(nums[i]) * Math.pow(10, leverl * 2);
+            int level = 4 - i - 1;
+            ver += Integer.valueOf(nums[i]) * Math.pow(10, level * 2);
         }
 
         // Logged.d(TAG, "Version Num: " + ver);
@@ -272,7 +273,7 @@ public class AppUpgradeManager {
                 is.close();
 
                 JSONObject json = new JSONObject(resultStr);
-                JSONObject apkJson = json.getJSONObject("android_v3.0");
+                JSONObject apkJson = json.getJSONObject(ANDROID_VERSION_NAME);
                 serverVersion = apkJson.getString("str");
                 appUrl = apkJson.getString("file");
                 Log.d(TAG, "Server App Version: " + serverVersion + "; File DownLoad URL: " + appUrl);
@@ -301,7 +302,7 @@ public class AppUpgradeManager {
                 newAppFile = null;
                 Log.e(TAG, "download new app exception");
             }
-            sendMessageToUI(MSG_DONWLOAD_APP_OVER, null);
+            sendMessageToUI(MSG_DOWNLOAD_APP_OVER, null);
         }
 
         public void stopDownload() {

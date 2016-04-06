@@ -20,6 +20,9 @@
     <string name="connection_refused">无法连接到您的设备，请检查设备和网络状态！</string>
     <string name="network_not_available">当前网络不可用，请检查网络状态！</string>
     <string name="oneos_version_mismatch">您的OneSpace系统版本过低，请升级到 OneOS v3.x 版本！</string>
+    <string name="fmt_oneos_version_upgrade" formatte="false">您的OneSpace系统版本过低，请升级到 OneOS v%s 以上版本！</string>
+    <string name="oneos_version_check_failed">检测系统版本失败，请重新尝试！</string>
+    <string name="tips_title_version_mismatch">系统版本不匹配</string>
     <string name="wifi_not_available">当前WiFi不可用，请检查WiFi状态！</string>
     <string name="error_json_exception">协议解析失败</string>
     <string name="operate_failed">操作失败</string>

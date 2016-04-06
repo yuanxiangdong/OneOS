@@ -234,8 +234,8 @@ public class BackupFileManager {
                     Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Scanning Dir: " + dir.getPath());
                     File[] files = dir.listFiles(new FileFilter() {
                         @Override
-                        public boolean accept(File pathname) {
-                            return !pathname.isHidden();
+                        public boolean accept(File f) {
+                            return !f.isHidden() && f.length() > 0;
                         }
                     });
                     for (File file : files) {

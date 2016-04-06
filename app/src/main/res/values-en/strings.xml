@@ -21,7 +21,10 @@
     <string name="all_loaded">All Loaded</string>
     <string name="connection_refused">Unable to connect to your OneSpace, please check the device and network status!</string>
     <string name="network_not_available">The network is not available, please check it!</string>
-    <string name="oneos_version_mismatch">Your OneSpace version is too low, please upgrade to OneOS v3.x version！</string>
+    <string name="oneos_version_mismatch">Your OneSpace version is too low, please upgrade to OneOS v3.x version!</string>
+    <string name="fmt_oneos_version_upgrade" formatte="false">Your OneSpace version is too low，please upgrade to OneOS version v%s and above!</string>
+    <string name="oneos_version_check_failed">Detection system version fails, please try again!</string>
+    <string name="tips_title_version_mismatch">OneOS Version Mismatch</string>
     <string name="wifi_not_available">The WiFi is not available, please check it!</string>
     <string name="error_json_exception">Failed to parse protocol</string>
     <string name="operate_failed">Operation failed</string>
@@ -365,7 +368,7 @@
     <string name="title_backup_photo">Backup Album</string>
     <string name="unknown_photo_date">unknown time</string>
     <string name="remain">Remain</string>
-    <string name="counts"> </string>
+    <string name="counts">&#160;</string>
     <string name="backup_dir_shown">Target Directory：&#160;</string>
     <string name="backup_complete">Backup Complete</string>
     <string name="backup_closed">Backup Closed</string>

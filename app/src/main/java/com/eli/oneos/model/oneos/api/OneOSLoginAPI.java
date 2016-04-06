@@ -13,6 +13,7 @@ import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logger;
+import com.eli.oneos.model.oneos.upgrade.OneOSVersionManager;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 
@@ -44,6 +45,32 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
 
     public void setOnLoginListener(OnLoginListener listener) {
         this.listener = listener;
+    }
+
+    private void checkOneOSVersion(final LoginSession loginSession) {
+        OneOSVersionAPI versionAPI = new OneOSVersionAPI(loginSession);
+        versionAPI.setOnSystemVersionListener(new OneOSVersionAPI.OnSystemVersionListener() {
+            @Override
+            public void onStart(String url) {
+            }
+
+            @Override
+            public void onSuccess(String url, String model, String product, String version, boolean needsUp) {
+                if (OneOSVersionManager.check(version)) {
+                    listener.onSuccess(url, loginSession);
+                } else {
+                    String msg = String.format(context.getResources().getString(R.string.fmt_oneos_version_upgrade), OneOSVersionManager.MIN_ONEOS_VERSION);
+                    listener.onFailure(url, HttpErrorNo.ERR_ONEOS_VERSION, msg);
+                }
+            }
+
+            @Override
+            public void onFailure(String url, int errorNo, String errorMsg) {
+                String msg = context.getResources().getString(R.string.oneos_version_check_failed);
+                listener.onFailure(url, HttpErrorNo.ERR_ONEOS_VERSION, msg);
+            }
+        });
+        versionAPI.query();
     }
 
     private void genLoginSession(String mac, int uid, int gid, int admin, String session, long time, boolean isLAN) {
@@ -82,7 +109,7 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
 
         LoginSession loginSession = new LoginSession(userInfo, deviceInfo, userSettings, session, time);
 
-        listener.onSuccess(url, loginSession);
+        checkOneOSVersion(loginSession);
     }
 
     public void login() {
@@ -99,6 +126,9 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
                 super.onFailure(th, errorNo, strMsg);
                 errorNo = parseFailure(th, errorNo);
                 if (listener != null) {
+                    if (errorNo == HttpErrorNo.ERR_ONEOS_VERSION) {
+                        strMsg = context.getResources().getString(R.string.oneos_version_mismatch);
+                    }
                     listener.onFailure(url, errorNo, strMsg);
                 }
             }
