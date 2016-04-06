@@ -11,12 +11,12 @@ import java.util.regex.Pattern;
 public class OneOSVersionManager {
     // Android OneSpace V3.0.9 beta 需要 OneOS 最低版本为3.0.12，适配情况：
     // 1、备份文件时需要使用新的重命名接口；
-    public static final String MIN_ONEOS_VERSION = "3.0.12";
+    public static final String MIN_ONEOS_VERSION = "3.0.10";
 
     /**
      * check version string, version must be format in xx.xx.xx
      *
-     * @param version
+     * @param version oneos current version
      * @return true if match success, otherwise false
      */
     public static boolean check(String version) {
@@ -29,19 +29,21 @@ public class OneOSVersionManager {
             Matcher matcher = pattern.matcher(version);
             version = matcher.replaceAll("").trim();
 
-            String cur[] = version.split(".");
-            String min[] = MIN_ONEOS_VERSION.split(".");
+            String cur[] = version.split("\\.");
+            String min[] = MIN_ONEOS_VERSION.split("\\.");
             for (int i = 0; i < 3; i++) {
                 int c;
                 int m;
                 try {
                     c = Integer.valueOf(cur[i]);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     c = 0;
                 }
                 try {
                     m = Integer.valueOf(min[i]);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     m = 0;
                 }
 

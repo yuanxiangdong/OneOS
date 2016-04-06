@@ -293,9 +293,14 @@ public class LoginActivity extends BaseActivity {
                 mDeviceSpinnerView.setOnSpinnerItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        DeviceInfo DeviceInfo = mLANDeviceList.get(position);
-                        mIPTxt.setText(DeviceInfo.getIp());
-                        mPortTxt.setText(DeviceInfo.getPort());
+                        DeviceInfo deviceInfo;
+                        if (position < mLANDeviceList.size()) {
+                            deviceInfo = mLANDeviceList.get(position);
+                        } else {
+                            deviceInfo = mHistoryDeviceList.get(position - mLANDeviceList.size());
+                        }
+                        mIPTxt.setText(deviceInfo.getIp());
+                        mPortTxt.setText(deviceInfo.getPort());
                         mDeviceSpinnerView.dismiss();
                     }
                 });

@@ -61,7 +61,7 @@ public class OneOSVersionAPI extends OneOSBaseAPI {
 
                             listener.onSuccess(url, model, product, version, needsUp);
                         } else {
-                            // {"errno":-1,"msg":"list error","result":false}
+                            Log.e(TAG, "Get OneOS Version Failed");
                             int errorNo = json.getInt("errno");
                             String msg = json.has("msg") ? json.getString("msg") : null;
                             listener.onFailure(url, errorNo, msg);

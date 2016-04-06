@@ -1,9 +1,0 @@
-apply plugin: 'java'
-
-repositories {
-    maven { url 'http://audiobox.keytwo.net' }
-}
-
-dependencies {
-    //    compile fileTree(include: ['*.jar'], dir: 'libs')
-}

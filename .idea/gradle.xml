@@ -13,7 +13,6 @@
             <option value="$PROJECT_DIR$/greendaogenerator" />
             <option value="$PROJECT_DIR$/materialloadingprogressbar" />
             <option value="$PROJECT_DIR$/segementgroup" />
-            <option value="$PROJECT_DIR$/websocket" />
           </set>
         </option>
       </GradleProjectSettings>

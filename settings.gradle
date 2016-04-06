@@ -1,1 +1,1 @@
-include ':app', ':segementgroup', ':greendaogenerator', ':materialloadingprogressbar', ':websocket'
+include ':app', ':segementgroup', ':greendaogenerator', ':materialloadingprogressbar'
