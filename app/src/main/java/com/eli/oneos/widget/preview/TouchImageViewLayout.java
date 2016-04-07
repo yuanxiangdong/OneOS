@@ -58,6 +58,7 @@ public class TouchImageViewLayout extends RelativeLayout {
 
     protected void init() {
         LayoutParams params;
+
         mProgressBar = new ProgressBar(mContext, null, android.R.attr.progressBarStyleInverse);
         params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
@@ -69,7 +70,6 @@ public class TouchImageViewLayout extends RelativeLayout {
 
         mImageView = new TouchImageView(mContext);
         params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        // params.addRule(RelativeLayout.CENTER_IN_PARENT);
         mImageView.setLayoutParams(params);
         mImageView.setOnLoadResultListener(new TouchImageView.onLoadResultCallback() {
 
@@ -91,6 +91,5 @@ public class TouchImageViewLayout extends RelativeLayout {
         if (mHttpBitmap != null) {
             mHttpBitmap.display(mImageView, imageUri);
         }
-
     }
 }

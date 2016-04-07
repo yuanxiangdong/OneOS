@@ -287,7 +287,7 @@ public class TouchImageView extends ImageView {
 
     public boolean pagerCanScroll() {
         if (mode != NONE)
-            return false;
+            return true;
         return saveScale == minScale;
     }
 

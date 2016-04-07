@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
@@ -72,16 +73,16 @@ public class GalleryPagerAdapter extends BasePagerAdapter {
             if (isLocalPic) {
                 File file = (File) mResources.get(position);
                 if (FileUtils.isGifFile(file.getName())) {
-                    Glide.with(mContext).load(Uri.fromFile(file)).asGif().into(ivLayout.getImageView());
+                    Glide.with(mContext).load(Uri.fromFile(file)).asGif().error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
                 } else {
-                    Glide.with(mContext).load(Uri.fromFile(file)).into(ivLayout.getImageView());
+                    Glide.with(mContext).load(Uri.fromFile(file)).error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
                 }
             } else {
                 OneOSFile file = (OneOSFile) mResources.get(position);
                 if (file.isGif()) {
-                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).asGif().into(ivLayout.getImageView());
+                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).asGif().error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
                 } else {
-                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).into(ivLayout.getImageView());
+                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
                 }
 //                Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, info)).
 //                        into(new ImageViewTarget<GlideDrawable>(ivLayout.getImageView()) {

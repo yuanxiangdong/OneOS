@@ -134,9 +134,9 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
             if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
                 imageView.setTag(null);
                 if (file.isGif()) {
-                    Glide.with(context).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).asGif().into(imageView);
+                    Glide.with(context).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).asGif().error(R.drawable.icon_file_pic_default).into(imageView);
                 } else {
-                    Glide.with(context).load(OneOSAPIs.genThumbnailUrl(mLoginSession, file)).centerCrop().into(imageView);
+                    Glide.with(context).load(OneOSAPIs.genThumbnailUrl(mLoginSession, file)).error(R.drawable.icon_file_pic_default).into(imageView);
                 }
             } else {
                 HttpBitmap.getInstance().display(imageView, OneOSAPIs.genThumbnailUrl(mLoginSession, file));

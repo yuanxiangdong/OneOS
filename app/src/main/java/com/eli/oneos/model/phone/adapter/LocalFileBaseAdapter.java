@@ -128,21 +128,21 @@ public class LocalFileBaseAdapter extends BaseAdapter {
         if (FileUtils.isGifFile(file.getName())) {
             if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
                 imageView.setTag(null);
-                Glide.with(context).load(Uri.fromFile(file.getFile())).asGif().into(imageView);
+                Glide.with(context).load(Uri.fromFile(file.getFile())).asGif().error(R.drawable.icon_file_pic_default).into(imageView);
             } else {
                 HttpBitmap.getInstance().display(imageView, file.getPath());
             }
         } else if (FileUtils.isPictureFile(file.getName())) {
             if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
                 imageView.setTag(null);
-                Glide.with(context).load(Uri.fromFile(file.getFile())).centerCrop().into(imageView);
+                Glide.with(context).load(Uri.fromFile(file.getFile())).error(R.drawable.icon_file_pic_default).centerCrop().into(imageView);
             } else {
                 HttpBitmap.getInstance().display(imageView, file.getPath());
             }
         } else {
             if (Constants.DISPLAY_IMAGE_WITH_GLIDE && FileUtils.isVideoFile(file.getName())) {
                 imageView.setTag(null);
-                Glide.with(context).load(Uri.fromFile(file.getFile())).centerCrop().into(imageView);
+                Glide.with(context).load(Uri.fromFile(file.getFile())).error(R.drawable.icon_file_video).into(imageView);
             } else {
                 int icon;
                 if (file.isDirectory()) {
