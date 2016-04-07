@@ -23,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -386,6 +387,19 @@ public class TouchImageView extends ImageView {
         Log.e(VIEW_LOG_TAG, "---set bitmap---");
         bmWidth = bm.getWidth();
         bmHeight = bm.getHeight();
+    }
+
+    @Override
+    public void setImageDrawable(Drawable drawable) {
+        super.setImageDrawable(drawable);
+        if (null != drawable) {
+            if (mResultCallback != null) {
+                mResultCallback.onCallback(true);
+            }
+
+            bmWidth = drawable.getIntrinsicWidth();
+            bmHeight = drawable.getIntrinsicHeight();
+        }
     }
 
     @Override

@@ -371,6 +371,15 @@ public class FileUtils {
         return filename;
     }
 
+    public static boolean isGifFile(String name) {
+        if (name != null) {
+            name = name.toLowerCase();
+            return name.endsWith(".gif");
+        }
+
+        return false;
+    }
+
     public static boolean isPictureFile(String name) {
         if (name != null) {
             name = name.toLowerCase();

@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginSession;
@@ -21,6 +23,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
     private static final String TAG = OneOSFileBaseAdapter.class.getSimpleName();
 
     public LayoutInflater mInflater;
+    public Context context;
     public List<OneOSFile> mFileList = null;
     public ArrayList<OneOSFile> mSelectedList = null;
     private boolean isMultiChoose = false;
@@ -32,6 +35,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
 
     public OneOSFileBaseAdapter(Context context, List<OneOSFile> fileList, ArrayList<OneOSFile> selectedList, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
         this.mInflater = LayoutInflater.from(context);
+        this.context = context;
         this.mListener = listener;
         this.mFileList = fileList;
         this.mSelectedList = selectedList;
@@ -127,7 +131,16 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
 
     public void showPicturePreview(ImageView imageView, OneOSFile file) {
         if (!mLoginSession.getUserSettings().getIsPreviewPicOnlyWifi() || isWifiAvailable) {
-            HttpBitmap.getInstance().display(imageView, OneOSAPIs.genThumbnailUrl(mLoginSession, file));
+            if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
+                imageView.setTag(null);
+                if (file.isGif()) {
+                    Glide.with(context).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).asGif().into(imageView);
+                } else {
+                    Glide.with(context).load(OneOSAPIs.genThumbnailUrl(mLoginSession, file)).centerCrop().into(imageView);
+                }
+            } else {
+                HttpBitmap.getInstance().display(imageView, OneOSAPIs.genThumbnailUrl(mLoginSession, file));
+            }
         } else {
             imageView.setImageResource(R.drawable.icon_file_pic);
         }

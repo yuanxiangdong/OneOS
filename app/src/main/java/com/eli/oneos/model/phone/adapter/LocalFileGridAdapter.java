@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.eli.oneos.R;
 import com.eli.oneos.model.phone.LocalFile;
-import com.eli.oneos.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,24 +60,7 @@ public class LocalFileGridAdapter extends LocalFileBaseAdapter {
         holder.mNameTxt.setText(file.getName());
         holder.mIconView.setTag(file.getName());
 
-        if (FileUtils.isPictureFile(file.getName())) {
-            showPicturePreview(holder.mIconView, file);
-        } else {
-            int icon;
-            if (file.isDirectory()) {
-                if (file.isDownloadDir()) {
-                    icon = R.drawable.icon_file_folder_download;
-                } else if (file.isBackupDir()) {
-                    icon = R.drawable.icon_file_folder_backup;
-                } else {
-                    icon = R.drawable.icon_file_folder;
-                }
-            } else {
-                icon = FileUtils.fmtFileIcon(file.getName());
-            }
-            holder.mIconView.setImageResource(icon);
-        }
-
+        showFileIcon(holder.mIconView, file);
         if (isMultiChooseModel()) {
             holder.mSelectCb.setVisibility(View.VISIBLE);
             holder.mSelectCb.setChecked(getSelectedList().contains(file));

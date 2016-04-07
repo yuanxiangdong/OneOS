@@ -18,22 +18,21 @@
 package com.eli.oneos.widget.preview;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.HttpBitmap;
 
 import java.io.File;
 import java.util.List;
 
-/**
- * Class wraps URLs to adapter, then it instantiates
- * {@link TouchImageViewLayout.truba.touchgallery.TouchView.UrlTouchImageView} objects to paging up
- * through them.
- */
 public class GalleryPagerAdapter extends BasePagerAdapter {
     private static final String TAG = GalleryPagerAdapter.class.getSimpleName();
 
@@ -68,12 +67,37 @@ public class GalleryPagerAdapter extends BasePagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup collection, final int position) {
         final TouchImageViewLayout ivLayout = new TouchImageViewLayout(mContext, finalBitmap);
-
-        ivLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        ivLayout.setUri(getPictureUri(position));
-
+        ivLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
+            if (isLocalPic) {
+                File file = (File) mResources.get(position);
+                if (FileUtils.isGifFile(file.getName())) {
+                    Glide.with(mContext).load(Uri.fromFile(file)).asGif().into(ivLayout.getImageView());
+                } else {
+                    Glide.with(mContext).load(Uri.fromFile(file)).into(ivLayout.getImageView());
+                }
+            } else {
+                OneOSFile file = (OneOSFile) mResources.get(position);
+                if (file.isGif()) {
+                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).asGif().into(ivLayout.getImageView());
+                } else {
+                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).into(ivLayout.getImageView());
+                }
+//                Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, info)).
+//                        into(new ImageViewTarget<GlideDrawable>(ivLayout.getImageView()) {
+//                            @Override
+//                            protected void setResource(GlideDrawable resource) {
+//                                ivLayout.getImageView().setImageDrawable(resource);
+//                                ivLayout.onLoadOver();
+//                            }
+//                        });
+            }
+        } else {
+            ivLayout.setUri(getPictureUri(position));
+        }
+//        ivLayout.setUri(getPictureUri(position));
         collection.addView(ivLayout, 0);
+
         return ivLayout;
     }
 

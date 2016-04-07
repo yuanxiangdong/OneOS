@@ -1,6 +1,7 @@
 package com.eli.oneos.model.phone.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.eli.oneos.R;
+import com.eli.oneos.constant.Constants;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.model.phone.LocalFile;
-import com.eli.oneos.model.phone.LocalFileType;
+import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.HttpBitmap;
 
 import java.util.ArrayList;
@@ -21,6 +25,7 @@ public class LocalFileBaseAdapter extends BaseAdapter {
     private static final String TAG = LocalFileBaseAdapter.class.getSimpleName();
 
     public LayoutInflater mInflater;
+    public Context context;
     public List<LocalFile> mFileList = null;
     public ArrayList<LocalFile> mSelectedList = null;
     private boolean isMultiChoose = false;
@@ -29,6 +34,7 @@ public class LocalFileBaseAdapter extends BaseAdapter {
 
     public LocalFileBaseAdapter(Context context, List<LocalFile> fileList, ArrayList<LocalFile> selectedList, OnMultiChooseClickListener listener) {
         this.mInflater = LayoutInflater.from(context);
+        this.context = context;
         this.mListener = listener;
         this.mFileList = fileList;
         this.mSelectedList = selectedList;
@@ -118,8 +124,41 @@ public class LocalFileBaseAdapter extends BaseAdapter {
         }
     }
 
-    public void showPicturePreview(ImageView imageView, LocalFile file) {
-        HttpBitmap.getInstance().display(imageView, file.getPath());
+    public void showFileIcon(ImageView imageView, LocalFile file) {
+        if (FileUtils.isGifFile(file.getName())) {
+            if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
+                imageView.setTag(null);
+                Glide.with(context).load(Uri.fromFile(file.getFile())).asGif().into(imageView);
+            } else {
+                HttpBitmap.getInstance().display(imageView, file.getPath());
+            }
+        } else if (FileUtils.isPictureFile(file.getName())) {
+            if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
+                imageView.setTag(null);
+                Glide.with(context).load(Uri.fromFile(file.getFile())).centerCrop().into(imageView);
+            } else {
+                HttpBitmap.getInstance().display(imageView, file.getPath());
+            }
+        } else {
+            if (Constants.DISPLAY_IMAGE_WITH_GLIDE && FileUtils.isVideoFile(file.getName())) {
+                imageView.setTag(null);
+                Glide.with(context).load(Uri.fromFile(file.getFile())).centerCrop().into(imageView);
+            } else {
+                int icon;
+                if (file.isDirectory()) {
+                    if (file.isDownloadDir()) {
+                        icon = R.drawable.icon_file_folder_download;
+                    } else if (file.isBackupDir()) {
+                        icon = R.drawable.icon_file_folder_backup;
+                    } else {
+                        icon = R.drawable.icon_file_folder;
+                    }
+                } else {
+                    icon = FileUtils.fmtFileIcon(file.getName());
+                }
+                imageView.setImageResource(icon);
+            }
+        }
     }
 
     public interface OnMultiChooseClickListener {

@@ -9,10 +9,8 @@ import android.widget.TextView;
 
 import com.eli.oneos.R;
 import com.eli.oneos.model.phone.LocalFile;
-import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.widget.sticky.gridview.StickyGridHeadersSimpleAdapter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,16 +65,10 @@ public class LocalStickyGridAdapter extends LocalFileBaseAdapter implements Stic
         }
 
         LocalFile localFile = mFileList.get(position);
-        File file = localFile.getFile();
-        holder.mNameTxt.setText(file.getName());
-        holder.mIconView.setTag(file.getName());
+        holder.mNameTxt.setText(localFile.getFile().getName());
+        holder.mIconView.setTag(localFile.getFile().getName());
 
-        if (FileUtils.isPictureFile(file.getName())) {
-            showPicturePreview(holder.mIconView, localFile);
-        } else {
-            holder.mIconView.setImageResource(FileUtils.fmtFileIcon(file));
-        }
-
+        showFileIcon(holder.mIconView, localFile);
         if (isMultiChooseModel()) {
             holder.mSelectCb.setVisibility(View.VISIBLE);
             holder.mSelectCb.setChecked(getSelectedList().contains(localFile));

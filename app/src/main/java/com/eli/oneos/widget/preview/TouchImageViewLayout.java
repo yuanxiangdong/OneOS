@@ -27,68 +27,70 @@ import com.eli.oneos.utils.HttpBitmap;
 
 
 public class TouchImageViewLayout extends RelativeLayout {
-	protected ProgressBar mProgressBar;
-	protected TouchImageView mImageView;
-	private HttpBitmap mHttpBitmap;
+    protected ProgressBar mProgressBar;
+    protected TouchImageView mImageView;
+    private HttpBitmap mHttpBitmap;
 
-	protected Context mContext;
+    protected Context mContext;
 
-	// public TouchImageViewLayout(Context ctx) {
-	// super(ctx);
-	// this.mContext = ctx;
-	// init();
-	// }
+    // public TouchImageViewLayout(Context ctx) {
+    // super(ctx);
+    // this.mContext = ctx;
+    // init();
+    // }
 
-	public TouchImageViewLayout(Context ctx, HttpBitmap httpBitmap) {
-		super(ctx);
-		this.mHttpBitmap = httpBitmap;
-		this.mContext = ctx;
-		init();
-	}
+    public TouchImageViewLayout(Context ctx, HttpBitmap httpBitmap) {
+        super(ctx);
+        this.mHttpBitmap = httpBitmap;
+        this.mContext = ctx;
+        init();
+    }
 
-	public TouchImageViewLayout(Context ctx, AttributeSet attrs) {
-		super(ctx, attrs);
-		mContext = ctx;
-		init();
-	}
+    public TouchImageViewLayout(Context ctx, AttributeSet attrs) {
+        super(ctx, attrs);
+        mContext = ctx;
+        init();
+    }
 
-	public TouchImageView getImageView() {
-		return mImageView;
-	}
+    public TouchImageView getImageView() {
+        return mImageView;
+    }
 
-	protected void init() {
-		mProgressBar = new ProgressBar(mContext, null, android.R.attr.progressBarStyleInverse);
-		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		params.addRule(RelativeLayout.CENTER_IN_PARENT);
-		params.setMargins(30, 0, 30, 0);
-		mProgressBar.setLayoutParams(params);
-		mProgressBar.setIndeterminate(false);
-		mProgressBar.setMax(100);
-		this.addView(mProgressBar);
+    protected void init() {
+        LayoutParams params;
+        mProgressBar = new ProgressBar(mContext, null, android.R.attr.progressBarStyleInverse);
+        params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        params.setMargins(30, 0, 30, 0);
+        mProgressBar.setLayoutParams(params);
+        mProgressBar.setIndeterminate(false);
+        mProgressBar.setMax(100);
+        this.addView(mProgressBar);
 
-		mImageView = new TouchImageView(mContext);
-		params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		// params.addRule(RelativeLayout.CENTER_IN_PARENT);
-		mImageView.setLayoutParams(params);
-		mImageView.setOnLoadResultListener(new TouchImageView.onLoadResultCallback() {
+        mImageView = new TouchImageView(mContext);
+        params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        // params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        mImageView.setLayoutParams(params);
+        mImageView.setOnLoadResultListener(new TouchImageView.onLoadResultCallback() {
 
-			@Override
-			public void onCallback(boolean success) {
-				mProgressBar.setVisibility(View.GONE);
-				mImageView.setVisibility(View.VISIBLE);
-			}
-		});
-		this.addView(mImageView);
-		mImageView.setVisibility(View.GONE);
-	}
+            @Override
+            public void onCallback(boolean success) {
+                onLoadOver();
+            }
+        });
+        this.addView(mImageView);
+        // mImageView.setVisibility(View.GONE);
+    }
 
-	public void onLoadOver(TouchImageView view, boolean success) {
-		mProgressBar.setVisibility(View.GONE);
-	}
+    public void onLoadOver() {
+        mProgressBar.setVisibility(View.GONE);
+        mImageView.setVisibility(View.VISIBLE);
+    }
 
-	public void setUri(String imageUri) {
-		if (mHttpBitmap != null) {
-			mHttpBitmap.display(mImageView, imageUri);
-		}
-	}
+    public void setUri(String imageUri) {
+        if (mHttpBitmap != null) {
+            mHttpBitmap.display(mImageView, imageUri);
+        }
+
+    }
 }

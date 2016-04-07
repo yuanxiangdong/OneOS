@@ -179,6 +179,10 @@ public class OneOSFile implements Serializable {
         return null != this.type && this.type.equalsIgnoreCase("pic");
     }
 
+    public boolean isGif() {
+        return null != this.name && this.name.toLowerCase().endsWith(".gif");
+    }
+
     public boolean isEncrypt() {
         return null != this.type && this.type.equalsIgnoreCase("enc");
     }

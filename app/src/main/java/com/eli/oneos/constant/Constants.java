@@ -26,4 +26,6 @@ public class Constants {
 
     public static final String PHOTO_DATE_UNKNOWN = MyApplication.getAppContext().getString(R.string.unknown_photo_date);
 
+    public static final boolean DISPLAY_IMAGE_WITH_GLIDE = true;
+
 }
