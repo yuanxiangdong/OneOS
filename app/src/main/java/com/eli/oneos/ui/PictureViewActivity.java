@@ -97,7 +97,7 @@ public class PictureViewActivity extends Activity {
                 }
             });
             GalleryViewPager mViewPager = (GalleryViewPager) this.findViewById(R.id.switch_viewer);
-            mViewPager.setOffscreenPageLimit(0);
+            mViewPager.setOffscreenPageLimit(1);
             mViewPager.setAdapter(pagerAdapter);
             mViewPager.setPageMargin(100);
             mViewPager.setCurrentItem(startIndex);
