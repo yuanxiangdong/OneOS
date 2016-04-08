@@ -20,8 +20,12 @@ package com.eli.oneos.widget.preview;
 import android.content.Context;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.bumptech.glide.Glide;
+import com.eli.oneos.constant.Constants;
 
 import java.util.List;
 
@@ -31,76 +35,80 @@ import java.util.List;
  */
 public class BasePagerAdapter extends PagerAdapter {
 
-	protected final List<?> mResources;
-	protected final Context mContext;
-	protected int mCurrentPosition = -1;
-	protected OnItemChangeListener mOnItemChangeListener;
+    protected final List<?> mResources;
+    protected final Context mContext;
+    protected int mCurrentPosition = -1;
+    protected OnItemChangeListener mOnItemChangeListener;
 
-	public BasePagerAdapter() {
-		mResources = null;
-		mContext = null;
-	}
+    public BasePagerAdapter() {
+        mResources = null;
+        mContext = null;
+    }
 
-	public BasePagerAdapter(Context context, List<?> resources) {
-		this.mResources = resources;
-		this.mContext = context;
-	}
+    public BasePagerAdapter(Context context, List<?> resources) {
+        this.mResources = resources;
+        this.mContext = context;
+    }
 
-	@Override
-	public void setPrimaryItem(ViewGroup container, final int position, Object object) {
-		super.setPrimaryItem(container, position, object);
-		if (mCurrentPosition == position)
-			return;
-		GalleryViewPager galleryContainer = ((GalleryViewPager) container);
-		if (galleryContainer.mCurrentView != null) {
-			galleryContainer.mCurrentView.resetScale();
-		}
-		mCurrentPosition = position;
-		if (mOnItemChangeListener != null)
-			mOnItemChangeListener.onItemChange(mCurrentPosition);
-	}
+    @Override
+    public void setPrimaryItem(ViewGroup container, final int position, Object object) {
+        super.setPrimaryItem(container, position, object);
+        if (mCurrentPosition == position)
+            return;
+        GalleryViewPager galleryContainer = ((GalleryViewPager) container);
+        if (galleryContainer.mCurrentView != null) {
+            galleryContainer.mCurrentView.resetScale();
+        }
+        mCurrentPosition = position;
+        if (mOnItemChangeListener != null)
+            mOnItemChangeListener.onItemChange(mCurrentPosition);
+    }
 
-	@Override
-	public void destroyItem(ViewGroup collection, int position, Object view) {
-		collection.removeView((View) view);
-	}
+    @Override
+    public void destroyItem(ViewGroup collection, int position, Object view) {
+        collection.removeView((View) view);
+        if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
+            Log.d("BasePagerAdapter", "Clear Glide Cache...");
+            Glide.clear(((TouchImageViewLayout) view).getImageView());
+        }
+    }
 
-	@Override
-	public int getCount() {
-		return mResources.size();
-	}
+    @Override
+    public int getCount() {
+        return mResources.size();
+    }
 
-	@Override
-	public boolean isViewFromObject(View view, Object object) {
-		return view.equals(object);
-	}
+    @Override
+    public boolean isViewFromObject(View view, Object object) {
+        return view.equals(object);
+    }
 
-	@Override
-	public void finishUpdate(ViewGroup arg0) {
-	}
+    @Override
+    public void finishUpdate(ViewGroup arg0) {
+    }
 
-	@Override
-	public void restoreState(Parcelable arg0, ClassLoader arg1) {
-	}
+    @Override
+    public void restoreState(Parcelable arg0, ClassLoader arg1) {
+    }
 
-	@Override
-	public Parcelable saveState() {
-		return null;
-	}
+    @Override
+    public Parcelable saveState() {
+        return null;
+    }
 
-	@Override
-	public void startUpdate(ViewGroup arg0) {
-	}
+    @Override
+    public void startUpdate(ViewGroup arg0) {
+    }
 
-	public int getCurrentPosition() {
-		return mCurrentPosition;
-	}
+    public int getCurrentPosition() {
+        return mCurrentPosition;
+    }
 
-	public void setOnItemChangeListener(OnItemChangeListener listener) {
-		mOnItemChangeListener = listener;
-	}
+    public void setOnItemChangeListener(OnItemChangeListener listener) {
+        mOnItemChangeListener = listener;
+    }
 
-	public static interface OnItemChangeListener {
-		public void onItemChange(int currentPosition);
-	}
+    public static interface OnItemChangeListener {
+        public void onItemChange(int currentPosition);
+    }
 };

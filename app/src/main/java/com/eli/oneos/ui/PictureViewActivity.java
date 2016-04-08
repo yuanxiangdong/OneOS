@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -96,7 +97,7 @@ public class PictureViewActivity extends Activity {
                 }
             });
             GalleryViewPager mViewPager = (GalleryViewPager) this.findViewById(R.id.switch_viewer);
-            mViewPager.setOffscreenPageLimit(1);
+            mViewPager.setOffscreenPageLimit(0);
             mViewPager.setAdapter(pagerAdapter);
             mViewPager.setPageMargin(100);
             mViewPager.setCurrentItem(startIndex);
@@ -131,6 +132,13 @@ public class PictureViewActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "OnDestroy");
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Log.e(TAG, "----On Low Memory---");
+        Glide.get(this).clearMemory();
     }
 
 }

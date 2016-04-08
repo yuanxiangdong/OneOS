@@ -21,8 +21,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
@@ -70,19 +72,24 @@ public class GalleryPagerAdapter extends BasePagerAdapter {
         final TouchImageViewLayout ivLayout = new TouchImageViewLayout(mContext, finalBitmap);
         ivLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
+            ivLayout.getImageView().setScaleType(ImageView.ScaleType.FIT_CENTER);
             if (isLocalPic) {
                 File file = (File) mResources.get(position);
                 if (FileUtils.isGifFile(file.getName())) {
-                    Glide.with(mContext).load(Uri.fromFile(file)).asGif().error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
+                    Glide.with(mContext).load(Uri.fromFile(file)).asGif().diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
                 } else {
-                    Glide.with(mContext).load(Uri.fromFile(file)).error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
+                    Glide.with(mContext).load(Uri.fromFile(file)).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
                 }
             } else {
                 OneOSFile file = (OneOSFile) mResources.get(position);
                 if (file.isGif()) {
-                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).asGif().error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
+                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).asGif().diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
                 } else {
-                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
+                    Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, file)).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .error(R.drawable.icon_file_pic_default).into(ivLayout.getImageView());
                 }
 //                Glide.with(mContext).load(OneOSAPIs.genDownloadUrl(mLoginSession, info)).
 //                        into(new ImageViewTarget<GlideDrawable>(ivLayout.getImageView()) {

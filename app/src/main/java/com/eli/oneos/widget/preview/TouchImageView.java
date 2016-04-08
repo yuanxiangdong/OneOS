@@ -40,7 +40,7 @@ import java.util.TimerTask;
 
 @SuppressLint("NewApi")
 public class TouchImageView extends ImageView {
-
+    private static final String TAG = TouchImageView.class.getSimpleName();
     // private int positionForTouchImageView = -1;
 
     // private static final String TAG = "Touch";
@@ -379,12 +379,10 @@ public class TouchImageView extends ImageView {
     @Override
     public void setImageBitmap(Bitmap bm) {
         super.setImageBitmap(bm);
-
+        Log.d(TAG, "---set bitmap---");
         if (mResultCallback != null) {
             mResultCallback.onCallback(true);
         }
-
-        Log.e(VIEW_LOG_TAG, "---set bitmap---");
         bmWidth = bm.getWidth();
         bmHeight = bm.getHeight();
     }
@@ -393,10 +391,11 @@ public class TouchImageView extends ImageView {
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
         if (null != drawable) {
+            Log.d(TAG, "---set drawable---");
+            setScaleType(ScaleType.MATRIX);
             if (mResultCallback != null) {
                 mResultCallback.onCallback(true);
             }
-
             bmWidth = drawable.getIntrinsicWidth();
             bmHeight = drawable.getIntrinsicHeight();
         }
