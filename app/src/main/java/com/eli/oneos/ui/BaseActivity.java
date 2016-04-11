@@ -57,9 +57,9 @@ public class BaseActivity extends FragmentActivity {
             mTintManager = new SystemBarManager(this);
         }
         mTintManager.setStatusBarTintEnabled(true);
-        mTintManager.setNavigationBarTintEnabled(true);
         mTintManager.setStatusBarTintResource(colorId);
-        mTintManager.setNavigationBarTintResource(colorId);
+//        mTintManager.setNavigationBarTintEnabled(true);
+//        mTintManager.setNavigationBarTintResource(colorId);
     }
 
     public void showLoading() {
