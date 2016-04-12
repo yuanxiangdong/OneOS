@@ -183,7 +183,7 @@ public class OneOSFileManage {
                 @Override
                 public void onClick(boolean isPositiveBtn) {
                     if (isPositiveBtn) {
-                        fileManageAPI.delete(selectedList, type == OneOSFileType.RECYCLE);
+                        fileManageAPI.delete(selectedList, type == OneOSFileType.RECYCLE || type == OneOSFileType.PUBLIC);
                     }
                 }
             });
