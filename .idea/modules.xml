@@ -4,12 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/OneSpace.iml" filepath="$PROJECT_DIR$/OneSpace.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/greendaogenerator/greendaogenerator.iml" filepath="$PROJECT_DIR$/greendaogenerator/greendaogenerator.iml" />
       <module fileurl="file://$PROJECT_DIR$/greendaogenerator/greendaogenerator.iml" filepath="$PROJECT_DIR$/greendaogenerator/greendaogenerator.iml" />
       <module fileurl="file://$PROJECT_DIR$/materialloadingprogressbar/materialloadingprogressbar.iml" filepath="$PROJECT_DIR$/materialloadingprogressbar/materialloadingprogressbar.iml" />
-      <module fileurl="file://$PROJECT_DIR$/materialloadingprogressbar/materialloadingprogressbar.iml" filepath="$PROJECT_DIR$/materialloadingprogressbar/materialloadingprogressbar.iml" />
-      <module fileurl="file://$PROJECT_DIR$/segementgroup/segementgroup.iml" filepath="$PROJECT_DIR$/segementgroup/segementgroup.iml" />
       <module fileurl="file://$PROJECT_DIR$/segementgroup/segementgroup.iml" filepath="$PROJECT_DIR$/segementgroup/segementgroup.iml" />
     </modules>
   </component>
