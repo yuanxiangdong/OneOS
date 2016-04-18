@@ -21,7 +21,7 @@ import java.net.ConnectException;
  */
 public abstract class OneOSBaseAPI {
     private static final String TAG = OneOSBaseAPI.class.getSimpleName();
-    private static final int TIMEOUT = 20 * 1000;
+    private static final int TIMEOUT = 30 * 1000;
 
     protected Context context = null;
     protected FinalHttp finalHttp = null;

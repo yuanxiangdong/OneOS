@@ -4,18 +4,21 @@ import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.UserInfo;
 
 /**
- * Singleton Class for manage list information.
+ * Used to manage user login information.
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/11.
  */
 public class LoginManage {
     private static LoginSession loginSession = null;
+    /**
+     * Singleton instance of {@link LoginManage}
+     */
     private static LoginManage INSTANCE = new LoginManage();
 
     /**
-     * Get Singleton Class instance.
+     * Get singleton instance of the class.
      *
-     * @return LoginManage Instance
+     * @return {@link LoginManage} Instance
      */
     public static LoginManage getInstance() {
         return LoginManage.INSTANCE;
@@ -25,9 +28,9 @@ public class LoginManage {
     }
 
     /**
-     * Whether is list OneSpace
+     * Is logged OneSpace
      *
-     * @return if list
+     * @return {@code true} if logged, {@code false} otherwise
      */
     public boolean isLogin() {
         if (loginSession == null) {
@@ -48,7 +51,7 @@ public class LoginManage {
     /**
      * Logout OneSpace
      *
-     * @return logout result
+     * @return {@code true} if successful, {@code false} otherwise
      */
     public boolean logout() {
         if (isLogin()) {
@@ -63,10 +66,22 @@ public class LoginManage {
         return false;
     }
 
+    /**
+     * Save User {@link LoginSession} Information
+     * <p/>
+     * You should update it only when the user login successful, and it will be saved for later use.
+     *
+     * @param loginSession {@link LoginSession}
+     */
     public void setLoginSession(LoginSession loginSession) {
         LoginManage.loginSession = loginSession;
     }
 
+    /**
+     * Get the saved {@link LoginSession}
+     *
+     * @return {@link LoginSession}
+     */
     public LoginSession getLoginSession() {
         return LoginManage.loginSession;
     }

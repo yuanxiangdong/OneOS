@@ -206,7 +206,7 @@ public class AriaDetailsFragment extends Fragment implements AriaDetailsActivity
         finalHttp.configCookieStore(new BasicCookieStore());
 
         // Logged.d(TAG, "Add Aria Download Url: " + baseUrl + activeAriaCmd.getEndUrl());
-        String baseUrl = LoginManage.getInstance().getLoginSession().getBaseUrl();
+        String baseUrl = LoginManage.getInstance().getLoginSession().getUrl();
         try {
             finalHttp.post(baseUrl + optCmd.getEndUrl(), new StringEntity(optCmd.toJsonParam()),
                     AriaUtils.ARIA_PARAMS_ENCODE, new AjaxCallBack<String>() {
@@ -272,7 +272,7 @@ public class AriaDetailsFragment extends Fragment implements AriaDetailsActivity
         finalHttp.configCookieStore(new BasicCookieStore());
 
         // Logged.d(TAG, "Add Aria Download Url: " + baseUrl + activeAriaCmd.getEndUrl());
-        String baseUrl = LoginManage.getInstance().getLoginSession().getBaseUrl();
+        String baseUrl = LoginManage.getInstance().getLoginSession().getUrl();
         try {
             finalHttp.post(baseUrl + optCmd.getEndUrl(), new StringEntity(optCmd.toJsonParam()),
                     AriaUtils.ARIA_PARAMS_ENCODE, new AjaxCallBack<String>() {

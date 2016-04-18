@@ -40,7 +40,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
         this.mFileList = fileList;
         this.mSelectedList = selectedList;
         this.mLoginSession = mLoginSession;
-        this.mBasicUrl = mLoginSession.getBaseUrl();
+        this.mBasicUrl = mLoginSession.getUrl();
         this.mSession = mLoginSession.getSession();
 
         clearSelectedList();

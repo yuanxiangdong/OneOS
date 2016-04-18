@@ -12,10 +12,25 @@ import com.eli.oneos.db.greendao.UserSettings;
  */
 public class LoginSession {
 
+    /**
+     * User information
+     */
     private UserInfo userInfo = null;
+    /**
+     * User settings
+     */
     private UserSettings userSettings = null;
+    /**
+     * Login device information
+     */
     private DeviceInfo deviceInfo = null;
+    /**
+     * Login session
+     */
     private String session = null;
+    /**
+     * Login timestamp
+     */
     private long time = 0;
 
     public LoginSession(UserInfo userInfo, DeviceInfo deviceInfo, UserSettings userSettings, String session, long time) {
@@ -67,11 +82,11 @@ public class LoginSession {
     }
 
     /**
-     * base url
+     * Formatted url, such as http://192.168.1.17:80
      *
-     * @return such as http://192.168.1.17:80
+     * @return Formatted url
      */
-    public String getBaseUrl() {
+    public String getUrl() {
         if (null != deviceInfo) {
             return OneOSAPIs.PREFIX_HTTP + deviceInfo.getIp() + ":" + deviceInfo.getPort();
         }
@@ -79,6 +94,11 @@ public class LoginSession {
         return null;
     }
 
+    /**
+     * Whether the user is an administrator
+     *
+     * @return {@code true} if administrator, {@code false} otherwise.
+     */
     public boolean isAdmin() {
         if (userInfo.getAdmin() == 1) {
             return true;
@@ -87,10 +107,20 @@ public class LoginSession {
         return false;
     }
 
+    /**
+     * Get user download save path
+     *
+     * @return Absolute path
+     */
     public String getDownloadPath() {
         return userSettings.getDownloadPath();
     }
 
+    /**
+     * Whether LAN
+     *
+     * @return {@code true} if LAN, {@code false} otherwise.
+     */
     public boolean isLANDevice() {
         return deviceInfo.getIsLAN();
     }

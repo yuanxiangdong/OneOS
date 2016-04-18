@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * OneSpace OS File Manage
+ * Class for management OneSpace File
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/21.
  */

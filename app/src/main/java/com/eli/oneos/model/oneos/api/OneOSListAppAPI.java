@@ -5,7 +5,7 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.model.oneos.PluginInfo;
+import com.eli.oneos.model.oneos.OneOSPluginInfo;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 import net.tsz.afinal.http.AjaxCallBack;
@@ -59,10 +59,10 @@ public class OneOSListAppAPI extends OneOSBaseAPI {
                         JSONObject json = new JSONObject(result);
                         boolean ret = json.getBoolean("result");
                         if (ret) {
-                            ArrayList<PluginInfo> mPlugList = new ArrayList<>();
+                            ArrayList<OneOSPluginInfo> mPlugList = new ArrayList<>();
                             JSONArray jsonArray = json.getJSONArray("apps");
                             for (int i = 0; i < jsonArray.length(); i++) {
-                                PluginInfo info = new PluginInfo(jsonArray.getJSONObject(i));
+                                OneOSPluginInfo info = new OneOSPluginInfo(jsonArray.getJSONObject(i));
                                 mPlugList.add(info);
                             }
                             for (int i = 0; i < mPlugList.size(); i++) {
@@ -94,7 +94,7 @@ public class OneOSListAppAPI extends OneOSBaseAPI {
     public interface OnListPluginListener {
         void onStart(String url);
 
-        void onSuccess(String url, ArrayList<PluginInfo> plugins);
+        void onSuccess(String url, ArrayList<OneOSPluginInfo> plugins);
 
         void onFailure(String url, int errorNo, String errorMsg);
     }

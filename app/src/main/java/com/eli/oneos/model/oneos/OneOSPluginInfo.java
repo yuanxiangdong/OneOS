@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * @author shz
  * @since V 1.6.21
  */
-public class PluginInfo {
+public class OneOSPluginInfo {
     public enum State {
         GETTING,
         ON,
@@ -27,10 +27,10 @@ public class PluginInfo {
     private String logo = null;
     private String url = null;
 
-    public PluginInfo() {
+    public OneOSPluginInfo() {
     }
 
-    public PluginInfo(JSONObject jsonObj) {
+    public OneOSPluginInfo(JSONObject jsonObj) {
         if (null != jsonObj) {
             try {
                 this.pack = jsonObj.getString("pack");

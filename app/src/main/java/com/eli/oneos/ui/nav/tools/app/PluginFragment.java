@@ -13,7 +13,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.oneos.PluginInfo;
+import com.eli.oneos.model.oneos.OneOSPluginInfo;
 import com.eli.oneos.model.oneos.adapter.PluginAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListAppAPI;
 import com.eli.oneos.model.oneos.api.OneOSAppManageAPI;
@@ -35,7 +35,7 @@ public class PluginFragment extends Fragment {
 
     private BaseActivity activity;
     private SwipeListView mListView;
-    private List<PluginInfo> mPlugList = new ArrayList<>();
+    private List<OneOSPluginInfo> mPlugList = new ArrayList<>();
     private PluginAdapter mAdapter;
     private LoginSession loginSession;
 
@@ -80,7 +80,7 @@ public class PluginFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 Intent intent = null;
-                PluginInfo info = mPlugList.get(arg2);
+                OneOSPluginInfo info = mPlugList.get(arg2);
                 if (info.getPack().equalsIgnoreCase("aria2")) {
                     intent = new Intent(getActivity(), AriaActivity.class);
                 }
@@ -93,7 +93,7 @@ public class PluginFragment extends Fragment {
         mAdapter.setOnClickListener(new PluginAdapter.OnPluginClickListener() {
 
             @Override
-            public void onClick(View view, PluginInfo info) {
+            public void onClick(View view, OneOSPluginInfo info) {
                 switch (view.getId()) {
                     case R.id.app_uninstall:
                         if (!LoginManage.getInstance().getLoginSession().isAdmin()) {
@@ -119,7 +119,7 @@ public class PluginFragment extends Fragment {
         });
     }
 
-    private void showOperatePluginDialog(final PluginInfo info, final boolean isUninstall) {
+    private void showOperatePluginDialog(final OneOSPluginInfo info, final boolean isUninstall) {
         String title = null;
         if (isUninstall) {
             title = getResources().getString(R.string.confirm_uninstall_plugin);
@@ -150,7 +150,7 @@ public class PluginFragment extends Fragment {
     }
 
     private void getPluginsStatusFromServer() {
-        for (PluginInfo info : mPlugList) {
+        for (OneOSPluginInfo info : mPlugList) {
             OneOSAppManageAPI manageAPI = new OneOSAppManageAPI(loginSession);
             manageAPI.setOnManagePluginListener(new OneOSAppManageAPI.OnManagePluginListener() {
                 @Override
@@ -159,9 +159,9 @@ public class PluginFragment extends Fragment {
 
                 @Override
                 public void onSuccess(String url, String pack, String cmd, boolean ret) {
-                    for (PluginInfo plug : mPlugList) {
+                    for (OneOSPluginInfo plug : mPlugList) {
                         if (plug.getPack().equals(pack)) {
-                            plug.setStat(ret ? PluginInfo.State.ON : PluginInfo.State.OFF);
+                            plug.setStat(ret ? OneOSPluginInfo.State.ON : OneOSPluginInfo.State.OFF);
                             break;
                         }
                     }
@@ -170,9 +170,9 @@ public class PluginFragment extends Fragment {
 
                 @Override
                 public void onFailure(String url, String pack, int errorNo, String errorMsg) {
-                    for (PluginInfo plug : mPlugList) {
+                    for (OneOSPluginInfo plug : mPlugList) {
                         if (plug.getPack().equals(pack)) {
-                            plug.setStat(PluginInfo.State.UNKNOWN);
+                            plug.setStat(OneOSPluginInfo.State.UNKNOWN);
                             break;
                         }
                     }
@@ -197,7 +197,7 @@ public class PluginFragment extends Fragment {
             }
 
             @Override
-            public void onSuccess(String url, ArrayList<PluginInfo> plugins) {
+            public void onSuccess(String url, ArrayList<OneOSPluginInfo> plugins) {
                 mPlugList.clear();
                 if (null != plugins) {
                     mPlugList.addAll(plugins);
@@ -218,7 +218,7 @@ public class PluginFragment extends Fragment {
 
     private int loading = 0;
 
-    private void doOperatePluginToServer(PluginInfo info, boolean isUninstall) {
+    private void doOperatePluginToServer(OneOSPluginInfo info, boolean isUninstall) {
         OneOSAppManageAPI manageAPI = new OneOSAppManageAPI(loginSession);
         manageAPI.setOnManagePluginListener(new OneOSAppManageAPI.OnManagePluginListener() {
             @Override

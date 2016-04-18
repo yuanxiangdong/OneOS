@@ -73,7 +73,7 @@ public class AriaActiveFragment extends Fragment implements MenuPopupView.OnMenu
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nav_transfer_child, container, false);
         mActivity = (BaseActivity) getActivity();
-        baseUrl = LoginManage.getInstance().getLoginSession().getBaseUrl();
+        baseUrl = LoginManage.getInstance().getLoginSession().getUrl();
 
         initAriaCmdParam();
 

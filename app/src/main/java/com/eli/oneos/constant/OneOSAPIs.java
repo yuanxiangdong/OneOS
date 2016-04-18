@@ -44,19 +44,19 @@ public class OneOSAPIs {
     public static final String APP_MANAGE = ONE_API + "/app/manage";
 
 //    public static String genOpenUrl(LoginSession loginSession, OneOSFile file) {
-//        String srcPath = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getToPath()));
-//        return loginSession.getBaseUrl() + "/" + path + "&session=" + loginSession.getSession();
+//        String srcPath = android.net.Uri.encode(file.getActualPath(loginSession.getUserInfo().getToPath()));
+//        return loginSession.getUrl() + "/" + path + "&session=" + loginSession.getSession();
 //    }
 
     public static String genDownloadUrl(LoginSession loginSession, OneOSFile file) {
         // "http://192.168.1.17/oneapi/file/download?path=home%2Fadmin%2Fzxt01%2Fxxxxxxxxxxxx.JPG&session=c5i6qqbe78oj0c1h78o0====";
-        String path = android.net.Uri.encode(file.getRealPath(loginSession.getUserInfo().getName()));
-        return loginSession.getBaseUrl() + OneOSAPIs.FILE_DOWNLOAD + "?session=" + loginSession.getSession() + "&path=" + path;
+        String path = android.net.Uri.encode(file.getActualPath(loginSession.getUserInfo().getName()));
+        return loginSession.getUrl() + OneOSAPIs.FILE_DOWNLOAD + "?session=" + loginSession.getSession() + "&path=" + path;
     }
 
     public static String genThumbnailUrl(LoginSession loginSession, OneOSFile file) {
         // "http://192.168.1.17/oneapi/file/thumbnail?path=%2Fzxt01%2Fxxxxxxxxxxxx.JPG&session=c5i6qqbe78oj0c1h78o0====";
         String path = android.net.Uri.encode(file.getPath());
-        return loginSession.getBaseUrl() + OneOSAPIs.FILE_THUMBNAIL + "?session=" + loginSession.getSession() + "&path=" + path;
+        return loginSession.getUrl() + OneOSAPIs.FILE_THUMBNAIL + "?session=" + loginSession.getSession() + "&path=" + path;
     }
 }

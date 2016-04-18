@@ -48,7 +48,7 @@ public class AddAriaTaskActivity extends BaseActivity implements OnClickListener
 
         initViews();
 
-        baseUrl = LoginManage.getInstance().getLoginSession().getBaseUrl();
+        baseUrl = LoginManage.getInstance().getLoginSession().getUrl();
     }
 
     private void initViews() {

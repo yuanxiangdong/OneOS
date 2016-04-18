@@ -84,7 +84,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
     int index = 1;
 
     private void duplicateRename(final String path, final String srcName) {
-//        String newName = genDuplicateName(srcName, index);
+        // String newName = genDuplicateName(srcName, index);
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("cmd", "rename");

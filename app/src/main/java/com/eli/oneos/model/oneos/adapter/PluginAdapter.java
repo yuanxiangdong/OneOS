@@ -14,7 +14,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.oneos.PluginInfo;
+import com.eli.oneos.model.oneos.OneOSPluginInfo;
 import com.eli.oneos.widget.SwitchButton;
 
 import java.util.ArrayList;
@@ -24,10 +24,10 @@ public class PluginAdapter extends BaseAdapter {
     private Context context;
     private int rightWidth;
     private LayoutInflater mInflater;
-    private List<PluginInfo> mPluginList = new ArrayList<>();
+    private List<OneOSPluginInfo> mPluginList = new ArrayList<>();
     private OnPluginClickListener listener;
 
-    public PluginAdapter(Context context, int rightWidth, List<PluginInfo> mPluginList) {
+    public PluginAdapter(Context context, int rightWidth, List<OneOSPluginInfo> mPluginList) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.rightWidth = rightWidth;
@@ -86,7 +86,7 @@ public class PluginAdapter extends BaseAdapter {
         LayoutParams rightLayout = new LayoutParams(rightWidth, LayoutParams.MATCH_PARENT);
         holder.mRightLayout.setLayoutParams(rightLayout);
 
-        final PluginInfo info = mPluginList.get(position);
+        final OneOSPluginInfo info = mPluginList.get(position);
         holder.mStateBtn.setChecked(info.isOn());
         holder.mIconImage.setImageResource(getResByName(info.getPack()));
         holder.mNameTxt.setText(info.getName());
@@ -95,13 +95,13 @@ public class PluginAdapter extends BaseAdapter {
             version = version.substring(1, version.length()).trim();
         }
         holder.mVersionTxt.setText(" ( V " + version + " )");
-        PluginInfo.State state = info.getStat();
+        OneOSPluginInfo.State state = info.getStat();
         int status;
-        if (state == PluginInfo.State.ON) {
+        if (state == OneOSPluginInfo.State.ON) {
             status = R.string.app_state_on;
-        } else if (state == PluginInfo.State.OFF) {
+        } else if (state == OneOSPluginInfo.State.OFF) {
             status = R.string.app_state_off;
-        } else if (state == PluginInfo.State.UNKNOWN) {
+        } else if (state == OneOSPluginInfo.State.UNKNOWN) {
             status = R.string.app_state_unknown;
         } else {
             status = R.string.app_state_getting;
@@ -199,6 +199,6 @@ public class PluginAdapter extends BaseAdapter {
     }
 
     public interface OnPluginClickListener {
-        void onClick(View view, PluginInfo info);
+        void onClick(View view, OneOSPluginInfo info);
     }
 }

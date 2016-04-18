@@ -72,7 +72,7 @@ public class AriaStoppedFragment extends Fragment implements MenuPopupView.OnMen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nav_transfer_child, container, false);
         activity = (BaseActivity) getActivity();
-        baseUrl = LoginManage.getInstance().getLoginSession().getBaseUrl();
+        baseUrl = LoginManage.getInstance().getLoginSession().getUrl();
 
         initAriaCmdParam();
 

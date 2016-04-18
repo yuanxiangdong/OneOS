@@ -57,7 +57,7 @@ public class AriaActivity extends BaseActivity implements OnClickListener {
         setContentView(R.layout.activity_tool_aria);
         initSystemBarStyle();
 
-        baseUrl = LoginManage.getInstance().getLoginSession().getBaseUrl();
+        baseUrl = LoginManage.getInstance().getLoginSession().getUrl();
 
         mActiveFragment = new AriaActiveFragment();
         mRecordFragment = new AriaStoppedFragment();

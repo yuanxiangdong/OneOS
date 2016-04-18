@@ -63,7 +63,7 @@ public class AriaDetailsActivity extends BaseActivity {
             return;
         }
 
-        baseUrl = LoginManage.getInstance().getLoginSession().getBaseUrl();
+        baseUrl = LoginManage.getInstance().getLoginSession().getUrl();
 
         initView();
 

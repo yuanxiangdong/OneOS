@@ -17,10 +17,19 @@ public class OneOSFile implements Serializable {
     private String path = null;
     private String perm = null;
     /**
-     * File Type, Server Type Table:
-     * directory="dir",jpg="pic",gif="pic",png="pic",jpeg="pic",bmp="pic",mp3="audio",ogg="audio",wav="audio",flac="audio",
-     * wma="audio",m4a="audio",avi="video",mp4="video",flv="video",rmvb="video",mkv="video",mov="video",wmv="video",
-     * mpg="video",doc="doc",xls="doc",ppt="doc",docx="doc",xlsx="doc",pptx="doc",pdf="doc",txt="doc",csv="doc",tea="enc"
+     * File Type
+     * <p/>
+     * Server file type table:
+     * <p/>
+     * { directory="dir",jpg="pic",gif="pic",png="pic",jpeg="pic",bmp="pic",
+     * <p/>
+     * mp3="audio",ogg="audio",wav="audio",flac="audio", wma="audio",m4a="audio",
+     * <p/>
+     * avi="video",mp4="video",flv="video",rmvb="video",mkv="video",mov="video",
+     * <p/>
+     * wmv="video", mpg="video",doc="doc",xls="doc",ppt="doc",docx="doc",xlsx="doc",
+     * <p/>
+     * pptx="doc",pdf="doc",txt="doc",csv="doc",tea="enc" }
      */
     private String type = null;
     private String name = null;
@@ -30,20 +39,26 @@ public class OneOSFile implements Serializable {
     private long size = 0;
     private long month = 0;
 
-    // file shown icon
+    /**
+     * file shown icon
+     */
     private int icon = R.drawable.icon_file_default;
-    // format file time
+    /**
+     * formatted file time
+     */
     private String fmtTime = null;
-    // format file size
+    /**
+     * formatted file size
+     */
     private String fmtSize = null;
 
     /**
-     * OneOS File real path
+     * OneOS File actual path
      *
      * @param user user name
      * @return private file: [/home/user/path], public file: [path]
      */
-    public String getRealPath(String user) {
+    public String getActualPath(String user) {
         if (isPublicFile()) {
             return path;
         } else {
