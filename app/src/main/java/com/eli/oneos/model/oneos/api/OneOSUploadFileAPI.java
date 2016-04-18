@@ -4,6 +4,7 @@ import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.model.log.Logger;
+import com.eli.oneos.model.oneos.transfer.OnTransferFileListener;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
@@ -40,7 +41,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
      */
     private static final int HTTP_BLOCK_SIZE = 1024 * 1024 * 2;
 
-    private OnUploadFileListener listener;
+    private OnTransferFileListener<UploadElement> listener;
     private UploadElement uploadElement;
     private boolean isInterrupt = false;
     private LoginSession loginSession;
@@ -51,7 +52,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         this.uploadElement = element;
     }
 
-    public void setOnUploadFileListener(OnUploadFileListener listener) {
+    public void setOnUploadFileListener(OnTransferFileListener<UploadElement> listener) {
         this.listener = listener;
     }
 
@@ -297,7 +298,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                     callback++;
                     if (null != listener && callback == 64) {
                         // callback every 512KB
-                        listener.onUploading(url, uploadElement);
+                        listener.onTransmission(url, uploadElement);
                         callback = 0;
                     }
                     if (blockUpLen >= HTTP_BLOCK_SIZE) {
@@ -366,13 +367,5 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                 uploadElement.setState(TransferState.FAILED);
             }
         }
-    }
-
-    public interface OnUploadFileListener {
-        void onStart(String url, UploadElement element);
-
-        void onUploading(String url, UploadElement element);
-
-        void onComplete(String url, UploadElement element);
     }
 }

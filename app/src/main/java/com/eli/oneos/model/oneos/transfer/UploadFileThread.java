@@ -15,12 +15,12 @@ public class UploadFileThread extends Thread {
     private final String TAG = UploadFileThread.class.getSimpleName();
 
     private UploadElement mElement;
-    private OnUploadResultListener mResultListener = null;
-    private OneOSUploadFileAPI.OnUploadFileListener mUploadListener = null;
+    private OnTransferResultListener<UploadElement> mResultListener = null;
+    private OnTransferFileListener<UploadElement> mUploadListener = null;
     private OneOSUploadFileAPI uploadFileAPI;
     private LoginSession mLoginSession;
 
-    public UploadFileThread(UploadElement element, LoginSession mLoginSession, OnUploadResultListener mListener) {
+    public UploadFileThread(UploadElement element, LoginSession mLoginSession, OnTransferResultListener<UploadElement> mListener) {
         if (mListener == null || mLoginSession == null) {
             Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadResultListener or LoginSession is NULL");
             new Throwable(new NullPointerException("OnUploadResultListener or LoginSession is NULL"));
@@ -30,7 +30,7 @@ public class UploadFileThread extends Thread {
         this.mResultListener = mListener;
     }
 
-    public UploadFileThread(UploadElement element, LoginSession mLoginSession, OneOSUploadFileAPI.OnUploadFileListener mListener) {
+    public UploadFileThread(UploadElement element, LoginSession mLoginSession, OnTransferFileListener<UploadElement> mListener) {
         if (mListener == null || mLoginSession == null) {
             Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadFileListener or LoginSession is NULL");
             new Throwable(new NullPointerException("OnUploadFileListener or LoginSession is NULL"));
@@ -46,15 +46,14 @@ public class UploadFileThread extends Thread {
         if (mUploadListener != null) {
             uploadFileAPI.setOnUploadFileListener(mUploadListener);
         } else {
-            uploadFileAPI.setOnUploadFileListener(new OneOSUploadFileAPI.OnUploadFileListener() {
+            uploadFileAPI.setOnUploadFileListener(new OnTransferFileListener<UploadElement>() {
                 @Override
                 public void onStart(String url, UploadElement element) {
                     Logger.p(LogLevel.INFO, Logged.UPLOAD, TAG, "Start Upload file: " + element.getSrcPath());
                 }
 
                 @Override
-                public void onUploading(String url, UploadElement element) {
-
+                public void onTransmission(String url, UploadElement element) {
                 }
 
                 @Override
@@ -74,9 +73,5 @@ public class UploadFileThread extends Thread {
         mElement.setState(TransferState.PAUSE);
         interrupt();
         Logger.p(LogLevel.INFO, Logged.UPLOAD, TAG, "Stop Upload file");
-    }
-
-    public interface OnUploadResultListener {
-        void onResult(UploadElement mElement);
     }
 }

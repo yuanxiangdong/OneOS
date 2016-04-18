@@ -19,14 +19,14 @@ import org.json.JSONObject;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/03/29.
  */
-public class OneOSHDInfoAPI extends OneOSBaseAPI {
-    private static final String TAG = OneOSHDInfoAPI.class.getSimpleName();
+public class OneOSHardDiskInfoAPI extends OneOSBaseAPI {
+    private static final String TAG = OneOSHardDiskInfoAPI.class.getSimpleName();
 
     private OnHDInfoListener listener;
     private String username = null;
     private OneOSHardDisk hardDisk1, hardDisk2;
 
-    public OneOSHDInfoAPI(LoginSession loginSession) {
+    public OneOSHardDiskInfoAPI(LoginSession loginSession) {
         super(loginSession);
         username = loginSession.getUserInfo().getName();
     }

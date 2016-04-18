@@ -11,6 +11,7 @@ import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.backup.BackupPriority;
 import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.backup.RecursiveFileObserver;
+import com.eli.oneos.model.oneos.transfer.OnTransferResultListener;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
@@ -189,7 +190,7 @@ public class BackupAlbumManager {
         private UploadFileThread backupPhotoThread = null;
         private boolean isRunning = false;
         private boolean hasBackupTask = false;
-        private UploadFileThread.OnUploadResultListener listener = new UploadFileThread.OnUploadResultListener() {
+        private OnTransferResultListener<UploadElement> listener = new OnTransferResultListener<UploadElement>() {
             @Override
             public void onResult(UploadElement element) {
                 BackupElement mElement = (BackupElement) element;

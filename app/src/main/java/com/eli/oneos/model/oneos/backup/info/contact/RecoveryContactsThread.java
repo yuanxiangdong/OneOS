@@ -15,6 +15,7 @@ import com.eli.oneos.model.oneos.backup.info.BackupInfoStep;
 import com.eli.oneos.model.oneos.backup.info.BackupInfoType;
 import com.eli.oneos.model.oneos.backup.info.OnBackupInfoListener;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
+import com.eli.oneos.model.oneos.transfer.OnTransferFileListener;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -87,7 +88,7 @@ public class RecoveryContactsThread extends Thread {
         DownloadElement downloadElement = new DownloadElement(file, targetPath);
         downloadElement.setCheck(false);
         OneOSDownloadFileAPI downloadFileAPI = new OneOSDownloadFileAPI(loginSession, downloadElement);
-        downloadFileAPI.setOnDownloadFileListener(new OneOSDownloadFileAPI.OnDownloadFileListener() {
+        downloadFileAPI.setOnDownloadFileListener(new OnTransferFileListener<DownloadElement>() {
             @Override
             public void onStart(String url, DownloadElement element) {
                 if (null != mListener) {
@@ -96,7 +97,7 @@ public class RecoveryContactsThread extends Thread {
             }
 
             @Override
-            public void onUploading(String url, DownloadElement element) {
+            public void onTransmission(String url, DownloadElement element) {
                 if (null != mListener) {
                     int progress = (int) (((float) element.getLength() / (float) element.getSize()) * 100);
                     mListener.onBackup(TYPE, BackupInfoStep.DOWNLOAD, progress);

@@ -5,6 +5,8 @@ import com.eli.oneos.model.oneos.OneOSFile;
 import java.io.File;
 
 /**
+ * Class for download file
+ * <p/>
  * Created by gaoyun@eli-tech.com on 2016/2/18.
  */
 public class DownloadElement extends TransferElement {
@@ -12,8 +14,9 @@ public class DownloadElement extends TransferElement {
     private OneOSFile file;
     // needs check phone space
     private boolean check = false;
+    // downloading file temporary name
     private String tmpName = null;
-    // downloaded real name
+    // downloaded actual name
     private String toName = null;
 
     public DownloadElement(OneOSFile file, String downloadPath) {
@@ -30,7 +33,7 @@ public class DownloadElement extends TransferElement {
     /**
      * Whether is download file
      *
-     * @return true or false
+     * @return {@code true} if download, {@code false} otherwise.
      */
     @Override
     protected boolean isDownload() {
@@ -66,9 +69,9 @@ public class DownloadElement extends TransferElement {
     }
 
     /**
-     * downloading file temporary name
+     * Get downloading file temporary name
      *
-     * @return
+     * @return temporary file name
      */
     public String getTmpName() {
         return tmpName;

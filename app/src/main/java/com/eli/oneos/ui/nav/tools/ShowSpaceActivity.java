@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.OneOSHardDisk;
-import com.eli.oneos.model.oneos.api.OneOSHDInfoAPI;
+import com.eli.oneos.model.oneos.api.OneOSHardDiskInfoAPI;
 import com.eli.oneos.model.oneos.api.OneOSSpaceAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.ui.BaseActivity;
@@ -275,8 +275,8 @@ public class ShowSpaceActivity extends BaseActivity {
     }
 
     private void queryHDInfo(OneOSHardDisk hardDisk1, OneOSHardDisk hardDisk2) {
-        OneOSHDInfoAPI hdInfoAPI = new OneOSHDInfoAPI(LoginManage.getInstance().getLoginSession());
-        hdInfoAPI.setOnHDInfoListener(new OneOSHDInfoAPI.OnHDInfoListener() {
+        OneOSHardDiskInfoAPI hdInfoAPI = new OneOSHardDiskInfoAPI(LoginManage.getInstance().getLoginSession());
+        hdInfoAPI.setOnHDInfoListener(new OneOSHardDiskInfoAPI.OnHDInfoListener() {
             @Override
             public void onStart(String url) {
             }

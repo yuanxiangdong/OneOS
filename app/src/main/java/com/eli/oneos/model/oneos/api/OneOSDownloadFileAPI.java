@@ -8,6 +8,7 @@ import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
+import com.eli.oneos.model.oneos.transfer.OnTransferFileListener;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -48,7 +49,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
     private static final String TAG = OneOSDownloadFileAPI.class.getSimpleName();
     private static final int HTTP_BUFFER_SIZE = 1024 * 16;
 
-    private OnDownloadFileListener listener;
+    private OnTransferFileListener<DownloadElement> listener;
     private DownloadElement downloadElement;
     private boolean isInterrupt = false;
     private LoginSession loginSession;
@@ -59,7 +60,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
         this.downloadElement = element;
     }
 
-    public void setOnDownloadFileListener(OnDownloadFileListener listener) {
+    public void setOnDownloadFileListener(OnTransferFileListener<DownloadElement> listener) {
         this.listener = listener;
     }
 
@@ -294,7 +295,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 callback++;
                 if (null != listener && callback == 32) {
                     // callback every 512KB
-                    listener.onUploading(url, downloadElement);
+                    listener.onTransmission(url, downloadElement);
                     callback = 0;
                 }
             }
@@ -368,13 +369,5 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 e.printStackTrace();
             }
         }
-    }
-
-    public interface OnDownloadFileListener {
-        void onStart(String url, DownloadElement element);
-
-        void onUploading(String url, DownloadElement element);
-
-        void onComplete(String url, DownloadElement element);
     }
 }

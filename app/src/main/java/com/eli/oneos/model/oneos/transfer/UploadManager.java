@@ -19,7 +19,7 @@ public class UploadManager extends TransferManager<UploadElement> {
     private static final String TAG = UploadManager.class.getSimpleName();
 
     private static UploadManager Instance = new UploadManager();
-    private UploadFileThread.OnUploadResultListener uploadResultListener = new UploadFileThread.OnUploadResultListener() {
+    private OnTransferResultListener<UploadElement> uploadResultListener = new OnTransferResultListener<UploadElement>() {
 
         @Override
         public void onResult(UploadElement mElement) {
@@ -312,9 +312,9 @@ public class UploadManager extends TransferManager<UploadElement> {
         private UploadFileThread uploadThread = null;
         private boolean isRunning = false;
         private boolean hasUploadTask = false;
-        private UploadFileThread.OnUploadResultListener listener;
+        private OnTransferResultListener<UploadElement> listener;
 
-        public HandlerQueueThread(List<UploadElement> uploadList, UploadFileThread.OnUploadResultListener listener) {
+        public HandlerQueueThread(List<UploadElement> uploadList, OnTransferResultListener<UploadElement> listener) {
             this.mUploadList = uploadList;
             this.listener = listener;
         }

@@ -20,7 +20,7 @@ public class DownloadManager extends TransferManager<DownloadElement> {
     private static final String LOG_TAG = DownloadManager.class.getSimpleName();
 
     private static DownloadManager INSTANCE = new DownloadManager();
-    private DownloadFileThread.OnDownloadResultListener mDownloadResultListener = new DownloadFileThread.OnDownloadResultListener() {
+    private OnTransferResultListener<DownloadElement> mDownloadResultListener = new OnTransferResultListener<DownloadElement>() {
 
         @Override
         public void onResult(DownloadElement mElement) {
@@ -312,9 +312,9 @@ public class DownloadManager extends TransferManager<DownloadElement> {
         private DownloadFileThread downloadThread = null;
         private boolean isRunning = false;
         private boolean hasDownloadTask = false;
-        private DownloadFileThread.OnDownloadResultListener listener = null;
+        private OnTransferResultListener<DownloadElement> listener = null;
 
-        public HandlerQueueThread(List<DownloadElement> mDownloadList, DownloadFileThread.OnDownloadResultListener listener) {
+        public HandlerQueueThread(List<DownloadElement> mDownloadList, OnTransferResultListener<DownloadElement> listener) {
             this.mDownloadList = mDownloadList;
             this.listener = listener;
         }

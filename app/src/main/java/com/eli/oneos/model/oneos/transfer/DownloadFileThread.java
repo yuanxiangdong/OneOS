@@ -17,11 +17,11 @@ public class DownloadFileThread extends Thread {
 
     private DownloadElement mElement;
     private LoginSession loginSession = null;
-    private OnDownloadResultListener mListener = null;
-    private OneOSDownloadFileAPI.OnDownloadFileListener mDownloadListener = null;
+    private OnTransferResultListener<DownloadElement> mListener = null;
+    private OnTransferFileListener<DownloadElement> mDownloadListener = null;
     private OneOSDownloadFileAPI downloadFileAPI = null;
 
-    public DownloadFileThread(DownloadElement element, LoginSession loginSession, OnDownloadResultListener mListener) {
+    public DownloadFileThread(DownloadElement element, LoginSession loginSession, OnTransferResultListener<DownloadElement> mListener) {
         if (mListener == null) {
             Logger.p(LogLevel.ERROR, IS_LOG, TAG, "DownloadResultListener is NULL");
             throw new NullPointerException("DownloadResultListener is NULL");
@@ -31,7 +31,7 @@ public class DownloadFileThread extends Thread {
         this.mListener = mListener;
     }
 
-    public DownloadFileThread(DownloadElement element, LoginSession loginSession, OneOSDownloadFileAPI.OnDownloadFileListener mDownloadListener) {
+    public DownloadFileThread(DownloadElement element, LoginSession loginSession, OnTransferFileListener<DownloadElement> mDownloadListener) {
         if (mListener == null) {
             Logger.p(LogLevel.ERROR, IS_LOG, TAG, "DownloadFileListener is NULL");
             throw new NullPointerException("DownloadFileListener is NULL");
@@ -48,14 +48,14 @@ public class DownloadFileThread extends Thread {
         if (mDownloadListener != null) {
             downloadFileAPI.setOnDownloadFileListener(mDownloadListener);
         } else {
-            downloadFileAPI.setOnDownloadFileListener(new OneOSDownloadFileAPI.OnDownloadFileListener() {
+            downloadFileAPI.setOnDownloadFileListener(new OnTransferFileListener<DownloadElement>() {
                 @Override
                 public void onStart(String url, DownloadElement element) {
                     Logger.p(LogLevel.INFO, IS_LOG, TAG, "Start Download file: " + element.getSrcPath());
                 }
 
                 @Override
-                public void onUploading(String url, DownloadElement element) {
+                public void onTransmission(String url, DownloadElement element) {
                 }
 
                 @Override
@@ -68,6 +68,9 @@ public class DownloadFileThread extends Thread {
         downloadFileAPI.download();
     }
 
+    /**
+     * Stop download file thread
+     */
     public void stopDownload() {
         if (null != downloadFileAPI) {
             downloadFileAPI.stopDownload();
@@ -77,8 +80,4 @@ public class DownloadFileThread extends Thread {
         Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Stop download");
     }
 
-
-    public interface OnDownloadResultListener {
-        void onResult(DownloadElement element);
-    }
 }
