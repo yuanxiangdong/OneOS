@@ -51,7 +51,7 @@ public class OneOSSpaceAPI extends OneOSBaseAPI {
             params.put("username", username);
             params.put("cmd", "space");
         }
-        Log.d(TAG, "Get Space: " + url + ", Params: " + params.toString());
+        logHttp(TAG, url, params);
 
         finalHttp.post(url, params, new AjaxCallBack<String>() {
             @Override

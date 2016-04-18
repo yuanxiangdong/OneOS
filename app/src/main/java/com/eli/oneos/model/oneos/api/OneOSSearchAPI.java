@@ -57,8 +57,6 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
 
     private void search() {
         url = genOneOSAPIUrl(OneOSAPIs.FILE_SEARCH);
-        Log.d(TAG, "Search File: " + url);
-
         AjaxParams params = new AjaxParams();
         params.put("session", session);
         params.put("srcPath", path);
@@ -68,6 +66,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
             params.put("pdate1", pdate1);
             params.put("pdate2", pdate2);
         }
+        logHttp(TAG, url, params);
 
         finalHttp.post(url, params, new AjaxCallBack<String>() {
 
