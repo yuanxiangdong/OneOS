@@ -13,8 +13,9 @@ import java.util.ArrayList;
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/20.
  */
-public class FileManageItemGenerate {
+public class FileManageItemGenerator {
     private static int OPT_BASE_ID = 0x10000000;
+
     private static FileManageItem OPT_COPY = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_copy, R.drawable.btn_opt_copy_pressed, R.string.copy_file, FileManageAction.COPY);
     private static FileManageItem OPT_MOVE = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_move, R.drawable.btn_opt_move_pressed, R.string.move_file, FileManageAction.MOVE);
     private static FileManageItem OPT_DELETE = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_delete, R.drawable.btn_opt_delete_pressed, R.string.delete_file, FileManageAction.DELETE);

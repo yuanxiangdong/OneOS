@@ -18,7 +18,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileManageItem;
 import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.FileManageItemGenerate;
+import com.eli.oneos.model.FileManageItemGenerator;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileType;
@@ -53,7 +53,7 @@ public class FileManagePanel extends RelativeLayout {
     }
 
     public void updatePanelItems(OneOSFileType fileType, final ArrayList<OneOSFile> selectedList) {
-        ArrayList<FileManageItem> mList = FileManageItemGenerate.generate(fileType, selectedList);
+        ArrayList<FileManageItem> mList = FileManageItemGenerator.generate(fileType, selectedList);
         this.mContainerLayout.removeAllViews();
         if (EmptyUtils.isEmpty(mList)) {
             TextView mEmptyTxt = new TextView(getContext());
@@ -97,7 +97,7 @@ public class FileManagePanel extends RelativeLayout {
     }
 
     public void updatePanelItems(LocalFileType fileType, final ArrayList<LocalFile> selectedList) {
-        ArrayList<FileManageItem> mList = FileManageItemGenerate.generate(fileType, selectedList);
+        ArrayList<FileManageItem> mList = FileManageItemGenerator.generate(fileType, selectedList);
         this.mContainerLayout.removeAllViews();
         if (EmptyUtils.isEmpty(mList)) {
             TextView mEmptyTxt = new TextView(getContext());
