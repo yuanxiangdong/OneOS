@@ -5,13 +5,14 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.oneos.user.LoginSession;
-
-import net.tsz.afinal.http.AjaxCallBack;
-import net.tsz.afinal.http.AjaxParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OneSpace Device Power Control API
@@ -34,14 +35,14 @@ public class OneOSPowerAPI extends OneOSBaseAPI {
     public void power(final boolean isPowerOff) {
         url = genOneOSAPIUrl(isPowerOff ? OneOSAPIs.SYSTEM_HALT : OneOSAPIs.SYSTEM_REBOOT);
         Log.d(TAG, "Power OneSpace: " + url);
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();;
         params.put("session", session);
 
-        finalHttp.post(url, params, new AjaxCallBack<String>() {
+        httpUtils.post(url, params, new OnHttpListener<String>() {
 
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                super.onFailure(t, errorNo, strMsg);
+                // super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: " + errorNo + " : " + strMsg);
                 if (listener != null) {
                     listener.onFailure(url, errorNo, strMsg);
@@ -50,7 +51,7 @@ public class OneOSPowerAPI extends OneOSBaseAPI {
 
             @Override
             public void onSuccess(String result) {
-                super.onSuccess(result);
+                // super.onSuccess(result);
                 Log.d(TAG, "Response Data:" + result);
                 if (listener != null) {
                     try {

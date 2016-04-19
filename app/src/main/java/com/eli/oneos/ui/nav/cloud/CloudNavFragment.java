@@ -18,6 +18,7 @@ import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
 import com.eli.oneos.ui.MainActivity;
+import com.eli.oneos.ui.nav.BaseNavFileFragment;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.SearchPanel;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/13.
  */
-public class CloudNavFragment extends BaseNavFileFragment {
+public class CloudNavFragment extends BaseNavFileFragment<OneOSFileType, OneOSFile> {
     private static final String TAG = CloudNavFragment.class.getSimpleName();
 
     private BaseCloudFragment mCurFragment;

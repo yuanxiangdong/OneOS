@@ -12,6 +12,7 @@ import com.eli.oneos.model.oneos.adapter.OneOSFileBaseAdapter;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.ui.MainActivity;
+import com.eli.oneos.ui.nav.BaseNavFileFragment;
 import com.eli.oneos.widget.FilePathPanel;
 
 import java.util.ArrayList;

@@ -5,6 +5,7 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.user.LoginSession;
@@ -13,15 +14,14 @@ import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 
-import net.tsz.afinal.http.AjaxCallBack;
-import net.tsz.afinal.http.AjaxParams;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * OneSpace OS Get File List API
@@ -57,7 +57,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
 
     private void search() {
         url = genOneOSAPIUrl(OneOSAPIs.FILE_SEARCH);
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("srcPath", path);
         params.put("stype", stype);
@@ -66,13 +66,12 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
             params.put("pdate1", pdate1);
             params.put("pdate2", pdate2);
         }
-        logHttp(TAG, url, params);
 
-        finalHttp.post(url, params, new AjaxCallBack<String>() {
+        httpUtils.post(url, params, new OnHttpListener<String>() {
 
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                super.onFailure(t, errorNo, strMsg);
+                // super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: ErrorNo=" + errorNo + " ; ErrorMsg=" + strMsg);
                 if (listener != null) {
                     listener.onFailure(url, errorNo, strMsg);
@@ -81,7 +80,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
 
             @Override
             public void onSuccess(String result) {
-                super.onSuccess(result);
+                // super.onSuccess(result);
                 Log.d(TAG, "Response Data:" + result);
                 if (listener != null) {
                     try {

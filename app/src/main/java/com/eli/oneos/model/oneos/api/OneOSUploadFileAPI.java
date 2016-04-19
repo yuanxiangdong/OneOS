@@ -1,6 +1,7 @@
 package com.eli.oneos.model.oneos.api;
 
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.http.HttpUtils;
 import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.model.log.Logger;
@@ -9,8 +10,6 @@ import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.model.oneos.user.LoginSession;
-
-import net.tsz.afinal.http.AjaxParams;
 
 import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
@@ -23,6 +22,8 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -86,16 +87,15 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
     private void duplicateRename(final String path, final String srcName) {
         // String newName = genDuplicateName(srcName, index);
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "rename");
         params.put("path", path);
         // params.put("newname", "");
 
         String url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
-        logHttp(TAG, url, params);
         try {
-            String result = (String) finalHttp.postSync(url, params);
+            String result = (String) httpUtils.postSync(url, params);
             Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "File Attr: " + result);
             JSONObject json = new JSONObject(result);
             boolean ret = json.getBoolean("result");
@@ -143,13 +143,12 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
      */
     private int checkExist(String path, long srcSize) {
         String url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "attributes");
         params.put("path", path);
-        logHttp(TAG, url, params);
         try {
-            String result = (String) finalHttp.postSync(url, params);
+            String result = (String) httpUtils.postSync(url, params);
             Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "File Attr: " + result);
             JSONObject json = new JSONObject(result);
             boolean ret = json.getBoolean("result");
@@ -172,7 +171,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
     private void doUpload() {
         url = genOneOSAPIUrl(OneOSAPIs.FILE_UPLOAD);
-        logHttp(TAG, url, null);
+        HttpUtils.log(TAG, url, null);
 
         uploadElement.setState(TransferState.START);
         String session = loginSession.getSession();

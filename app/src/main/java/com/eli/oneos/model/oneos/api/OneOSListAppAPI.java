@@ -5,17 +5,17 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.oneos.OneOSPluginInfo;
 import com.eli.oneos.model.oneos.user.LoginSession;
-
-import net.tsz.afinal.http.AjaxCallBack;
-import net.tsz.afinal.http.AjaxParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OneSpace OS List Plugins API
@@ -37,13 +37,12 @@ public class OneOSListAppAPI extends OneOSBaseAPI {
 
     public void list() {
         url = genOneOSAPIUrl(OneOSAPIs.APP_LIST);
-        AjaxParams params = new AjaxParams();
-        logHttp(TAG, url, params);
-        finalHttp.post(url, params, new AjaxCallBack<String>() {
+        Map<String, String> params = new HashMap<>();
+        httpUtils.post(url, params, new OnHttpListener<String>() {
 
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                super.onFailure(t, errorNo, strMsg);
+                // super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: ErrorNo=" + errorNo + " ; ErrorMsg=" + strMsg);
                 if (listener != null) {
                     listener.onFailure(url, errorNo, strMsg);
@@ -52,7 +51,7 @@ public class OneOSListAppAPI extends OneOSBaseAPI {
 
             @Override
             public void onSuccess(String result) {
-                super.onSuccess(result);
+                // super.onSuccess(result);
                 Log.d(TAG, "Response Data:" + result);
                 if (listener != null) {
                     try {

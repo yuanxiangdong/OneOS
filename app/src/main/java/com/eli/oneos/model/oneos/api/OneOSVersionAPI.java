@@ -5,9 +5,8 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.oneos.user.LoginSession;
-
-import net.tsz.afinal.http.AjaxCallBack;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,12 +31,11 @@ public class OneOSVersionAPI extends OneOSBaseAPI {
 
     public void query() {
         url = genOneOSAPIUrl(OneOSAPIs.SYSTEM_VERSION);
-        logHttp(TAG, url, null);
 
-        finalHttp.post(url, null, new AjaxCallBack<String>() {
+        httpUtils.post(url, new OnHttpListener<String>() {
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                super.onFailure(t, errorNo, strMsg);
+                // super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: " + errorNo + " : " + strMsg);
                 if (listener != null) {
                     listener.onFailure(url, errorNo, strMsg);
@@ -46,7 +44,7 @@ public class OneOSVersionAPI extends OneOSBaseAPI {
 
             @Override
             public void onSuccess(String result) {
-                super.onSuccess(result);
+                // super.onSuccess(result);
                 Log.d(TAG, "Response Data:" + result);
                 if (listener != null) {
                     try {

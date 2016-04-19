@@ -6,18 +6,18 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileManageAction;
+import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.GsonUtils;
-
-import net.tsz.afinal.http.AjaxCallBack;
-import net.tsz.afinal.http.AjaxParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OneSpace OS File Manage API
@@ -34,14 +34,13 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         super(ip, port, session);
     }
 
-    private void doManageFiles(AjaxParams params) {
+    private void doManageFiles(Map<String, String> params) {
         url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
-        logHttp(TAG, url, params);
-        finalHttp.post(url, params, new AjaxCallBack<String>() {
+        httpUtils.post(url, params, new OnHttpListener<String>() {
 
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                super.onFailure(t, errorNo, strMsg);
+                // super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: ErrorNo=" + errorNo + " ; ErrorMsg=" + strMsg);
                 if (listener != null) {
                     listener.onFailure(url, action, errorNo, strMsg);
@@ -50,7 +49,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
             @Override
             public void onSuccess(String result) {
-                super.onSuccess(result);
+                // super.onSuccess(result);
                 Log.d(TAG, "Response Data:" + result);
                 if (listener != null) {
                     try {
@@ -83,7 +82,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     public void attr(OneOSFile file) {
         this.action = FileManageAction.ATTR;
         String path = file.getPath();
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "attributes");
         params.put("path", path);
@@ -94,7 +93,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     public void delete(ArrayList<OneOSFile> delList, boolean isDelShift) {
         this.action = isDelShift ? FileManageAction.DELETE_SHIFT : FileManageAction.DELETE;
         String path = genJsonArray(delList);
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", isDelShift ? "deleteshift" : "delete");
         params.put("path", path);
@@ -103,7 +102,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     public void chmod(OneOSFile file, String group, String other) {
         this.action = FileManageAction.CHMOD;
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "chmod");
         params.put("path", file.getPath());
@@ -116,7 +115,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         this.action = FileManageAction.MOVE;
         Log.d(TAG, "Move file to: " + toDir);
         String path = genJsonArray(delList);
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "move");
         params.put("path", path);
@@ -128,7 +127,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     public void copy(ArrayList<OneOSFile> delList, String toDir) {
         this.action = FileManageAction.COPY;
         String path = genJsonArray(delList);
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "copy");
         params.put("path", path);
@@ -140,7 +139,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     public void rename(OneOSFile file, String newName) {
         this.action = FileManageAction.RENAME;
         String path = file.getPath();
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "rename");
         params.put("path", path);
@@ -151,7 +150,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     public void rename(String path, String newName) {
         this.action = FileManageAction.RENAME;
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "rename");
         params.put("path", path);
@@ -166,7 +165,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
         if (!path.endsWith(File.separator)) {
             path += File.separator;
         }
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "mkdir");
         params.put("path", path);
@@ -178,7 +177,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
     public void crypt(OneOSFile file, String pwd, boolean isEncrypt) {
         this.action = isEncrypt ? FileManageAction.ENCRYPT : FileManageAction.DECRYPT;
         String path = file.getPath();
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", isEncrypt ? "encrypt" : "decrypt");
         params.put("path", path);
@@ -189,7 +188,7 @@ public class OneOSFileManageAPI extends OneOSBaseAPI {
 
     public void cleanRecycle() {
         this.action = FileManageAction.CLEAN_RECYCLE;
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "cleanrecycle");
 

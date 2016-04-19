@@ -16,6 +16,7 @@ import com.eli.oneos.model.FileTypeItem;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileType;
 import com.eli.oneos.ui.MainActivity;
+import com.eli.oneos.ui.nav.BaseNavFileFragment;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.SearchPanel;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 /**
  * Created by Administrator on 2016/2/29.
  */
-public class LocalNavFragment extends BaseNavFileFragment {
+public class LocalNavFragment extends BaseNavFileFragment<LocalFileType, LocalFile> {
     private static final String TAG = LocalNavFragment.class.getSimpleName();
 
     private FileSelectPanel mSelectPanel;

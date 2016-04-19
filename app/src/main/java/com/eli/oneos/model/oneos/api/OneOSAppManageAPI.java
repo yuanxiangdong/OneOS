@@ -5,13 +5,14 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.oneos.user.LoginSession;
-
-import net.tsz.afinal.http.AjaxCallBack;
-import net.tsz.afinal.http.AjaxParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OneSpace OS Manage App API
@@ -34,7 +35,7 @@ public class OneOSAppManageAPI extends OneOSBaseAPI {
 
     public void state(String pack) {
         this.cmd = "stat";
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("pack", pack);
         params.put("cmd", cmd);
         doManage(pack, params);
@@ -42,7 +43,7 @@ public class OneOSAppManageAPI extends OneOSBaseAPI {
 
     public void on(String pack) {
         this.cmd = "on";
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("pack", pack);
         params.put("cmd", cmd);
         params.put("session", session);
@@ -51,7 +52,7 @@ public class OneOSAppManageAPI extends OneOSBaseAPI {
 
     public void off(String pack) {
         this.cmd = "off";
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("pack", pack);
         params.put("cmd", cmd);
         params.put("session", session);
@@ -60,21 +61,20 @@ public class OneOSAppManageAPI extends OneOSBaseAPI {
 
     public void delete(String pack) {
         this.cmd = "delete";
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("pack", pack);
         params.put("cmd", cmd);
         params.put("session", session);
         doManage(pack, params);
     }
 
-    private void doManage(final String pack, AjaxParams params) {
+    private void doManage(final String pack, Map<String, String> params) {
         url = genOneOSAPIUrl(OneOSAPIs.APP_MANAGE);
-        logHttp(TAG, url, params);
-        finalHttp.post(url, params, new AjaxCallBack<String>() {
+        httpUtils.post(url, params, new OnHttpListener<String>() {
 
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                super.onFailure(t, errorNo, strMsg);
+                // super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: ErrorNo=" + errorNo + " ; ErrorMsg=" + strMsg);
                 if (listener != null) {
                     listener.onFailure(url, pack, errorNo, strMsg);
@@ -83,7 +83,7 @@ public class OneOSAppManageAPI extends OneOSBaseAPI {
 
             @Override
             public void onSuccess(String result) {
-                super.onSuccess(result);
+                // super.onSuccess(result);
                 Log.d(TAG, "Response Data:" + result);
                 if (listener != null) {
                     try {

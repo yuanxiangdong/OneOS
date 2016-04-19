@@ -5,13 +5,14 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.oneos.user.LoginSession;
-
-import net.tsz.afinal.http.AjaxCallBack;
-import net.tsz.afinal.http.AjaxParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OneSpace OS Get Device Mac Address API
@@ -33,20 +34,19 @@ public class OneOSUserManageAPI extends OneOSBaseAPI {
         this.listener = listener;
     }
 
-    private void manage(AjaxParams params) {
+    private void manage(Map<String, String> params) {
         if (null == params) {
-            params = new AjaxParams();
+            params = new HashMap<>();
         }
         url = genOneOSAPIUrl(OneOSAPIs.USER_MANAGE);
         params.put("session", session);
         params.put("cmd", cmd);
         params.put("username", username);
-        logHttp(TAG, url, params);
 
-        finalHttp.post(url, params, new AjaxCallBack<String>() {
+        httpUtils.post(url, params, new OnHttpListener<String>() {
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                super.onFailure(t, errorNo, strMsg);
+                // super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: " + errorNo + " : " + strMsg);
                 if (listener != null) {
                     listener.onFailure(url, errorNo, strMsg);
@@ -55,7 +55,7 @@ public class OneOSUserManageAPI extends OneOSBaseAPI {
 
             @Override
             public void onSuccess(String result) {
-                super.onSuccess(result);
+                // super.onSuccess(result);
                 Log.d(TAG, "Response Data:" + result);
                 if (listener != null) {
                     try {
@@ -86,7 +86,7 @@ public class OneOSUserManageAPI extends OneOSBaseAPI {
         this.cmd = "add";
         this.username = username;
 
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("password", password);
         manage(params);
     }
@@ -102,7 +102,7 @@ public class OneOSUserManageAPI extends OneOSBaseAPI {
         this.cmd = "chpwd";
         this.username = username;
 
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("password", password);
         manage(params);
     }
@@ -111,7 +111,7 @@ public class OneOSUserManageAPI extends OneOSBaseAPI {
         this.cmd = "space";
         this.username = username;
 
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         params.put("space", String.valueOf(space));
         manage(params);
     }

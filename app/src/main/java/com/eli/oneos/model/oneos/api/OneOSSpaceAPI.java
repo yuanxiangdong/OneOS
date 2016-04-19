@@ -5,16 +5,17 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.oneos.OneOSHardDisk;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 
-import net.tsz.afinal.http.AjaxCallBack;
-import net.tsz.afinal.http.AjaxParams;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OneSpace OS Get Device Mac Address API
@@ -42,7 +43,7 @@ public class OneOSSpaceAPI extends OneOSBaseAPI {
     }
 
     public void query(final boolean isOneOSSpace) {
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();
         if (isOneOSSpace) {
             url = genOneOSAPIUrl(OneOSAPIs.SYSTEM_HD_SMART);
         } else {
@@ -51,12 +52,11 @@ public class OneOSSpaceAPI extends OneOSBaseAPI {
             params.put("username", username);
             params.put("cmd", "space");
         }
-        logHttp(TAG, url, params);
 
-        finalHttp.post(url, params, new AjaxCallBack<String>() {
+        httpUtils.post(url, params, new OnHttpListener<String>() {
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                super.onFailure(t, errorNo, strMsg);
+                // super.onFailure(t, errorNo, strMsg);
                 Log.e(TAG, "Response Data: " + errorNo + " : " + strMsg);
                 if (listener != null) {
                     listener.onFailure(url, errorNo, strMsg);
@@ -65,7 +65,7 @@ public class OneOSSpaceAPI extends OneOSBaseAPI {
 
             @Override
             public void onSuccess(String result) {
-                super.onSuccess(result);
+                // super.onSuccess(result);
                 Log.d(TAG, "Response Data:" + result);
                 if (listener != null) {
                     try {

@@ -7,12 +7,8 @@ import com.eli.oneos.MyApplication;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.greendao.DeviceInfo;
+import com.eli.oneos.model.http.HttpUtils;
 import com.eli.oneos.model.oneos.user.LoginSession;
-
-import net.tsz.afinal.FinalHttp;
-import net.tsz.afinal.http.AjaxParams;
-
-import org.apache.http.impl.client.BasicCookieStore;
 
 import java.net.ConnectException;
 
@@ -24,7 +20,7 @@ public abstract class OneOSBaseAPI {
     private static final int TIMEOUT = 30 * 1000;
 
     protected Context context = null;
-    protected FinalHttp finalHttp = null;
+    protected HttpUtils httpUtils = null;
     protected String url = null;
     protected String ip = null;
     protected String session = null;
@@ -57,14 +53,8 @@ public abstract class OneOSBaseAPI {
     }
 
     protected void initHttp() {
-        initHttp(TIMEOUT);
-    }
-
-    protected void initHttp(int timeout) {
         context = MyApplication.getAppContext();
-        finalHttp = new FinalHttp();
-        finalHttp.configCookieStore(new BasicCookieStore());
-        finalHttp.configTimeout(timeout);
+        httpUtils = new HttpUtils();
     }
 
     public String genOneOSAPIUrl(String action) {
@@ -84,9 +74,5 @@ public abstract class OneOSBaseAPI {
         }
 
         return errorNo;
-    }
-
-    public void logHttp(String TAG, String url, AjaxParams params) {
-        Log.d(TAG, "Url: " + url + ", Params: " + (params == null ? "Null" : params.toString()));
     }
 }

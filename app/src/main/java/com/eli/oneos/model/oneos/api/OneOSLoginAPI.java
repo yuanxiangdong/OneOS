@@ -11,17 +11,18 @@ import com.eli.oneos.db.UserSettingsKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserSettings;
+import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.upgrade.OneOSVersionManager;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 
-import net.tsz.afinal.http.AjaxCallBack;
-import net.tsz.afinal.http.AjaxParams;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OneSpace OS Login API
@@ -115,15 +116,15 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
     public void login() {
         url = genOneOSAPIUrl(OneOSAPIs.LOGIN);
         Log.d(TAG, "Login: " + url);
-        AjaxParams params = new AjaxParams();
+        Map<String, String> params = new HashMap<>();;
         params.put("username", user);
         params.put("password", pwd);
 
-        finalHttp.post(url, params, new AjaxCallBack<String>() {
+        httpUtils.post(url, params, new OnHttpListener<String>() {
 
             @Override
             public void onFailure(Throwable th, int errorNo, String strMsg) {
-                super.onFailure(th, errorNo, strMsg);
+                // super.onFailure(th, errorNo, strMsg);
                 errorNo = parseFailure(th, errorNo);
                 if (listener != null) {
                     if (errorNo == HttpErrorNo.ERR_ONEOS_VERSION) {
@@ -135,7 +136,7 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
 
             @Override
             public void onSuccess(String result) {
-                super.onSuccess(result);
+                // super.onSuccess(result);
                 Log.d(TAG, "Response Data:" + result);
                 if (listener != null) {
                     try {

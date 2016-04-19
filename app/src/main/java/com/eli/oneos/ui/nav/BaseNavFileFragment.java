@@ -1,9 +1,6 @@
-package com.eli.oneos.ui.nav.cloud;
+package com.eli.oneos.ui.nav;
 
 
-import com.eli.oneos.model.oneos.OneOSFile;
-import com.eli.oneos.model.oneos.OneOSFileType;
-import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.widget.FileManagePanel;
 import com.eli.oneos.widget.FileSelectPanel;
 import com.eli.oneos.widget.SearchPanel;
@@ -15,7 +12,7 @@ import java.util.ArrayList;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/1/13.
  */
-public abstract class BaseNavFileFragment extends BaseNavFragment {
+public abstract class BaseNavFileFragment<T, F> extends BaseNavFragment {
 
     /**
      * Show/Hide Top Select Bar
@@ -41,13 +38,13 @@ public abstract class BaseNavFileFragment extends BaseNavFragment {
     public abstract void showManageBar(boolean isShown);
 
     /**
-     * Update Bottom Operate Bar
+     * Update Bottom Operate Bar`
      *
-     * @param fileType     OneOS file type
+     * @param fileType     OneOS/Local file type
      * @param selectedList Selected file list
      * @param mListener    On file operate listener
      */
-    public abstract void updateManageBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener);
+    public abstract void updateManageBar(T fileType, ArrayList<F> selectedList, FileManagePanel.OnFileManageListener mListener);
 
     /**
      * Add search file listener
