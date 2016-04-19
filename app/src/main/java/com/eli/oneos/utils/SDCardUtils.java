@@ -18,7 +18,7 @@ import java.util.List;
 
 public class SDCardUtils {
 
-    private static final String TAG_SDCARD = SDCardUtils.class.getSimpleName();
+    private static final String TAG = SDCardUtils.class.getSimpleName();
 
     /**
      * create local download store path
@@ -36,7 +36,7 @@ public class SDCardUtils {
             dir.mkdirs();
         }
 
-        Log.i(TAG_SDCARD, "Create default download path: " + savePath);
+        Log.i(TAG, "Create default download path: " + savePath);
         return savePath;
     }
 
@@ -153,47 +153,48 @@ public class SDCardUtils {
         String cmd = "cat /proc/mounts";
         Runtime run = Runtime.getRuntime();// 返回与当前 Java 应用程序相关的运行时对象
         try {
-            Process p = run.exec(cmd);// 启动另一个进程来执行命令
-            BufferedInputStream in = new BufferedInputStream(p.getInputStream());
+            Process process = run.exec(cmd);// 启动另一个进程来执行命令
+            BufferedInputStream in = new BufferedInputStream(process.getInputStream());
             BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
 
             String lineStr;
             while ((lineStr = inBr.readLine()) != null) {
                 // 获得命令执行后在控制台的输出信息
-                // Logged.i(TAG_SDCARD, "--" + lineStr);
+                // Log.e(TAG, "-->> " + lineStr);
 
                 String[] temp = TextUtils.split(lineStr, " ");
                 // 得到的输出的第二个空格后面是路径
                 String result = temp[1];
                 File file = new File(result);
-                if (!result.endsWith("legacy") && file.isDirectory() && file.canRead()
-                        && file.canWrite() && !isSymbolicLink(file)) {
-                    // Logged.d(TAG_SDCARD, "directory can read can write:" +
-                    // file.getPath());
+                if (!result.endsWith("legacy") && file.isDirectory() && file.canRead() && file.canWrite() && !isSymbolicLink(file)) {
+                    // Logged.d(TAG, "directory can read can write:" + file.getPath());
                     // 可读可写的文件夹未必是sdcard，我的手机的sdcard下的Android/obb文件夹也可以得到
                     sdcardPaths.add(result);
+                    // Log.d(TAG, ">>>> Add Path: " + result);
                 }
 
                 // 检查命令是否执行失败。
-                if (p.waitFor() != 0 && p.exitValue() == 1) {
+                if (process.waitFor() != 0 && process.exitValue() == 1) {
                     // p.exitValue()==0表示正常结束，1：非正常结束
-                    Log.e(TAG_SDCARD, "CommonUtil:getSDCardPath" + "命令执行失败!");
+                    Log.e(TAG, "CommonUtil: GetSDCardPath Command fails!");
                 }
             }
             inBr.close();
             in.close();
         } catch (Exception e) {
-            Log.e(TAG_SDCARD, e.toString());
+            Log.e(TAG, e.toString());
+        }
 
-            sdcardPaths.add(Environment.getExternalStorageDirectory().getAbsolutePath());
+        String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        if (!sdcardPaths.contains(externalPath)) {
+            sdcardPaths.add(externalPath);
         }
 
         optimize(sdcardPaths);
 
         ArrayList<File> sdcardList = new ArrayList<File>();
         for (Iterator<String> iterator = sdcardPaths.iterator(); iterator.hasNext(); ) {
-            String path = (String) iterator.next();
-            // Logged.e(TAG_SDCARD, "清除过后: " + string);
+            String path = iterator.next();
             sdcardList.add(new File(path));
         }
 
@@ -212,26 +213,26 @@ public class SDCardUtils {
         }
     }
 
-    private static void optimize(List<String> sdcaredPaths) {
-        if (sdcaredPaths.size() == 0) {
+    private static void optimize(List<String> sdcardPaths) {
+        if (sdcardPaths.size() == 0) {
             return;
         }
         int index = 0;
         while (true) {
-            if (index >= sdcaredPaths.size() - 1) {
-                String lastItem = sdcaredPaths.get(sdcaredPaths.size() - 1);
-                for (int i = sdcaredPaths.size() - 2; i >= 0; i--) {
-                    if (sdcaredPaths.get(i).contains(lastItem)) {
-                        sdcaredPaths.remove(i);
+            if (index >= sdcardPaths.size() - 1) {
+                String lastItem = sdcardPaths.get(sdcardPaths.size() - 1);
+                for (int i = sdcardPaths.size() - 2; i >= 0; i--) {
+                    if (sdcardPaths.get(i).contains(lastItem)) {
+                        sdcardPaths.remove(i);
                     }
                 }
                 return;
             }
 
-            String containsItem = sdcaredPaths.get(index);
-            for (int i = index + 1; i < sdcaredPaths.size(); i++) {
-                if (sdcaredPaths.get(i).contains(containsItem)) {
-                    sdcaredPaths.remove(i);
+            String containsItem = sdcardPaths.get(index);
+            for (int i = index + 1; i < sdcardPaths.size(); i++) {
+                if (sdcardPaths.get(i).contains(containsItem)) {
+                    sdcardPaths.remove(i);
                     i--;
                 }
             }

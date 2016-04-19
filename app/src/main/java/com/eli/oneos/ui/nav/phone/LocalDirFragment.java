@@ -187,7 +187,6 @@ public class LocalDirFragment extends BaseLocalFragment {
     private SearchPanel.OnSearchActionListener mSearchListener = new SearchPanel.OnSearchActionListener() {
         @Override
         public void onVisible(boolean visible) {
-
         }
 
         @Override
