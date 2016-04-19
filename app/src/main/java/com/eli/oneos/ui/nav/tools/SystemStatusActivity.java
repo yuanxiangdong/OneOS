@@ -2,6 +2,7 @@ package com.eli.oneos.ui.nav.tools;
 
 import android.os.Bundle;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
@@ -257,10 +258,11 @@ public class SystemStatusActivity extends BaseActivity {
                     if (json.has("cpu")) {
                         // {"result":true,"cpu":{"used":570775,"total":72466388}}
                         json = json.getJSONObject("cpu");
-                        long used = json.getLong("used") - lastCpuUsed;
-                        long total = json.getLong("total") - lastCpuTotal;
+                        long used = json.getLong("used");
+                        long total = json.getLong("total");
                         if (lastCpuUsed != -1 || lastCpuTotal != -1) {
-                            int load = (int) (used * 100 / total);
+                            int load = (int) ((used - lastCpuUsed) * 100 / (total - lastCpuTotal));
+                            Log.d(TAG, ">>> CPULoad: " + load);
                             load = load > 0 ? load : 0;
                             mCPUQueue.remove(MAX_SHOW_COUNT - 1);
                             mCPUQueue.add(0, load);
