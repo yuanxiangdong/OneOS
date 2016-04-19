@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -68,8 +67,8 @@ public class AriaActiveAdapter extends BaseAdapter {
         TextView fileName;
         TextView fileRatio;
         TextView fileSize;
+        TextView deleteTxt;
         CircleStateProgressBar circleProgress;
-        ImageButton deleteBtn;
     }
 
     @Override
@@ -86,18 +85,16 @@ public class AriaActiveAdapter extends BaseAdapter {
             holder.fileSize = (TextView) convertView.findViewById(R.id.fileSize);
             holder.fileRatio = (TextView) convertView.findViewById(R.id.ratio);
             holder.circleProgress = (CircleStateProgressBar) convertView.findViewById(R.id.progress);
-            holder.deleteBtn = (ImageButton) convertView.findViewById(R.id.btn_delete);
+            holder.deleteTxt = (TextView) convertView.findViewById(R.id.txt_delete);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        LayoutParams leftLayout = new LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        LayoutParams leftLayout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         holder.leftLayout.setLayoutParams(leftLayout);
 
-        LayoutParams rightLayout = new LayoutParams(rightWidth,
-                LayoutParams.MATCH_PARENT);
+        LayoutParams rightLayout = new LayoutParams(rightWidth, LayoutParams.MATCH_PARENT);
         holder.rightLayout.setLayoutParams(rightLayout);
 
         final AriaInfo mElement = mList.get(position);
@@ -175,7 +172,7 @@ public class AriaActiveAdapter extends BaseAdapter {
             }
         });
 
-        holder.deleteBtn.setOnClickListener(new OnClickListener() {
+        holder.deleteTxt.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
