@@ -31,11 +31,39 @@ public class SharedPreferencesHelper {
     /**
      * get value from {@link SharedPreferences} by key
      *
-     * @param key value of key
+     * @param key      value of key
+     * @param defValue default value
      * @return value or {@code null}
      */
-    public static String get(String key) {
+    public static String get(String key, String defValue) {
         SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-        return preferences.getString(key, null);
+        return preferences.getString(key, defValue);
+    }
+
+    /**
+     * put value in {@link SharedPreferences} by key
+     *
+     * @param key
+     * @param value
+     * @return {@code true} if success, otherwise {@code false}
+     */
+    public static boolean put(String key, boolean value) {
+        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.putBoolean(key, value);
+
+        return edit.commit();
+    }
+
+    /**
+     * get value from {@link SharedPreferences} by key
+     *
+     * @param key      value of key
+     * @param defValue default value
+     * @return value or {@code null}
+     */
+    public static boolean get(String key, boolean defValue) {
+        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, defValue);
     }
 }

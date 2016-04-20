@@ -8,6 +8,7 @@
     <string name="confirm">确定</string>
     <string name="cancel">取消</string>
     <string name="tips">提示</string>
+    <string name="warning">警告</string>
     <string name="paste">粘贴</string>
     <string name="modify">修改</string>
     <string name="modifying">正在修改&#8230;</string>
@@ -278,15 +279,19 @@
     <string name="get_version_from_server_exception">获取新版本信息失败</string>
     <string name="is_latest_version">当前已是最新版本</string>
     <string name="have_new_version_app">新版本:&#160;V&#160;</string>
+    <string name="oneos_minimum_version">注意：要求OneOS最低版本&#160;v</string>
     <string name="confirm_cancel_download_app">确定取消下载新版本?</string>
     <string name="interrupt_download">取消下载</string>
     <string name="continue_download">继续下载</string>
     <string name="check_app_version">APP版本检测&#8230;</string>
     <string name="upgrade_app_now">立即升级</string>
+    <string name="tips_upgrade_oneos_version_low" formatted="false">当前设备的OneOS系统版本为v%s，低于App要求的最低版本v%s，建议您先升级OneOS到最新版本后再升级App，否则App将无法正常使用！</string>
+    <string name="upgrade_later">稍后更新</string>
     <string name="upgrade_next_time">下次再说</string>
     <string name="ignore_this_version">忽略此版本</string>
     <string name="download_new_app">正在下载新版APP</string>
     <string name="download_app_failed">下载失败，请重新尝试</string>
+    <string name="tip_oneos_new_version_upgrade">您的设备有新的OneOS系统可以更新，请前往http://onespace.cc/download/oneos/查看更新！</string>
 
     <!-- Space Activity -->
     <string name="user_space_info">您的空间已使用</string>

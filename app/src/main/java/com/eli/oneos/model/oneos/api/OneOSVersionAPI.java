@@ -6,6 +6,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.http.OnHttpListener;
+import com.eli.oneos.model.oneos.OneOSInfo;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 import org.json.JSONException;
@@ -55,9 +56,11 @@ public class OneOSVersionAPI extends OneOSBaseAPI {
                             String model = json.getString("model");
                             String product = json.getString("product");
                             String version = json.getString("version");
+                            String build = json.getString("build");
                             boolean needsUp = json.getBoolean("needup");
+                            OneOSInfo info = new OneOSInfo(version, model, needsUp, product, build);
 
-                            listener.onSuccess(url, model, product, version, needsUp);
+                            listener.onSuccess(url, info);
                         } else {
                             Log.e(TAG, "Get OneOS Version Failed");
                             int errorNo = json.getInt("errno");
@@ -80,7 +83,7 @@ public class OneOSVersionAPI extends OneOSBaseAPI {
     public interface OnSystemVersionListener {
         void onStart(String url);
 
-        void onSuccess(String url, String model, String product, String version, boolean needsUp);
+        void onSuccess(String url, OneOSInfo info);
 
         void onFailure(String url, int errorNo, String errorMsg);
     }

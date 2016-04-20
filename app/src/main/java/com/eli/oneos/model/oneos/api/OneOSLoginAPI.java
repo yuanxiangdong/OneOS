@@ -14,6 +14,7 @@ import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logger;
+import com.eli.oneos.model.oneos.OneOSInfo;
 import com.eli.oneos.model.upgrade.OneOSVersionManager;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
@@ -56,8 +57,9 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
             }
 
             @Override
-            public void onSuccess(String url, String model, String product, String version, boolean needsUp) {
-                if (OneOSVersionManager.check(version)) {
+            public void onSuccess(String url, OneOSInfo info) {
+                loginSession.setOneOSInfo(info);
+                if (OneOSVersionManager.check(info.getVersion())) {
                     listener.onSuccess(url, loginSession);
                 } else {
                     String msg = String.format(context.getResources().getString(R.string.fmt_oneos_version_upgrade), OneOSVersionManager.MIN_ONEOS_VERSION);
@@ -116,7 +118,8 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
     public void login() {
         url = genOneOSAPIUrl(OneOSAPIs.LOGIN);
         Log.d(TAG, "Login: " + url);
-        Map<String, String> params = new HashMap<>();;
+        Map<String, String> params = new HashMap<>();
+        ;
         params.put("username", user);
         params.put("password", pwd);
 

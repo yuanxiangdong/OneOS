@@ -123,7 +123,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
         mAppUpgradeManager = new AppUpgradeManager(this);
         mAppUpgradeManager.detectAppUpgrade(new AppUpgradeManager.OnUpgradeListener() {
             @Override
-            public void onUpgrade(boolean hasUpgrade, String curVersion, String newVersion, String appUrl, ArrayList<String> logs) {
+            public void onUpgrade(boolean hasUpgrade, String curVersion, String newVersion, String miniOneOS, String appUrl, ArrayList<String> logs) {
                 if (hasUpgrade) {
                     mTransBadgeView.setVisibility(View.VISIBLE);
                 } else {

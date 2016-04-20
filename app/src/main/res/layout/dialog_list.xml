@@ -15,6 +15,16 @@
         android:textSize="@dimen/text_size_title"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/txt_tips"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:textColor="@color/red"
+        android:textSize="@dimen/text_size_sm"
+        android:visibility="gone" />
+
     <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"

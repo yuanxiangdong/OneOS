@@ -8,6 +8,7 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="tips">Tips</string>
+    <string name="warning">Warning</string>
     <string name="paste">Paste</string>
     <string name="modify">Apply</string>
     <string name="modifying">Modifying&#8230;</string>
@@ -278,10 +279,13 @@
     <string name="get_version_from_server_exception">Failed to get new version information</string>
     <string name="is_latest_version">Currently is the latest version</string>
     <string name="have_new_version_app">New version:&#160;V&#160;</string>
+    <string name="oneos_minimum_version">Note: Minimum OneOS version&#160;v</string>
     <string name="confirm_cancel_download_app">Confirm to download app?</string>
     <string name="interrupt_download">Cancel</string>
     <string name="continue_download">Continue</string>
     <string name="check_app_version">Check APP version&#8230;</string>
+    <string name="tips_upgrade_oneos_version_low" formatted="false">The current device OneOS version is v%s, lower than the App required minimum version v%s, we recommend that you upgrade to the latest OneOS version before upgrading App, otherwise the App will not work!</string>
+    <string name="upgrade_later">Upgrade Later</string>
     <string name="upgrade_app_now">Upgrade Now</string>
     <string name="upgrade_next_time">Upgrade Next</string>
     <string name="ignore_this_version">Ignore This Version</string>

@@ -114,6 +114,11 @@ public class DialogUtils {
         }
     }
 
+    public static void showWarningDialog(Activity activity, String title, String content,
+                                         String positive, String negative, final OnDialogClickListener mListener) {
+        showConfirmDialog(activity, true, title, content, positive, negative, mListener);
+    }
+
     /**
      * Show customized dialog, parameter determines the dialog UI
      *
@@ -461,7 +466,7 @@ public class DialogUtils {
     //
 
 
-    public static void showListDialog(Activity activity, List<String> titleList, List<String> contentList, String title,
+    public static void showListDialog(Activity activity, List<String> titleList, List<String> contentList, String title, String tips,
                                       String top, String mid, String neg, final OnMultiDialogClickListener mListener) {
         if (activity == null || (titleList == null && contentList == null)) {
             Log.e(TAG, "activity or dialog content is null");
@@ -475,6 +480,12 @@ public class DialogUtils {
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.txt_title);
         titleTextView.setText(title);
         titleTextView.setVisibility(View.VISIBLE);
+
+        if (!EmptyUtils.isEmpty(tips)) {
+            TextView tipsTextView = (TextView) dialogView.findViewById(R.id.txt_tips);
+            tipsTextView.setText(tips);
+            tipsTextView.setVisibility(View.VISIBLE);
+        }
 
         ListView mListView = (ListView) dialogView.findViewById(R.id.listview);
         DialogListAdapter mAdapter = new DialogListAdapter(activity, titleList, contentList);
@@ -536,6 +547,7 @@ public class DialogUtils {
                 titleList,
                 contentList,
                 titleId > 0 ? resources.getString(titleId) : null,
+                null,
                 topId > 0 ? resources.getString(topId) : null,
                 midId > 0 ? resources.getString(midId) : null,
                 negId > 0 ? resources.getString(negId) : null,
@@ -543,9 +555,9 @@ public class DialogUtils {
         );
     }
 
-    public static void showListDialog(Activity activity, List<String> contentList, String title,
+    public static void showListDialog(Activity activity, List<String> contentList, String title, String tips,
                                       String top, String mid, String neg, final OnMultiDialogClickListener mListener) {
-        showListDialog(activity, null, contentList, title, top, mid, neg, mListener);
+        showListDialog(activity, null, contentList, title, tips, top, mid, neg, mListener);
     }
 
     private static void setListViewMaxVisibleLines(Activity activity, ListView listView, int maxLines) {

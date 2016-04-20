@@ -20,8 +20,12 @@ public class OneOSVersionManager {
      * @return true if match success, otherwise false
      */
     public static boolean check(String version) {
+        return compare(version, MIN_ONEOS_VERSION);
+    }
+
+    public static boolean compare(String version, String minVersion) {
         if (!EmptyUtils.isEmpty(version)) {
-            if (version.equalsIgnoreCase(MIN_ONEOS_VERSION)) {
+            if (version.equalsIgnoreCase(minVersion)) {
                 return true;
             }
             String regEx = "[^.0-9]";
@@ -30,7 +34,7 @@ public class OneOSVersionManager {
             version = matcher.replaceAll("").trim();
 
             String cur[] = version.split("\\.");
-            String min[] = MIN_ONEOS_VERSION.split("\\.");
+            String min[] = minVersion.split("\\.");
             for (int i = 0; i < 3; i++) {
                 int c;
                 int m;
@@ -55,5 +59,4 @@ public class OneOSVersionManager {
 
         return false;
     }
-
 }

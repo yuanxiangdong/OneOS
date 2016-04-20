@@ -4,6 +4,7 @@ import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserSettings;
+import com.eli.oneos.model.oneos.OneOSInfo;
 
 /**
  * User Login information
@@ -28,6 +29,10 @@ public class LoginSession {
      * Login session
      */
     private String session = null;
+    /**
+     * OneOS information
+     */
+    private OneOSInfo oneOSInfo = null;
     /**
      * Login timestamp
      */
@@ -79,6 +84,14 @@ public class LoginSession {
 
     public void setUserSettings(UserSettings userSettings) {
         this.userSettings = userSettings;
+    }
+
+    public OneOSInfo getOneOSInfo() {
+        return oneOSInfo;
+    }
+
+    public void setOneOSInfo(OneOSInfo oneOSInfo) {
+        this.oneOSInfo = oneOSInfo;
     }
 
     /**
