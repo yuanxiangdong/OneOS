@@ -277,13 +277,14 @@
     <string name="get_version_exception">版本獲取失敗</string>
     <string name="get_version_from_server_exception">獲取新版本信息失敗</string>
     <string name="is_latest_version">當前已是最新版本</string>
-    <string name="have_new_version_app">檢測到新版本:&#160;V&#160;</string>
+    <string name="have_new_version_app">新版本:&#160;V&#160;</string>
     <string name="confirm_cancel_download_app">確定取消下載新版本?</string>
     <string name="interrupt_download">取消下載</string>
     <string name="continue_download">繼續下載</string>
     <string name="check_app_version">APP版本檢測&#8230;</string>
-    <string name="confirm_update_app">立即升級</string>
-    <string name="ignore_update_app">下次再說</string>
+    <string name="upgrade_app_now">立即升級</string>
+    <string name="upgrade_next_time">下次再說</string>
+    <string name="ignore_this_version">忽略此版本</string>
     <string name="download_new_app">正在下載新版APP</string>
     <string name="download_app_failed">下載失敗，請重新嘗試</string>
 

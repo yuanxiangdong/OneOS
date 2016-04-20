@@ -8,14 +8,14 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.oneos.upgrade.AppUpgradeManager;
+import com.eli.oneos.model.upgrade.AppUpgradeManager;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.AppVersionUtils;
 import com.eli.oneos.widget.TitleBackLayout;
 
 public class AboutActivity extends BaseActivity {
     private static final String TAG = AboutActivity.class.getSimpleName();
-    private TextView mVersionText, mWebsiteTxt;
+    private TextView mWebsiteTxt;
     private AppUpgradeManager mAppUpgradeManager;
 
     @Override
@@ -42,7 +42,8 @@ public class AboutActivity extends BaseActivity {
         mTitleLayout.setBackTitle(R.string.title_back);
         mTitleLayout.setTitle(R.string.title_about);
 
-        mVersionText = (TextView) findViewById(R.id.version);
+        TextView mVersionText = (TextView) findViewById(R.id.version);
+        mVersionText.setText(AppVersionUtils.formatAppVersion(AppVersionUtils.getAppVersion()));
         mWebsiteTxt = (TextView) findViewById(R.id.txt_website);
         mWebsiteTxt.getPaint().setAntiAlias(true);// 抗锯齿
         mWebsiteTxt.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);// 下划线
@@ -58,22 +59,8 @@ public class AboutActivity extends BaseActivity {
         });
     }
 
-    private void updateVersionText(String curVersion) {
-        mVersionText.setText(AppVersionUtils.formatAppVersion(curVersion));
-    }
-
     private void checkAppUpdate() {
         mAppUpgradeManager = new AppUpgradeManager(this);
-        mAppUpgradeManager.setOnUpgradeListener(new AppUpgradeManager.OnUpgradeListener() {
-
-            @Override
-            public void onUpgrade(boolean hasUpgrade, String curVersion, String newVersion, String url) {
-                updateVersionText(curVersion);
-                if (hasUpgrade) {
-                    mAppUpgradeManager.upgradeApp();
-                }
-            }
-        });
-        mAppUpgradeManager.checkAppUpgrade();
+        mAppUpgradeManager.detectAppUpgrade();
     }
 }

@@ -23,6 +23,7 @@ import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileManage;
 import com.eli.oneos.model.phone.LocalFileType;
+import com.eli.oneos.model.upgrade.AppUpgradeManager;
 import com.eli.oneos.receiver.NetworkStateManager;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.nav.BaseNavFragment;
@@ -165,6 +166,9 @@ public class MainActivity extends BaseActivity {
         if (null != service) {
             service.setOnTransferCountListener(transferCountListener);
         }
+
+        AppUpgradeManager upgradeManager = new AppUpgradeManager(this);
+        upgradeManager.detectAppUpgrade();
     }
 
     private Intent getUploadIntent() {

@@ -28,6 +28,11 @@ public class HttpUtils {
         finalHttp.configTimeout(timeout);
     }
 
+    public void get(String url, OnHttpListener<? extends Object> callBack) {
+        log(TAG, url, null);
+        finalHttp.get(url, callBack);
+    }
+
     public void post(String url, OnHttpListener<? extends Object> callBack) {
         log(TAG, url, null);
         finalHttp.post(url, callBack);

@@ -14,7 +14,7 @@ import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.http.OnHttpListener;
 import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logger;
-import com.eli.oneos.model.oneos.upgrade.OneOSVersionManager;
+import com.eli.oneos.model.upgrade.OneOSVersionManager;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 

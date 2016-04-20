@@ -8,7 +8,7 @@ import net.tsz.afinal.http.AjaxCallBack;
 public abstract class OnHttpListener<T> extends AjaxCallBack<T> {
     // public abstract void onStart();
 
-    public abstract void onSuccess(T t);
+    public abstract void onSuccess(T result);
 
     public abstract void onFailure(Throwable t, int errorNo, String strMsg);
 }

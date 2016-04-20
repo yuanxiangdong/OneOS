@@ -1,4 +1,4 @@
-package com.eli.oneos.model.oneos.upgrade;
+package com.eli.oneos.model.upgrade;
 
 import com.eli.oneos.utils.EmptyUtils;
 

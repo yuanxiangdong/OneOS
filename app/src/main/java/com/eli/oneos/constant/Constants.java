@@ -28,4 +28,8 @@ public class Constants {
 
     public static final boolean DISPLAY_IMAGE_WITH_GLIDE = true;
 
+    /**
+     * for remember ignore version number
+     */
+    public static final String SP_KEY_IGNORE_VERSION_NO = "IgnoreVersionNo";
 }

@@ -282,8 +282,9 @@
     <string name="interrupt_download">Cancel</string>
     <string name="continue_download">Continue</string>
     <string name="check_app_version">Check APP version&#8230;</string>
-    <string name="confirm_update_app">Upgrade Now</string>
-    <string name="ignore_update_app">Upgrade Next</string>
+    <string name="upgrade_app_now">Upgrade Now</string>
+    <string name="upgrade_next_time">Upgrade Next</string>
+    <string name="ignore_this_version">Ignore This Version</string>
     <string name="download_new_app">Downloading new APP</string>
     <string name="download_app_failed">Download failed, please try again</string>
 

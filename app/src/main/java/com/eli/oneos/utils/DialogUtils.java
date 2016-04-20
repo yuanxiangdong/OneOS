@@ -20,6 +20,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 
 import java.util.List;
@@ -459,9 +460,10 @@ public class DialogUtils {
     // }
     //
 
-    public static void showListDialog(Activity activity, List<String> titleList, List<String> contentList, int titleId,
-                                      int topId, int midId, int negId, final OnMultiDialogClickListener mListener) {
-        if (activity == null || titleList == null) {
+
+    public static void showListDialog(Activity activity, List<String> titleList, List<String> contentList, String title,
+                                      String top, String mid, String neg, final OnMultiDialogClickListener mListener) {
+        if (activity == null || (titleList == null && contentList == null)) {
             Log.e(TAG, "activity or dialog content is null");
             return;
         }
@@ -471,20 +473,20 @@ public class DialogUtils {
         final Dialog mDialog = new Dialog(activity, R.style.DialogTheme);
 
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.txt_title);
-        titleTextView.setText(titleId);
+        titleTextView.setText(title);
         titleTextView.setVisibility(View.VISIBLE);
 
         ListView mListView = (ListView) dialogView.findViewById(R.id.listview);
         DialogListAdapter mAdapter = new DialogListAdapter(activity, titleList, contentList);
         mListView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
-        // setListViewVisibleLines(activity, mListView, 6);
+//        setListViewMaxVisibleLines(activity, mListView, 8);
 
-        if (topId > 0) {
+        if (!EmptyUtils.isEmpty(top)) {
             LinearLayout layout = (LinearLayout) dialogView.findViewById(R.id.layout_multi_top);
             layout.setVisibility(View.VISIBLE);
             Button mBtn = (Button) dialogView.findViewById(R.id.btn_multi_top);
-            mBtn.setText(topId);
+            mBtn.setText(top);
             mBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     if (mListener != null) {
@@ -495,11 +497,11 @@ public class DialogUtils {
             });
         }
 
-        if (midId > 0) {
+        if (!EmptyUtils.isEmpty(mid)) {
             LinearLayout layout = (LinearLayout) dialogView.findViewById(R.id.layout_multi_mid);
             layout.setVisibility(View.VISIBLE);
             Button mBtn = (Button) dialogView.findViewById(R.id.btn_multi_mid);
-            mBtn.setText(midId);
+            mBtn.setText(mid);
             mBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     if (mListener != null) {
@@ -511,7 +513,7 @@ public class DialogUtils {
         }
 
         Button negativeBan = (Button) dialogView.findViewById(R.id.btn_negative);
-        negativeBan.setText(negId);
+        negativeBan.setText(neg);
         negativeBan.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if (mListener != null) {
@@ -526,25 +528,46 @@ public class DialogUtils {
         mDialog.show();
     }
 
-    private static void setListViewVisibleLines(Activity activity, ListView listView, int lines) {
+    public static void showListDialog(Activity activity, List<String> titleList, List<String> contentList, int titleId,
+                                      int topId, int midId, int negId, final OnMultiDialogClickListener mListener) {
+        Resources resources = MyApplication.getAppContext().getResources();
+        showListDialog(
+                activity,
+                titleList,
+                contentList,
+                titleId > 0 ? resources.getString(titleId) : null,
+                topId > 0 ? resources.getString(topId) : null,
+                midId > 0 ? resources.getString(midId) : null,
+                negId > 0 ? resources.getString(negId) : null,
+                mListener
+        );
+    }
+
+    public static void showListDialog(Activity activity, List<String> contentList, String title,
+                                      String top, String mid, String neg, final OnMultiDialogClickListener mListener) {
+        showListDialog(activity, null, contentList, title, top, mid, neg, mListener);
+    }
+
+    private static void setListViewMaxVisibleLines(Activity activity, ListView listView, int maxLines) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
             return;
         }
         int itemCount = listAdapter.getCount();
+        if (itemCount > maxLines) {
+            int totalHeight = 0;
+            if (itemCount > 0) {
+                View listItem = listAdapter.getView(0, null, listView);
+                listItem.measure(0, 0);
+                totalHeight = listItem.getMeasuredHeight() * maxLines + listView.getDividerHeight() * (maxLines + 1);
+            } else {
+                totalHeight = Utils.dipToPx(200);
+            }
 
-        int totalHeight = 0;
-        if (itemCount > 0) {
-            View listItem = listAdapter.getView(0, null, listView);
-            listItem.measure(0, 0);
-            totalHeight = listItem.getMeasuredHeight() * lines;
-        } else {
-            totalHeight = Utils.dipToPx(200);
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalHeight + (listView.getDividerHeight() * (maxLines - 1));
+            listView.setLayoutParams(params);
         }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (lines - 1));
-        listView.setLayoutParams(params);
     }
 
     public static void dismiss() {
@@ -592,7 +615,7 @@ public class DialogUtils {
 
         @Override
         public int getCount() {
-            return mTitleList.size();
+            return mContentList.size();
         }
 
         @Override
@@ -624,7 +647,12 @@ public class DialogUtils {
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            holder.mTitleTxt.setText(mTitleList.get(position));
+            if (null == mTitleList) {
+                holder.mTitleTxt.setVisibility(View.GONE);
+            } else {
+                holder.mTitleTxt.setText(mTitleList.get(position));
+                holder.mTitleTxt.setVisibility(View.VISIBLE);
+            }
             holder.mContentTxt.setText(mContentList.get(position));
 
             return convertView;
