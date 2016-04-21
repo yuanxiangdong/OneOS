@@ -165,13 +165,7 @@ public class MagicDialog {
         TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
         mTextView.setText(title);
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
-        if (EmptyUtils.isEmpty(content)) {
-            mTextView.setVisibility(View.GONE);
-        } else {
-            mTextView.setText(content);
-            mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
-            mTextView.setVisibility(View.VISIBLE);
-        }
+        showContentTextView(mTextView);
         Button mButton = (Button) view.findViewById(right == MagicDialogButton.POSITIVE ? R.id.btn_dialog_right : R.id.btn_dialog_left);
         mButton.setText(positive);
         mButton.setTypeface(bold == MagicDialogButton.POSITIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
@@ -223,13 +217,7 @@ public class MagicDialog {
         TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
         mTextView.setText(title);
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
-        if (EmptyUtils.isEmpty(content)) {
-            mTextView.setVisibility(View.GONE);
-        } else {
-            mTextView.setText(content);
-            mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
-            mTextView.setVisibility(View.VISIBLE);
-        }
+        showContentTextView(mTextView);
         Button mButton = (Button) view.findViewById(right == MagicDialogButton.POSITIVE ? R.id.btn_dialog_right : R.id.btn_dialog_left);
         mButton.setText(positive);
         mButton.setTypeface(bold == MagicDialogButton.POSITIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
@@ -292,13 +280,7 @@ public class MagicDialog {
         TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
         mTextView.setText(title);
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
-        if (EmptyUtils.isEmpty(content)) {
-            mTextView.setVisibility(View.GONE);
-        } else {
-            mTextView.setText(content);
-            mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
-            mTextView.setVisibility(View.VISIBLE);
-        }
+        showContentTextView(mTextView);
         Button mButton = (Button) view.findViewById(R.id.btn_dialog_positive);
         if (!EmptyUtils.isEmpty(positive)) {
             mButton.setText(positive);
@@ -342,13 +324,7 @@ public class MagicDialog {
         TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
         mTextView.setText(title);
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
-        if (!EmptyUtils.isEmpty(content)) {
-            mTextView.setText(content);
-            mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
-            mTextView.setVisibility(View.VISIBLE);
-        } else {
-            mTextView.setVisibility(View.GONE);
-        }
+        showContentTextView(mTextView);
         ListView mListView = (ListView) view.findViewById(R.id.listview_dialog);
         if (!EmptyUtils.isEmpty(list)) {
             MagicDialogListAdapter adapter = new MagicDialogListAdapter(activity, list);
@@ -405,6 +381,16 @@ public class MagicDialog {
         mDialog.setContentView(view);
         mDialog.setCancelable(cancelable);
         mDialog.show();
+    }
+
+    private void showContentTextView(TextView mContentTxt) {
+        if (!EmptyUtils.isEmpty(content)) {
+            mContentTxt.setText(content);
+            mContentTxt.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
+            mContentTxt.setVisibility(View.VISIBLE);
+        } else {
+            mContentTxt.setVisibility(View.GONE);
+        }
     }
 
     /**
