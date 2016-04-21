@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="5dp">
+    android:padding="6dp">
 
     <TextView
         android:id="@+id/txt_title"
@@ -13,9 +13,9 @@
         android:layout_marginLeft="10dp"
         android:layout_weight="1.0"
         android:ellipsize="end"
-        android:gravity="center|right"
+        android:gravity="center|left"
         android:singleLine="true"
-        android:textColor="@color/darker"
+        android:textColor="@color/magic_dialog_darker"
         android:textSize="@dimen/text_size_sm" />
 
     <TextView
@@ -26,6 +26,6 @@
         android:layout_weight="3.0"
         android:gravity="center|left"
         android:singleLine="false"
-        android:textColor="@color/darker"
+        android:textColor="@color/magic_dialog_darker"
         android:textSize="@dimen/text_size_sm" />
 </LinearLayout>

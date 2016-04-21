@@ -1,21 +1,21 @@
-package com.eli.oneos.widget;
+package com.eli.lib.magicdialog;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.eli.oneos.R;
-import com.eli.oneos.utils.EmptyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
 public class MagicDialog {
 
     public enum MagicDialogType {
-        NOTIFY, CONFIRM, LIST
+        NOTICE, CONFIRM, LIST
     }
 
     public enum MagicDialogButton {
@@ -55,10 +55,11 @@ public class MagicDialog {
         /**
          * On Magic Dialog Button Click
          *
-         * @param view   click view
-         * @param button {@link com.eli.oneos.widget.MagicDialog.MagicDialogButton}
+         * @param view    click view
+         * @param button  {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
+         * @param checked {@code true} if checked, otherwise {@code false}
          */
-        void onClick(View view, MagicDialogButton button);
+        void onClick(View view, MagicDialogButton button, boolean checked);
     }
 
     private Activity activity = null;
@@ -70,7 +71,7 @@ public class MagicDialog {
     // dialog cancelable
     private boolean cancelable = false;
     // dialog type
-    private MagicDialogType type = MagicDialogType.NOTIFY;
+    private MagicDialogType type = null;
     // dialog top title
     private String title = null;
     // dialog middle content
@@ -83,12 +84,18 @@ public class MagicDialog {
     private String negative = null;
     // dialog neutral button
     private String neutral = null;
+    // dialog check string
+    private String check = null;
+    // dialog default check state
+    private boolean checked = false;
     // are warning
     private boolean warning = false;
-    // negative button on left
-    private boolean positiveRight = false;
+    // dialog right button
+    private MagicDialogButton right = MagicDialogButton.POSITIVE;
     // dialog bold button
     private MagicDialogButton bold = MagicDialogButton.NEGATIVE;
+    // dialog top button
+    private MagicDialogButton top = MagicDialogButton.POSITIVE;
 
     public MagicDialog(Activity activity) {
         if (null == activity) {
@@ -100,73 +107,135 @@ public class MagicDialog {
         inflater = activity.getLayoutInflater();
     }
 
+    /**
+     * show dialog
+     */
+    public void show() {
+        if (null == type) {
+            if (!EmptyUtils.isEmpty(list) || !EmptyUtils.isEmpty(neutral)) {
+                type = MagicDialogType.LIST;
+            } else if (!EmptyUtils.isEmpty(negative)) {
+                type = MagicDialogType.CONFIRM;
+            } else {
+                type = MagicDialogType.NOTICE;
+            }
+        }
+
+        if (type == MagicDialogType.LIST) {
+            showListDialog();
+        } else if (type == MagicDialogType.NOTICE) {
+            showNoticeDialog();
+        } else {
+            showConfirmDialog();
+        }
+    }
+
     private void showConfirmDialog() {
-        View view = inflater.inflate(R.layout.magic_dialog_confirm, null);
+        if (null == right) {
+            right = MagicDialogButton.POSITIVE;
+        }
+
+        final View view = inflater.inflate(R.layout.magic_dialog_confirm, null);
         TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
         mTextView.setText(title);
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
         mTextView.setText(content);
-        mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.black));
-        Button mButton = (Button) view.findViewById(positiveRight ? R.id.btn_dialog_right : R.id.btn_dialog_left);
+        mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
+        Button mButton = (Button) view.findViewById(right == MagicDialogButton.POSITIVE ? R.id.btn_dialog_right : R.id.btn_dialog_left);
         mButton.setText(positive);
         mButton.setTypeface(bold == MagicDialogButton.POSITIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != listener) {
-                    listener.onClick(v, MagicDialogButton.POSITIVE);
+                    CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+                    listener.onClick(v, MagicDialogButton.POSITIVE, mCheckBox.isChecked());
                 }
                 mDialog.dismiss();
             }
         });
-        mButton = (Button) view.findViewById(positiveRight ? R.id.btn_dialog_left : R.id.btn_dialog_right);
+        mButton = (Button) view.findViewById(right == MagicDialogButton.NEGATIVE ? R.id.btn_dialog_right : R.id.btn_dialog_left);
         mButton.setText(negative);
         mButton.setTypeface(bold == MagicDialogButton.NEGATIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != listener) {
-                    listener.onClick(v, MagicDialogButton.NEGATIVE);
+                    CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+                    listener.onClick(v, MagicDialogButton.NEGATIVE, mCheckBox.isChecked());
                 }
                 mDialog.dismiss();
             }
         });
+        LinearLayout mCheckLayout = (LinearLayout) view.findViewById(R.id.layout_dialog_check);
+        if (EmptyUtils.isEmpty(check)) {
+            mCheckLayout.setVisibility(View.GONE);
+        } else {
+            CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+            mCheckBox.setChecked(checked);
+            mTextView = (TextView) view.findViewById(R.id.txt_dialog_check);
+            mTextView.setText(check);
+            mCheckLayout.setVisibility(View.VISIBLE);
+        }
+
         mDialog.setContentView(view);
         mDialog.setCancelable(cancelable);
         mDialog.show();
     }
 
-    private void showNotifyDialog() {
-        View view = inflater.inflate(R.layout.magic_dialog_notify, null);
+    private void showNoticeDialog() {
+        final View view = inflater.inflate(R.layout.magic_dialog_notice, null);
         TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
         mTextView.setText(title);
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
         mTextView.setText(content);
-        mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.black));
+        mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
         Button mButton = (Button) view.findViewById(R.id.btn_dialog_positive);
-        mButton.setText(positive);
+        if (!EmptyUtils.isEmpty(positive)) {
+            mButton.setText(positive);
+        } else if (!EmptyUtils.isEmpty(negative)) {
+            mButton.setText(negative);
+        } else if (!EmptyUtils.isEmpty(neutral)) {
+            mButton.setText(neutral);
+        }
+        mButton.setTypeface(bold == MagicDialogButton.POSITIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != listener) {
-                    listener.onClick(v, MagicDialogButton.POSITIVE);
+                    CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+                    listener.onClick(v, MagicDialogButton.POSITIVE, mCheckBox.isChecked());
                 }
                 mDialog.dismiss();
             }
         });
+        LinearLayout mCheckLayout = (LinearLayout) view.findViewById(R.id.layout_dialog_check);
+        if (EmptyUtils.isEmpty(check)) {
+            mCheckLayout.setVisibility(View.GONE);
+        } else {
+            CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+            mCheckBox.setChecked(checked);
+            mTextView = (TextView) view.findViewById(R.id.txt_dialog_check);
+            mTextView.setText(check);
+            mCheckLayout.setVisibility(View.VISIBLE);
+        }
         mDialog.setContentView(view);
         mDialog.setCancelable(cancelable);
         mDialog.show();
     }
 
     private void showListDialog() {
+        if (top == null || top == MagicDialogButton.NEGATIVE) {
+            top = MagicDialogButton.POSITIVE;
+        }
+
         View view = inflater.inflate(R.layout.magic_dialog_list, null);
         TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
         mTextView.setText(title);
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
         if (!EmptyUtils.isEmpty(content)) {
             mTextView.setText(content);
-            mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.black));
+            mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
             mTextView.setVisibility(View.VISIBLE);
         } else {
             mTextView.setVisibility(View.GONE);
@@ -176,23 +245,20 @@ public class MagicDialog {
             MagicDialogListAdapter adapter = new MagicDialogListAdapter(activity, list);
             mListView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
-            mListView.setVisibility(View.VISIBLE);
-        } else {
-            mListView.setVisibility(View.GONE);
         }
 
         LinearLayout mLinearLayout;
         Button mButton;
         if (!EmptyUtils.isEmpty(positive)) {
-            mLinearLayout = (LinearLayout) view.findViewById(R.id.layout_dialog_positive);
-            mButton = (Button) view.findViewById(R.id.btn_dialog_positive);
+            mLinearLayout = (LinearLayout) view.findViewById(top == MagicDialogButton.POSITIVE ? R.id.layout_dialog_top : R.id.layout_dialog_mid);
+            mButton = (Button) view.findViewById(top == MagicDialogButton.POSITIVE ? R.id.btn_dialog_top : R.id.btn_dialog_mid);
             mButton.setText(positive);
             mButton.setTypeface(bold == MagicDialogButton.POSITIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
             mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (null != listener) {
-                        listener.onClick(v, MagicDialogButton.POSITIVE);
+                        listener.onClick(v, MagicDialogButton.POSITIVE, false);
                     }
                     mDialog.dismiss();
                 }
@@ -200,15 +266,15 @@ public class MagicDialog {
             mLinearLayout.setVisibility(View.VISIBLE);
         }
         if (!EmptyUtils.isEmpty(neutral)) {
-            mLinearLayout = (LinearLayout) view.findViewById(R.id.layout_dialog_neutral);
-            mButton = (Button) view.findViewById(R.id.btn_dialog_neutral);
+            mLinearLayout = (LinearLayout) view.findViewById(top == MagicDialogButton.NEGATIVE ? R.id.layout_dialog_top : R.id.layout_dialog_mid);
+            mButton = (Button) view.findViewById(top == MagicDialogButton.NEGATIVE ? R.id.btn_dialog_top : R.id.btn_dialog_mid);
             mButton.setText(neutral);
             mButton.setTypeface(bold == MagicDialogButton.NEUTRAL ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
             mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (null != listener) {
-                        listener.onClick(v, MagicDialogButton.NEUTRAL);
+                        listener.onClick(v, MagicDialogButton.NEUTRAL, false);
                     }
                     mDialog.dismiss();
                 }
@@ -222,7 +288,7 @@ public class MagicDialog {
             @Override
             public void onClick(View v) {
                 if (null != listener) {
-                    listener.onClick(v, MagicDialogButton.NEGATIVE);
+                    listener.onClick(v, MagicDialogButton.NEGATIVE, false);
                 }
                 mDialog.dismiss();
             }
@@ -233,36 +299,52 @@ public class MagicDialog {
     }
 
     /**
-     * show dialog
+     * Set {@link MagicDialog#type} {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#NOTICE}
+     *
+     * @return {@link MagicDialog}
+     * @see MagicDialog#type(MagicDialogType)
      */
-    public void show() {
-        if (type == MagicDialogType.LIST) {
-            showListDialog();
-        } else if (type == MagicDialogType.NOTIFY) {
-            showNotifyDialog();
-        } else {
-            showConfirmDialog();
-        }
-
+    public MagicDialog notice() {
+        return type(MagicDialogType.NOTICE);
     }
 
     /**
-     * set {@link MagicDialog#type}
+     * Set {@link MagicDialog#type} {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#CONFIRM}
+     *
+     * @return {@link MagicDialog}
+     * @see MagicDialog#type(MagicDialogType)
+     */
+    public MagicDialog confirm() {
+        return type(MagicDialogType.CONFIRM);
+    }
+
+    /**
+     * Set {@link MagicDialog#type} {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#LIST}
+     *
+     * @return {@link MagicDialog}
+     * @see MagicDialog#type(MagicDialogType)
+     */
+    public MagicDialog list() {
+        return type(MagicDialogType.LIST);
+    }
+
+    /**
+     * Set {@link MagicDialog#type}
      *
      * @param type {@link MagicDialog#type}
      * @return {@link MagicDialog}
      */
-    public MagicDialog type(MagicDialogType type) {
-        if (null == type) {
-            throw new NullPointerException("MagicDialogType cannot be NULL");
-        }
+    private MagicDialog type(MagicDialogType type) {
+//        if (null == type) {
+//            throw new NullPointerException("MagicDialogType cannot be NULL");
+//        }
         this.type = type;
 
         return this;
     }
 
     /**
-     * set {@link MagicDialog#cancelable}
+     * Set {@link MagicDialog#cancelable}
      *
      * @param cancelable {@link MagicDialog#cancelable}
      * @return {@link MagicDialog}
@@ -436,6 +518,48 @@ public class MagicDialog {
     }
 
     /**
+     * Set {@link MagicDialog#check}
+     *
+     * @param check check string
+     * @return {@link MagicDialog}
+     * @see MagicDialog#check(int)
+     */
+    public MagicDialog check(String check) {
+        this.check = check;
+
+        return this;
+    }
+
+    /**
+     * Set {@link MagicDialog#check}
+     *
+     * @param id check resource id
+     * @return {@link MagicDialog}
+     * @see MagicDialog#check(String)
+     */
+    public MagicDialog check(int id) {
+        try {
+            check = resources.getString(id);
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return this;
+    }
+
+    /**
+     * Set {@link MagicDialog} default checked state
+     *
+     * @param checked {@code true} is default checked, otherwise {@code false}
+     * @return {@link MagicDialog}
+     */
+    public MagicDialog checked(boolean checked) {
+        this.checked = checked;
+
+        return this;
+    }
+
+    /**
      * Set {@link MagicDialog#warning}
      *
      * @param warning are warning
@@ -472,31 +596,20 @@ public class MagicDialog {
     }
 
     /**
-     * Set {@link MagicDialog#positiveRight} {@code true}, negative button will be on the right.
+     * Set {@link MagicDialog#right}
      *
      * @return {@link MagicDialog}
      */
-    public MagicDialog negativeRight() {
-        this.positiveRight = false;
+    public MagicDialog right(MagicDialogButton button) {
+        this.right = button;
 
         return this;
     }
 
     /**
-     * Set {@link MagicDialog#positiveRight} {@code false}, positive button will be on the right.
+     * Set {@link MagicDialog#bold} {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
      *
-     * @return {@link MagicDialog}
-     */
-    public MagicDialog positiveRight() {
-        this.positiveRight = true;
-
-        return this;
-    }
-
-    /**
-     * Set {@link MagicDialog#bold} {@link com.eli.oneos.widget.MagicDialog.MagicDialogButton}
-     *
-     * @param button {@link com.eli.oneos.widget.MagicDialog.MagicDialogButton}
+     * @param button {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
      * @return {@link MagicDialog}
      */
     public MagicDialog bold(MagicDialogButton button) {
@@ -505,12 +618,27 @@ public class MagicDialog {
         return this;
     }
 
+    /**
+     * Set {@link MagicDialog#top} {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
+     *
+     * @param button {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
+     * @return {@link MagicDialog}
+     */
+    public MagicDialog top(MagicDialogButton button) {
+        this.top = button;
+
+        return this;
+    }
+
     private static class MagicDialogListAdapter extends BaseAdapter {
+        private Context context;
         public LayoutInflater mInflater;
         private List<? extends MagicDialogListItem> mItemList;
+        private int titleWidth = 0;
 
         public MagicDialogListAdapter(Context context, List<? extends MagicDialogListItem> itemList) {
             this.mInflater = LayoutInflater.from(context);
+            this.context = context;
             this.mItemList = itemList;
         }
 
@@ -544,6 +672,10 @@ public class MagicDialog {
                 holder.mTitleTxt = (TextView) convertView.findViewById(R.id.txt_title);
                 holder.mContentTxt = (TextView) convertView.findViewById(R.id.txt_content);
 
+                ViewGroup.LayoutParams params = holder.mTitleTxt.getLayoutParams();
+                params.width = titleWidth;
+                holder.mTitleTxt.setLayoutParams(params);
+
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -561,6 +693,25 @@ public class MagicDialog {
             holder.mContentTxt.setTextColor(mItemList.get(position).color);
 
             return convertView;
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+            if (EmptyUtils.isEmpty(mItemList)) {
+                Paint paint = new Paint();
+                Rect bounds = new Rect();
+                paint.setTextSize(context.getResources().getDimension(R.dimen.text_size_sm));
+                paint.setTypeface(Typeface.DEFAULT);
+                for (MagicDialogListItem item : mItemList) {
+                    int width = 0;
+                    if (!EmptyUtils.isEmpty(item.title)) {
+                        paint.getTextBounds(item.title, 0, 1, bounds);
+                        width = bounds.width();
+                    }
+                    titleWidth = width > titleWidth ? width : titleWidth;
+                }
+            }
+            super.notifyDataSetChanged();
         }
     }
 }

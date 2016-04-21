@@ -1,1 +1,1 @@
-include ':app', ':segementgroup', ':greendaogenerator', ':materialloadingprogressbar'
+include ':app', ':segementgroup', ':greendaogenerator', ':materialloadingprogressbar', ':magicdialog'
