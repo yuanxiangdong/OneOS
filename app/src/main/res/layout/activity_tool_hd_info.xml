@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:background="@drawable/bg_stroke_full_radius_light_gray"
+                android:background="@drawable/bg_stroke_full_radius_gray"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -241,7 +241,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/bg_stroke_full_radius_light_gray"
+                android:background="@drawable/bg_stroke_full_radius_gray"
                 android:orientation="vertical"
                 android:visibility="gone">
 

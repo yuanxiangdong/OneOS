@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,7 +29,7 @@ import java.util.List;
 public class MagicDialog {
 
     public enum MagicDialogType {
-        NOTICE, CONFIRM, LIST
+        NOTICE, CONFIRM, LIST, EDIT
     }
 
     public enum MagicDialogButton {
@@ -51,23 +52,38 @@ public class MagicDialog {
         }
     }
 
-    public interface OnMagicDialogClickListener {
+    public static class OnMagicDialogClickCallback {
         /**
-         * On Magic Dialog Button Click
+         * On Magic Dialog Button Click, to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#NOTICE}/
+         * {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#CONFIRM}/ {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#LIST}
          *
-         * @param view    click view
-         * @param button  {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
-         * @param checked {@code true} if checked, otherwise {@code false}
+         * @param clickView click view
+         * @param button    {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
+         * @param checked   {@code true} if checked, otherwise {@code false}
          */
-        void onClick(View view, MagicDialogButton button, boolean checked);
+        void onClick(View clickView, MagicDialogButton button, boolean checked) {
+        }
+
+        /**
+         * On Magic Dialog Button Click, to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#EDIT}
+         *
+         * @param clickView click view
+         * @param button    {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
+         * @param editText  EditText
+         * @param checked   {@code true} if checked, otherwise {@code false}
+         * @return {@code true} if dialog can dismiss, otherwise {@code false}
+         */
+        boolean onClick(View clickView, MagicDialogButton button, EditText editText, boolean checked) {
+            return true;
+        }
     }
 
     private Activity activity = null;
     private Resources resources = null;
     private Dialog mDialog = null;
     private LayoutInflater inflater = null;
-    // click listener
-    private OnMagicDialogClickListener listener = null;
+    // click callback
+    private OnMagicDialogClickCallback callback = null;
     // dialog cancelable
     private boolean cancelable = false;
     // dialog type
@@ -90,6 +106,12 @@ public class MagicDialog {
     private boolean checked = false;
     // are warning
     private boolean warning = false;
+    // dialog edit hint string
+    private String hint = null;
+    // dialog edit string
+    private String edit = null;
+    // dialog verify hint string
+    private String verify = null;
     // dialog right button
     private MagicDialogButton right = MagicDialogButton.POSITIVE;
     // dialog bold button
@@ -112,7 +134,9 @@ public class MagicDialog {
      */
     public void show() {
         if (null == type) {
-            if (!EmptyUtils.isEmpty(list) || !EmptyUtils.isEmpty(neutral)) {
+            if (!EmptyUtils.isEmpty(hint) || !EmptyUtils.isEmpty(edit)) {
+                type = MagicDialogType.EDIT;
+            } else if (!EmptyUtils.isEmpty(list) || !EmptyUtils.isEmpty(neutral)) {
                 type = MagicDialogType.LIST;
             } else if (!EmptyUtils.isEmpty(negative)) {
                 type = MagicDialogType.CONFIRM;
@@ -125,6 +149,8 @@ public class MagicDialog {
             showListDialog();
         } else if (type == MagicDialogType.NOTICE) {
             showNoticeDialog();
+        } else if (type == MagicDialogType.EDIT) {
+            showEditDialog();
         } else {
             showConfirmDialog();
         }
@@ -139,17 +165,22 @@ public class MagicDialog {
         TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
         mTextView.setText(title);
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
-        mTextView.setText(content);
-        mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
+        if (EmptyUtils.isEmpty(content)) {
+            mTextView.setVisibility(View.GONE);
+        } else {
+            mTextView.setText(content);
+            mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
+            mTextView.setVisibility(View.VISIBLE);
+        }
         Button mButton = (Button) view.findViewById(right == MagicDialogButton.POSITIVE ? R.id.btn_dialog_right : R.id.btn_dialog_left);
         mButton.setText(positive);
         mButton.setTypeface(bold == MagicDialogButton.POSITIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != listener) {
+                if (null != callback) {
                     CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
-                    listener.onClick(v, MagicDialogButton.POSITIVE, mCheckBox.isChecked());
+                    callback.onClick(v, MagicDialogButton.POSITIVE, mCheckBox.isChecked());
                 }
                 mDialog.dismiss();
             }
@@ -160,9 +191,9 @@ public class MagicDialog {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != listener) {
+                if (null != callback) {
                     CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
-                    listener.onClick(v, MagicDialogButton.NEGATIVE, mCheckBox.isChecked());
+                    callback.onClick(v, MagicDialogButton.NEGATIVE, mCheckBox.isChecked());
                 }
                 mDialog.dismiss();
             }
@@ -183,13 +214,91 @@ public class MagicDialog {
         mDialog.show();
     }
 
+    private void showEditDialog() {
+        if (null == right) {
+            right = MagicDialogButton.POSITIVE;
+        }
+
+        final View view = inflater.inflate(R.layout.magic_dialog_edit, null);
+        TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
+        mTextView.setText(title);
+        mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
+        if (EmptyUtils.isEmpty(content)) {
+            mTextView.setVisibility(View.GONE);
+        } else {
+            mTextView.setText(content);
+            mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
+            mTextView.setVisibility(View.VISIBLE);
+        }
+        Button mButton = (Button) view.findViewById(right == MagicDialogButton.POSITIVE ? R.id.btn_dialog_right : R.id.btn_dialog_left);
+        mButton.setText(positive);
+        mButton.setTypeface(bold == MagicDialogButton.POSITIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != callback) {
+                    CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+                    EditText mEditText = (EditText) view.findViewById(R.id.et_dialog_input);
+                    if (callback.onClick(v, MagicDialogButton.POSITIVE, mEditText, mCheckBox.isChecked())) {
+                        mDialog.dismiss();
+                    }
+                } else {
+                    mDialog.dismiss();
+                }
+            }
+        });
+        mButton = (Button) view.findViewById(right == MagicDialogButton.NEGATIVE ? R.id.btn_dialog_right : R.id.btn_dialog_left);
+        mButton.setText(negative);
+        mButton.setTypeface(bold == MagicDialogButton.NEGATIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != callback) {
+                    CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+                    EditText mEditText = (EditText) view.findViewById(R.id.et_dialog_input);
+                    if (callback.onClick(v, MagicDialogButton.NEGATIVE, mEditText, mCheckBox.isChecked())) {
+                        mDialog.dismiss();
+                    }
+                } else {
+                    mDialog.dismiss();
+                }
+            }
+        });
+        LinearLayout mCheckLayout = (LinearLayout) view.findViewById(R.id.layout_dialog_check);
+        if (EmptyUtils.isEmpty(check)) {
+            mCheckLayout.setVisibility(View.GONE);
+        } else {
+            CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+            mCheckBox.setChecked(checked);
+            mTextView = (TextView) view.findViewById(R.id.txt_dialog_check);
+            mTextView.setText(check);
+            mCheckLayout.setVisibility(View.VISIBLE);
+        }
+        EditText mEditText = (EditText) view.findViewById(R.id.et_dialog_input);
+        if (!EmptyUtils.isEmpty(edit)) {
+            mEditText.setText(edit);
+            mEditText.setSelection(0, edit.length());
+        } else if (!EmptyUtils.isEmpty(hint)) {
+            mEditText.setHint(hint);
+        }
+
+        mDialog.setContentView(view);
+        mDialog.setCancelable(cancelable);
+        mDialog.show();
+    }
+
     private void showNoticeDialog() {
         final View view = inflater.inflate(R.layout.magic_dialog_notice, null);
         TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
         mTextView.setText(title);
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
-        mTextView.setText(content);
-        mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
+        if (EmptyUtils.isEmpty(content)) {
+            mTextView.setVisibility(View.GONE);
+        } else {
+            mTextView.setText(content);
+            mTextView.setTextColor(warning ? activity.getResources().getColor(R.color.red) : activity.getResources().getColor(R.color.darker));
+            mTextView.setVisibility(View.VISIBLE);
+        }
         Button mButton = (Button) view.findViewById(R.id.btn_dialog_positive);
         if (!EmptyUtils.isEmpty(positive)) {
             mButton.setText(positive);
@@ -202,9 +311,9 @@ public class MagicDialog {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != listener) {
+                if (null != callback) {
                     CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
-                    listener.onClick(v, MagicDialogButton.POSITIVE, mCheckBox.isChecked());
+                    callback.onClick(v, MagicDialogButton.POSITIVE, mCheckBox.isChecked());
                 }
                 mDialog.dismiss();
             }
@@ -257,8 +366,8 @@ public class MagicDialog {
             mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (null != listener) {
-                        listener.onClick(v, MagicDialogButton.POSITIVE, false);
+                    if (null != callback) {
+                        callback.onClick(v, MagicDialogButton.POSITIVE, false);
                     }
                     mDialog.dismiss();
                 }
@@ -273,8 +382,8 @@ public class MagicDialog {
             mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (null != listener) {
-                        listener.onClick(v, MagicDialogButton.NEUTRAL, false);
+                    if (null != callback) {
+                        callback.onClick(v, MagicDialogButton.NEUTRAL, false);
                     }
                     mDialog.dismiss();
                 }
@@ -287,8 +396,8 @@ public class MagicDialog {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != listener) {
-                    listener.onClick(v, MagicDialogButton.NEGATIVE, false);
+                if (null != callback) {
+                    callback.onClick(v, MagicDialogButton.NEGATIVE, false);
                 }
                 mDialog.dismiss();
             }
@@ -316,6 +425,16 @@ public class MagicDialog {
      */
     public MagicDialog confirm() {
         return type(MagicDialogType.CONFIRM);
+    }
+
+    /**
+     * Set {@link MagicDialog#type} {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#EDIT}
+     *
+     * @return {@link MagicDialog}
+     * @see MagicDialog#type(MagicDialogType)
+     */
+    public MagicDialog edit() {
+        return type(MagicDialogType.EDIT);
     }
 
     /**
@@ -560,6 +679,66 @@ public class MagicDialog {
     }
 
     /**
+     * Set {@link MagicDialog} EditText hint string
+     *
+     * @param hint hint string
+     * @return {@link MagicDialog}
+     * @see MagicDialog#hint(int)
+     */
+    public MagicDialog hint(String hint) {
+        this.hint = hint;
+
+        return this;
+    }
+
+    /**
+     * Set {@link MagicDialog} EditText hint string
+     *
+     * @param id hint string resource id
+     * @return {@link MagicDialog}
+     * @see MagicDialog#hint(String)
+     */
+    public MagicDialog hint(int id) {
+        try {
+            hint = resources.getString(id);
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return this;
+    }
+
+    /**
+     * Set {@link MagicDialog} EditText default string
+     *
+     * @param edit edit default string
+     * @return {@link MagicDialog}
+     * @see MagicDialog#edit(int)
+     */
+    public MagicDialog edit(String edit) {
+        this.edit = hint;
+
+        return this;
+    }
+
+    /**
+     * Set {@link MagicDialog} EditText default string
+     *
+     * @param id default string resource id
+     * @return {@link MagicDialog}
+     * @see MagicDialog#edit(String)
+     */
+    public MagicDialog edit(int id) {
+        try {
+            edit = resources.getString(id);
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return this;
+    }
+
+    /**
      * Set {@link MagicDialog#warning}
      *
      * @param warning are warning
@@ -584,13 +763,13 @@ public class MagicDialog {
     }
 
     /**
-     * Set {@link OnMagicDialogClickListener}
+     * Set {@link OnMagicDialogClickCallback}
      *
-     * @param listener {@link OnMagicDialogClickListener}
+     * @param listener {@link OnMagicDialogClickCallback}
      * @return {@link MagicDialog}
      */
-    public MagicDialog listener(OnMagicDialogClickListener listener) {
-        this.listener = listener;
+    public MagicDialog listener(OnMagicDialogClickCallback listener) {
+        this.callback = listener;
 
         return this;
     }

@@ -24,7 +24,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:background="@drawable/bg_stroke_full_radius_light_gray"
+            android:background="@drawable/bg_stroke_full_radius_gray"
             android:gravity="center"
             android:padding="8dp"
             android:singleLine="true"
