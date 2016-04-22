@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
 
-import com.eli.lib.magicdialog.MagicDialogSample;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
@@ -170,8 +169,6 @@ public class MainActivity extends BaseActivity {
 
         AppUpgradeManager upgradeManager = new AppUpgradeManager(this);
         upgradeManager.detectAppUpgrade();
-
-        MagicDialogSample.list(this);
     }
 
     private Intent getUploadIntent() {

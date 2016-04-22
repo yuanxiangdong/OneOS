@@ -291,6 +291,7 @@
     <string name="ignore_this_version">忽略此版本</string>
     <string name="download_new_app">正在下載新版APP</string>
     <string name="download_app_failed">下載失敗，請重新嘗試</string>
+    <string name="tip_oneos_new_version_upgrade">您的設備有新的OneOS系統可以升級，請前往http://onespace.cc/download/oneos/查看更新！</string>
 
     <!-- Space Activity -->
     <string name="user_space_info">您的空間已使用</string>
