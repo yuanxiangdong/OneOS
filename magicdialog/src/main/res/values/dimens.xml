@@ -13,6 +13,7 @@
     <dimen name="layout_dialog_margin">15dp</dimen>
     <dimen name="common_size_radius">5dp</dimen>
     <dimen name="common_size_stroke">2px</dimen>
+    <dimen name="common_size_stroke_shrink">-2px</dimen>
     <dimen name="line_dialog_weight">0.5dp</dimen>
     <dimen name="line_list_divider_height">@dimen/line_dialog_weight</dimen>
     <dimen name="layout_dialog_bottom_height">42dp</dimen>

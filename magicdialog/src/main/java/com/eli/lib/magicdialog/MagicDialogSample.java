@@ -19,7 +19,6 @@ public class MagicDialogSample {
                 .listener(new MagicDialog.OnMagicDialogClickCallback() {
                     @Override
                     public void onClick(View view, MagicDialog.MagicDialogButton button, boolean checked) {
-                        Toast.makeText(activity, "On Dialog Button Click: " + button, Toast.LENGTH_SHORT).show();
                         if (checked) {
                             MagicDialogSample.list(activity);
                         }
@@ -34,7 +33,6 @@ public class MagicDialogSample {
                 .listener(new MagicDialog.OnMagicDialogClickCallback() {
                     @Override
                     public void onClick(View view, MagicDialog.MagicDialogButton button, boolean checked) {
-                        Toast.makeText(activity, "On Dialog Button Click: " + button, Toast.LENGTH_SHORT).show();
                         if (button == MagicDialog.MagicDialogButton.POSITIVE && checked) {
                             MagicDialogSample.notice(activity);
                         }
@@ -44,12 +42,11 @@ public class MagicDialogSample {
 
     public static void edit(final Activity activity) {
         MagicDialog dialog = new MagicDialog(activity);
-        dialog.title("EditDialog Title")/*.content("Confirm Content Body")*/.hint("Please enter your name").unit("MB").warning().positive("OK").negative("Cancel")
-                /*.check("Show Notice Dialog?").checked(true)*/.bold(MagicDialog.MagicDialogButton.POSITIVE).right(MagicDialog.MagicDialogButton.POSITIVE)
+        dialog.title("EditDialog Title").content("Confirm Content Body").hint("Please enter your name").unit("MB").warning().positive("OK").negative("Verify")
+                .check("Show Notice Dialog?").checked(true).bold(MagicDialog.MagicDialogButton.POSITIVE).right(MagicDialog.MagicDialogButton.POSITIVE)
                 .listener(new MagicDialog.OnMagicDialogClickCallback() {
                     @Override
                     public boolean onClick(View view, MagicDialog.MagicDialogButton button, EditText editText, boolean checked) {
-                        Toast.makeText(activity, "On Dialog Button Click: " + button, Toast.LENGTH_SHORT).show();
                         String input = editText.getText().toString();
                         if (button == MagicDialog.MagicDialogButton.POSITIVE) {
                             if (EmptyUtils.isEmpty(input)) {
@@ -57,6 +54,41 @@ public class MagicDialogSample {
                                 return false;
                             } else {
                                 if (checked) {
+                                    MagicDialogSample.notice(activity);
+                                }
+                                return true;
+                            }
+                        } else {
+                            MagicDialogSample.verify(activity);
+                        }
+
+                        return true;
+                    }
+                }).show();
+    }
+
+    public static void verify(final Activity activity) {
+        MagicDialog dialog = new MagicDialog(activity);
+        dialog.title("VerifyDialog Title").content("Please remember your password").hint("Please enter your password").verify("Please confirm password")
+                .warning().positive("Verify").negative("Cancel").check("Show Notice Dialog?").checked(true).bold(MagicDialog.MagicDialogButton.POSITIVE).right(MagicDialog.MagicDialogButton.POSITIVE)
+                .listener(new MagicDialog.OnMagicDialogClickCallback() {
+                    @Override
+                    public boolean onClick(View view, MagicDialog.MagicDialogButton button, EditText editText, EditText verifyEditText, boolean checked) {
+                        String input = editText.getText().toString();
+                        String verify = verifyEditText.getText().toString();
+                        if (button == MagicDialog.MagicDialogButton.POSITIVE) {
+                            if (EmptyUtils.isEmpty(input)) {
+                                Toast.makeText(activity, "Please enter your password!!!", Toast.LENGTH_SHORT).show();
+                                return false;
+                            } else if (EmptyUtils.isEmpty(verify)) {
+                                Toast.makeText(activity, "Please confirm your password!!!", Toast.LENGTH_SHORT).show();
+                                return false;
+                            } else {
+                                if (!input.equals(verify)) {
+                                    Toast.makeText(activity, "Confirm password Failed!!!", Toast.LENGTH_SHORT).show();
+                                    return false;
+                                } else {
+                                    Toast.makeText(activity, "Confirm password Succeed!!!", Toast.LENGTH_SHORT).show();
                                     MagicDialogSample.notice(activity);
                                 }
                                 return true;
@@ -91,7 +123,6 @@ public class MagicDialogSample {
                 .bold(MagicDialog.MagicDialogButton.NEGATIVE).listener(new MagicDialog.OnMagicDialogClickCallback() {
             @Override
             public void onClick(View view, MagicDialog.MagicDialogButton button, boolean checked) {
-                Toast.makeText(activity, "On Dialog Button Click: " + button, Toast.LENGTH_SHORT).show();
                 if (button == MagicDialog.MagicDialogButton.POSITIVE) {
                     MagicDialogSample.confirm(activity);
                 } else if (button == MagicDialog.MagicDialogButton.NEUTRAL) {

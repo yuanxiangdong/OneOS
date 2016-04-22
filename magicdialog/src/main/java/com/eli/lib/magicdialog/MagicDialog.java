@@ -76,6 +76,20 @@ public class MagicDialog {
         boolean onClick(View clickView, MagicDialogButton button, EditText editText, boolean checked) {
             return true;
         }
+
+        /**
+         * On Magic Dialog Button Click, to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#VERIFY}
+         *
+         * @param clickView      click view
+         * @param button         {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
+         * @param editText       EditText
+         * @param verifyEditText Verify EditText
+         * @param checked        {@code true} if checked, otherwise {@code false}
+         * @return {@code true} if dialog can dismiss, otherwise {@code false}
+         */
+        boolean onClick(View clickView, MagicDialogButton button, EditText editText, EditText verifyEditText, boolean checked) {
+            return true;
+        }
     }
 
     private Activity activity = null;
@@ -137,7 +151,11 @@ public class MagicDialog {
     public void show() {
         if (null == type) {
             if (!EmptyUtils.isEmpty(hint) || !EmptyUtils.isEmpty(edit)) {
-                type = MagicDialogType.EDIT;
+                if (!EmptyUtils.isEmpty(verify)) {
+                    type = MagicDialogType.VERIFY;
+                } else {
+                    type = MagicDialogType.EDIT;
+                }
             } else if (!EmptyUtils.isEmpty(list) || !EmptyUtils.isEmpty(neutral)) {
                 type = MagicDialogType.LIST;
             } else if (!EmptyUtils.isEmpty(negative)) {
@@ -153,6 +171,8 @@ public class MagicDialog {
             showNoticeDialog();
         } else if (type == MagicDialogType.EDIT) {
             showEditDialog();
+        } else if (type == MagicDialogType.VERIFY) {
+            showVerifyDialog();
         } else {
             showConfirmDialog();
         }
@@ -277,6 +297,79 @@ public class MagicDialog {
             mTextView.setVisibility(View.VISIBLE);
         } else {
             mTextView.setVisibility(View.GONE);
+        }
+
+        mDialog.setContentView(view);
+        mDialog.setCancelable(cancelable);
+        mDialog.show();
+    }
+
+    private void showVerifyDialog() {
+        if (null == right) {
+            right = MagicDialogButton.POSITIVE;
+        }
+
+        final View view = inflater.inflate(R.layout.magic_dialog_verify, null);
+        TextView mTextView = (TextView) view.findViewById(R.id.txt_dialog_title);
+        mTextView.setText(title);
+        mTextView = (TextView) view.findViewById(R.id.txt_dialog_content);
+        showContentTextView(mTextView);
+        Button mButton = (Button) view.findViewById(right == MagicDialogButton.POSITIVE ? R.id.btn_dialog_right : R.id.btn_dialog_left);
+        mButton.setText(positive);
+        mButton.setTypeface(bold == MagicDialogButton.POSITIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != callback) {
+                    CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+                    EditText mEditText = (EditText) view.findViewById(R.id.et_dialog_input);
+                    EditText mVerifyEditText = (EditText) view.findViewById(R.id.et_dialog_verify);
+                    if (callback.onClick(v, MagicDialogButton.POSITIVE, mEditText, mVerifyEditText, mCheckBox.isChecked())) {
+                        mDialog.dismiss();
+                    }
+                } else {
+                    mDialog.dismiss();
+                }
+            }
+        });
+        mButton = (Button) view.findViewById(right == MagicDialogButton.NEGATIVE ? R.id.btn_dialog_right : R.id.btn_dialog_left);
+        mButton.setText(negative);
+        mButton.setTypeface(bold == MagicDialogButton.NEGATIVE ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != callback) {
+                    CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+                    EditText mEditText = (EditText) view.findViewById(R.id.et_dialog_input);
+                    EditText mVerifyEditText = (EditText) view.findViewById(R.id.et_dialog_verify);
+                    if (callback.onClick(v, MagicDialogButton.NEGATIVE, mEditText, mVerifyEditText, mCheckBox.isChecked())) {
+                        mDialog.dismiss();
+                    }
+                } else {
+                    mDialog.dismiss();
+                }
+            }
+        });
+        LinearLayout mCheckLayout = (LinearLayout) view.findViewById(R.id.layout_dialog_check);
+        if (EmptyUtils.isEmpty(check)) {
+            mCheckLayout.setVisibility(View.GONE);
+        } else {
+            CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.cb_dialog_check);
+            mCheckBox.setChecked(checked);
+            mTextView = (TextView) view.findViewById(R.id.txt_dialog_check);
+            mTextView.setText(check);
+            mCheckLayout.setVisibility(View.VISIBLE);
+        }
+        EditText mEditText = (EditText) view.findViewById(R.id.et_dialog_input);
+        if (!EmptyUtils.isEmpty(edit)) {
+            mEditText.setText(edit);
+            mEditText.setSelection(0, edit.length());
+        } else if (!EmptyUtils.isEmpty(hint)) {
+            mEditText.setHint(hint);
+        }
+        if (!EmptyUtils.isEmpty(verify)) {
+            mEditText = (EditText) view.findViewById(R.id.et_dialog_verify);
+            mEditText.setHint(verify);
         }
 
         mDialog.setContentView(view);
@@ -766,6 +859,36 @@ public class MagicDialog {
     public MagicDialog unit(int id) {
         try {
             unit = resources.getString(id);
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return this;
+    }
+
+    /**
+     * Set {@link MagicDialog} EditText verify string
+     *
+     * @param verify edit verify string
+     * @return {@link MagicDialog}
+     * @see MagicDialog#verify(int)
+     */
+    public MagicDialog verify(String verify) {
+        this.verify = verify;
+
+        return this;
+    }
+
+    /**
+     * Set {@link MagicDialog} EditText verify string
+     *
+     * @param id default verify resource id
+     * @return {@link MagicDialog}
+     * @see MagicDialog#verify(String)
+     */
+    public MagicDialog verify(int id) {
+        try {
+            verify = resources.getString(id);
         } catch (Resources.NotFoundException e) {
             e.printStackTrace();
         }
