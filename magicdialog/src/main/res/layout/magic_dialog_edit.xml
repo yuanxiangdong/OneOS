@@ -26,26 +26,45 @@
         android:textColor="@android:color/black"
         android:textSize="@dimen/text_size_mid" />
 
-    <EditText
-        android:id="@+id/et_dialog_input"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/layout_dialog_input"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txt_dialog_content"
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:background="@drawable/bg_stroke_full_radius_gray"
         android:gravity="center"
-        android:padding="8dp"
-        android:singleLine="true"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/text_size_mid" />
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_dialog_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@drawable/bg_stroke_full_radius_gray"
+            android:gravity="center"
+            android:padding="8dp"
+            android:singleLine="true"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_mid" />
+
+        <TextView
+            android:id="@+id/txt_dialog_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/darker"
+            android:textSize="@dimen/text_size_mid"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_dialog_check"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/et_dialog_input"
+        android:layout_below="@+id/layout_dialog_input"
         android:layout_marginBottom="15dp"
         android:gravity="center"
         android:orientation="horizontal">

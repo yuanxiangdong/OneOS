@@ -29,7 +29,7 @@ import java.util.List;
 public class MagicDialog {
 
     public enum MagicDialogType {
-        NOTICE, CONFIRM, LIST, EDIT
+        NOTICE, CONFIRM, LIST, EDIT, VERIFY
     }
 
     public enum MagicDialogButton {
@@ -110,6 +110,8 @@ public class MagicDialog {
     private String hint = null;
     // dialog edit string
     private String edit = null;
+    // dialog edit unit string
+    private String unit = null;
     // dialog verify hint string
     private String verify = null;
     // dialog right button
@@ -269,6 +271,13 @@ public class MagicDialog {
         } else if (!EmptyUtils.isEmpty(hint)) {
             mEditText.setHint(hint);
         }
+        mTextView = (TextView) view.findViewById(R.id.txt_dialog_unit);
+        if (!EmptyUtils.isEmpty(unit)) {
+            mTextView.setText(unit);
+            mTextView.setVisibility(View.VISIBLE);
+        } else {
+            mTextView.setVisibility(View.GONE);
+        }
 
         mDialog.setContentView(view);
         mDialog.setCancelable(cancelable);
@@ -404,7 +413,7 @@ public class MagicDialog {
     }
 
     /**
-     * Set {@link MagicDialog#type} {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#CONFIRM}
+     * Set {@link MagicDialog#type} to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#CONFIRM}
      *
      * @return {@link MagicDialog}
      * @see MagicDialog#type(MagicDialogType)
@@ -414,7 +423,7 @@ public class MagicDialog {
     }
 
     /**
-     * Set {@link MagicDialog#type} {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#EDIT}
+     * Set {@link MagicDialog#type} to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#EDIT}
      *
      * @return {@link MagicDialog}
      * @see MagicDialog#type(MagicDialogType)
@@ -424,13 +433,23 @@ public class MagicDialog {
     }
 
     /**
-     * Set {@link MagicDialog#type} {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#LIST}
+     * Set {@link MagicDialog#type} to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#LIST}
      *
      * @return {@link MagicDialog}
      * @see MagicDialog#type(MagicDialogType)
      */
     public MagicDialog list() {
         return type(MagicDialogType.LIST);
+    }
+
+    /**
+     * Set {@link MagicDialog#type} to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#VERIFY}
+     *
+     * @return {@link MagicDialog}
+     * @see MagicDialog#type(MagicDialogType)
+     */
+    public MagicDialog verify() {
+        return type(MagicDialogType.VERIFY);
     }
 
     /**
@@ -702,7 +721,7 @@ public class MagicDialog {
      * @see MagicDialog#edit(int)
      */
     public MagicDialog edit(String edit) {
-        this.edit = hint;
+        this.edit = edit;
 
         return this;
     }
@@ -717,6 +736,36 @@ public class MagicDialog {
     public MagicDialog edit(int id) {
         try {
             edit = resources.getString(id);
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return this;
+    }
+
+    /**
+     * Set {@link MagicDialog} EditText unit string
+     *
+     * @param unit edit unit string
+     * @return {@link MagicDialog}
+     * @see MagicDialog#unit(int)
+     */
+    public MagicDialog unit(String unit) {
+        this.unit = unit;
+
+        return this;
+    }
+
+    /**
+     * Set {@link MagicDialog} EditText unit string
+     *
+     * @param id default unit resource id
+     * @return {@link MagicDialog}
+     * @see MagicDialog#unit(String)
+     */
+    public MagicDialog unit(int id) {
+        try {
+            unit = resources.getString(id);
         } catch (Resources.NotFoundException e) {
             e.printStackTrace();
         }

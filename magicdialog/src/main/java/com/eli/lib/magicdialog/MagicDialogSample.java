@@ -44,7 +44,7 @@ public class MagicDialogSample {
 
     public static void edit(final Activity activity) {
         MagicDialog dialog = new MagicDialog(activity);
-        dialog.title("EditDialog Title")/*.content("Confirm Content Body")*/.hint("Please enter your name").warning().positive("OK").negative("Cancel")
+        dialog.title("EditDialog Title")/*.content("Confirm Content Body")*/.hint("Please enter your name").unit("MB").warning().positive("OK").negative("Cancel")
                 /*.check("Show Notice Dialog?").checked(true)*/.bold(MagicDialog.MagicDialogButton.POSITIVE).right(MagicDialog.MagicDialogButton.POSITIVE)
                 .listener(new MagicDialog.OnMagicDialogClickCallback() {
                     @Override

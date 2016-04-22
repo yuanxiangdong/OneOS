@@ -7,7 +7,7 @@ import com.eli.oneos.MyApplication;
 
 /**
  * SharedPreferences Helper
- * <p/>
+ * <p>
  * Created by gaoyun@eli-tech.com on 2016/4/20.
  */
 public class SharedPreferencesHelper {
