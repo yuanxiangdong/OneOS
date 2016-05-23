@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.Formatter;
 import android.util.Base64;
+import android.util.Log;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
@@ -31,6 +32,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class FileUtils {
+    private static final String TAG = FileUtils.class.getSimpleName();
     public static final String DEFAULT_TIME_FMT = "yyyy-MM-dd HH:mm:ss";
 
     /**
@@ -241,12 +243,13 @@ public class FileUtils {
             }
             openOneOSPicture(activity, position, picList);
         } else {
-            String url = OneOSAPIs.genDownloadUrl(loginSession, file);
+            String url = OneOSAPIs.genOpenUrl(loginSession, file);
             try {
                 Intent intent = new Intent();
                 intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setAction(android.content.Intent.ACTION_VIEW);
                 String type = MIMETypeUtils.getMIMEType(file.getName());
+                Log.d(TAG, "Open OneOS file: " + url + "; type: " + type);
                 intent.setDataAndType(Uri.parse(url), type);
                 activity.startActivity(intent);
             } catch (ActivityNotFoundException e) {

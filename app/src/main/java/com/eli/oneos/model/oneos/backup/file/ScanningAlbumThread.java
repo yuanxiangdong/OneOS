@@ -16,14 +16,14 @@ import java.util.List;
 /**
  * Created by gaoyun@eli-tech.com on 2016/2/24.
  */
-public class BackupScanPhotoThread extends Thread {
-    private static final String TAG = BackupScanPhotoThread.class.getSimpleName();
+public class ScanningAlbumThread extends Thread {
+    private static final String TAG = ScanningAlbumThread.class.getSimpleName();
 
     private List<BackupFile> mBackupList;
     private OnScanFileListener mListener;
     private boolean isInterrupt = false;
 
-    public BackupScanPhotoThread(List<BackupFile> mBackupList, OnScanFileListener mScanListener) {
+    public ScanningAlbumThread(List<BackupFile> mBackupList, OnScanFileListener mScanListener) {
         this.mBackupList = mBackupList;
         this.mListener = mScanListener;
         if (EmptyUtils.isEmpty(mBackupList)) {

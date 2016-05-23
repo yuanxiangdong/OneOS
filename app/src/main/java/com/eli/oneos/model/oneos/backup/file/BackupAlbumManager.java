@@ -31,7 +31,7 @@ public class BackupAlbumManager {
     private static final String TAG = BackupAlbumManager.class.getSimpleName();
     private static final boolean IS_LOG = Logged.BACKUP_ALBUM;
 
-    private BackupScanPhotoThread mBackupThread = null;
+    private ScanningAlbumThread mBackupThread = null;
     private List<RecursiveFileObserver> mFileObserverList = new ArrayList<>();
     private HandlerQueueThread handlerQueueThread = null;
 
@@ -40,7 +40,7 @@ public class BackupAlbumManager {
     private Context context;
     private long mLastBackupTime = 0;
 
-    private BackupScanPhotoThread.OnScanFileListener mScanListener = new BackupScanPhotoThread.OnScanFileListener() {
+    private ScanningAlbumThread.OnScanFileListener mScanListener = new ScanningAlbumThread.OnScanFileListener() {
         @Override
         public void onComplete(ArrayList<BackupElement> mBackupList) {
             addBackupElements(mBackupList);
@@ -76,7 +76,7 @@ public class BackupAlbumManager {
                     RecursiveFileObserver.EVENTS_BACKUP_PHOTOS, mObserverListener);
             mFileObserverList.add(mFileObserver);
         }
-        mBackupThread = new BackupScanPhotoThread(mBackupList, mScanListener);
+        mBackupThread = new ScanningAlbumThread(mBackupList, mScanListener);
     }
 
     private boolean initBackupPhotoIfNeeds() {

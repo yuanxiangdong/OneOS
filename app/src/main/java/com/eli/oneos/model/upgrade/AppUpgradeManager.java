@@ -154,7 +154,7 @@ public class AppUpgradeManager {
         if (LoginManage.getInstance().isLogin()) {
             String curOneOS = LoginManage.getInstance().getLoginSession().getOneOSInfo().getVersion();
             if (!EmptyUtils.isEmpty(curOneOS) && !EmptyUtils.isEmpty(miniOneOS)) {
-                if (!OneOSVersionManager.compare(curOneOS, LoginManage.getInstance().getLoginSession().getOneOSInfo().getVersion())) {
+                if (OneOSVersionManager.compare(curOneOS, miniOneOS)) {
                     downloadApp(url);
                 } else {
                     String title = String.format(activity.getString(R.string.tips_upgrade_oneos_version_low), curOneOS, miniOneOS);

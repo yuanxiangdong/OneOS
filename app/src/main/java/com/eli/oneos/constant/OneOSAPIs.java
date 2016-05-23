@@ -43,10 +43,11 @@ public class OneOSAPIs {
     public static final String APP_LIST = ONE_API + "/app/list";
     public static final String APP_MANAGE = ONE_API + "/app/manage";
 
-//    public static String genOpenUrl(LoginSession loginSession, OneOSFile file) {
-//        String srcPath = android.net.Uri.encode(file.getActualPath(loginSession.getUserInfo().getToPath()));
-//        return loginSession.getUrl() + "/" + path + "&session=" + loginSession.getSession();
-//    }
+    public static String genOpenUrl(LoginSession loginSession, OneOSFile file) {
+        // http://192.168.1.17/home/admin/test.mp4?session=c5i6qqbe78oj0c1h78o0====
+        String path = file.getActualPath(loginSession.getUserInfo().getName());
+        return loginSession.getUrl() + "/" + path + "?session=" + loginSession.getSession();
+    }
 
     public static String genDownloadUrl(LoginSession loginSession, OneOSFile file) {
         // "http://192.168.1.17/oneapi/file/download?path=home%2Fadmin%2Fzxt01%2Fxxxxxxxxxxxx.JPG&session=c5i6qqbe78oj0c1h78o0====";

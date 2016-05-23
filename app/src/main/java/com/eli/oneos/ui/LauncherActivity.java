@@ -95,6 +95,9 @@ public class LauncherActivity extends BaseActivity {
              */
             @Override
             public void onAnimationStart(Animation animation) {
+                if (lastUserInfo != null && !lastUserInfo.getIsLogout()) {
+                    scanningLANDevice();
+                }
             }
 
             /**
@@ -108,8 +111,6 @@ public class LauncherActivity extends BaseActivity {
                 showAppVersion();
                 if (lastUserInfo == null || lastUserInfo.getIsLogout()) {
                     gotoLoginActivity();
-                } else {
-                    scanningLANDevice();
                 }
             }
 
