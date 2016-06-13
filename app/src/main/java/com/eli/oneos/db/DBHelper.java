@@ -13,13 +13,15 @@ import com.eli.oneos.db.greendao.DaoSession;
 public class DBHelper {
 
     private static final String DB_NAME = "oneos_db";
+    private static DaoMaster daoMaster = null;
+    private static DaoSession daoSession = null;
 
     /**
      * Get Writable Database
      *
      * @return Writable Database
      */
-    public static SQLiteDatabase getWritableDB() {
+    private static SQLiteDatabase getWritableDB() {
         Context context = MyApplication.getAppContext();
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, DB_NAME, null);
 
@@ -29,12 +31,17 @@ public class DBHelper {
     /**
      * Get GreenDao Session
      *
-     * @return DaoSession
+     * @return Single {@link DaoSession}
      */
     public static DaoSession getDaoSession() {
-        DaoMaster daoMaster = new DaoMaster(getWritableDB());
+        if (null == daoSession) {
+            if (null == daoMaster) {
+                daoMaster = new DaoMaster(getWritableDB());
+            }
 
-        return daoMaster.newSession();
+            daoSession = daoMaster.newSession();
+        }
+
+        return daoSession;
     }
-
 }

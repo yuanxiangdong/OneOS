@@ -44,7 +44,7 @@ public class RecordsFragment extends BaseTransferFragment {
     private TransferManager.OnTransferCompleteListener<DownloadElement> downloadCompleteListener = new TransferManager.OnTransferCompleteListener<DownloadElement>() {
         @Override
         public void onComplete(boolean isDownload, DownloadElement element) {
-            Log.d(TAG, "---Download Complete: " + element.getSrcPath());
+//            Log.d(TAG, "---Download Complete: " + element.getSrcPath());
             if (loginManage.isLogin()) {
                 final TransferHistory history = genTransferHistory(element, true);
                 getActivity().runOnUiThread(new Runnable() {
@@ -73,7 +73,6 @@ public class RecordsFragment extends BaseTransferFragment {
         }
     };
 
-    @SuppressLint("ValidFragment")
     public RecordsFragment() {
     }
 
@@ -174,7 +173,7 @@ public class RecordsFragment extends BaseTransferFragment {
         } else {
             mEmptyTxt.setText(R.string.not_login);
         }
-        Log.e(TAG, "TransferHistory Size: " + mHistoryList.size());
+//        Log.e(TAG, "TransferHistory Size: " + mHistoryList.size());
         mAdapter.notifyDataSetChanged();
     }
 
