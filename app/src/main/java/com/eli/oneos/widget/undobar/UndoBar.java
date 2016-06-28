@@ -41,7 +41,7 @@ public final class UndoBar {
     /**
      * Default duration in milliseconds the undo bar will be displayed.
      */
-    public static final int DEFAULT_DURATION = 5000;
+    public static final int DEFAULT_DURATION = 3000;
     /**
      * Default duration in milliseconds of the undo bar show and hide animation.
      */

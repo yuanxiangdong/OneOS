@@ -15,7 +15,6 @@ import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.DeviceInfoKeeper;
-import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
@@ -60,7 +59,7 @@ public class LauncherActivity extends BaseActivity {
             }
         }
 
-        lastUserInfo = UserInfoKeeper.lastUser();
+//        lastUserInfo = UserInfoKeeper.lastUser();
         initView();
     }
 

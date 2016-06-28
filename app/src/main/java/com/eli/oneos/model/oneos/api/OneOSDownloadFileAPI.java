@@ -40,6 +40,9 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
+import www.glinkwin.com.glink.ssudp.SSUDPFileChunk;
+import www.glinkwin.com.glink.ssudp.SSUDPManager;
+
 /**
  * OneSpace OS Download File API
  * <p/>
@@ -48,6 +51,7 @@ import java.util.List;
 public class OneOSDownloadFileAPI extends OneOSBaseAPI {
     private static final String TAG = OneOSDownloadFileAPI.class.getSimpleName();
     private static final int HTTP_BUFFER_SIZE = 1024 * 16;
+    private static final double SSUDP_CHUNK_SIZE = 1024 * 1024;
 
     private OnTransferFileListener<DownloadElement> listener;
     private DownloadElement downloadElement;
@@ -69,7 +73,11 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             listener.onStart(url, downloadElement);
         }
 
-        doDownload();
+        if (LoginManage.getInstance().isSSUDP()) {
+            doSSUDPDownload();
+        } else {
+            doHttpDownload();
+        }
 
         if (null != listener) {
             Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "download over");
@@ -84,7 +92,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
         Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "Upload Stopped");
     }
 
-    private void doDownload() {
+    private void doHttpDownload() {
         url = OneOSAPIs.genDownloadUrl(loginSession, downloadElement.getFile());
 
         // set element download state to start
@@ -269,6 +277,41 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
         }
     }
 
+    private void completeDownload(String tmpPath, long downloadLen) {
+        if (isInterrupt) {
+            downloadElement.setState(TransferState.PAUSE);
+            Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download interrupt");
+        } else {
+            if (downloadElement.getSize() > 0 && downloadLen != downloadElement.getSize()) {
+                Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, String.format("Download file length[%d] is not equals file real length[%d]", downloadLen, downloadElement.getSize()));
+                downloadElement.setState(TransferState.FAILED);
+                downloadElement.setException(TransferException.UNKNOWN_EXCEPTION);
+            } else {
+                File toFile = new File(downloadElement.getToPath() + File.separator + downloadElement.getSrcName());
+                String toName = downloadElement.getSrcName();
+                int addition = 1;
+                while (toFile.exists()) {
+                    String name = toFile.getName();
+                    int index = name.indexOf(".");
+                    if (index >= 0) {
+                        String prefix = name.substring(0, index);
+                        String suffix = name.substring(index, name.length());
+                        toName = prefix + "_" + addition + suffix;
+                    } else {
+                        toName = name + "_" + addition;
+                    }
+                    toFile = new File(downloadElement.getToPath() + File.separator + toName);
+                    addition++;
+                }
+                downloadElement.setToName(toName);
+                File tmpFile = new File(tmpPath);
+                tmpFile.renameTo(toFile);
+
+                downloadElement.setState(TransferState.COMPLETE);
+            }
+        }
+    }
+
     private void saveData(InputStream input, HttpClient httpClient) {
         RandomAccessFile outputFile = null;
         long downloadLen = downloadElement.getOffset();
@@ -301,38 +344,7 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             }
             downloadElement.setOffset(downloadElement.getLength());
 
-            if (isInterrupt) {
-                downloadElement.setState(TransferState.PAUSE);
-                Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download interrupt");
-            } else {
-                if (downloadElement.getSize() > 0 && downloadLen != downloadElement.getSize()) {
-                    Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Download file length is not equals file real length");
-                    downloadElement.setState(TransferState.FAILED);
-                    downloadElement.setException(TransferException.UNKNOWN_EXCEPTION);
-                } else {
-                    File toFile = new File(downloadElement.getToPath() + File.separator + downloadElement.getSrcName());
-                    String toName = downloadElement.getSrcName();
-                    int addition = 1;
-                    while (toFile.exists()) {
-                        String name = toFile.getName();
-                        int index = name.indexOf(".");
-                        if (index >= 0) {
-                            String prefix = name.substring(0, index);
-                            String suffix = name.substring(index, name.length());
-                            toName = prefix + "_" + addition + suffix;
-                        } else {
-                            toName = name + "_" + addition;
-                        }
-                        toFile = new File(downloadElement.getToPath() + File.separator + toName);
-                        addition++;
-                    }
-                    downloadElement.setToName(toName);
-                    File tmpFile = new File(tmpPath);
-                    tmpFile.renameTo(toFile);
-
-                    downloadElement.setState(TransferState.COMPLETE);
-                }
-            }
+            completeDownload(tmpPath, downloadLen);
 
             httpClient.getConnectionManager().shutdown();
             Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "Shut down http connection");
@@ -368,6 +380,80 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
                 Logger.p(LogLevel.ERROR, Logged.DOWNLOAD, TAG, "Input/Output Stream closed error");
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void doSSUDPDownload() {
+        Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, ">>>> Start SSUDP download...");
+
+        SSUDPManager ssudpManager = SSUDPManager.getInstance();
+
+        // set element download state to start
+        downloadElement.setState(TransferState.START);
+        isInterrupt = false;
+        String session = loginSession.getSession();
+
+        long offset = downloadElement.getOffset();
+        long size = downloadElement.getSize();
+        if (offset >= size) {
+            Logger.p(LogLevel.DEBUG, Logged.DOWNLOAD, TAG, "download offset[" + offset + "], file size[" + size + "], complete");
+            downloadElement.setState(TransferState.COMPLETE);
+            return;
+        }
+
+        if (offset < 0) {
+            Logger.p(LogLevel.WARN, Logged.DOWNLOAD, TAG, "error position, position must greater than or equal zero");
+            downloadElement.setOffset(0);
+            offset = 0;
+        }
+
+        long chunks = (long) Math.ceil((double) size / SSUDP_CHUNK_SIZE);
+        long chunk = (long) Math.floor((double) offset / SSUDP_CHUNK_SIZE);
+        try {
+            RandomAccessFile outputFile;
+            File dir = new File(downloadElement.getToPath());
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String tmpPath = downloadElement.getToPath() + File.separator + downloadElement.getTmpName();
+            outputFile = new RandomAccessFile(tmpPath, "rw");
+            outputFile.seek(downloadElement.getOffset());
+
+//            int callback = 0;
+            int retry = 0;
+            long downloadLen = downloadElement.getOffset();
+            SSUDPFileChunk fileChunk = new SSUDPFileChunk(session, downloadElement.getSrcPath(), chunks, chunk);
+            while (!isInterrupt && fileChunk.chunk < fileChunk.chunks) {
+                fileChunk = ssudpManager.ssudpDownloadRequest(fileChunk);
+                if (fileChunk.result) {
+                    outputFile.write(fileChunk.body);
+                    fileChunk.chunk++;
+//                    callback++;
+                    downloadLen += fileChunk.length;
+                    downloadElement.setLength(downloadLen);
+                    if (null != listener/* && callback == 32*/) {
+                        // callback every 512KB
+                        listener.onTransmission(url, downloadElement);
+//                        callback = 0;
+                    }
+                } else {
+                    retry++;
+                    if (retry > 5) {
+                        downloadElement.setState(TransferState.FAILED);
+                        downloadElement.setException(TransferException.SSUDP_DISCONNECTED);
+                        break;
+                    }
+                }
+            }
+            downloadElement.setOffset(downloadElement.getLength());
+
+            completeDownload(tmpPath, downloadLen);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

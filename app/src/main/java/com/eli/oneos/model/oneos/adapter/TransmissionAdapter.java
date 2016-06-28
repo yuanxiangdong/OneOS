@@ -221,6 +221,7 @@ public class TransmissionAdapter extends BaseAdapter {
         } else if (failedId == TransferException.WIFI_UNAVAILABLE) {
             failedInfo = context.getResources().getString(R.string.wifi_connect_break);
         }
+
         return failedInfo;
     }
 

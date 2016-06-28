@@ -26,7 +26,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Name = new Property(1, String.class, "name", false, "NAME");
         public final static Property Mac = new Property(2, String.class, "mac", false, "MAC");
-        public final static Property Pwd = new Property(3, String.class, "pwd", false, "PWD");
+        public final static Property Pwd = new Property(3, String.class, "strpwd", false, "PWD");
         public final static Property Admin = new Property(4, Integer.class, "admin", false, "ADMIN");
         public final static Property Uid = new Property(5, Integer.class, "uid", false, "UID");
         public final static Property Gid = new Property(6, Integer.class, "gid", false, "GID");
@@ -51,7 +51,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
                 "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "'NAME' TEXT NOT NULL ," + // 1: name
                 "'MAC' TEXT NOT NULL ," + // 2: mac
-                "'PWD' TEXT NOT NULL ," + // 3: pwd
+                "'PWD' TEXT NOT NULL ," + // 3: strpwd
                 "'ADMIN' INTEGER," + // 4: admin
                 "'UID' INTEGER," + // 5: uid
                 "'GID' INTEGER," + // 6: gid
@@ -123,7 +123,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // name
             cursor.getString(offset + 2), // mac
-            cursor.getString(offset + 3), // pwd
+            cursor.getString(offset + 3), // strpwd
             cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // admin
             cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // uid
             cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // gid

@@ -13,6 +13,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.HttpBitmap;
 
@@ -130,7 +131,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
     }
 
     public void showPicturePreview(ImageView imageView, OneOSFile file) {
-        if (!mLoginSession.getUserSettings().getIsPreviewPicOnlyWifi() || isWifiAvailable) {
+        if (!LoginManage.getInstance().isSSUDP() && (!mLoginSession.getUserSettings().getIsPreviewPicOnlyWifi() || isWifiAvailable)) {
             if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
                 imageView.setTag(null);
                 if (file.isGif()) {

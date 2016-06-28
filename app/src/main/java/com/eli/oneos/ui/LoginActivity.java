@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.eli.lib.magicdialog.MagicDialog;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
@@ -41,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import www.glinkwin.com.glink.ssudp.SSUDPManager;
 
 /**
  * Activity for User Login OneSpace
@@ -102,6 +105,7 @@ public class LoginActivity extends BaseActivity {
     private View.OnClickListener onLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            LoginManage.getInstance().setSSUDP(false);
             attemptLogin();
         }
     };
@@ -215,6 +219,40 @@ public class LoginActivity extends BaseActivity {
         mMoreIpBtn.setOnClickListener(onMoreClickListener);
         mLoginBtn = (Button) findViewById(R.id.btn_login);
         mLoginBtn.setOnClickListener(onLoginClickListener);
+
+        // TODO.. for SSUDP test
+        mLoginBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                LoginManage.getInstance().setSSUDP(true);
+                String strcid = "Z0W8H8UHE10000A0-BTPUaENetUmGnEEW";
+                String strpwd = "12345678";
+                final SSUDPManager ssudpManager = SSUDPManager.getInstance();
+                ssudpManager.initSSUDPClient(LoginActivity.this, strcid, strpwd);
+                ssudpManager.connectSSUPDClient(new SSUDPManager.OnSSUDPConnectListener() {
+                    @Override
+                    public void onResult(final int progress, final boolean connected) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (connected) {
+                                    ssudpManager.startSSUDPClient();
+                                    attemptLogin();
+                                } else {
+                                    dismissLoading();
+                                    MagicDialog dialog = new MagicDialog(LoginActivity.this);
+                                    dialog.notice().title(R.string.tips).positive(R.string.ok).bold(MagicDialog.MagicDialogButton.POSITIVE)
+                                            .content("SSUDP connect failed").show();
+                                }
+                            }
+                        });
+                    }
+                });
+                showLoading(R.string.loading);
+
+                return true;
+            }
+        });
     }
 
     private void showUserSpinnerView(View view) {

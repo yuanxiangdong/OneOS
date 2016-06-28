@@ -85,4 +85,15 @@ public class LoginManage {
     public LoginSession getLoginSession() {
         return LoginManage.loginSession;
     }
+
+
+    private boolean isSSUDP = false;
+
+    public boolean isSSUDP() {
+        return isSSUDP;
+    }
+
+    public void setSSUDP(boolean isSSUDP) {
+        this.isSSUDP = isSSUDP;
+    }
 }

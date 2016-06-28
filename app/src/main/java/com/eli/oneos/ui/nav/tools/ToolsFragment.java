@@ -40,10 +40,6 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     private static final String TAG = ToolsFragment.class.getSimpleName();
 
     private static final int TOOL_SETTING = R.string.tool_setting;
-    private static final int TOOL_BACKUP_PHOTO = R.string.tool_backup_photo;
-    private static final int TOOL_BACKUP_FILE = R.string.tool_backup_file;
-    private static final int TOOL_SYNC_CONTACT = R.string.tool_sync_contact;
-    private static final int TOOL_SYNC_SMS = R.string.tool_sync_sms;
     private static final int TOOL_USER_MANAGEMENT = R.string.tool_user_management;
     private static final int TOOL_HD_INFO = R.string.tool_hd_info;
     private static final int TOOL_APP = R.string.tool_app;
@@ -51,12 +47,12 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
     private static final int TOOL_SYSTEM_MANAGEMENT = R.string.tool_system_management;
     private static final int TOOL_SYSTEM_STATUS = R.string.tool_system_status;
     private static final int TOOL_LOGOUT = R.string.tool_logout;
-    private static final int[] TOOL_TITLE_M3X = new int[]{/*TOOL_SETTING, TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT,
-            TOOL_SYNC_SMS,*/ TOOL_USER_MANAGEMENT, TOOL_HD_INFO, TOOL_APP, TOOL_ARIA, TOOL_SYSTEM_MANAGEMENT, TOOL_SYSTEM_STATUS, TOOL_LOGOUT};
-    private static final int[] TOOL_ICON_M3X = new int[]{/*R.drawable.icon_tools_setting, R.drawable.icon_tools_backup_photo,
-            R.drawable.icon_tools_backup_file, R.drawable.icon_tools_contact, R.drawable.icon_tools_sms,*/ R.drawable.icon_tools_user_management,
+    private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_USER_MANAGEMENT, TOOL_HD_INFO, TOOL_APP, TOOL_ARIA, TOOL_SYSTEM_MANAGEMENT, TOOL_SYSTEM_STATUS, TOOL_LOGOUT};
+    private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_user_management,
             R.drawable.icon_tools_user_management, R.drawable.icon_tools_app, R.drawable.icon_tools_offline, R.drawable.icon_tools_power,
             R.drawable.icon_tools_system_status, R.drawable.icon_tools_change_user};
+    private static final int[] TOOL_TITLE_M3X_SSUDP = new int[]{TOOL_HD_INFO, TOOL_SYSTEM_MANAGEMENT, TOOL_LOGOUT};
+    private static final int[] TOOL_ICON_M3X_SSUDP = new int[]{R.drawable.icon_tools_user_management, R.drawable.icon_tools_power, R.drawable.icon_tools_change_user};
 
     private StickListView mListView;
     private ToolAdapter mAdapter;
@@ -114,6 +110,10 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         mToolList.clear();
         int[] title = TOOL_TITLE_M3X;
         int[] icon = TOOL_ICON_M3X;
+        if (LoginManage.getInstance().isSSUDP()) {
+            title = TOOL_TITLE_M3X_SSUDP;
+            icon = TOOL_ICON_M3X_SSUDP;
+        }
 
         for (int i = 0; i < title.length; ++i) {
             ToolBar toolBar = new ToolBar();
@@ -139,14 +139,20 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             }
         });
 
-        LinearLayout mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_album);
-        mLayout.setOnClickListener(backupListener);
-        mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_file);
-        mLayout.setOnClickListener(backupListener);
-        mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_contacts);
-        mLayout.setOnClickListener(backupListener);
-        mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_sms);
-        mLayout.setOnClickListener(backupListener);
+        LinearLayout mLayout = (LinearLayout) view.findViewById(R.id.layout_backup);
+        if (LoginManage.getInstance().isSSUDP()) { // SSUDP时不显示备份功能
+            mLayout.setVisibility(View.GONE);
+        } else {
+            mLayout.setVisibility(View.VISIBLE);
+            mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_album);
+            mLayout.setOnClickListener(backupListener);
+            mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_file);
+            mLayout.setOnClickListener(backupListener);
+            mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_contacts);
+            mLayout.setOnClickListener(backupListener);
+            mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_sms);
+            mLayout.setOnClickListener(backupListener);
+        }
 
         mListView = (StickListView) view.findViewById(R.id.listview_tools);
         mAdapter = new ToolAdapter(getActivity());

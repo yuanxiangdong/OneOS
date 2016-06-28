@@ -1,5 +1,7 @@
 package com.eli.oneos.model.oneos.api;
 
+import android.util.Log;
+
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.http.HttpUtils;
 import com.eli.oneos.model.log.LogLevel;
@@ -9,6 +11,7 @@ import com.eli.oneos.model.oneos.transfer.OnTransferFileListener;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 import org.apache.http.protocol.HTTP;
@@ -26,6 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import www.glinkwin.com.glink.ssudp.SSUDPFileChunk;
+import www.glinkwin.com.glink.ssudp.SSUDPManager;
+
 /**
  * OneSpace OS Upload File API
  * <p/>
@@ -37,10 +43,11 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
     private static final int HTTP_UPLOAD_RENAME_TIMES = 100;
     private static final int HTTP_UPLOAD_RETRY_TIMES = 5;
     private static final int HTTP_BUFFER_SIZE = 1024 * 8;
+    private static final double SSUDP_CHUNK_SIZE = 1024 * 1024;
     /**
-     * chuck block size: 4mb
+     * chuck block size: 2mb
      */
-    private static final int HTTP_BLOCK_SIZE = 1024 * 1024 * 2;
+    private static final long HTTP_BLOCK_SIZE = 1024 * 1024 * 2;
 
     private OnTransferFileListener<UploadElement> listener;
     private UploadElement uploadElement;
@@ -69,10 +76,18 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             } else if (check == -1) {
                 duplicateRename(uploadElement.getToPath() + uploadElement.getSrcName(), uploadElement.getSrcName());
             } else {
-                doUpload();
+                if (LoginManage.getInstance().isSSUDP()) {
+                    doSSUDPUpload();
+                } else {
+                    doHttpUpload();
+                }
             }
         } else {
-            doUpload();
+            if (LoginManage.getInstance().isSSUDP()) {
+                doSSUDPUpload();
+            } else {
+                doHttpUpload();
+            }
         }
 
         if (null != listener) {
@@ -101,7 +116,11 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             boolean ret = json.getBoolean("result");
             if (ret) {
                 Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename Success");
-                doUpload();
+                if (LoginManage.getInstance().isSSUDP()) {
+                    doSSUDPUpload();
+                } else {
+                    doHttpUpload();
+                }
             } else {
                 Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename Failed");
                 if (count <= HTTP_UPLOAD_RENAME_TIMES) {
@@ -169,7 +188,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         return 0; // file do not exist
     }
 
-    private void doUpload() {
+    private void doHttpUpload() {
         url = genOneOSAPIUrl(OneOSAPIs.FILE_UPLOAD);
         HttpUtils.log(TAG, url, null);
 
@@ -199,8 +218,8 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
         long retry = 0; // exception retry times
         long uploadLen = 0;
-        int chunkNum = (int) Math.ceil((double) fileLen / (double) HTTP_BLOCK_SIZE);
-        int chunkIndex;
+        long chunkNum = (long) Math.ceil((double) fileLen / (double) HTTP_BLOCK_SIZE);
+        long chunkIndex;
         for (chunkIndex = 0; chunkIndex < chunkNum; chunkIndex++) {
             Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "=====>>> BlockIndex:" + chunkIndex + ", BlockNum:" + chunkNum + ", BlockSize:" + HTTP_BLOCK_SIZE);
             long blockUpLen = 0;
@@ -366,5 +385,93 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
                 uploadElement.setState(TransferState.FAILED);
             }
         }
+    }
+
+    private void doSSUDPUpload() {
+        uploadElement.setState(TransferState.START);
+        String session = loginSession.getSession();
+        String srcPath = uploadElement.getSrcPath();
+        String targetPath = new File(uploadElement.getToPath(), uploadElement.getSrcName()).getPath();
+
+        File uploadFile = new File(srcPath);
+        if (!uploadFile.exists()) {
+            Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "upload file does not exist");
+            uploadElement.setState(TransferState.FAILED);
+            uploadElement.setException(TransferException.FILE_NOT_FOUND);
+            return;
+        }
+
+        long fileLen = uploadFile.length();
+        long uploadPosition = 0;
+        // Modified to new position, to make sure anim_progress is correct
+        uploadElement.setLength(uploadPosition);
+        uploadElement.setOffset(uploadPosition);
+
+        long chunks = (long) Math.ceil((double) fileLen / SSUDP_CHUNK_SIZE);
+        long chunk = (long) Math.floor((double) uploadPosition / SSUDP_CHUNK_SIZE);
+
+        SSUDPManager ssudpManager = SSUDPManager.getInstance();
+        SSUDPFileChunk fileChunk = new SSUDPFileChunk(session, targetPath, chunks, chunk);
+        int retry = 0;
+        long uploadLen = uploadPosition;
+        int chunkSize = (int) SSUDP_CHUNK_SIZE;
+
+        try {
+            RandomAccessFile inputStream = new RandomAccessFile(uploadFile, "r");
+            while (!isInterrupt && fileChunk.chunk < fileChunk.chunks) {
+                Log.d(TAG, ">>>> SSUDP upload: chunk=" + chunk + ", chunks=" + chunks);
+                inputStream.seek(uploadLen);
+                if (fileChunk.chunk == fileChunk.chunks - 1) {
+                    fileChunk.body((int) (fileLen - uploadLen));
+                } else {
+                    fileChunk.body(chunkSize);
+                }
+
+
+                fileChunk.length = inputStream.read(fileChunk.body);
+                if (fileChunk.length == -1) {
+                    break;
+                }
+
+                fileChunk = ssudpManager.ssudpUploadRequest(fileChunk);
+                if (fileChunk.result) {
+                    fileChunk.chunk++;
+                    uploadLen += fileChunk.length;
+                    uploadElement.setLength(uploadLen);
+                    if (null != listener) {
+                        listener.onTransmission(url, uploadElement);
+                    }
+                } else {
+                    retry++;
+                    if (retry > 5) {
+                        uploadElement.setState(TransferState.FAILED);
+                        uploadElement.setException(TransferException.SSUDP_DISCONNECTED);
+                        break;
+                    }
+                }
+            }
+
+            inputStream.close();
+
+            Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "The end of the file upload: FileLen = " + fileLen + ", UploadLen = " + uploadLen);
+            if (fileLen == uploadLen) {
+                uploadElement.setState(TransferState.COMPLETE);
+            } else {
+                if (isInterrupt) {
+                    uploadElement.setState(TransferState.PAUSE);
+                } else {
+                    uploadElement.setState(TransferState.FAILED);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            uploadElement.setState(TransferState.FAILED);
+            uploadElement.setException(TransferException.FILE_NOT_FOUND);
+        } catch (IOException e) {
+            e.printStackTrace();
+            uploadElement.setState(TransferState.FAILED);
+            uploadElement.setException(TransferException.IO_EXCEPTION);
+        }
+
     }
 }

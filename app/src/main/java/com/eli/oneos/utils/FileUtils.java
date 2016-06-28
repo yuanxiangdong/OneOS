@@ -11,11 +11,13 @@ import android.text.format.Formatter;
 import android.util.Base64;
 import android.util.Log;
 
+import com.eli.lib.magicdialog.MagicDialog;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.ui.BaseActivity;
@@ -225,6 +227,13 @@ public class FileUtils {
     }
 
     public static void openOneOSFile(LoginSession loginSession, BaseActivity activity, int position, final ArrayList<OneOSFile> fileList) {
+        if (LoginManage.getInstance().isSSUDP()) {
+            MagicDialog dialog = new MagicDialog(activity);
+            dialog.title(R.string.tips).content(R.string.error_app_not_found_to_open_file).positive(R.string.ok)
+                    .bold(MagicDialog.MagicDialogButton.POSITIVE).show();
+            return;
+        }
+
         OneOSFile file = fileList.get(position);
         if (file.isEncrypt()) {
             DialogUtils.showNotifyDialog(activity, R.string.tips, R.string.error_open_encrypt_file, R.string.ok, null);
