@@ -1,7 +1,10 @@
 package www.glinkwin.com.glink.ssudp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+
+import com.eli.oneos.MyApplication;
 
 import java.util.ArrayList;
 
@@ -17,7 +20,9 @@ public class SSUDPManager {
     private SSUDPRequest.OnSSUdpStateListener stateListener = new SSUDPRequest.OnSSUdpStateListener() {
         @Override
         public void onStateChanged(boolean isConnected) {
-
+            Intent intent = new Intent(SSUDPConst.BROADCAST_ACTION_SSUDP);
+            intent.putExtra(SSUDPConst.EXTRA_SSUDP_STATE,isConnected);
+            MyApplication.getAppContext().sendBroadcast(intent);
         }
     };
 
@@ -41,6 +46,7 @@ public class SSUDPManager {
         int count = SSUDPConst.MAX_CLIENTS_COUNT - ssudpRequests.size();
         for (int i = 0; i < count; i++) {
             SSUDPRequest client = new SSUDPRequest(context, strCid, strPwd);
+            client.setOnSSUdpStateListener(stateListener);
             ssudpRequests.add(client);
         }
 

@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.eli.oneos.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import www.glinkwin.com.glink.ssudp.SSUDPConst;
 
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/14.
@@ -26,13 +29,19 @@ public class NetworkStateManager {
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                ConnectivityManager mManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo mobNetInfo = mManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-                NetworkInfo wifiNetInfo = mManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-                boolean isWifiAvailable = wifiNetInfo.isAvailable();
-                boolean isAvailable = isWifiAvailable || mobNetInfo.isAvailable();
-                for (OnNetworkStateChangedListener listener : listenerList) {
-                    listener.onChanged(isAvailable, isWifiAvailable);
+                String action = intent.getAction();
+                if (null != action && action.equals(SSUDPConst.BROADCAST_ACTION_SSUDP)) {
+                    boolean connect = intent.getBooleanExtra(SSUDPConst.EXTRA_SSUDP_STATE, true);
+                    Log.e("NetworkStateManager", "----state: " + connect);
+                } else {
+                    ConnectivityManager mManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo mobNetInfo = mManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                    NetworkInfo wifiNetInfo = mManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                    boolean isWifiAvailable = wifiNetInfo.isAvailable();
+                    boolean isAvailable = isWifiAvailable || mobNetInfo.isAvailable();
+                    for (OnNetworkStateChangedListener listener : listenerList) {
+                        listener.onChanged(isAvailable, isWifiAvailable);
+                    }
                 }
             }
         };
@@ -51,6 +60,7 @@ public class NetworkStateManager {
         Context context = MyApplication.getAppContext();
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction(SSUDPConst.BROADCAST_ACTION_SSUDP);
         context.registerReceiver(mNetworkReceiver, filter);
     }
 

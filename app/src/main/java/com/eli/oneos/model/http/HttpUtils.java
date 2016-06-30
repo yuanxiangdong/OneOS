@@ -126,11 +126,6 @@ public class HttpUtils<T> {
 
             @Override
             public void onFailure(int errno, String errMsg) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 callBack.onFailure(new Exception("SSUDP request failed!"), errno, errMsg);
             }
         });

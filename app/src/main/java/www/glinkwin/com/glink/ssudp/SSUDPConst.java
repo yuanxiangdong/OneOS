@@ -6,6 +6,9 @@ public class SSUDPConst {
      */
     public static final int MAX_CLIENTS_COUNT = 1;
 
+    public static final String BROADCAST_ACTION_SSUDP = "com.eli.onespace.ssudp.STATE_CHANGED";
+    public static final String EXTRA_SSUDP_STATE = "SSUDPState";
+
     public static final String FMT_TRANS_FILE = "SESSION:%s\r\nCHUNKS:%s\r\nCHUNK:%s\r\nPATH:%s\r\n";
 
     /*数据加控制命令都用ssudp安全传输*/

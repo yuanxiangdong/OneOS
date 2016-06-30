@@ -31,14 +31,17 @@ public class SSUDPRequest extends SSUDPClient {
 //                    }
                     break;
                 case SSUDPConst.SSUDP_MSG_STREAM:
-                    Log.e(TAG, config.id() + ">>> Receive Stream: " + msg.obj);
                     isIdle = true;
                     if (null != responseListener) {
-                        responseListener.onSuccess(stream.header, stream.buffer);
-                        stream.resetBuffer();
-                        stream.resetHeader();
-//                        responseListener = null;
+                        boolean success = (Boolean) msg.obj;
+                        if (success) {
+                            responseListener.onSuccess(stream.header, stream.buffer);
+                        } else {
+                            responseListener.onFailure(msg.arg1, "SSUDP send failed.");
+                        }
                     }
+                    stream.resetBuffer();
+                    stream.resetHeader();
                     break;
                 case SSUDPConst.SSUDP_MSG_STATE:
                     boolean conn = (Boolean) msg.obj;
@@ -46,7 +49,6 @@ public class SSUDPRequest extends SSUDPClient {
                         isIdle = true;
                         if (null != responseListener) {
                             responseListener.onFailure(SSUDPConst.SSUPD_ERROR_DISCONNECT, "SSUDP disconnected.");
-//                            responseListener = null;
                         }
                     }
                     if (null != stateListener) {
@@ -209,12 +211,12 @@ public class SSUDPRequest extends SSUDPClient {
                             if (ret == -1) {
                                 disconnect();
                             } else {
-//                                if (stream.type == SSUDPConst.TAGID_FTP_REQUEST_ACK) {
-                                Message msg = Message.obtain();
-                                msg.what = SSUDPConst.SSUDP_MSG_STREAM;
-//                                    msg.obj = stream.buffer;
-                                handler.sendMessage(msg);
-//                                }
+                                if (stream.type == SSUDPConst.TAGID_FTP_REQUEST_ACK) {
+                                    Message msg = Message.obtain();
+                                    msg.what = SSUDPConst.SSUDP_MSG_STREAM;
+                                    msg.obj = true;
+                                    handler.sendMessage(msg);
+                                }
                             }
                         }
                     }
@@ -237,10 +239,11 @@ public class SSUDPRequest extends SSUDPClient {
         int send = send(buffer, buffer.length, SSUDPConst.SS_WAIT);
         if (send < 0) {
             Log.d(TAG, config.id() + ">>>> Send failed, result=" + send + "; connected=" + isConnected());
-            if (null != responseListener) {
-                responseListener.onFailure(send, "Send request failed");
-//                responseListener = null;
-            }
+            Message msg = Message.obtain();
+            msg.what = SSUDPConst.SSUDP_MSG_STREAM;
+            msg.obj = false;
+            msg.arg1 = send;
+            handler.sendMessage(msg);
         }
     }
 
@@ -360,6 +363,10 @@ public class SSUDPRequest extends SSUDPClient {
             msg.obj = isConnected;
             handler.sendMessage(msg);
         }
+    }
+
+    public void setOnSSUdpStateListener(OnSSUdpStateListener listener) {
+        this.stateListener = listener;
     }
 
     public interface OnSSUdpResponseListener {
