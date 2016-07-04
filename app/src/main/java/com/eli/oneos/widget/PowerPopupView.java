@@ -73,7 +73,7 @@ public class PowerPopupView {
 		// mListView.setOnItemClickListener(listener);
 	}
 
-	public void showPopupCenter(View parent) {
+	public void showPopupBottom(View parent) {
 		mRootLayout.startAnimation(mInAnim);
 		mPopupMenu.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
 		mPopupMenu.update();

@@ -34,7 +34,10 @@ public class DAOGenerator {
         note.addStringProperty("mac").notNull().primaryKey();   // 设备Mac地址
         note.addStringProperty("ip").notNull();                 // 设备IP地址
         note.addStringProperty("port").notNull();               // 设备端口号
-        note.addBooleanProperty("isLAN");                       // 是否是局域网设备
+//        note.addBooleanProperty("isLAN");                       // (db v1.0) 是否是局域网设备
+        note.addIntProperty("domain");                          // (db v2.0) 0: LAN, 1: WAN, 2: SSUDP
+        note.addStringProperty("cid");                          // (db v2.0) 设备SSUDP ClientID
+        note.addStringProperty("pwd");                          // (db v2.0) 设备SSUDP Password
         note.addLongProperty("time");                           // 创建时间
     }
 

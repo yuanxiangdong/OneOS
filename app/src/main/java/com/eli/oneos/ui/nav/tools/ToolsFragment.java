@@ -244,7 +244,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             initPowerMenu(view);
         }
 
-        mPopupView.showPopupCenter(view);
+        mPopupView.showPopupBottom(view);
     }
 
     private void initPowerMenu(View view) {

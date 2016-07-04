@@ -39,6 +39,7 @@ public class OneOSAPIs {
     public static final String SYSTEM_HD_INFO = ONE_API + "/sys/hdinfo";
     public static final String SYSTEM_INFO = ONE_API + "/sys/info";
     public static final String SYSTEM_VERSION = ONE_API + "/sys/ver";
+    public static final String SYSTEM_SSUDP_CID = ONE_API + "/sys/ssudpcid";
 
     public static final String APP_LIST = ONE_API + "/app/list";
     public static final String APP_MANAGE = ONE_API + "/app/manage";

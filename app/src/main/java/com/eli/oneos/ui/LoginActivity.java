@@ -23,6 +23,7 @@ import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
+import com.eli.oneos.model.oneos.api.OneOSSsudpClientIDAPI;
 import com.eli.oneos.model.oneos.scan.OnScanDeviceListener;
 import com.eli.oneos.model.oneos.scan.ScanDeviceManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -105,8 +106,7 @@ public class LoginActivity extends BaseActivity {
     private View.OnClickListener onLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            LoginManage.getInstance().setSSUDP(false);
-            attemptLogin();
+            attemptLogin(false);
         }
     };
     private View.OnClickListener onMoreClickListener = new View.OnClickListener() {
@@ -205,7 +205,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (attemptLogin()) {
+                    if (attemptLogin(false)) {
                         InputMethodUtils.hideKeyboard(LoginActivity.this, mPortTxt);
                     }
                 }
@@ -224,32 +224,7 @@ public class LoginActivity extends BaseActivity {
         mLoginBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                LoginManage.getInstance().setSSUDP(true);
-                String strcid = "Z0W8H8UHE10000A0-BTPUaENetUmGnEEW";
-                String strpwd = "12345678";
-                final SSUDPManager ssudpManager = SSUDPManager.getInstance();
-                ssudpManager.initSSUDPClient(LoginActivity.this, strcid, strpwd);
-                ssudpManager.connectSSUPDClient(new SSUDPManager.OnSSUDPConnectListener() {
-                    @Override
-                    public void onResult(final int progress, final boolean connected) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (connected) {
-                                    ssudpManager.startSSUDPClient();
-                                    attemptLogin();
-                                } else {
-                                    dismissLoading();
-                                    MagicDialog dialog = new MagicDialog(LoginActivity.this);
-                                    dialog.notice().title(R.string.tips).positive(R.string.ok).bold(MagicDialog.MagicDialogButton.POSITIVE)
-                                            .content("SSUDP connect failed").show();
-                                }
-                            }
-                        });
-                    }
-                });
-                showLoading(R.string.loading);
-
+                attemptLogin(true);
                 return true;
             }
         });
@@ -366,7 +341,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private boolean attemptLogin() {
+    private boolean attemptLogin(boolean isSsudp) {
         String user = mUserTxt.getText().toString();
         if (EmptyUtils.isEmpty(user)) {
             AnimUtils.sharkEditText(LoginActivity.this, mUserTxt);
@@ -400,7 +375,15 @@ public class LoginActivity extends BaseActivity {
         }
 
         String mac = getLANDeviceMacByIP(ip);
-        doLogin(user, pwd, ip, port, mac);
+
+        if (isSsudp) {
+            LoginManage.getInstance().setSSUDP(false); // set false to get SSUDP Client ID
+            getSSUDPClientID(user, pwd, ip, port, mac);
+        } else {
+            LoginManage.getInstance().setSSUDP(isSsudp);
+            doLogin(user, pwd, ip, port, mac);
+        }
+
         return true;
     }
 
@@ -432,6 +415,54 @@ public class LoginActivity extends BaseActivity {
             }
         });
         loginAPI.login();
+    }
+
+    private void getSSUDPClientID(final String user, final String pwd, final String ip, final String port, final String mac) {
+        OneOSSsudpClientIDAPI ssudpClientIDAPI = new OneOSSsudpClientIDAPI(ip, port);
+        ssudpClientIDAPI.setOnClientIDListener(new OneOSSsudpClientIDAPI.OnClientIDListener() {
+            @Override
+            public void onStart(String url) {
+                showLoading(R.string.loading);
+            }
+
+            @Override
+            public void onSuccess(String url, String cid) {
+                connectSSUPDClient(cid, user, pwd, ip, port, mac);
+            }
+
+            @Override
+            public void onFailure(String url, int errorNo, String errorMsg) {
+                showTipView("Get SSUDP Client ID Failed", false);
+            }
+        });
+        ssudpClientIDAPI.query();
+    }
+
+    private void connectSSUPDClient(String strcid, final String user, final String pwd, final String ip, final String port, final String mac) {
+        String strpwd = "12345678";
+        final SSUDPManager ssudpManager = SSUDPManager.getInstance();
+        ssudpManager.initSSUDPClient(LoginActivity.this, strcid, strpwd);
+        ssudpManager.connectSSUPDClient(new SSUDPManager.OnSSUDPConnectListener() {
+            @Override
+            public void onResult(final int progress, final boolean connected) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (connected) {
+                            ssudpManager.startSSUDPClient();
+                            LoginManage.getInstance().setSSUDP(true);
+                            doLogin(user, pwd, ip, port, mac);
+                        } else {
+                            dismissLoading();
+                            MagicDialog dialog = new MagicDialog(LoginActivity.this);
+                            dialog.notice().title(R.string.tips).positive(R.string.ok).bold(MagicDialog.MagicDialogButton.POSITIVE)
+                                    .content("SSUDP connect failed").show();
+                        }
+                    }
+                });
+            }
+        });
+        showLoading(R.string.loading);
     }
 
     private void gotoMainActivity() {
