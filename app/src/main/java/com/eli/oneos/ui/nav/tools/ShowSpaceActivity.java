@@ -83,7 +83,7 @@ public class ShowSpaceActivity extends BaseActivity {
                 // ImageButton mSetBtn = (ImageButton) findViewById(R.id.btn_icon_right);
                 // mSetBtn.setOnClickListener(new OnClickListener() {
                 // @Override
-                // public void onClick(View v) {
+                // public void onButtonClick(View v) {
                 // Intent intent = new Intent(ShowSpaceActivity.this, RootActivity.class);
                 // startActivity(intent);
                 // }

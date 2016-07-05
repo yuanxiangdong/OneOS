@@ -16,6 +16,7 @@ public class UserInfo {
     private Integer admin;
     private Integer uid;
     private Integer gid;
+    private Integer domain;
     private Long time;
     private Boolean isLogout;
     private Boolean isActive;
@@ -27,7 +28,7 @@ public class UserInfo {
         this.id = id;
     }
 
-    public UserInfo(Long id, String name, String mac, String pwd, Integer admin, Integer uid, Integer gid, Long time, Boolean isLogout, Boolean isActive) {
+    public UserInfo(Long id, String name, String mac, String pwd, Integer admin, Integer uid, Integer gid, Integer domain, Long time, Boolean isLogout, Boolean isActive) {
         this.id = id;
         this.name = name;
         this.mac = mac;
@@ -35,6 +36,7 @@ public class UserInfo {
         this.admin = admin;
         this.uid = uid;
         this.gid = gid;
+        this.domain = domain;
         this.time = time;
         this.isLogout = isLogout;
         this.isActive = isActive;
@@ -100,6 +102,14 @@ public class UserInfo {
 
     public void setGid(Integer gid) {
         this.gid = gid;
+    }
+
+    public Integer getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Integer domain) {
+        this.domain = domain;
     }
 
     public Long getTime() {

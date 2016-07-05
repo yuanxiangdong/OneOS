@@ -25,7 +25,7 @@ public class OneOSPowerAPI extends OneOSBaseAPI {
     private OnPowerListener listener;
 
     public OneOSPowerAPI(LoginSession loginSession) {
-        super(loginSession.getDeviceInfo().getIp(), loginSession.getDeviceInfo().getPort(), loginSession.getSession());
+        super(loginSession);
     }
 
     public void setOnPowerListener(OnPowerListener listener) {

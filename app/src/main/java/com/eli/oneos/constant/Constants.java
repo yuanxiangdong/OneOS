@@ -28,4 +28,7 @@ public class Constants {
 
     public static final boolean DISPLAY_IMAGE_WITH_GLIDE = true;
 
+    public static final int DOMAIN_DEVICE_LAN = 0;
+    public static final int DOMAIN_DEVICE_WAN = 1;
+    public static final int DOMAIN_DEVICE_SSUDP = 2;
 }

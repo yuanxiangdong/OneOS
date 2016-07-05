@@ -52,46 +52,6 @@ public class MagicDialog {
         }
     }
 
-    public static class OnMagicDialogClickCallback {
-        /**
-         * On Magic Dialog Button Click, to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#NOTICE}/
-         * {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#CONFIRM}/ {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#LIST}
-         *
-         * @param clickView click view
-         * @param button    {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
-         * @param checked   {@code true} if checked, otherwise {@code false}
-         */
-        void onClick(View clickView, MagicDialogButton button, boolean checked) {
-        }
-
-        /**
-         * On Magic Dialog Button Click, to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#EDIT}
-         *
-         * @param clickView click view
-         * @param button    {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
-         * @param editText  EditText
-         * @param checked   {@code true} if checked, otherwise {@code false}
-         * @return {@code true} if dialog can dismiss, otherwise {@code false}
-         */
-        boolean onClick(View clickView, MagicDialogButton button, EditText editText, boolean checked) {
-            return true;
-        }
-
-        /**
-         * On Magic Dialog Button Click, to {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogType#VERIFY}
-         *
-         * @param clickView      click view
-         * @param button         {@link com.eli.lib.magicdialog.MagicDialog.MagicDialogButton}
-         * @param editText       EditText
-         * @param verifyEditText Verify EditText
-         * @param checked        {@code true} if checked, otherwise {@code false}
-         * @return {@code true} if dialog can dismiss, otherwise {@code false}
-         */
-        boolean onClick(View clickView, MagicDialogButton button, EditText editText, EditText verifyEditText, boolean checked) {
-            return true;
-        }
-    }
-
     private Activity activity = null;
     private Resources resources = null;
     private Dialog mDialog = null;

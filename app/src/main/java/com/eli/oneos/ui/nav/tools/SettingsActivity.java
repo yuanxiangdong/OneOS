@@ -140,7 +140,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
             mPreviewSwitcher.setChecked(loginSession.getUserSettings().getIsPreviewPicOnlyWifi());
             mDownloadSwitcher.setChecked(loginSession.getUserSettings().getIsTipTransferNotWifi());
             mUserText.setText(loginSession.getUserInfo().getName());
-            mIPTxt.setText(loginSession.getDeviceInfo().getIp());
+            mIPTxt.setText(loginSession.getIp());
             mIPTxt.setVisibility(View.VISIBLE);
         } else {
             mUserText.setHint(R.string.not_login);

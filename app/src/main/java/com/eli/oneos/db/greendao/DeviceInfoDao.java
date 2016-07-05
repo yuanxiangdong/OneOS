@@ -24,10 +24,15 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, String> {
     */
     public static class Properties {
         public final static Property Mac = new Property(0, String.class, "mac", true, "MAC");
-        public final static Property Ip = new Property(1, String.class, "ip", false, "IP");
-        public final static Property Port = new Property(2, String.class, "port", false, "PORT");
-        public final static Property IsLAN = new Property(3, Boolean.class, "isLAN", false, "IS_LAN");
-        public final static Property Time = new Property(4, Long.class, "time", false, "TIME");
+        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
+        public final static Property LanIp = new Property(2, String.class, "lanIp", false, "LAN_IP");
+        public final static Property LanPort = new Property(3, String.class, "lanPort", false, "LAN_PORT");
+        public final static Property WanIp = new Property(4, String.class, "wanIp", false, "WAN_IP");
+        public final static Property WanPort = new Property(5, String.class, "wanPort", false, "WAN_PORT");
+        public final static Property SsudpCid = new Property(6, String.class, "ssudpCid", false, "SSUDP_CID");
+        public final static Property SsudpPwd = new Property(7, String.class, "ssudpPwd", false, "SSUDP_PWD");
+        public final static Property Domain = new Property(8, Integer.class, "domain", false, "DOMAIN");
+        public final static Property Time = new Property(9, Long.class, "time", false, "TIME");
     };
 
 
@@ -44,10 +49,15 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, String> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'DEVICE_INFO' (" + //
                 "'MAC' TEXT PRIMARY KEY NOT NULL ," + // 0: mac
-                "'IP' TEXT NOT NULL ," + // 1: ip
-                "'PORT' TEXT NOT NULL ," + // 2: port
-                "'IS_LAN' INTEGER," + // 3: isLAN
-                "'TIME' INTEGER);"); // 4: time
+                "'NAME' TEXT," + // 1: name
+                "'LAN_IP' TEXT," + // 2: lanIp
+                "'LAN_PORT' TEXT," + // 3: lanPort
+                "'WAN_IP' TEXT," + // 4: wanIp
+                "'WAN_PORT' TEXT," + // 5: wanPort
+                "'SSUDP_CID' TEXT," + // 6: ssudpCid
+                "'SSUDP_PWD' TEXT," + // 7: ssudpPwd
+                "'DOMAIN' INTEGER," + // 8: domain
+                "'TIME' INTEGER);"); // 9: time
     }
 
     /** Drops the underlying database table. */
@@ -61,17 +71,50 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, String> {
     protected void bindValues(SQLiteStatement stmt, DeviceInfo entity) {
         stmt.clearBindings();
         stmt.bindString(1, entity.getMac());
-        stmt.bindString(2, entity.getIp());
-        stmt.bindString(3, entity.getPort());
  
-        Boolean isLAN = entity.getIsLAN();
-        if (isLAN != null) {
-            stmt.bindLong(4, isLAN ? 1l: 0l);
+        String name = entity.getName();
+        if (name != null) {
+            stmt.bindString(2, name);
+        }
+ 
+        String lanIp = entity.getLanIp();
+        if (lanIp != null) {
+            stmt.bindString(3, lanIp);
+        }
+ 
+        String lanPort = entity.getLanPort();
+        if (lanPort != null) {
+            stmt.bindString(4, lanPort);
+        }
+ 
+        String wanIp = entity.getWanIp();
+        if (wanIp != null) {
+            stmt.bindString(5, wanIp);
+        }
+ 
+        String wanPort = entity.getWanPort();
+        if (wanPort != null) {
+            stmt.bindString(6, wanPort);
+        }
+ 
+        String ssudpCid = entity.getSsudpCid();
+        if (ssudpCid != null) {
+            stmt.bindString(7, ssudpCid);
+        }
+ 
+        String ssudpPwd = entity.getSsudpPwd();
+        if (ssudpPwd != null) {
+            stmt.bindString(8, ssudpPwd);
+        }
+ 
+        Integer domain = entity.getDomain();
+        if (domain != null) {
+            stmt.bindLong(9, domain);
         }
  
         Long time = entity.getTime();
         if (time != null) {
-            stmt.bindLong(5, time);
+            stmt.bindLong(10, time);
         }
     }
 
@@ -86,10 +129,15 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, String> {
     public DeviceInfo readEntity(Cursor cursor, int offset) {
         DeviceInfo entity = new DeviceInfo( //
             cursor.getString(offset + 0), // mac
-            cursor.getString(offset + 1), // ip
-            cursor.getString(offset + 2), // port
-            cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3) != 0, // isLAN
-            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4) // time
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // name
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // lanIp
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // lanPort
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // wanIp
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // wanPort
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // ssudpCid
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // ssudpPwd
+            cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8), // domain
+            cursor.isNull(offset + 9) ? null : cursor.getLong(offset + 9) // time
         );
         return entity;
     }
@@ -98,10 +146,15 @@ public class DeviceInfoDao extends AbstractDao<DeviceInfo, String> {
     @Override
     public void readEntity(Cursor cursor, DeviceInfo entity, int offset) {
         entity.setMac(cursor.getString(offset + 0));
-        entity.setIp(cursor.getString(offset + 1));
-        entity.setPort(cursor.getString(offset + 2));
-        entity.setIsLAN(cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3) != 0);
-        entity.setTime(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
+        entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setLanIp(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setLanPort(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setWanIp(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setWanPort(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setSsudpCid(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setSsudpPwd(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setDomain(cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8));
+        entity.setTime(cursor.isNull(offset + 9) ? null : cursor.getLong(offset + 9));
      }
     
     /** @inheritdoc */

@@ -47,7 +47,7 @@ public class OneOSSearchAPI extends OneOSBaseAPI {
     private String pdate1 = null, pdate2 = null;
 
     public OneOSSearchAPI(LoginSession mLoginSession) {
-        super(mLoginSession.getDeviceInfo());
+        super(mLoginSession);
         this.session = mLoginSession.getSession();
     }
 

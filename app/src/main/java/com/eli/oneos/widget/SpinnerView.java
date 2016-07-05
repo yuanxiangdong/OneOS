@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -22,21 +22,19 @@ import com.eli.oneos.utils.Utils;
 
 import java.util.ArrayList;
 
-public class SpinnerView {
+public class SpinnerView<T> {
     private static final String TAG = SpinnerView.class.getSimpleName();
 
-    private ArrayList<String> itemList;
-    private ArrayList<Integer> iconList;
+    private ArrayList<SpinnerItem> itemList;
     private Context context;
     private PopupWindow mPopupSpinner;
     private ListView mListView;
     private RelativeLayout mBackLayout;
-    private OnSpinnerButtonClickListener mOnButtonClickListener;
+    private OnSpinnerClickListener mClickListener;
 
     public SpinnerView(Context context, int width, int offset) {
         this.context = context;
         itemList = new ArrayList<>();
-        iconList = new ArrayList<>();
 
         View view = LayoutInflater.from(context).inflate(R.layout.layout_spinner_view, null);
 
@@ -45,46 +43,26 @@ public class SpinnerView {
         mListView.setAdapter(new PopupMenuAdapter(offset));
         mListView.setFocusableInTouchMode(true);
         mListView.setFocusable(true);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (mClickListener != null) {
+                    mClickListener.onItemClick(view, itemList.get(position));
+                }
+            }
+        });
 
         mPopupSpinner = new PopupWindow(view, width, LayoutParams.WRAP_CONTENT);
         mPopupSpinner.setBackgroundDrawable(new BitmapDrawable(context.getResources(), (Bitmap) null));
     }
 
-    public void addSpinnerItems(String[] items) {
-        for (String s : items) {
-            itemList.add(s);
-        }
-    }
-
-    public void addSpinnerItems(String[] items, int[] icons) {
-        for (String s : items) {
-            itemList.add(s);
-        }
-        for (Integer i : icons) {
-            iconList.add(i);
-        }
-    }
-
-    public void addSpinnerItems(ArrayList<String> list) {
+    public void addSpinnerItems(ArrayList<SpinnerItem<T>> list) {
         if (null != list) {
             itemList.addAll(list);
         }
     }
 
-    public void addSpinnerItems(ArrayList<String> list, ArrayList<Integer> icons) {
-        if (null != list) {
-            itemList.addAll(list);
-        }
-        if (null != icons) {
-            iconList.addAll(icons);
-        }
-    }
-
-    public void addSpinnerItem(String item) {
-        itemList.add(item);
-    }
-
-    public String getSpinnerItem(int index) {
+    public SpinnerItem getSpinnerItem(int index) {
         if (index < itemList.size()) {
             return itemList.get(index);
         }
@@ -124,12 +102,8 @@ public class SpinnerView {
         return mPopupSpinner.isShowing();
     }
 
-    public void setOnSpinnerItemClickListener(OnItemClickListener listener) {
-        mListView.setOnItemClickListener(listener);
-    }
-
-    public void setOnSpinnerButtonClickListener(OnSpinnerButtonClickListener listener) {
-        this.mOnButtonClickListener = listener;
+    public void setOnSpinnerClickListener(OnSpinnerClickListener listener) {
+        this.mClickListener = listener;
     }
 
     public void setOnSpinnerDismissListener(OnDismissListener listener) {
@@ -175,22 +149,18 @@ public class SpinnerView {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.mTitleTxt.setText(itemList.get(position));
-            if (iconList != null && iconList.size() >= position) {
-                int icon = iconList.get(position);
-                if (icon > 0) {
-                    holder.mRightIBtn.setVisibility(View.VISIBLE);
-                    holder.mRightIBtn.setImageResource(iconList.get(position));
-                    if (mOnButtonClickListener != null) {
-                        holder.mRightIBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mOnButtonClickListener.onClick(v, position);
-                            }
-                        });
-                    }
-                } else {
-                    holder.mRightIBtn.setVisibility(View.INVISIBLE);
+            final SpinnerItem item = itemList.get(position);
+            holder.mTitleTxt.setText(item.title);
+            if (item.deletable) {
+                holder.mRightIBtn.setVisibility(View.VISIBLE);
+                holder.mRightIBtn.setImageResource(item.icon);
+                if (mClickListener != null) {
+                    holder.mRightIBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mClickListener.onButtonClick(v, item);
+                        }
+                    });
                 }
             } else {
                 holder.mRightIBtn.setVisibility(View.INVISIBLE);
@@ -205,7 +175,27 @@ public class SpinnerView {
         }
     }
 
-    public interface OnSpinnerButtonClickListener {
-        void onClick(View view, int index);
+    public static class SpinnerItem<T> {
+        public int id = 0;
+        public int group = 0;
+        public int icon = 0;
+        public String title = null;
+        public boolean deletable = false;
+        public T obj = null;
+
+        public SpinnerItem(int id, int group, int icon, String title, boolean deletable, T t) {
+            this.id = id;
+            this.group = group;
+            this.icon = icon;
+            this.title = title;
+            this.deletable = deletable;
+            this.obj = t;
+        }
+    }
+
+    public interface OnSpinnerClickListener<T> {
+        void onButtonClick(View view, SpinnerItem<T> item);
+
+        void onItemClick(View view, SpinnerItem<T> item);
     }
 }

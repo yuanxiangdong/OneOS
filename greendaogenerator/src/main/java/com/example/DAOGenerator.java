@@ -8,7 +8,7 @@ import de.greenrobot.daogenerator.Schema;
  * GreenDAO generator for OneSpace
  */
 public class DAOGenerator {
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     private static final String DEFAULT_PACKAGE = "com.eli.oneos.db.greendao";
 
     public static void main(String[] args) throws Exception {
@@ -28,16 +28,19 @@ public class DAOGenerator {
      * 设备信息表
      *
      * @param schema
+     * @since db v1
      */
     private static void addDeviceInfoTable(Schema schema) {
         Entity note = schema.addEntity("DeviceInfo");
         note.addStringProperty("mac").notNull().primaryKey();   // 设备Mac地址
-        note.addStringProperty("ip").notNull();                 // 设备IP地址
-        note.addStringProperty("port").notNull();               // 设备端口号
-//        note.addBooleanProperty("isLAN");                       // (db v1.0) 是否是局域网设备
-        note.addIntProperty("domain");                          // (db v2.0) 0: LAN, 1: WAN, 2: SSUDP
-        note.addStringProperty("cid");                          // (db v2.0) 设备SSUDP ClientID
-        note.addStringProperty("pwd");                          // (db v2.0) 设备SSUDP Password
+        note.addStringProperty("name");                         // 设备名称
+        note.addStringProperty("lanIp");                        // 设备局域网IP地址
+        note.addStringProperty("lanPort");                      // 设备局域网端口号
+        note.addStringProperty("wanIp");                        // 设备外网IP地址
+        note.addStringProperty("wanPort");                      // 设备外网端口号
+        note.addStringProperty("ssudpCid");                     // 设备SSUDP ClientID
+        note.addStringProperty("ssudpPwd");                     // 设备SSUDP Password
+        note.addIntProperty("domain");                          // 最后登录方式， 0：LAN, 1:WAN, 2:SSUDP
         note.addLongProperty("time");                           // 创建时间
     }
 
@@ -45,6 +48,7 @@ public class DAOGenerator {
      * 用户信息表
      *
      * @param schema
+     * @since db v1
      */
     private static void addUserInfoTable(Schema schema) {
         Entity note = schema.addEntity("UserInfo");
@@ -55,6 +59,9 @@ public class DAOGenerator {
         note.addIntProperty("admin");               // 是否为管理员用户（1:true, 2: false）
         note.addIntProperty("uid");                 // 设备数据库中的ID
         note.addIntProperty("gid");                 // 用户组ID
+        // -----------------------------db v2----------------------------------------
+        note.addIntProperty("domain");              // 最后登录方式， 0：LAN, 1:WAN, 2:SSUDP
+        // --------------------------------------------------------------------------
         note.addLongProperty("time");               // 最后登录时间
         note.addBooleanProperty("isLogout");        // 是否注销登录
         note.addBooleanProperty("isActive");        // 是否活跃（默认为false）；为false时，登录页面不显示该用户为备选
@@ -64,6 +71,7 @@ public class DAOGenerator {
      * 用户设置信息表
      *
      * @param schema
+     * @since db v1
      */
     private static void addUserSettingsTable(Schema schema) {
         Entity note = schema.addEntity("UserSettings");
@@ -84,6 +92,7 @@ public class DAOGenerator {
      * 备份文件表
      *
      * @param schema
+     * @since db v1
      */
     private static void addBackupFileTable(Schema schema) {
         Entity note = schema.addEntity("BackupFile");
@@ -101,6 +110,7 @@ public class DAOGenerator {
      * 备份信息表：通讯录/短信
      *
      * @param schema
+     * @since db v1
      */
     private static void addBackupInfoTable(Schema schema) {
         Entity note = schema.addEntity("BackupInfo");
@@ -115,6 +125,7 @@ public class DAOGenerator {
      * 上传下载记录表
      *
      * @param schema
+     * @since db v1
      */
     private static void addTransferHistoryTable(Schema schema) {
         Entity note = schema.addEntity("TransferHistory");

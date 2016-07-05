@@ -73,10 +73,10 @@ public class OneOSDownloadFileAPI extends OneOSBaseAPI {
             listener.onStart(url, downloadElement);
         }
 
-        if (LoginManage.getInstance().isSSUDP()) {
-            doSSUDPDownload();
-        } else {
+        if (LoginManage.getInstance().isHttp()) {
             doHttpDownload();
+        } else {
+            doSSUDPDownload();
         }
 
         if (null != listener) {

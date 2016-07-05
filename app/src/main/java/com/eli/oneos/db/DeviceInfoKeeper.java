@@ -20,10 +20,19 @@ public class DeviceInfoKeeper {
         return queryBuilder.list();
     }
 
-    public static boolean insertOrReplace(DeviceInfo history) {
-        if (history != null) {
+    public static DeviceInfo query(String mac) {
+        DeviceInfoDao dao = DBHelper.getDaoSession().getDeviceInfoDao();
+        QueryBuilder queryBuilder = dao.queryBuilder();
+        queryBuilder.where(DeviceInfoDao.Properties.Mac.eq(mac));
+        queryBuilder.limit(1);
+
+        return (DeviceInfo) queryBuilder.unique();
+    }
+
+    public static boolean insertOrReplace(DeviceInfo info) {
+        if (info != null) {
             DeviceInfoDao dao = DBHelper.getDaoSession().getDeviceInfoDao();
-            return dao.insertOrReplace(history) > 0;
+            return dao.insertOrReplace(info) > 0;
         }
 
         return false;

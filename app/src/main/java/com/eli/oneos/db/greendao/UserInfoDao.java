@@ -26,13 +26,14 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Name = new Property(1, String.class, "name", false, "NAME");
         public final static Property Mac = new Property(2, String.class, "mac", false, "MAC");
-        public final static Property Pwd = new Property(3, String.class, "strpwd", false, "PWD");
+        public final static Property Pwd = new Property(3, String.class, "pwd", false, "PWD");
         public final static Property Admin = new Property(4, Integer.class, "admin", false, "ADMIN");
         public final static Property Uid = new Property(5, Integer.class, "uid", false, "UID");
         public final static Property Gid = new Property(6, Integer.class, "gid", false, "GID");
-        public final static Property Time = new Property(7, Long.class, "time", false, "TIME");
-        public final static Property IsLogout = new Property(8, Boolean.class, "isLogout", false, "IS_LOGOUT");
-        public final static Property IsActive = new Property(9, Boolean.class, "isActive", false, "IS_ACTIVE");
+        public final static Property Domain = new Property(7, Integer.class, "domain", false, "DOMAIN");
+        public final static Property Time = new Property(8, Long.class, "time", false, "TIME");
+        public final static Property IsLogout = new Property(9, Boolean.class, "isLogout", false, "IS_LOGOUT");
+        public final static Property IsActive = new Property(10, Boolean.class, "isActive", false, "IS_ACTIVE");
     };
 
 
@@ -51,13 +52,14 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
                 "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "'NAME' TEXT NOT NULL ," + // 1: name
                 "'MAC' TEXT NOT NULL ," + // 2: mac
-                "'PWD' TEXT NOT NULL ," + // 3: strpwd
+                "'PWD' TEXT NOT NULL ," + // 3: pwd
                 "'ADMIN' INTEGER," + // 4: admin
                 "'UID' INTEGER," + // 5: uid
                 "'GID' INTEGER," + // 6: gid
-                "'TIME' INTEGER," + // 7: time
-                "'IS_LOGOUT' INTEGER," + // 8: isLogout
-                "'IS_ACTIVE' INTEGER);"); // 9: isActive
+                "'DOMAIN' INTEGER," + // 7: domain
+                "'TIME' INTEGER," + // 8: time
+                "'IS_LOGOUT' INTEGER," + // 9: isLogout
+                "'IS_ACTIVE' INTEGER);"); // 10: isActive
     }
 
     /** Drops the underlying database table. */
@@ -94,19 +96,24 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
             stmt.bindLong(7, gid);
         }
  
+        Integer domain = entity.getDomain();
+        if (domain != null) {
+            stmt.bindLong(8, domain);
+        }
+ 
         Long time = entity.getTime();
         if (time != null) {
-            stmt.bindLong(8, time);
+            stmt.bindLong(9, time);
         }
  
         Boolean isLogout = entity.getIsLogout();
         if (isLogout != null) {
-            stmt.bindLong(9, isLogout ? 1l: 0l);
+            stmt.bindLong(10, isLogout ? 1l: 0l);
         }
  
         Boolean isActive = entity.getIsActive();
         if (isActive != null) {
-            stmt.bindLong(10, isActive ? 1l: 0l);
+            stmt.bindLong(11, isActive ? 1l: 0l);
         }
     }
 
@@ -123,13 +130,14 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // name
             cursor.getString(offset + 2), // mac
-            cursor.getString(offset + 3), // strpwd
+            cursor.getString(offset + 3), // pwd
             cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // admin
             cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // uid
             cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // gid
-            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7), // time
-            cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0, // isLogout
-            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0 // isActive
+            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7), // domain
+            cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8), // time
+            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0, // isLogout
+            cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0 // isActive
         );
         return entity;
     }
@@ -144,9 +152,10 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
         entity.setAdmin(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
         entity.setUid(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
         entity.setGid(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
-        entity.setTime(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
-        entity.setIsLogout(cursor.isNull(offset + 8) ? null : cursor.getShort(offset + 8) != 0);
-        entity.setIsActive(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
+        entity.setDomain(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
+        entity.setTime(cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8));
+        entity.setIsLogout(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
+        entity.setIsActive(cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0);
      }
     
     /** @inheritdoc */

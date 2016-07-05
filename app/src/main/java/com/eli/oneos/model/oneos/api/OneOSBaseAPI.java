@@ -6,8 +6,8 @@ import android.util.Log;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
-import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.model.http.HttpUtils;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 import java.net.ConnectException;
@@ -25,23 +25,31 @@ public abstract class OneOSBaseAPI {
     protected String ip = null;
     protected String session = null;
     protected String port = OneOSAPIs.ONE_API_DEFAULT_PORT;
+    private boolean isHttp = true;
 
     protected OneOSBaseAPI(LoginSession loginSession) {
-        this.ip = loginSession.getDeviceInfo().getIp();
-        this.port = loginSession.getDeviceInfo().getPort();
+        this.ip = loginSession.getIp();
+        this.port = loginSession.getPort();
         this.session = loginSession.getSession();
         initHttp();
     }
 
-    protected OneOSBaseAPI(DeviceInfo info) {
-        this.ip = info.getIp();
-        this.port = info.getPort();
-        initHttp();
-    }
+//    protected OneOSBaseAPI(DeviceInfo info) {
+//        this.ip = info.getIp();
+//        this.port = info.getPort();
+//        initHttp();
+//    }
 
     protected OneOSBaseAPI(String ip, String port) {
         this.ip = ip;
         this.port = port;
+        initHttp();
+    }
+
+    protected OneOSBaseAPI(String ip, String port, boolean isHttp) {
+        this.ip = ip;
+        this.port = port;
+        this.isHttp = isHttp;
         initHttp();
     }
 
@@ -54,7 +62,11 @@ public abstract class OneOSBaseAPI {
 
     protected void initHttp() {
         context = MyApplication.getAppContext();
-        httpUtils = new HttpUtils();
+        if (LoginManage.getInstance().isLogin()) {
+            httpUtils = new HttpUtils(LoginManage.getInstance().isHttp());
+        } else {
+            httpUtils = new HttpUtils(isHttp);
+        }
     }
 
     public String genOneOSAPIUrl(String action) {

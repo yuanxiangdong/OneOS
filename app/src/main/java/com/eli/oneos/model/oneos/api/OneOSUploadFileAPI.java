@@ -76,14 +76,14 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             } else if (check == -1) {
                 duplicateRename(uploadElement.getToPath() + uploadElement.getSrcName(), uploadElement.getSrcName());
             } else {
-                if (LoginManage.getInstance().isSSUDP()) {
-                    doSSUDPUpload();
-                } else {
+                if (LoginManage.getInstance().isHttp()) {
                     doHttpUpload();
+                } else {
+                    doSSUDPUpload();
                 }
             }
         } else {
-            if (LoginManage.getInstance().isSSUDP()) {
+            if (LoginManage.getInstance().isHttp()) {
                 doSSUDPUpload();
             } else {
                 doHttpUpload();
@@ -116,10 +116,10 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             boolean ret = json.getBoolean("result");
             if (ret) {
                 Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename Success");
-                if (LoginManage.getInstance().isSSUDP()) {
-                    doSSUDPUpload();
-                } else {
+                if (LoginManage.getInstance().isHttp()) {
                     doHttpUpload();
+                } else {
+                    doSSUDPUpload();
                 }
             } else {
                 Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "======Duplicate Rename Failed");

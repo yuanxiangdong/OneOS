@@ -26,6 +26,10 @@ public class OneOSVersionAPI extends OneOSBaseAPI {
         super(loginSession);
     }
 
+    public OneOSVersionAPI(String ip, String port, boolean isHttp) {
+        super(ip, port, isHttp);
+    }
+
     public void setOnSystemVersionListener(OnSystemVersionListener listener) {
         this.listener = listener;
     }

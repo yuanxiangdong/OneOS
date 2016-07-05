@@ -2,20 +2,23 @@ package com.eli.oneos.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eli.lib.magicdialog.MagicDialog;
+import com.eli.lib.magicdialog.OnMagicDialogClickCallback;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.DeviceInfoKeeper;
@@ -23,7 +26,7 @@ import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
-import com.eli.oneos.model.oneos.api.OneOSSsudpClientIDAPI;
+import com.eli.oneos.model.oneos.api.OneOSSSUDPClientIDAPI;
 import com.eli.oneos.model.oneos.scan.OnScanDeviceListener;
 import com.eli.oneos.model.oneos.scan.ScanDeviceManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -34,8 +37,6 @@ import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.InputMethodUtils;
-import com.eli.oneos.utils.ToastHelper;
-import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.SpinnerView;
 import com.eli.oneos.widget.TitleBackLayout;
 
@@ -87,7 +88,8 @@ public class LoginActivity extends BaseActivity {
             while (iterator.hasNext()) {
                 String key = iterator.next();
                 String value = mDeviceMap.get(key);
-                DeviceInfo DeviceInfo = new DeviceInfo(key, value, OneOSAPIs.ONE_API_DEFAULT_PORT, true, System.currentTimeMillis());
+                DeviceInfo DeviceInfo = new DeviceInfo(key, null, value, OneOSAPIs.ONE_API_DEFAULT_PORT, null, null, null, null,
+                        Constants.DOMAIN_DEVICE_LAN, System.currentTimeMillis());
                 mLANDeviceList.add(DeviceInfo);
             }
         }
@@ -106,7 +108,7 @@ public class LoginActivity extends BaseActivity {
     private View.OnClickListener onLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            attemptLogin(false);
+            attemptLogin();
         }
     };
     private View.OnClickListener onMoreClickListener = new View.OnClickListener() {
@@ -205,7 +207,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (attemptLogin(false)) {
+                    if (attemptLogin()) {
                         InputMethodUtils.hideKeyboard(LoginActivity.this, mPortTxt);
                     }
                 }
@@ -224,7 +226,7 @@ public class LoginActivity extends BaseActivity {
         mLoginBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                attemptLogin(true);
+//                attemptLogin(true);
                 return true;
             }
         });
@@ -237,29 +239,27 @@ public class LoginActivity extends BaseActivity {
             if (!EmptyUtils.isEmpty(mHistoryUserList)) {
                 TextView mPreTxt = (TextView) findViewById(R.id.txt_name);
                 mUserSpinnerView = new SpinnerView(this, view.getWidth(), mPreTxt.getWidth());
-                ArrayList<String> users = new ArrayList<>();
-                ArrayList<Integer> icons = new ArrayList<>();
-                for (UserInfo info : mHistoryUserList) {
-                    users.add(info.getName());
-                    icons.add(R.drawable.btn_clear);
-                }
 
-                mUserSpinnerView.addSpinnerItems(users, icons);
-                mUserSpinnerView.setOnSpinnerButtonClickListener(new SpinnerView.OnSpinnerButtonClickListener() {
+                ArrayList<SpinnerView.SpinnerItem<UserInfo>> spinnerItems = new ArrayList<>();
+                for (int i = 0; i < mHistoryUserList.size(); i++) {
+                    UserInfo info = mHistoryUserList.get(i);
+                    SpinnerView.SpinnerItem<UserInfo> item = new SpinnerView.SpinnerItem<>(i, 0, R.drawable.btn_clear, info.getName(), true, info);
+                    spinnerItems.add(item);
+                }
+                mUserSpinnerView.addSpinnerItems(spinnerItems);
+                mUserSpinnerView.setOnSpinnerClickListener(new SpinnerView.OnSpinnerClickListener<UserInfo>() {
                     @Override
-                    public void onClick(View view, int index) {
-                        UserInfo UserHistory = mHistoryUserList.get(index);
-                        mHistoryUserList.remove(UserHistory);
-                        UserInfoKeeper.unActive(UserHistory);
+                    public void onButtonClick(View view, SpinnerView.SpinnerItem<UserInfo> item) {
+                        mHistoryUserList.remove(item.obj);
+                        UserInfoKeeper.unActive(item.obj);
                         mUserSpinnerView.dismiss();
                     }
-                });
-                mUserSpinnerView.setOnSpinnerItemClickListener(new AdapterView.OnItemClickListener() {
+
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        UserInfo UserHistory = mHistoryUserList.get(position);
-                        mUserTxt.setText(UserHistory.getName());
-                        mPwdTxt.setText(UserHistory.getPwd());
+                    public void onItemClick(View view, SpinnerView.SpinnerItem<UserInfo> item) {
+                        UserInfo userInfo = item.obj;
+                        mUserTxt.setText(userInfo.getName());
+                        mPwdTxt.setText(userInfo.getPwd());
                         mUserSpinnerView.dismiss();
                     }
                 });
@@ -275,48 +275,66 @@ public class LoginActivity extends BaseActivity {
         } else {
             if (!EmptyUtils.isEmpty(mLANDeviceList) || !EmptyUtils.isEmpty(mHistoryDeviceList)) {
                 mDeviceSpinnerView = new SpinnerView(this, view.getWidth(), mUserTxt.getLeft());
-                final ArrayList<DeviceInfo> mDeviceList = new ArrayList<>();
-                ArrayList<String> users = new ArrayList<>();
-                ArrayList<Integer> icons = new ArrayList<>();
+
+                int id = 0;
+                ArrayList<SpinnerView.SpinnerItem<DeviceInfo>> spinnerItems = new ArrayList<>();
                 for (DeviceInfo info : mLANDeviceList) {
-                    mDeviceList.add(info);
-                    users.add(info.getIp());
-                    icons.add(0);
+                    SpinnerView.SpinnerItem<DeviceInfo> spinnerItem = new SpinnerView.SpinnerItem<>(id, Constants.DOMAIN_DEVICE_LAN, 0, info.getLanIp(), false, info);
+                    spinnerItems.add(spinnerItem);
+                    id++;
                 }
+
                 for (DeviceInfo info : mHistoryDeviceList) {
-                    mDeviceList.add(info);
-                    users.add(info.getIp());
-                    icons.add(R.drawable.btn_clear);
+                    if (!EmptyUtils.isEmpty(info.getWanIp())) {
+                        SpinnerView.SpinnerItem<DeviceInfo> spinnerItem = new SpinnerView.SpinnerItem<>(id, Constants.DOMAIN_DEVICE_WAN, R.drawable.btn_clear, info.getLanIp(), true, info);
+                        spinnerItems.add(spinnerItem);
+                        id++;
+                    }
                 }
-                mDeviceSpinnerView.addSpinnerItems(users, icons);
-                mDeviceSpinnerView.setOnSpinnerButtonClickListener(new SpinnerView.OnSpinnerButtonClickListener() {
+
+                for (DeviceInfo info : mHistoryDeviceList) {
+                    if (!EmptyUtils.isEmpty(info.getSsudpCid())) {
+                        SpinnerView.SpinnerItem<DeviceInfo> spinnerItem = new SpinnerView.SpinnerItem<>(id, Constants.DOMAIN_DEVICE_SSUDP, R.drawable.btn_clear, info.getSsudpCid(), true, info);
+                        spinnerItems.add(spinnerItem);
+                        id++;
+                    }
+                }
+
+                mDeviceSpinnerView.addSpinnerItems(spinnerItems);
+                mDeviceSpinnerView.setOnSpinnerClickListener(new SpinnerView.OnSpinnerClickListener<DeviceInfo>() {
                     @Override
-                    public void onClick(View view, int index) {
-                        DeviceInfo device = mDeviceList.get(index);
-                        if (device.getIsLAN()) {
-                            mLANDeviceList.remove(device);
+                    public void onButtonClick(View view, SpinnerView.SpinnerItem<DeviceInfo> item) {
+                        DeviceInfo info = item.obj;
+                        if (item.group == Constants.DOMAIN_DEVICE_WAN) {
+                            info.setWanIp(null);
+                            info.setWanPort(null);
+                        } else if (item.group == Constants.DOMAIN_DEVICE_SSUDP) {
+                            info.setSsudpCid(null);
+                            info.setSsudpPwd(null);
+                        }
+                        DeviceInfoKeeper.insertOrReplace(info);
+                        mDeviceSpinnerView.dismiss();
+                    }
+
+                    @Override
+                    public void onItemClick(View view, SpinnerView.SpinnerItem<DeviceInfo> item) {
+                        Log.e(TAG, ">>> DeviceSpinnerView Item Click: " + item.id);
+                        DeviceInfo deviceInfo = item.obj;
+                        if (item.group == Constants.DOMAIN_DEVICE_LAN) {
+                            mIPTxt.setText(deviceInfo.getLanIp());
+                            mPortTxt.setText(deviceInfo.getLanPort());
+                        } else if (item.group == Constants.DOMAIN_DEVICE_WAN) {
+                            mIPTxt.setText(deviceInfo.getWanIp());
+                            mPortTxt.setText(deviceInfo.getWanPort());
                         } else {
-                            mHistoryDeviceList.remove(device);
-                            DeviceInfoKeeper.delete(device);
+                            mIPTxt.setText(deviceInfo.getSsudpCid());
+                            mPortTxt.setText(deviceInfo.getSsudpPwd());
                         }
 
                         mDeviceSpinnerView.dismiss();
                     }
                 });
-                mDeviceSpinnerView.setOnSpinnerItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        DeviceInfo deviceInfo;
-                        if (position < mLANDeviceList.size()) {
-                            deviceInfo = mLANDeviceList.get(position);
-                        } else {
-                            deviceInfo = mHistoryDeviceList.get(position - mLANDeviceList.size());
-                        }
-                        mIPTxt.setText(deviceInfo.getIp());
-                        mPortTxt.setText(deviceInfo.getPort());
-                        mDeviceSpinnerView.dismiss();
-                    }
-                });
+
                 InputMethodUtils.hideKeyboard(LoginActivity.this);
                 mDeviceSpinnerView.showPopupDown(view);
             }
@@ -336,12 +354,12 @@ public class LoginActivity extends BaseActivity {
         }
 
         List<DeviceInfo> deviceList = DeviceInfoKeeper.all();
-        if (!EmptyUtils.isEmpty(deviceList)) {
+        if (null != deviceList) {
             mHistoryDeviceList.addAll(deviceList);
         }
     }
 
-    private boolean attemptLogin(boolean isSsudp) {
+    private boolean attemptLogin() {
         String user = mUserTxt.getText().toString();
         if (EmptyUtils.isEmpty(user)) {
             AnimUtils.sharkEditText(LoginActivity.this, mUserTxt);
@@ -367,27 +385,36 @@ public class LoginActivity extends BaseActivity {
         if (EmptyUtils.isEmpty(port)) {
             port = OneOSAPIs.ONE_API_DEFAULT_PORT;
             mPortTxt.setText(port);
-        } else if (!Utils.checkPort(port)) {
-            AnimUtils.sharkEditText(LoginActivity.this, mPortTxt);
-            AnimUtils.focusToEnd(mPortTxt);
-            ToastHelper.showToast(R.string.tip_invalid_port);
-            return false;
+//        } else if (!Utils.checkPort(port)) {
+//            AnimUtils.sharkEditText(LoginActivity.this, mPortTxt);
+//            AnimUtils.focusToEnd(mPortTxt);
+//            ToastHelper.showToast(R.string.tip_invalid_port);
+//            return false;
         }
 
+        // TODO.. just for test
         String mac = getLANDeviceMacByIP(ip);
-
-        if (isSsudp) {
-            LoginManage.getInstance().setSSUDP(false); // set false to get SSUDP Client ID
-            getSSUDPClientID(user, pwd, ip, port, mac);
+        int domain;
+        if (mac != null) {
+            domain = Constants.DOMAIN_DEVICE_LAN;
         } else {
-            LoginManage.getInstance().setSSUDP(isSsudp);
-            doLogin(user, pwd, ip, port, mac);
+            if (port.equals("12345678")) {
+                domain = Constants.DOMAIN_DEVICE_SSUDP;
+            } else {
+                domain = Constants.DOMAIN_DEVICE_WAN;
+            }
+        }
+
+        if (domain == Constants.DOMAIN_DEVICE_SSUDP) {
+            connectSSUPDClient(ip, port, user, pwd);
+        } else {
+            doLogin(user, pwd, ip, port, mac, domain);
         }
 
         return true;
     }
 
-    private void doLogin(String user, String pwd, String ip, String port, String mac) {
+    private void doLogin(String user, String pwd, String ip, String port, String mac, int domain) {
         OneOSLoginAPI loginAPI = new OneOSLoginAPI(ip, port, user, pwd, mac);
         loginAPI.setOnLoginListener(new OneOSLoginAPI.OnLoginListener() {
             @Override
@@ -399,7 +426,12 @@ public class LoginActivity extends BaseActivity {
             public void onSuccess(String url, LoginSession loginSession) {
                 dismissLoading();
                 mLoginSession = loginSession;
-                gotoMainActivity();
+
+                if (mLoginSession.isNew()) {
+                    showSSUDPTipsDialog();
+                } else {
+                    gotoMainActivity();
+                }
             }
 
             @Override
@@ -414,32 +446,64 @@ public class LoginActivity extends BaseActivity {
                 }
             }
         });
-        loginAPI.login();
+        loginAPI.login(domain);
     }
 
-    private void getSSUDPClientID(final String user, final String pwd, final String ip, final String port, final String mac) {
-        OneOSSsudpClientIDAPI ssudpClientIDAPI = new OneOSSsudpClientIDAPI(ip, port);
-        ssudpClientIDAPI.setOnClientIDListener(new OneOSSsudpClientIDAPI.OnClientIDListener() {
+    private void showSSUDPTipsDialog() {
+        MagicDialog dialog = new MagicDialog(this);
+        dialog.confirm().title(R.string.tip_title_bond_ssudp).content(R.string.tip_bond_ssudp)
+                .positive(R.string.bind_now).negative(R.string.cancel).bold(MagicDialog.MagicDialogButton.POSITIVE)
+                .listener(new OnMagicDialogClickCallback() {
+                    @Override
+                    public void onClick(View clickView, MagicDialog.MagicDialogButton button, boolean checked) {
+                        if (button == MagicDialog.MagicDialogButton.POSITIVE) {
+                            getSSUDPClientID();
+                        } else {
+                            gotoMainActivity();
+                        }
+                    }
+                }).show();
+    }
+
+    private void getSSUDPClientID() {
+        OneOSSSUDPClientIDAPI ssudpClientIDAPI = new OneOSSSUDPClientIDAPI(mLoginSession.getIp(), mLoginSession.getPort());
+        ssudpClientIDAPI.setOnClientIDListener(new OneOSSSUDPClientIDAPI.OnClientIDListener() {
             @Override
             public void onStart(String url) {
-                showLoading(R.string.loading);
+                showLoading(R.string.binding);
             }
 
             @Override
             public void onSuccess(String url, String cid) {
-                connectSSUPDClient(cid, user, pwd, ip, port, mac);
+                mLoginSession.getDeviceInfo().setSsudpCid(cid);
+                mLoginSession.getDeviceInfo().setSsudpPwd("12345678");
+                DeviceInfoKeeper.insertOrReplace(mLoginSession.getDeviceInfo());
+
+                showTipView(R.string.bind_succeed, true, new PopupWindow.OnDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        gotoMainActivity();
+                    }
+                });
             }
 
             @Override
             public void onFailure(String url, int errorNo, String errorMsg) {
-                showTipView("Get SSUDP Client ID Failed", false);
+                MagicDialog dialog = new MagicDialog(LoginActivity.this);
+                dialog.notice().title(R.string.tip_title_bond_ssudp_failed).content(R.string.tip_bond_ssudp_failed)
+                        .positive(R.string.ok).bold(MagicDialog.MagicDialogButton.POSITIVE)
+                        .listener(new OnMagicDialogClickCallback() {
+                            @Override
+                            public void onClick(View clickView, MagicDialog.MagicDialogButton button, boolean checked) {
+                                gotoMainActivity();
+                            }
+                        }).show();
             }
         });
         ssudpClientIDAPI.query();
     }
 
-    private void connectSSUPDClient(String strcid, final String user, final String pwd, final String ip, final String port, final String mac) {
-        String strpwd = "12345678";
+    private void connectSSUPDClient(String strcid, String strpwd, final String user, final String pwd) {
         final SSUDPManager ssudpManager = SSUDPManager.getInstance();
         ssudpManager.initSSUDPClient(LoginActivity.this, strcid, strpwd);
         ssudpManager.connectSSUPDClient(new SSUDPManager.OnSSUDPConnectListener() {
@@ -450,19 +514,18 @@ public class LoginActivity extends BaseActivity {
                     public void run() {
                         if (connected) {
                             ssudpManager.startSSUDPClient();
-                            LoginManage.getInstance().setSSUDP(true);
-                            doLogin(user, pwd, ip, port, mac);
+                            doLogin(user, pwd, null, null, null, Constants.DOMAIN_DEVICE_SSUDP);
                         } else {
                             dismissLoading();
                             MagicDialog dialog = new MagicDialog(LoginActivity.this);
-                            dialog.notice().title(R.string.tips).positive(R.string.ok).bold(MagicDialog.MagicDialogButton.POSITIVE)
-                                    .content("SSUDP connect failed").show();
+                            dialog.notice().title(R.string.tips).content(R.string.tip_title_connect_ssudp_failed).positive(R.string.ok)
+                                    .bold(MagicDialog.MagicDialogButton.POSITIVE).show();
                         }
                     }
                 });
             }
         });
-        showLoading(R.string.loading);
+        showLoading(R.string.ssudp_connecting);
     }
 
     private void gotoMainActivity() {
@@ -476,7 +539,7 @@ public class LoginActivity extends BaseActivity {
 
     private String getLANDeviceMacByIP(String ip) {
         for (DeviceInfo info : mLANDeviceList) {
-            if (info.getIp().equals(ip)) {
+            if (info.getLanIp().equals(ip)) {
                 return info.getMac();
             }
         }

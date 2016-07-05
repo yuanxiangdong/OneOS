@@ -16,7 +16,7 @@ public class MagicDialogSample {
     public static void notice(final Activity activity) {
         MagicDialog dialog = new MagicDialog(activity);
         dialog.title("Notify Title").notice().content("Notify Content Body.").positive("OK").bold(null).warning().check("Show List Dialog").checked(true)
-                .listener(new MagicDialog.OnMagicDialogClickCallback() {
+                .listener(new OnMagicDialogClickCallback() {
                     @Override
                     public void onClick(View view, MagicDialog.MagicDialogButton button, boolean checked) {
                         if (checked) {
@@ -30,7 +30,7 @@ public class MagicDialogSample {
         MagicDialog dialog = new MagicDialog(activity);
         dialog.title("Confirm Title").confirm().content("Confirm Content Body").warning().positive("OK").negative("Cancel")
                 .check("Show Notice Dialog?").checked(true).bold(MagicDialog.MagicDialogButton.POSITIVE).right(MagicDialog.MagicDialogButton.POSITIVE)
-                .listener(new MagicDialog.OnMagicDialogClickCallback() {
+                .listener(new OnMagicDialogClickCallback() {
                     @Override
                     public void onClick(View view, MagicDialog.MagicDialogButton button, boolean checked) {
                         if (button == MagicDialog.MagicDialogButton.POSITIVE && checked) {
@@ -44,7 +44,7 @@ public class MagicDialogSample {
         MagicDialog dialog = new MagicDialog(activity);
         dialog.title("EditDialog Title").content("Confirm Content Body").hint("Please enter your name").unit("MB").warning().positive("OK").negative("Verify")
                 .check("Show Notice Dialog?").checked(true).bold(MagicDialog.MagicDialogButton.POSITIVE).right(MagicDialog.MagicDialogButton.POSITIVE)
-                .listener(new MagicDialog.OnMagicDialogClickCallback() {
+                .listener(new OnMagicDialogClickCallback() {
                     @Override
                     public boolean onClick(View view, MagicDialog.MagicDialogButton button, EditText editText, boolean checked) {
                         String input = editText.getText().toString();
@@ -71,7 +71,7 @@ public class MagicDialogSample {
         MagicDialog dialog = new MagicDialog(activity);
         dialog.title("VerifyDialog Title").content("Please remember your password").hint("Please enter your password").verify("Please confirm password")
                 .warning().positive("Verify").negative("Cancel").check("Show Notice Dialog?").checked(true).bold(MagicDialog.MagicDialogButton.POSITIVE).right(MagicDialog.MagicDialogButton.POSITIVE)
-                .listener(new MagicDialog.OnMagicDialogClickCallback() {
+                .listener(new OnMagicDialogClickCallback() {
                     @Override
                     public boolean onClick(View view, MagicDialog.MagicDialogButton button, EditText editText, EditText verifyEditText, boolean checked) {
                         String input = editText.getText().toString();
@@ -120,7 +120,7 @@ public class MagicDialogSample {
 
         MagicDialog dialog = new MagicDialog(activity);
         dialog.title("List Title").list(itemList).content("This is MagicDialog Tester").warning().positive("ConfirmDialog").negative("EditDialog").neutral("NotifyDialog")
-                .bold(MagicDialog.MagicDialogButton.NEGATIVE).listener(new MagicDialog.OnMagicDialogClickCallback() {
+                .bold(MagicDialog.MagicDialogButton.NEGATIVE).listener(new OnMagicDialogClickCallback() {
             @Override
             public void onClick(View view, MagicDialog.MagicDialogButton button, boolean checked) {
                 if (button == MagicDialog.MagicDialogButton.POSITIVE) {

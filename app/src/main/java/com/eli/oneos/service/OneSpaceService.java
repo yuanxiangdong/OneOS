@@ -89,7 +89,7 @@ public class OneSpaceService extends Service {
 
     // ==========================================Auto Backup File==========================================
     public void startBackupFile() {
-        if (LoginManage.getInstance().isSSUDP()) {
+        if (!LoginManage.getInstance().isHttp()) {
             Log.e(TAG, "SSUDP, Do not open auto backup file");
             return;
         }
@@ -155,7 +155,7 @@ public class OneSpaceService extends Service {
 
     // ==========================================Auto Backup Album==========================================
     public void startBackupAlbum() {
-        if (LoginManage.getInstance().isSSUDP()) {
+        if (!LoginManage.getInstance().isHttp()) {
             Log.e(TAG, "SSUDP, Do not open auto backup photo");
             return;
         }

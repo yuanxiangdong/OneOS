@@ -87,13 +87,7 @@ public class LoginManage {
     }
 
 
-    private boolean isSSUDP = false;
-
-    public boolean isSSUDP() {
-        return isSSUDP;
-    }
-
-    public void setSSUDP(boolean isSSUDP) {
-        this.isSSUDP = isSSUDP;
+    public boolean isHttp() {
+        return null == loginSession || loginSession.isLANDevice() || loginSession.isWANDevice();
     }
 }

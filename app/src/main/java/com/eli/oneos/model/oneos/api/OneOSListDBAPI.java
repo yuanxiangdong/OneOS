@@ -35,7 +35,7 @@ public class OneOSListDBAPI extends OneOSBaseAPI {
     private OneOSFileType type = null;
 
     public OneOSListDBAPI(LoginSession loginSession, OneOSFileType type) {
-        super(loginSession.getDeviceInfo());
+        super(loginSession);
         this.session = loginSession.getSession();
         this.type = type;
     }
@@ -46,7 +46,8 @@ public class OneOSListDBAPI extends OneOSBaseAPI {
 
     public void list(int page) {
         url = genOneOSAPIUrl(OneOSAPIs.FILE_LIST_DB);
-        Map<String, String> params = new HashMap<>();;
+        Map<String, String> params = new HashMap<>();
+        ;
         params.put("session", session);
         params.put("sort", "5");
         params.put("page", String.valueOf(page));

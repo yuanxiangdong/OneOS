@@ -8,11 +8,14 @@ public class DeviceInfo {
 
     /** Not-null value. */
     private String mac;
-    /** Not-null value. */
-    private String ip;
-    /** Not-null value. */
-    private String port;
-    private Boolean isLAN;
+    private String name;
+    private String lanIp;
+    private String lanPort;
+    private String wanIp;
+    private String wanPort;
+    private String ssudpCid;
+    private String ssudpPwd;
+    private Integer domain;
     private Long time;
 
     public DeviceInfo() {
@@ -22,11 +25,16 @@ public class DeviceInfo {
         this.mac = mac;
     }
 
-    public DeviceInfo(String mac, String ip, String port, Boolean isLAN, Long time) {
+    public DeviceInfo(String mac, String name, String lanIp, String lanPort, String wanIp, String wanPort, String ssudpCid, String ssudpPwd, Integer domain, Long time) {
         this.mac = mac;
-        this.ip = ip;
-        this.port = port;
-        this.isLAN = isLAN;
+        this.name = name;
+        this.lanIp = lanIp;
+        this.lanPort = lanPort;
+        this.wanIp = wanIp;
+        this.wanPort = wanPort;
+        this.ssudpCid = ssudpCid;
+        this.ssudpPwd = ssudpPwd;
+        this.domain = domain;
         this.time = time;
     }
 
@@ -40,32 +48,68 @@ public class DeviceInfo {
         this.mac = mac;
     }
 
-    /** Not-null value. */
-    public String getIp() {
-        return ip;
+    public String getName() {
+        return name;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    /** Not-null value. */
-    public String getPort() {
-        return port;
+    public String getLanIp() {
+        return lanIp;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setPort(String port) {
-        this.port = port;
+    public void setLanIp(String lanIp) {
+        this.lanIp = lanIp;
     }
 
-    public Boolean getIsLAN() {
-        return isLAN;
+    public String getLanPort() {
+        return lanPort;
     }
 
-    public void setIsLAN(Boolean isLAN) {
-        this.isLAN = isLAN;
+    public void setLanPort(String lanPort) {
+        this.lanPort = lanPort;
+    }
+
+    public String getWanIp() {
+        return wanIp;
+    }
+
+    public void setWanIp(String wanIp) {
+        this.wanIp = wanIp;
+    }
+
+    public String getWanPort() {
+        return wanPort;
+    }
+
+    public void setWanPort(String wanPort) {
+        this.wanPort = wanPort;
+    }
+
+    public String getSsudpCid() {
+        return ssudpCid;
+    }
+
+    public void setSsudpCid(String ssudpCid) {
+        this.ssudpCid = ssudpCid;
+    }
+
+    public String getSsudpPwd() {
+        return ssudpPwd;
+    }
+
+    public void setSsudpPwd(String ssudpPwd) {
+        this.ssudpPwd = ssudpPwd;
+    }
+
+    public Integer getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Integer domain) {
+        this.domain = domain;
     }
 
     public Long getTime() {

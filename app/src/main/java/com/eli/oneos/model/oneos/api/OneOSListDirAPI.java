@@ -35,7 +35,7 @@ public class OneOSListDirAPI extends OneOSBaseAPI {
     private String type = "all";
 
     public OneOSListDirAPI(LoginSession loginSession, String path) {
-        super(loginSession.getDeviceInfo());
+        super(loginSession);
         this.session = loginSession.getSession();
         this.path = path;
     }

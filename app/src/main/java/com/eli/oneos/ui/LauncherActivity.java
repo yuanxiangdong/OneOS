@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.DeviceInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
@@ -27,7 +28,6 @@ import com.eli.oneos.utils.AppVersionUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
-import java.util.List;
 import java.util.Map;
 
 public class LauncherActivity extends BaseActivity {
@@ -170,7 +170,7 @@ public class LauncherActivity extends BaseActivity {
             public void onScanning(String mac, String ip) {
                 if (checkIfLastLoginDevice(mac)) {
                     isLastDeviceExist = true;
-                    doLogin(lastUserInfo.getName(), lastUserInfo.getPwd(), ip, OneOSAPIs.ONE_API_DEFAULT_PORT, mac);
+                    doLogin(lastUserInfo.getName(), lastUserInfo.getPwd(), ip, OneOSAPIs.ONE_API_DEFAULT_PORT, mac, Constants.DOMAIN_DEVICE_LAN);
                     mScanManager.stop();
                     mScanManager = null;
                 }
@@ -179,13 +179,12 @@ public class LauncherActivity extends BaseActivity {
             @Override
             public void onScanOver(Map<String, String> mDeviceMap, boolean isInterrupt, boolean isUdp) {
                 if (!isLastDeviceExist) {
-                    List<DeviceInfo> mHistoryDeviceList = DeviceInfoKeeper.all();
-                    if (!EmptyUtils.isEmpty(mHistoryDeviceList)) {
-                        for (DeviceInfo info : mHistoryDeviceList) {
-                            if (info.getMac().equals(lastUserInfo.getMac())) {
-                                doLogin(lastUserInfo.getName(), lastUserInfo.getPwd(), info.getIp(), info.getPort(), lastUserInfo.getMac());
-                                return;
-                            }
+                    int domain = lastUserInfo.getDomain();
+                    if (domain == Constants.DOMAIN_DEVICE_WAN) {
+                        DeviceInfo info = DeviceInfoKeeper.query(lastUserInfo.getMac());
+                        if (null != info) {
+                            doLogin(lastUserInfo.getName(), lastUserInfo.getPwd(), info.getLanIp(), info.getLanPort(), lastUserInfo.getMac(), domain);
+                            return;
                         }
                     }
 
@@ -212,7 +211,7 @@ public class LauncherActivity extends BaseActivity {
         return isLast;
     }
 
-    private void doLogin(String user, String pwd, String ip, String port, String mac) {
+    private void doLogin(String user, String pwd, String ip, String port, String mac, int domain) {
         OneOSLoginAPI loginAPI = new OneOSLoginAPI(ip, port, user, pwd, mac);
         loginAPI.setOnLoginListener(new OneOSLoginAPI.OnLoginListener() {
             @Override
@@ -230,7 +229,7 @@ public class LauncherActivity extends BaseActivity {
                 gotoLoginActivity();
             }
         });
-        loginAPI.login();
+        loginAPI.login(domain);
     }
 
 }

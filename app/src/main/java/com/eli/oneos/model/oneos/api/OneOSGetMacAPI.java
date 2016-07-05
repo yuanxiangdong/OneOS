@@ -26,8 +26,8 @@ public class OneOSGetMacAPI extends OneOSBaseAPI {
 
     private OnGetMacListener listener;
 
-    public OneOSGetMacAPI(String ip, String port) {
-        super(ip, port);
+    public OneOSGetMacAPI(String ip, String port, boolean isHttp) {
+        super(ip, port, isHttp);
     }
 
     public void setOnGetMacListener(OnGetMacListener listener) {
@@ -37,7 +37,6 @@ public class OneOSGetMacAPI extends OneOSBaseAPI {
     public void getMac() {
         url = genOneOSAPIUrl(OneOSAPIs.NET_GET_MAC);
         Map<String, String> params = new HashMap<>();
-        ;
         params.put("iface", "eth1");
 
         httpUtils.post(url, params, new OnHttpListener<String>() {

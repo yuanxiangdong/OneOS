@@ -110,7 +110,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         mToolList.clear();
         int[] title = TOOL_TITLE_M3X;
         int[] icon = TOOL_ICON_M3X;
-        if (LoginManage.getInstance().isSSUDP()) {
+        if (!LoginManage.getInstance().isHttp()) {
             title = TOOL_TITLE_M3X_SSUDP;
             icon = TOOL_ICON_M3X_SSUDP;
         }
@@ -140,7 +140,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         });
 
         LinearLayout mLayout = (LinearLayout) view.findViewById(R.id.layout_backup);
-        if (LoginManage.getInstance().isSSUDP()) { // SSUDP时不显示备份功能
+        if (!LoginManage.getInstance().isHttp()) { // SSUDP时不显示备份功能
             mLayout.setVisibility(View.GONE);
         } else {
             mLayout.setVisibility(View.VISIBLE);

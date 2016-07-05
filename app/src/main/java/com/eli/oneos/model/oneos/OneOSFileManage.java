@@ -161,7 +161,7 @@ public class OneOSFileManage {
         this.loginSession = loginSession;
         this.mRootView = rootView;
         this.callback = callback;
-        fileManageAPI = new OneOSFileManageAPI(this.loginSession.getDeviceInfo().getIp(), this.loginSession.getDeviceInfo().getPort(), this.loginSession.getSession());
+        fileManageAPI = new OneOSFileManageAPI(this.loginSession.getIp(), this.loginSession.getPort(), this.loginSession.getSession());
         fileManageAPI.setOnFileManageListener(mListener);
     }
 
