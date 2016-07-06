@@ -286,7 +286,7 @@ public class LoginActivity extends BaseActivity {
 
                 for (DeviceInfo info : mHistoryDeviceList) {
                     if (!EmptyUtils.isEmpty(info.getWanIp())) {
-                        SpinnerView.SpinnerItem<DeviceInfo> spinnerItem = new SpinnerView.SpinnerItem<>(id, Constants.DOMAIN_DEVICE_WAN, R.drawable.btn_clear, info.getLanIp(), true, info);
+                        SpinnerView.SpinnerItem<DeviceInfo> spinnerItem = new SpinnerView.SpinnerItem<>(id, Constants.DOMAIN_DEVICE_WAN, R.drawable.btn_clear, info.getWanIp(), true, info);
                         spinnerItems.add(spinnerItem);
                         id++;
                     }
@@ -398,7 +398,7 @@ public class LoginActivity extends BaseActivity {
         if (mac != null) {
             domain = Constants.DOMAIN_DEVICE_LAN;
         } else {
-            if (port.equals("12345678")) {
+            if (ip.length() == 33 &&port.equals("12345678")) {
                 domain = Constants.DOMAIN_DEVICE_SSUDP;
             } else {
                 domain = Constants.DOMAIN_DEVICE_WAN;

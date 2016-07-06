@@ -158,6 +158,18 @@
     <string name="error_get_device_mac">Get OneSpace Mac address failed, please try to login again</string>
     <string name="error_login_user_or_pwd">Incorrect username or password</string>
 
+    <!-- for SSUDP -->
+    <string name="tip_title_bond_ssudp">Bind SSUDP？</string>
+    <string name="tip_bond_ssudp">After binding, you can access OneSpace using SSUDP</string>
+    <string name="binding">Binding&#8230;</string>
+    <string name="ssudp_connecting">Connecting&#8230;</string>
+    <string name="bind_now">Bind Now</string>
+    <string name="bind_succeed">Bind Succeed</string>
+    <string name="bind_failed">Bind Failed</string>
+    <string name="tip_title_bond_ssudp_failed">SSUDP Bind Failed</string>
+    <string name="tip_title_connect_ssudp_failed">Connect OneSpace Failed</string>
+    <string name="tip_bond_ssudp_failed">Your OneSpace does not support SSUDP, please upgrade to the latest version or contact the officials!</string>
+
     <!-- Cloud Fragment -->
     <string name="root_dir_name_private">Private</string>
     <string name="root_dir_name_public">Public</string>

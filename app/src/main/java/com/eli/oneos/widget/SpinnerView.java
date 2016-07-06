@@ -150,7 +150,15 @@ public class SpinnerView<T> {
             }
 
             final SpinnerItem item = itemList.get(position);
+            if (item.group == 2) {
+                holder.mTitleTxt.setTextColor(context.getResources().getColor(R.color.red));
+            } else if (item.group == 1) {
+                holder.mTitleTxt.setTextColor(context.getResources().getColor(R.color.primary));
+            } else {
+                holder.mTitleTxt.setTextColor(context.getResources().getColor(R.color.darker));
+            }
             holder.mTitleTxt.setText(item.title);
+
             if (item.deletable) {
                 holder.mRightIBtn.setVisibility(View.VISIBLE);
                 holder.mRightIBtn.setImageResource(item.icon);
