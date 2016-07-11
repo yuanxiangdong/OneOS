@@ -55,7 +55,7 @@ public class SSUDPUpload extends SSUDPClient {
         len = ssudpSend(pcsLink, buffer, len, flags);
         if (len == -1) {
             setConnect(false);
-            return SSUDPConst.SSUPD_ERROR_DISCONNECT;
+            return SSUDPConst.SSUDP_ERROR_DISCONNECT;
         }
 
         return len;
@@ -122,14 +122,14 @@ public class SSUDPUpload extends SSUDPClient {
         Log.e(TAG, "Upload SSUDP state: " + isConnected());
         if (pcsLink == 0) {
             fileChunk.result = false;
-            fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_NOT_READY;
+            fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_NOT_READY;
             Log.e(TAG, "Upload SSUDP Not ready...");
             return fileChunk;
         }
 
         if (!isConnected()) {
             fileChunk.result = false;
-            fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_DISCONNECT;
+            fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_DISCONNECT;
             Log.e(TAG, "Upload SSUDP disconnected...");
             return fileChunk;
         }
@@ -147,7 +147,7 @@ public class SSUDPUpload extends SSUDPClient {
         if (send < 0) {
             Log.e(TAG, config.id() + ">>>> Send failed, result=" + send + "; connected=" + isConnected());
             fileChunk.result = false;
-            fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_DISCONNECT;
+            fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_DISCONNECT;
             return fileChunk;
         } else {
             Log.d(TAG, config.id() + ">>>> Send success, len=" + send);
@@ -160,7 +160,7 @@ public class SSUDPUpload extends SSUDPClient {
             if (len <= 0) {
                 Log.e(TAG, config.id() + ">>>> Receive none content...");
                 fileChunk.result = false;
-                fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_NO_CONTENT;
+                fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_NO_CONTENT;
             } else {
                 if (stream.type == SSUDPConst.TAGID_FTP_UPLOAD_ACK) {
                     Log.d(TAG, ">>>> Receive response: " + new String(stream.buffer).trim().replaceAll("\r\n", "--"));
@@ -203,12 +203,12 @@ public class SSUDPUpload extends SSUDPClient {
                         } else {
                             Log.d(TAG, ">>>> Upload failed !!");
                             fileChunk.result = false;
-                            fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_EXCEPTION;
+                            fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_EXCEPTION;
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                         fileChunk.result = false;
-                        fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_EXCEPTION;
+                        fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_EXCEPTION;
                     }
 
                     break;

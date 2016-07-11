@@ -83,6 +83,15 @@ public class MainActivity extends BaseActivity {
                 mCurNavFragment.onNetworkChanged(isAvailable, isWifiAvailable);
             }
         }
+
+        @Override
+        public void onSSUDPChanged(boolean isConnect) {
+            if (isConnect) {
+                ToastHelper.showToast(R.string.tip_title_ssudp_connect);
+            } else {
+                ToastHelper.showToast(R.string.tip_title_ssudp_disconnect);
+            }
+        }
     };
     private ImageCheckBox.OnImageCheckedChangedListener listener = new ImageCheckBox.OnImageCheckedChangedListener() {
 

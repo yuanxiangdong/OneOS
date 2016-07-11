@@ -48,7 +48,7 @@ public class SSUDPRequest extends SSUDPClient {
                     if (!conn) {
                         isIdle = true;
                         if (null != responseListener) {
-                            responseListener.onFailure(SSUDPConst.SSUPD_ERROR_DISCONNECT, "SSUDP disconnected.");
+                            responseListener.onFailure(SSUDPConst.SSUDP_ERROR_DISCONNECT, "SSUDP disconnected.");
                         }
                     }
                     if (null != stateListener) {
@@ -250,15 +250,15 @@ public class SSUDPRequest extends SSUDPClient {
     @Override
     synchronized int send(byte[] buffer, int len, int flags) {
         if (pcsLink == 0) {
-            return SSUDPConst.SSUPD_ERROR_NOT_READY;
+            return SSUDPConst.SSUDP_ERROR_NOT_READY;
         }
 
         if (!isConnected()) {
-            return SSUDPConst.SSUPD_ERROR_DISCONNECT;
+            return SSUDPConst.SSUDP_ERROR_DISCONNECT;
         }
 
         if (!isIdle()) {
-            return SSUDPConst.SSUPD_ERROR_IS_BUSY;
+            return SSUDPConst.SSUDP_ERROR_IS_BUSY;
         }
 
         isIdle = false;
@@ -266,7 +266,7 @@ public class SSUDPRequest extends SSUDPClient {
         if (len == -1) {
             updateState(false);
             isIdle = true;
-            return SSUDPConst.SSUPD_ERROR_DISCONNECT;
+            return SSUDPConst.SSUDP_ERROR_DISCONNECT;
         }
 
         return len;

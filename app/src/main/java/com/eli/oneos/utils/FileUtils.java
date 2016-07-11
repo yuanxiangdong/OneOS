@@ -229,7 +229,7 @@ public class FileUtils {
     public static void openOneOSFile(LoginSession loginSession, BaseActivity activity, int position, final ArrayList<OneOSFile> fileList) {
         if (!LoginManage.getInstance().isHttp()) {
             MagicDialog dialog = new MagicDialog(activity);
-            dialog.title(R.string.tips).content(R.string.error_app_not_found_to_open_file).positive(R.string.ok)
+            dialog.title(R.string.tips).content(R.string.tip_ssudp_open_file_failed).positive(R.string.ok)
                     .bold(MagicDialog.MagicDialogButton.POSITIVE).show();
             return;
         }

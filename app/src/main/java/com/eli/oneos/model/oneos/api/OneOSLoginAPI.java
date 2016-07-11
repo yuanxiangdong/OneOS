@@ -170,13 +170,13 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
         if (null == userInfo) {
             userInfo = new UserInfo(null, user, mac, pwd, admin, uid, gid, domain, time, false, true);
             id = UserInfoKeeper.insert(userInfo);
-            if (id == -1) {
-                Logger.p(LogLevel.ERROR, true, TAG, "Insert UserInfo Error: " + id);
-                new Throwable(new Exception("Insert UserInfo Error"));
-                return;
-            } else {
-                userSettings = UserSettingsKeeper.insertDefault(id, user);
-            }
+//            if (id == -1) {
+//                Logger.p(LogLevel.ERROR, true, TAG, "Insert UserInfo Error: " + id);
+//                new Throwable(new Exception("Insert UserInfo Error"));
+//                return;
+//            } else {
+            userSettings = UserSettingsKeeper.insertDefault(id, user);
+//            }
         } else {
             userInfo.setPwd(pwd);
             userInfo.setAdmin(admin);

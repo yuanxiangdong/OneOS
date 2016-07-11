@@ -6,14 +6,13 @@ import android.util.Log;
 
 import com.eli.oneos.MyApplication;
 
-import java.util.ArrayList;
-
 
 public class SSUDPManager {
     private static final String TAG = SSUDPManager.class.getSimpleName();
 
     private static SSUDPManager instance = null;
-    private ArrayList<SSUDPRequest> ssudpRequests = new ArrayList<>();
+    //    private ArrayList<SSUDPRequest> ssudpRequests = new ArrayList<>();
+    private SSUDPRequest ssudpRequest;
     private SSUDPDownload ssudpDownload;
     private SSUDPUpload ssudpUpload;
     private SSUDPRequest.OnSSUdpResponseListener respCallback;
@@ -21,7 +20,7 @@ public class SSUDPManager {
         @Override
         public void onStateChanged(boolean isConnected) {
             Intent intent = new Intent(SSUDPConst.BROADCAST_ACTION_SSUDP);
-            intent.putExtra(SSUDPConst.EXTRA_SSUDP_STATE,isConnected);
+            intent.putExtra(SSUDPConst.EXTRA_SSUDP_STATE, isConnected);
             MyApplication.getAppContext().sendBroadcast(intent);
         }
     };
@@ -38,18 +37,25 @@ public class SSUDPManager {
     }
 
     public void initSSUDPClient(Context context, String strCid, String strPwd) {
-        if (ssudpRequests.size() >= SSUDPConst.MAX_CLIENTS_COUNT) {
-            Log.e(TAG, String.format("SSUDP client can create up to %d.", SSUDPConst.MAX_CLIENTS_COUNT));
-            return;
+//        if (ssudpRequests.size() >= SSUDPConst.MAX_CLIENTS_COUNT) {
+//            Log.e(TAG, String.format("SSUDP client can create up to %d.", SSUDPConst.MAX_CLIENTS_COUNT));
+//            return;
+//        }
+//
+//        int count = SSUDPConst.MAX_CLIENTS_COUNT - ssudpRequests.size();
+//        for (int i = 0; i < count; i++) {
+//            SSUDPRequest client = new SSUDPRequest(context, strCid, strPwd);
+//            client.setOnSSUdpStateListener(stateListener);
+//            ssudpRequests.add(client);
+//        }
+
+        if (null != ssudpRequest) {
+            ssudpRequest.stopReceivedThread();
+            ssudpRequest = null;
         }
 
-        int count = SSUDPConst.MAX_CLIENTS_COUNT - ssudpRequests.size();
-        for (int i = 0; i < count; i++) {
-            SSUDPRequest client = new SSUDPRequest(context, strCid, strPwd);
-            client.setOnSSUdpStateListener(stateListener);
-            ssudpRequests.add(client);
-        }
-
+        ssudpRequest = new SSUDPRequest(context, strCid, strPwd);
+        ssudpRequest.setOnSSUdpStateListener(stateListener);
         ssudpDownload = new SSUDPDownload(context, strCid, strPwd);
         ssudpUpload = new SSUDPUpload(context, strCid, strPwd);
 
@@ -59,10 +65,10 @@ public class SSUDPManager {
     private int times = 0;
 
     public boolean connectSSUPDClient(final OnSSUDPConnectListener listener) {
-        if (ssudpRequests.isEmpty()) {
-            Log.e(TAG, "None SSUDP client to connect.");
-            return false;
-        }
+//        if (ssudpRequests.isEmpty()) {
+//            Log.e(TAG, "None SSUDP client to connect.");
+//            return false;
+//        }
 
         times = 0;
         new Thread(new Runnable() {
@@ -71,13 +77,13 @@ public class SSUDPManager {
                 while (true) {
                     times++;
                     boolean allConnected = true;
-                    for (SSUDPRequest client : ssudpRequests) {
-                        if (!client.isConnected() && client.connect()) {
-                            allConnected = false;
-                        }
-                    }
+//                    for (SSUDPRequest client : ssudpRequests) {
+//                        if (!client.isConnected() && client.connect()) {
+//                            allConnected = false;
+//                        }
+//                    }
 
-                    if (allConnected) {
+                    if (ssudpRequest.isConnected() || ssudpRequest.connect()) {
                         if (null != listener) {
                             listener.onResult(times, true);
                         }
@@ -96,30 +102,34 @@ public class SSUDPManager {
     }
 
     public void startSSUDPClient() {
-        for (SSUDPRequest client : ssudpRequests) {
-            client.startReceivedThread();
-        }
+//        for (SSUDPRequest client : ssudpRequests) {
+//            client.startReceivedThread();
+//        }
+        ssudpRequest.startReceivedThread();
     }
 
     public void destroySSUDPClient() {
-        for (SSUDPRequest client : ssudpRequests) {
-            client.stopReceivedThread();
-        }
-        ssudpRequests.clear();
+//        for (SSUDPRequest client : ssudpRequests) {
+//            client.stopReceivedThread();
+//        }
+//        ssudpRequests.clear();
+        ssudpRequest.stopReceivedThread();
     }
 
     public boolean sendSSUDPRequest(String request, SSUDPRequest.OnSSUdpResponseListener listener) {
         this.respCallback = listener;
-        if (ssudpRequests.isEmpty()) {
-            Log.e(TAG, "None SSUDP client to use.");
-            if (null != respCallback) {
-                respCallback.onFailure(SSUDPConst.SSUPD_ERROR_NOT_READY, "None SSUDP client to use, waiting...");
-            }
+//        if (ssudpRequests.isEmpty()) {
+//            Log.e(TAG, "None SSUDP client to use.");
+//            if (null != respCallback) {
+//                respCallback.onFailure(SSUDPConst.SSUDP_ERROR_NOT_READY, "None SSUDP client to use, waiting...");
+//            }
+//
+//            return false;
+//        }
+//        SSUDPRequest client = ssudpRequests.get(0);
+//        client.send(SSUDPConst.TAGID_FTP_REQUEST, request, respCallback);
 
-            return false;
-        }
-        SSUDPRequest client = ssudpRequests.get(0);
-        client.send(SSUDPConst.TAGID_FTP_REQUEST, request, respCallback);
+        ssudpRequest.send(SSUDPConst.TAGID_FTP_REQUEST, request, respCallback);
 
         return true;
     }

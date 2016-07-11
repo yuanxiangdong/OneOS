@@ -159,6 +159,7 @@
     <string name="error_login_user_or_pwd">用户名或密码错误</string>
 
     <!-- for SSUDP -->
+    <string name="remote_login">远程访问</string>
     <string name="tip_title_bond_ssudp">绑定SSUDP？</string>
     <string name="tip_bond_ssudp">绑定后，可以选择使用SSUDP访问设备！</string>
     <string name="binding">正在绑定&#8230;</string>
@@ -169,6 +170,9 @@
     <string name="tip_title_bond_ssudp_failed">绑定SSUDP失败</string>
     <string name="tip_title_connect_ssudp_failed">连接设备失败</string>
     <string name="tip_bond_ssudp_failed">您的OneSpace暂不支持SSUDP服务，请升级到最新版或联系官方人员！</string>
+    <string name="tip_ssudp_open_file_failed">SSUDP登录不支持在线打开文件，请下载后查看！</string>
+    <string name="tip_title_ssudp_disconnect">SSUDP连接已断开</string>
+    <string name="tip_title_ssudp_connect">SSUDP恢复连接</string>
 
     <!-- Cloud Fragment -->
     <string name="root_dir_name_private">我的目录</string>

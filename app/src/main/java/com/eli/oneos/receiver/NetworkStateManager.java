@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import com.eli.oneos.MyApplication;
 
@@ -32,7 +31,9 @@ public class NetworkStateManager {
                 String action = intent.getAction();
                 if (null != action && action.equals(SSUDPConst.BROADCAST_ACTION_SSUDP)) {
                     boolean connect = intent.getBooleanExtra(SSUDPConst.EXTRA_SSUDP_STATE, true);
-                    Log.e("NetworkStateManager", "----state: " + connect);
+                    for (OnNetworkStateChangedListener listener : listenerList) {
+                        listener.onSSUDPChanged(connect);
+                    }
                 } else {
                     ConnectivityManager mManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo mobNetInfo = mManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
@@ -83,5 +84,7 @@ public class NetworkStateManager {
 
     public interface OnNetworkStateChangedListener {
         void onChanged(boolean isAvailable, boolean isWifiAvailable);
+
+        void onSSUDPChanged(boolean isConnect);
     }
 }

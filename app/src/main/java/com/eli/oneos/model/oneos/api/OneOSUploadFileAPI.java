@@ -84,9 +84,9 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
             }
         } else {
             if (LoginManage.getInstance().isHttp()) {
-                doSSUDPUpload();
-            } else {
                 doHttpUpload();
+            } else {
+                doSSUDPUpload();
             }
         }
 

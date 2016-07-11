@@ -103,6 +103,10 @@ public class LoginActivity extends BaseActivity {
                 DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tips, R.string.network_not_available, R.string.ok, null);
             }
         }
+
+        @Override
+        public void onSSUDPChanged(boolean isConnect) {
+        }
     };
 
     private View.OnClickListener onLoginClickListener = new View.OnClickListener() {
@@ -120,21 +124,21 @@ public class LoginActivity extends BaseActivity {
                     break;
                 case R.id.btn_more_ip:
                     if (EmptyUtils.isEmpty(mLANDeviceList)) {
-                        if (isWifiAvailable) {
-                            DialogUtils.showConfirmDialog(LoginActivity.this, R.string.tip_title_research, R.string.tip_search_again,
-                                    R.string.research_now, R.string.cancel, new DialogUtils.OnDialogClickListener() {
-                                        @Override
-                                        public void onClick(boolean isPositiveBtn) {
-                                            if (isPositiveBtn) {
-                                                mScanManager.start();
-                                            } else {
-                                                showDeviceSpinnerView(mIPLayout);
-                                            }
+//                        if (isWifiAvailable) {
+                        DialogUtils.showConfirmDialog(LoginActivity.this, R.string.tip_title_research, R.string.tip_search_again,
+                                R.string.research_now, R.string.remote_login, new DialogUtils.OnDialogClickListener() {
+                                    @Override
+                                    public void onClick(boolean isPositiveBtn) {
+                                        if (isPositiveBtn) {
+                                            mScanManager.start();
+                                        } else {
+                                            showDeviceSpinnerView(mIPLayout);
                                         }
-                                    });
-                        } else {
-                            DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tips, R.string.wifi_not_available, R.string.ok, null);
-                        }
+                                    }
+                                });
+//                        } else {
+//                            DialogUtils.showNotifyDialog(LoginActivity.this, R.string.tips, R.string.wifi_not_available, R.string.ok, null);
+//                        }
                         return;
                     } else {
                         showDeviceSpinnerView(mIPLayout);
@@ -398,7 +402,7 @@ public class LoginActivity extends BaseActivity {
         if (mac != null) {
             domain = Constants.DOMAIN_DEVICE_LAN;
         } else {
-            if (ip.length() == 33 &&port.equals("12345678")) {
+            if (ip.length() == 33 && port.equals("12345678")) {
                 domain = Constants.DOMAIN_DEVICE_SSUDP;
             } else {
                 domain = Constants.DOMAIN_DEVICE_WAN;

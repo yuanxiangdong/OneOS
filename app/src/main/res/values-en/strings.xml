@@ -159,6 +159,7 @@
     <string name="error_login_user_or_pwd">Incorrect username or password</string>
 
     <!-- for SSUDP -->
+    <string name="remote_login">Remote Access</string>
     <string name="tip_title_bond_ssudp">Bind SSUDP？</string>
     <string name="tip_bond_ssudp">After binding, you can access OneSpace using SSUDP</string>
     <string name="binding">Binding&#8230;</string>
@@ -169,6 +170,9 @@
     <string name="tip_title_bond_ssudp_failed">SSUDP Bind Failed</string>
     <string name="tip_title_connect_ssudp_failed">Connect OneSpace Failed</string>
     <string name="tip_bond_ssudp_failed">Your OneSpace does not support SSUDP, please upgrade to the latest version or contact the officials!</string>
+    <string name="tip_ssudp_open_file_failed">SSUDP does not support open file online, please open after download!</string>
+    <string name="tip_title_ssudp_disconnect">SSUDP Disconnected</string>
+    <string name="tip_title_ssudp_connect">SSUDP Connected</string>
 
     <!-- Cloud Fragment -->
     <string name="root_dir_name_private">Private</string>

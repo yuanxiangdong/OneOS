@@ -55,7 +55,7 @@ public class SSUDPDownload extends SSUDPClient {
         len = ssudpSend(pcsLink, buffer, len, flags);
         if (len == -1) {
             setConnect(false);
-            return SSUDPConst.SSUPD_ERROR_DISCONNECT;
+            return SSUDPConst.SSUDP_ERROR_DISCONNECT;
         }
 
         return len;
@@ -124,14 +124,14 @@ public class SSUDPDownload extends SSUDPClient {
         Log.e(TAG, "Download SSUDP state: " + isConnected());
         if (pcsLink == 0) {
             fileChunk.result = false;
-            fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_NOT_READY;
+            fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_NOT_READY;
             Log.e(TAG, "Download SSUDP Not ready...");
             return fileChunk;
         }
 
         if (!isConnected()) {
             fileChunk.result = false;
-            fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_DISCONNECT;
+            fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_DISCONNECT;
             Log.e(TAG, "Download SSUDP disconnected...");
             return fileChunk;
         }
@@ -148,7 +148,7 @@ public class SSUDPDownload extends SSUDPClient {
         if (send < 0) {
             Log.e(TAG, config.id() + ">>>> Send failed, result=" + send + "; connected=" + isConnected());
             fileChunk.result = false;
-            fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_DISCONNECT;
+            fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_DISCONNECT;
             return fileChunk;
         }
 
@@ -159,7 +159,7 @@ public class SSUDPDownload extends SSUDPClient {
             if (len <= 0) {
                 Log.e(TAG, config.id() + ">>>> Receive none content...");
                 fileChunk.result = false;
-                fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_NO_CONTENT;
+                fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_NO_CONTENT;
             } else {
                 if (stream.type == SSUDPConst.TAGID_FTP_DOWNLOAD_ACK) {
                     ByteArrayInputStream inputStream = new ByteArrayInputStream(stream.buffer);
@@ -209,12 +209,12 @@ public class SSUDPDownload extends SSUDPClient {
                             System.arraycopy(stream.buffer, cmdLen, fileChunk.body, 0, fileLen);
                         } else {
                             fileChunk.result = false;
-                            fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_EXCEPTION;
+                            fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_EXCEPTION;
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                         fileChunk.result = false;
-                        fileChunk.errorNo = SSUDPConst.SSUPD_ERROR_EXCEPTION;
+                        fileChunk.errorNo = SSUDPConst.SSUDP_ERROR_EXCEPTION;
                     }
 
                     break;

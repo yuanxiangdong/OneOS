@@ -78,12 +78,27 @@ public class UserInfoKeeper {
     public static long insert(UserInfo info) {
         if (info != null) {
             Logger.p(LogLevel.ERROR, true, "UserInfoKeeper", "Insert New User: name=" + info.getName() + ", mac=" + info.getMac());
-
             UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
             return dao.insert(info);
         }
 
         return -1;
+    }
+
+    /**
+     * Update user information
+     *
+     * @param user
+     * @return
+     */
+    public static boolean update(UserInfo user) {
+        if (null == user) {
+            return false;
+        }
+
+        UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
+        dao.update(user);
+        return true;
     }
 
     /**
@@ -100,22 +115,6 @@ public class UserInfoKeeper {
         UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
         info.setIsActive(false);
         dao.update(info);
-        return true;
-    }
-
-    /**
-     * Update user information
-     *
-     * @param user
-     * @return
-     */
-    public static boolean update(UserInfo user) {
-        if (null == user) {
-            return false;
-        }
-
-        UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
-        dao.update(user);
         return true;
     }
 }

@@ -56,7 +56,7 @@ public class DAOGenerator {
         note.addStringProperty("name").notNull();   // 用户名
         note.addStringProperty("mac").notNull();    // 设备Mac地址
         note.addStringProperty("pwd").notNull();    // 用户密码
-        note.addIntProperty("admin");               // 是否为管理员用户（1:true, 2: false）
+        note.addIntProperty("admin");               // 是否为管理员用户（1:true, x: false）
         note.addIntProperty("uid");                 // 设备数据库中的ID
         note.addIntProperty("gid");                 // 用户组ID
         // -----------------------------db v2----------------------------------------

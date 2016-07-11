@@ -56,11 +56,11 @@ public class SSUDPConst {
     public static final int SSUDP_MSG_STATE = 0x103;
 
     //----------------- SSUDP error info --------------------
-    public static final int SSUPD_ERROR_NOT_READY = -0x10001;
-    public static final int SSUPD_ERROR_DISCONNECT = -0x10002;
-    public static final int SSUPD_ERROR_IS_BUSY = -0x10003;
-    public static final int SSUPD_ERROR_NO_CONTENT = -0x10004;
-    public static final int SSUPD_ERROR_EXCEPTION = -0x10004;
+    public static final int SSUDP_ERROR_NOT_READY = -0x10001;
+    public static final int SSUDP_ERROR_DISCONNECT = -0x10002;
+    public static final int SSUDP_ERROR_IS_BUSY = -0x10003;
+    public static final int SSUDP_ERROR_NO_CONTENT = -0x10004;
+    public static final int SSUDP_ERROR_EXCEPTION = -0x10004;
 }
 
 

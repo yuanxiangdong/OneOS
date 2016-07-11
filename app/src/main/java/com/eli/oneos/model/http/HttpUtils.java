@@ -121,13 +121,17 @@ public class HttpUtils<T> {
                     callBack.onSuccess((T) response);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
-                    callBack.onFailure(new Exception("SSUDP request failed!"), SSUDPConst.SSUPD_ERROR_NO_CONTENT, "No content response.");
+                    callBack.onFailure(new Exception("SSUDP request failed!"), SSUDPConst.SSUDP_ERROR_NO_CONTENT, "No content response.");
                 }
             }
 
             @Override
             public void onFailure(int errno, String errMsg) {
-                callBack.onFailure(new Exception("SSUDP request failed!"), errno, errMsg);
+                if (errno == SSUDPConst.SSUDP_ERROR_DISCONNECT || errno == SSUDPConst.SSUDP_ERROR_NOT_READY) {
+                    errMsg = "SSUDP disconnect";
+                }
+
+                callBack.onFailure(new Exception(errMsg), errno, errMsg);
             }
         });
 
