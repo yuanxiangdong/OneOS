@@ -45,7 +45,7 @@ public final class UndoBar {
     /**
      * Default duration in milliseconds of the undo bar show and hide animation.
      */
-    public static final int DEFAULT_ANIMATION_DURATION = 300;
+    public static final int DEFAULT_ANIMATION_DURATION = 350;
 
     private final Activity mActivity;
     private final UndoBarView mView;

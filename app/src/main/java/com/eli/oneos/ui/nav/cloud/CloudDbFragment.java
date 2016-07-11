@@ -375,7 +375,7 @@ public class CloudDbFragment extends BaseCloudFragment {
 
         ArrayList<String> mSectionLetters = new ArrayList<>();
         int index = 0;
-        String fmt = getResources().getString(R.string.fmt_time_line);
+        String fmt = mMainActivity.getResources().getString(R.string.fmt_time_line);
         for (OneOSFile file : mFileList) {
             String letter = FileUtils.formatTime(file.getMonth() * 1000, fmt);
             if (!mSectionLetters.contains(letter)) {

@@ -117,7 +117,10 @@ public class HttpUtils<T> {
             @Override
             public void onSuccess(byte[] header, byte[] buffer) {
                 try {
-                    String response = new String(buffer, "UTF-8").trim();
+                    String response = null;
+                    if (null != buffer) {
+                        response = new String(buffer, "UTF-8").trim();
+                    }
                     callBack.onSuccess((T) response);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
