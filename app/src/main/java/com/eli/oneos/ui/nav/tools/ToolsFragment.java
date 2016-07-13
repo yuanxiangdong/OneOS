@@ -35,21 +35,24 @@ import com.eli.oneos.widget.TitleBackLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import www.glinkwin.com.glink.ssudp.SSUDPManager;
+
 public class ToolsFragment extends BaseNavFragment implements OnItemClickListener {
 
     private static final String TAG = ToolsFragment.class.getSimpleName();
 
     private static final int TOOL_SETTING = R.string.tool_setting;
     private static final int TOOL_USER_MANAGEMENT = R.string.tool_user_management;
+    private static final int TOOL_BIND_SSUDP = R.string.tool_bind_ssudp;
     private static final int TOOL_HD_INFO = R.string.tool_hd_info;
     private static final int TOOL_APP = R.string.tool_app;
     private static final int TOOL_ARIA = R.string.tool_aria;
     private static final int TOOL_SYSTEM_MANAGEMENT = R.string.tool_system_management;
     private static final int TOOL_SYSTEM_STATUS = R.string.tool_system_status;
     private static final int TOOL_LOGOUT = R.string.tool_logout;
-    private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_USER_MANAGEMENT, TOOL_HD_INFO, TOOL_APP, TOOL_ARIA, TOOL_SYSTEM_MANAGEMENT, TOOL_SYSTEM_STATUS, TOOL_LOGOUT};
-    private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_user_management,
-            R.drawable.icon_tools_user_management, R.drawable.icon_tools_app, R.drawable.icon_tools_offline, R.drawable.icon_tools_power,
+    private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_USER_MANAGEMENT, TOOL_BIND_SSUDP, TOOL_HD_INFO, TOOL_APP, TOOL_ARIA, TOOL_SYSTEM_MANAGEMENT, TOOL_SYSTEM_STATUS, TOOL_LOGOUT};
+    private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_user_management, R.drawable.icon_tools_ssudp_bind,
+            R.drawable.icon_tools_hd_info, R.drawable.icon_tools_app, R.drawable.icon_tools_offline, R.drawable.icon_tools_power,
             R.drawable.icon_tools_system_status, R.drawable.icon_tools_change_user};
     private static final int[] TOOL_TITLE_M3X_SSUDP = new int[]{TOOL_HD_INFO, TOOL_SYSTEM_MANAGEMENT, TOOL_LOGOUT};
     private static final int[] TOOL_ICON_M3X_SSUDP = new int[]{R.drawable.icon_tools_user_management, R.drawable.icon_tools_power, R.drawable.icon_tools_change_user};
@@ -211,6 +214,12 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             } else {
                 ToastHelper.showToast(R.string.please_login_onespace);
             }
+        } else if (tool == TOOL_BIND_SSUDP) {
+            if (isLogin()) {
+                intent = new Intent(getActivity(), SsudpActivity.class);
+            } else {
+                ToastHelper.showToast(R.string.please_login_onespace);
+            }
         } else if (tool == TOOL_SYSTEM_STATUS) {
             if (isLogin()) {
                 intent = new Intent(getActivity(), SystemStatusActivity.class);
@@ -322,6 +331,11 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
      * login out
      */
     private void doLoginOut() {
+        if (!LoginManage.getInstance().isHttp()) {
+            SSUDPManager ssudpManager = SSUDPManager.getInstance();
+            ssudpManager.destroySSUDPClient();
+        }
+
         OneSpaceService mTransferService = MyApplication.getService();
         mTransferService.notifyUserLogout();
         LoginManage.getInstance().logout();

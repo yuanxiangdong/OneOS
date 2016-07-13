@@ -50,8 +50,13 @@ public class SSUDPManager {
 //        }
 
         if (null != ssudpRequest) {
-            ssudpRequest.stopReceivedThread();
-            ssudpRequest = null;
+            if (ssudpRequest.config.strcid.equals(strCid)) {
+                Log.d(TAG, "SSUDP has been initialized");
+                return;
+            } else {
+                ssudpRequest.stopReceivedThread();
+                ssudpRequest = null;
+            }
         }
 
         ssudpRequest = new SSUDPRequest(context, strCid, strPwd);
@@ -60,6 +65,14 @@ public class SSUDPManager {
         ssudpUpload = new SSUDPUpload(context, strCid, strPwd);
 
         Log.d(TAG, String.format("Init SSUDP client complete: %d.", SSUDPConst.MAX_CLIENTS_COUNT));
+    }
+
+    public void destroy() {
+        destroySSUDPClient();
+        ssudpDownload.destroy();
+        ssudpDownload = null;
+        ssudpUpload.destroy();
+        ssudpUpload = null;
     }
 
     private int times = 0;
@@ -105,7 +118,9 @@ public class SSUDPManager {
 //        for (SSUDPRequest client : ssudpRequests) {
 //            client.startReceivedThread();
 //        }
-        ssudpRequest.startReceivedThread();
+        if (null != ssudpRequest) {
+            ssudpRequest.startReceivedThread();
+        }
     }
 
     public void destroySSUDPClient() {
@@ -113,7 +128,10 @@ public class SSUDPManager {
 //            client.stopReceivedThread();
 //        }
 //        ssudpRequests.clear();
-        ssudpRequest.stopReceivedThread();
+        if (null != ssudpRequest) {
+            ssudpRequest.stopReceivedThread();
+            ssudpRequest = null;
+        }
     }
 
     public boolean sendSSUDPRequest(String request, SSUDPRequest.OnSSUdpResponseListener listener) {

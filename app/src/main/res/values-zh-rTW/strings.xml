@@ -169,7 +169,7 @@
     <string name="bind_failed">綁定失敗</string>
     <string name="tip_title_bond_ssudp_failed">綁定SSUDP失敗</string>
     <string name="tip_title_connect_ssudp_failed">連接設備失敗</string>
-    <string name="tip_bond_ssudp_failed">您的OneSpace暫不支持SSUDP服務，請升級到最新版或聯系官方人員！</string>
+    <string name="tip_bond_ssudp_failed">您的OneSpace暫不支持SSUDP服務，請聯系官方技術支持！</string>
     <string name="tip_ssudp_open_file_failed">SSUDP登錄不支持在線打開文件，請下載後查看！</string>
     <string name="tip_title_ssudp_disconnect">SSUDP連接已斷開</string>
     <string name="tip_title_ssudp_connect">SSUDP恢復連接</string>
@@ -512,4 +512,12 @@
     <string name="hd_info_capacity">硬盤容量：</string>
     <string name="fmt_hd_info_tmp" formatted="false">%d&#160;℃</string>
     <string name="fmt_oneos_mode" formatted="false">當前正在使用模式：%s</string>
+    <string name="hint_enter_ssupd_name">請輸入設備名稱</string>
+    <string name="ssudp_boned">SSUDP已綁定</string>
+    <string name="tip_unbind_ssudp">確認解除綁定SSUDP？</string>
+    <string name="title_bind_ssudp">綁定SSUDP</string>
+    <string name="title_ssudp_name">設備名稱</string>
+    <string name="tool_bind_ssudp">SSUDP綁定</string>
+    <string name="unbind">解除綁定</string>
+    <string name="unbind_succeed">解綁成功</string>
 </resources>

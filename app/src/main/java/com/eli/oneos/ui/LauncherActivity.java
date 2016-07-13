@@ -16,6 +16,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.db.DeviceInfoKeeper;
+import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
@@ -59,7 +60,7 @@ public class LauncherActivity extends BaseActivity {
             }
         }
 
-//        lastUserInfo = UserInfoKeeper.lastUser();
+        lastUserInfo = UserInfoKeeper.lastUser();
         initView();
     }
 
@@ -86,6 +87,7 @@ public class LauncherActivity extends BaseActivity {
         scaleAnim.setDuration(1000);
         animationSet.addAnimation(scaleAnim);
         mLogoView.startAnimation(animationSet);
+        final boolean needsAutoLogin = (lastUserInfo != null) && (!lastUserInfo.getIsLogout()) && (lastUserInfo.getDomain() != Constants.DOMAIN_DEVICE_SSUDP);
         animationSet.setAnimationListener(new Animation.AnimationListener() {
             /**
              * <p>Notifies the start of the animation.</p>
@@ -94,7 +96,7 @@ public class LauncherActivity extends BaseActivity {
              */
             @Override
             public void onAnimationStart(Animation animation) {
-                if (lastUserInfo != null && !lastUserInfo.getIsLogout()) {
+                if (needsAutoLogin) {
                     scanningLANDevice();
                 }
             }
@@ -108,7 +110,7 @@ public class LauncherActivity extends BaseActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 showAppVersion();
-                if (lastUserInfo == null || lastUserInfo.getIsLogout()) {
+                if (!needsAutoLogin) {
                     gotoLoginActivity();
                 }
             }
@@ -183,7 +185,7 @@ public class LauncherActivity extends BaseActivity {
                     if (domain == Constants.DOMAIN_DEVICE_WAN) {
                         DeviceInfo info = DeviceInfoKeeper.query(lastUserInfo.getMac());
                         if (null != info) {
-                            doLogin(lastUserInfo.getName(), lastUserInfo.getPwd(), info.getLanIp(), info.getLanPort(), lastUserInfo.getMac(), domain);
+                            doLogin(lastUserInfo.getName(), lastUserInfo.getPwd(), info.getWanIp(), info.getWanPort(), lastUserInfo.getMac(), domain);
                             return;
                         }
                     }

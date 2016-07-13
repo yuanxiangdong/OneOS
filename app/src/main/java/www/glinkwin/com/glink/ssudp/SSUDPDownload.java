@@ -43,15 +43,26 @@ public class SSUDPDownload extends SSUDPClient {
     }
 
     @Override
-    void disconnect() {
+    public void disconnect() {
+        if (pcsLink != 0) {
+            ssudpDisconnect(pcsLink);
+            delayMS(300);
+            ssudpClose(pcsLink);
+//            delayMS(600);
+            pcsLink = 0;
+        }
     }
 
     @Override
-    void closeClient() {
+    public void closeClient() {
+        if (clientId != 0) {
+            ssudpCloseClient(clientId);
+            clientId = 0;
+        }
     }
 
     @Override
-    int send(byte[] buffer, int len, int flags) {
+    public int send(byte[] buffer, int len, int flags) {
         len = ssudpSend(pcsLink, buffer, len, flags);
         if (len == -1) {
             setConnect(false);
@@ -59,6 +70,11 @@ public class SSUDPDownload extends SSUDPClient {
         }
 
         return len;
+    }
+
+    public void destroy() {
+        disconnect();
+        closeClient();
     }
 
     private int receive(byte[] buffer, int offset, int lens, int flags) {

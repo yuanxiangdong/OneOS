@@ -6,6 +6,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.http.OnHttpListener;
+import com.eli.oneos.model.oneos.user.LoginSession;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +21,10 @@ public class OneOSSSUDPClientIDAPI extends OneOSBaseAPI {
 
     private OnClientIDListener listener;
     private String dev, name;
+
+    public OneOSSSUDPClientIDAPI(LoginSession loginSession) {
+        super(loginSession);
+    }
 
     public OneOSSSUDPClientIDAPI(String ip, String port) {
         super(ip, port);

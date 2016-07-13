@@ -209,7 +209,11 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
             deviceInfo.setWanIp(ip);
             deviceInfo.setWanPort(port);
         }
-        DeviceInfoKeeper.insertOrReplace(deviceInfo);
+        if (isNewDevice) {
+            DeviceInfoKeeper.insert(deviceInfo);
+        } else {
+            DeviceInfoKeeper.update(deviceInfo);
+        }
 
         LoginSession loginSession = new LoginSession(userInfo, deviceInfo, userSettings, session, isNewDevice, time);
 

@@ -47,6 +47,7 @@ public class TipView {
         if (context == null) {
             return;
         }
+        dismiss();
 
         View view = LayoutInflater.from(context).inflate(R.layout.layout_pop_tip, null);
         mTipPop = new PopupWindow(view, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);

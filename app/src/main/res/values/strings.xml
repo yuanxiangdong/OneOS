@@ -169,10 +169,17 @@
     <string name="bind_failed">绑定失败</string>
     <string name="tip_title_bond_ssudp_failed">绑定SSUDP失败</string>
     <string name="tip_title_connect_ssudp_failed">连接设备失败</string>
-    <string name="tip_bond_ssudp_failed">您的OneSpace暂不支持SSUDP服务，请升级到最新版或联系官方人员！</string>
+    <string name="tip_bond_ssudp_failed">您的OneSpace暂不支持SSUDP服务，请联系官方技术支持！</string>
     <string name="tip_ssudp_open_file_failed">SSUDP登录不支持在线打开文件，请下载后查看！</string>
     <string name="tip_title_ssudp_disconnect">SSUDP连接已断开</string>
-    <string name="tip_title_ssudp_connect">SSUDP恢复连接</string>
+    <string name="tip_title_ssudp_connect">SSUDP已连接</string>
+    <string name="hint_enter_ssupd_name">请输入设备名称</string>
+    <string name="title_ssudp_name">设备名称</string>
+    <string name="title_bind_ssudp">绑定SSUDP</string>
+    <string name="unbind">解除绑定</string>
+    <string name="ssudp_boned">SSUDP已绑定</string>
+    <string name="tip_unbind_ssudp">确认解除绑定SSUDP？</string>
+    <string name="unbind_succeed">解绑成功</string>
 
     <!-- Cloud Fragment -->
     <string name="root_dir_name_private">我的目录</string>
@@ -245,6 +252,7 @@
     <string name="tool_backup_file">文件备份</string>
     <string name="tool_sync_contact">通讯录备份</string>
     <string name="tool_sync_sms">短信备份</string>
+    <string name="tool_bind_ssudp">SSUDP绑定</string>
     <string name="tool_user_management">用户管理</string>
     <string name="tool_hd_info">硬盘信息</string>
     <string name="tool_app">应用管理</string>

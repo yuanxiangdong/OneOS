@@ -37,6 +37,8 @@ import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.InputMethodUtils;
+import com.eli.oneos.utils.ToastHelper;
+import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.SpinnerView;
 import com.eli.oneos.widget.TitleBackLayout;
 
@@ -58,7 +60,7 @@ public class LoginActivity extends BaseActivity {
     private EditText mUserTxt, mPwdTxt, mPortTxt;
     private Button mLoginBtn;
     private ImageButton mMoreUserBtn, mMoreIpBtn;
-    private RelativeLayout mUserLayout, mIPLayout;
+    private RelativeLayout mUserLayout, mIPLayout, mPortLayout;
     private EditText mIPTxt;
 
     private Intent uploadIntent = null;
@@ -220,20 +222,12 @@ public class LoginActivity extends BaseActivity {
             }
         });
         mIPLayout = (RelativeLayout) findViewById(R.id.layout_server);
+        mPortLayout = (RelativeLayout) findViewById(R.id.layout_port);
         mIPTxt = (EditText) findViewById(R.id.editext_ip);
         mMoreIpBtn = (ImageButton) findViewById(R.id.btn_more_ip);
         mMoreIpBtn.setOnClickListener(onMoreClickListener);
         mLoginBtn = (Button) findViewById(R.id.btn_login);
         mLoginBtn.setOnClickListener(onLoginClickListener);
-
-        // TODO.. for SSUDP test
-        mLoginBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-//                attemptLogin(true);
-                return true;
-            }
-        });
     }
 
     private void showUserSpinnerView(View view) {
@@ -298,7 +292,11 @@ public class LoginActivity extends BaseActivity {
 
                 for (DeviceInfo info : mHistoryDeviceList) {
                     if (!EmptyUtils.isEmpty(info.getSsudpCid())) {
-                        SpinnerView.SpinnerItem<DeviceInfo> spinnerItem = new SpinnerView.SpinnerItem<>(id, Constants.DOMAIN_DEVICE_SSUDP, R.drawable.btn_clear, info.getSsudpCid(), true, info);
+                        String name = info.getName();
+                        if (EmptyUtils.isEmpty(name)) {
+                            name = info.getSsudpCid();
+                        }
+                        SpinnerView.SpinnerItem<DeviceInfo> spinnerItem = new SpinnerView.SpinnerItem<>(id, Constants.DOMAIN_DEVICE_SSUDP, R.drawable.btn_clear, name, true, info);
                         spinnerItems.add(spinnerItem);
                         id++;
                     }
@@ -316,7 +314,7 @@ public class LoginActivity extends BaseActivity {
                             info.setSsudpCid(null);
                             info.setSsudpPwd(null);
                         }
-                        DeviceInfoKeeper.insertOrReplace(info);
+                        DeviceInfoKeeper.update(info);
                         mDeviceSpinnerView.dismiss();
                     }
 
@@ -327,12 +325,15 @@ public class LoginActivity extends BaseActivity {
                         if (item.group == Constants.DOMAIN_DEVICE_LAN) {
                             mIPTxt.setText(deviceInfo.getLanIp());
                             mPortTxt.setText(deviceInfo.getLanPort());
+                            mPortLayout.setVisibility(View.VISIBLE);
                         } else if (item.group == Constants.DOMAIN_DEVICE_WAN) {
                             mIPTxt.setText(deviceInfo.getWanIp());
                             mPortTxt.setText(deviceInfo.getWanPort());
+                            mPortLayout.setVisibility(View.VISIBLE);
                         } else {
                             mIPTxt.setText(deviceInfo.getSsudpCid());
                             mPortTxt.setText(deviceInfo.getSsudpPwd());
+                            mPortLayout.setVisibility(View.GONE);
                         }
 
                         mDeviceSpinnerView.dismiss();
@@ -389,23 +390,22 @@ public class LoginActivity extends BaseActivity {
         if (EmptyUtils.isEmpty(port)) {
             port = OneOSAPIs.ONE_API_DEFAULT_PORT;
             mPortTxt.setText(port);
-//        } else if (!Utils.checkPort(port)) {
-//            AnimUtils.sharkEditText(LoginActivity.this, mPortTxt);
-//            AnimUtils.focusToEnd(mPortTxt);
-//            ToastHelper.showToast(R.string.tip_invalid_port);
-//            return false;
+        } else if (mPortLayout.isShown() && !Utils.checkPort(port)) {
+            AnimUtils.sharkEditText(LoginActivity.this, mPortTxt);
+            AnimUtils.focusToEnd(mPortTxt);
+            ToastHelper.showToast(R.string.tip_invalid_port);
+            return false;
         }
 
-        // TODO.. just for test
         String mac = getLANDeviceMacByIP(ip);
         int domain;
         if (mac != null) {
             domain = Constants.DOMAIN_DEVICE_LAN;
         } else {
-            if (ip.length() == 33 && port.equals("12345678")) {
-                domain = Constants.DOMAIN_DEVICE_SSUDP;
-            } else {
+            if (mPortLayout.isShown()) {
                 domain = Constants.DOMAIN_DEVICE_WAN;
+            } else {
+                domain = Constants.DOMAIN_DEVICE_SSUDP;
             }
         }
 
@@ -469,6 +469,40 @@ public class LoginActivity extends BaseActivity {
                 }).show();
     }
 
+    private void setSSUDPName(final String cid) {
+        MagicDialog.creator(LoginActivity.this).edit().title(R.string.title_ssudp_name).hint(R.string.hint_enter_ssupd_name)
+                .positive(R.string.confirm).negative(R.string.cancel).bold(MagicDialog.MagicDialogButton.POSITIVE)
+                .listener(new OnMagicDialogClickCallback() {
+                    @Override
+                    public boolean onClick(View view, MagicDialog.MagicDialogButton button, EditText editText, boolean checked) {
+                        String name = editText.getText().toString();
+                        if (button == MagicDialog.MagicDialogButton.POSITIVE) {
+                            if (EmptyUtils.isEmpty(name)) {
+                                AnimUtils.sharkEditText(LoginActivity.this, editText);
+                                return false;
+                            } else {
+                                mLoginSession.getDeviceInfo().setSsudpCid(cid);
+                                mLoginSession.getDeviceInfo().setSsudpPwd("12345678");
+                                mLoginSession.getDeviceInfo().setName(name);
+                                DeviceInfoKeeper.update(mLoginSession.getDeviceInfo());
+
+                                showTipView(R.string.bind_succeed, true, new PopupWindow.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss() {
+                                        gotoMainActivity();
+                                    }
+                                });
+                                return true;
+                            }
+                        } else {
+                            gotoMainActivity();
+                        }
+
+                        return true;
+                    }
+                }).show();
+    }
+
     private void getSSUDPClientID() {
         OneOSSSUDPClientIDAPI ssudpClientIDAPI = new OneOSSSUDPClientIDAPI(mLoginSession.getIp(), mLoginSession.getPort());
         ssudpClientIDAPI.setOnClientIDListener(new OneOSSSUDPClientIDAPI.OnClientIDListener() {
@@ -479,16 +513,7 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void onSuccess(String url, String cid) {
-                mLoginSession.getDeviceInfo().setSsudpCid(cid);
-                mLoginSession.getDeviceInfo().setSsudpPwd("12345678");
-                DeviceInfoKeeper.insertOrReplace(mLoginSession.getDeviceInfo());
-
-                showTipView(R.string.bind_succeed, true, new PopupWindow.OnDismissListener() {
-                    @Override
-                    public void onDismiss() {
-                        gotoMainActivity();
-                    }
-                });
+                setSSUDPName(cid);
             }
 
             @Override

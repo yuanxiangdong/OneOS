@@ -3,6 +3,7 @@ package com.eli.lib.magicdialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -58,6 +59,8 @@ public class MagicDialog {
     private LayoutInflater inflater = null;
     // click callback
     private OnMagicDialogClickCallback callback = null;
+    // dismiss listener
+    private DialogInterface.OnDismissListener dismissListener = null;
     // dialog cancelable
     private boolean cancelable = false;
     // dialog type
@@ -102,7 +105,19 @@ public class MagicDialog {
         this.activity = activity;
         resources = activity.getResources();
         mDialog = new Dialog(activity, R.style.DialogTheme);
+        mDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (null != dismissListener) {
+                    dismissListener.onDismiss(dialog);
+                }
+            }
+        });
         inflater = activity.getLayoutInflater();
+    }
+
+    public static MagicDialog creator(Activity activity) {
+        return new MagicDialog(activity);
     }
 
     /**
@@ -248,7 +263,8 @@ public class MagicDialog {
         if (!EmptyUtils.isEmpty(edit)) {
             mEditText.setText(edit);
             mEditText.setSelection(0, edit.length());
-        } else if (!EmptyUtils.isEmpty(hint)) {
+        }
+        if (!EmptyUtils.isEmpty(hint)) {
             mEditText.setHint(hint);
         }
         mTextView = (TextView) view.findViewById(R.id.txt_dialog_unit);
@@ -262,6 +278,7 @@ public class MagicDialog {
         mDialog.setContentView(view);
         mDialog.setCancelable(cancelable);
         mDialog.show();
+        InputMethodUtils.showKeyboard(activity, mEditText, 200);
     }
 
     private void showVerifyDialog() {
@@ -324,7 +341,8 @@ public class MagicDialog {
         if (!EmptyUtils.isEmpty(edit)) {
             mEditText.setText(edit);
             mEditText.setSelection(0, edit.length());
-        } else if (!EmptyUtils.isEmpty(hint)) {
+        }
+        if (!EmptyUtils.isEmpty(hint)) {
             mEditText.setHint(hint);
         }
         if (!EmptyUtils.isEmpty(verify)) {
@@ -888,6 +906,18 @@ public class MagicDialog {
      */
     public MagicDialog listener(OnMagicDialogClickCallback listener) {
         this.callback = listener;
+
+        return this;
+    }
+
+    /**
+     * Set {@link DialogInterface.OnDismissListener}
+     *
+     * @param listener {@link DialogInterface.OnDismissListener}
+     * @return {@link MagicDialog}
+     */
+    public MagicDialog listener(DialogInterface.OnDismissListener listener) {
+        this.dismissListener = listener;
 
         return this;
     }

@@ -169,7 +169,7 @@
     <string name="bind_failed">Bind Failed</string>
     <string name="tip_title_bond_ssudp_failed">SSUDP Bind Failed</string>
     <string name="tip_title_connect_ssudp_failed">Connect OneSpace Failed</string>
-    <string name="tip_bond_ssudp_failed">Your OneSpace does not support SSUDP, please upgrade to the latest version or contact the officials!</string>
+    <string name="tip_bond_ssudp_failed">Your OneSpace does not support SSUDP, please contact the official technical support!</string>
     <string name="tip_ssudp_open_file_failed">SSUDP does not support open file online, please open after download!</string>
     <string name="tip_title_ssudp_disconnect">SSUDP Disconnected</string>
     <string name="tip_title_ssudp_connect">SSUDP Connected</string>
@@ -512,4 +512,12 @@
     <string name="hd_info_capacity">Disk Size:</string>
     <string name="fmt_hd_info_tmp" formatted="false">%d&#160;℃</string>
     <string name="fmt_oneos_mode" formatted="false">Current Mode：%s</string>
+    <string name="hint_enter_ssupd_name">Please enter device name</string>
+    <string name="ssudp_boned">SSUDP bound</string>
+    <string name="tip_unbind_ssudp">Confirm unbind SSUDP?</string>
+    <string name="title_bind_ssudp">Bind SSUDP</string>
+    <string name="title_ssudp_name">Device Name</string>
+    <string name="tool_bind_ssudp">SSUDP Bind</string>
+    <string name="unbind">Unbind</string>
+    <string name="unbind_succeed">Unbind success</string>
 </resources>

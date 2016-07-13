@@ -29,19 +29,38 @@ public class DeviceInfoKeeper {
         return (DeviceInfo) queryBuilder.unique();
     }
 
-    public static boolean insertOrReplace(DeviceInfo info) {
-        if (info != null) {
+    public static boolean insert(DeviceInfo info) {
+        if (null != info) {
             DeviceInfoDao dao = DBHelper.getDaoSession().getDeviceInfoDao();
-            return dao.insertOrReplace(info) > 0;
+            return dao.insert(info) > 0;
         }
 
         return false;
     }
 
-    public static boolean delete(DeviceInfo history) {
-        if (history != null) {
+    public static boolean update(DeviceInfo info) {
+        if (null != info) {
             DeviceInfoDao dao = DBHelper.getDaoSession().getDeviceInfoDao();
-            dao.delete(history);
+            dao.update(info);
+            return true;
+        }
+
+        return false;
+    }
+
+//    public static boolean insertOrReplace(DeviceInfo info) {
+//        if (info != null) {
+//            DeviceInfoDao dao = DBHelper.getDaoSession().getDeviceInfoDao();
+//            return dao.insertOrReplace(info) > 0;
+//        }
+//
+//        return false;
+//    }
+
+    public static boolean delete(DeviceInfo info) {
+        if (info != null) {
+            DeviceInfoDao dao = DBHelper.getDaoSession().getDeviceInfoDao();
+            dao.delete(info);
 
             return true;
         }
