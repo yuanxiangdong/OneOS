@@ -25,6 +25,7 @@
     <string name="oneos_version_check_failed">检测系统版本失败，请重新尝试！</string>
     <string name="tips_title_version_mismatch">系统版本不匹配</string>
     <string name="wifi_not_available">当前WiFi不可用，请检查WiFi状态！</string>
+    <string name="goto_settings">设置</string>
     <string name="error_json_exception">协议解析失败</string>
     <string name="operate_failed">操作失败</string>
     <string name="app_exception">程序异常</string>

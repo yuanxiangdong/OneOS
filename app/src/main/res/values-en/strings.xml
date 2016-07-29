@@ -27,6 +27,7 @@
     <string name="oneos_version_check_failed">Detection system version fails, please try again!</string>
     <string name="tips_title_version_mismatch">OneOS Version Mismatch</string>
     <string name="wifi_not_available">The WiFi is not available, please check it!</string>
+    <string name="goto_settings">Settings</string>
     <string name="error_json_exception">Failed to parse protocol</string>
     <string name="operate_failed">Operation failed</string>
     <string name="app_exception">Application Exception</string>

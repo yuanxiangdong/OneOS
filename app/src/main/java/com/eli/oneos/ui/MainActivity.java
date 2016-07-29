@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -15,6 +16,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
 
+import com.eli.lib.magicdialog.MagicDialog;
+import com.eli.lib.magicdialog.OnMagicDialogClickCallback;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.FileManageAction;
@@ -31,7 +34,6 @@ import com.eli.oneos.ui.nav.cloud.CloudNavFragment;
 import com.eli.oneos.ui.nav.phone.LocalNavFragment;
 import com.eli.oneos.ui.nav.tansfer.TransferNavFragment;
 import com.eli.oneos.ui.nav.tools.ToolsFragment;
-import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.BadgeView;
@@ -51,7 +53,7 @@ public class MainActivity extends BaseActivity {
     private List<BaseNavFragment> mFragmentList = new ArrayList<>();
     private BaseNavFragment mCurNavFragment;
     private TransferNavFragment mTransferFragment;
-    //    private RadioGroup radioGroup;
+    // private RadioGroup radioGroup;
     private LinearLayout mNavLayout;
     private BadgeView mTransferBadgeView;
     private ImageCheckBox mLocalBox, mCloudBox, mTransferBox, mToolsBox;
@@ -66,11 +68,29 @@ public class MainActivity extends BaseActivity {
                 boolean isLANDevice = mLoginManager.getLoginSession().isLANDevice();
                 if (isLANDevice) {
                     if (!isWifiAvailable) {
-                        DialogUtils.showNotifyDialog(MainActivity.this, R.string.tips, R.string.wifi_not_available, R.string.ok, null);
+                        MagicDialog.creator(MainActivity.this).confirm().title(R.string.tips).content(R.string.wifi_not_available)
+                                .positive(R.string.goto_settings).negative(R.string.cancel).bold(MagicDialog.MagicDialogButton.POSITIVE)
+                                .listener(new OnMagicDialogClickCallback() {
+                                    public void onClick(View clickView, MagicDialog.MagicDialogButton button, boolean checked) {
+                                        if (button == MagicDialog.MagicDialogButton.POSITIVE) {
+                                            Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                                            startActivity(intent);
+                                        }
+                                    }
+                                }).show();
                     }
                 } else {
                     if (!isAvailable) {
-                        DialogUtils.showNotifyDialog(MainActivity.this, R.string.tips, R.string.network_not_available, R.string.ok, null);
+                        MagicDialog.creator(MainActivity.this).confirm().title(R.string.tips).content(R.string.network_not_available)
+                                .positive(R.string.goto_settings).negative(R.string.cancel).bold(MagicDialog.MagicDialogButton.POSITIVE)
+                                .listener(new OnMagicDialogClickCallback() {
+                                    public void onClick(View clickView, MagicDialog.MagicDialogButton button, boolean checked) {
+                                        if (button == MagicDialog.MagicDialogButton.POSITIVE) {
+                                            Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                                            startActivity(intent);
+                                        }
+                                    }
+                                }).show();
                     }
                 }
             } else {
