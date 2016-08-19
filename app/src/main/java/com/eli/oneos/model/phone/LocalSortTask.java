@@ -236,7 +236,6 @@ public class LocalSortTask extends AsyncTask<Integer, Integer, String[]> {
                 String dateTime = exif.getAttribute(ExifInterface.TAG_DATETIME);
                 if (dateTime != null) {
                     String date = exif.getAttribute(ExifInterface.TAG_DATETIME);
-                    Log.d(TAG, "Date: " + date);
                     return FileUtils.parseFmtTime(date, "yyyy:MM:dd HH:mm:ss");
                 }
             }
