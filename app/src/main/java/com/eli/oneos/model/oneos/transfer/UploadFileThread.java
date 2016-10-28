@@ -20,6 +20,13 @@ public class UploadFileThread extends Thread {
     private OneOSUploadFileAPI uploadFileAPI;
     private LoginSession mLoginSession;
 
+    /**
+     * To listener upload result
+     *
+     * @param element
+     * @param mLoginSession
+     * @param mListener
+     */
     public UploadFileThread(UploadElement element, LoginSession mLoginSession, OnTransferResultListener<UploadElement> mListener) {
         if (mListener == null || mLoginSession == null) {
             Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadResultListener or LoginSession is NULL");
@@ -30,6 +37,13 @@ public class UploadFileThread extends Thread {
         this.mResultListener = mListener;
     }
 
+    /**
+     * To listener upload progress
+     *
+     * @param element
+     * @param mLoginSession
+     * @param mListener
+     */
     public UploadFileThread(UploadElement element, LoginSession mLoginSession, OnTransferFileListener<UploadElement> mListener) {
         if (mListener == null || mLoginSession == null) {
             Logger.p(LogLevel.ERROR, Logged.UPLOAD, TAG, "OnUploadFileListener or LoginSession is NULL");
@@ -62,8 +76,8 @@ public class UploadFileThread extends Thread {
                     mResultListener.onResult(element);
                 }
             });
-            uploadFileAPI.upload();
         }
+        uploadFileAPI.upload();
     }
 
     public void stopUpload() {

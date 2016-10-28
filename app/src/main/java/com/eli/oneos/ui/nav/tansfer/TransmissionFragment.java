@@ -18,7 +18,7 @@ import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.adapter.TransmissionAdapter;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
-import com.eli.oneos.model.oneos.transfer.TransferControlListener;
+import com.eli.oneos.model.oneos.transfer.OnTransferControlListener;
 import com.eli.oneos.model.oneos.transfer.TransferElement;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.utils.DialogUtils;
@@ -102,7 +102,7 @@ public class TransmissionFragment extends BaseTransferFragment {
         mListView = (SwipeListView) view.findViewById(R.id.list_transfer);
         mListView.setEmptyView(mEmptyView);
         mAdapter = new TransmissionAdapter(getActivity(), mListView.getRightViewWidth());
-        mAdapter.setOnControlListener(new TransferControlListener() {
+        mAdapter.setOnControlListener(new OnTransferControlListener() {
 
             @Override
             public void onPause(TransferElement element) {

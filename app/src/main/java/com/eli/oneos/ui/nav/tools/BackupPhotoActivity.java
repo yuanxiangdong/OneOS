@@ -1,5 +1,6 @@
 package com.eli.oneos.ui.nav.tools;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +16,8 @@ import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.db.UserSettingsKeeper;
+import com.eli.oneos.model.oneos.transfer.OnTransferFileListener;
+import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.service.OneSpaceService;
@@ -33,7 +36,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
 
     private SwitchButton mSwitchButton, mCtrlSwitchButton;
     private LinearLayout mProgressLayout, mCompleteLayout;
-    private TextView mProgressTxt, mServerDirTxt, mCompleteTipTxt;
+    private TextView mProgressTxt, mServerDirTxt, mCompleteTipTxt, mFileNameTxt;
     private AnimCircleProgressBar mProgressBar;
     private TitleBackLayout mTitleLayout;
 
@@ -43,6 +46,50 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
     private Thread mThread = null;
 
     private OneSpaceService mBackupService;
+    private OnTransferFileListener<UploadElement> listener = new OnTransferFileListener<UploadElement>() {
+
+        @Override
+        public void onStart(String url, UploadElement element) {
+            updateBackupFileInfo(element, true);
+        }
+
+        @Override
+        public void onTransmission(String url, UploadElement element) {
+            updateBackupFileInfo(element, false);
+        }
+
+        @Override
+        public void onComplete(String url, UploadElement element) {
+        }
+    };
+
+    private void updateBackupFileInfo(final UploadElement element, final boolean start) {
+        if (null != element) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int progress = (int) (element.getLength() * 100 / element.getSize());
+                    String s = element.getSrcName();
+                    if (!start) {
+                        s += " (" + progress + "%)";
+                    }
+                    mFileNameTxt.setText(s);
+                }
+            });
+        }
+    }
+
+    /**
+     * Dispatch incoming result to the correct fragment.
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +125,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
         mProgressTxt = (TextView) findViewById(R.id.txt_progress);
         mCompleteTipTxt = (TextView) findViewById(R.id.txt_complete_tips);
         mServerDirTxt = (TextView) findViewById(R.id.txt_server_dir);
+        mFileNameTxt = (TextView) findViewById(R.id.txt_file_name);
 
         mSwitchButton = (SwitchButton) findViewById(R.id.btn_auto_backup);
         if (getLoginStatus()) {
@@ -105,6 +153,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
                         if (isChecked) {
                             Log.d(TAG, "-----Start Backup-----");
                             mBackupService.startBackupAlbum();
+                            mBackupService.setOnBackupAlbumListener(listener);
                         } else {
                             Log.d(TAG, "-----Stop Backup-----");
                             mBackupService.stopBackupAlbum();
@@ -150,10 +199,23 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
                     public void onClick(boolean isPositiveBtn) {
                         if (isPositiveBtn) {
                             mBackupService.resetBackupAlbum();
+                            mBackupService.setOnBackupAlbumListener(listener);
                             ToastHelper.showToast(R.string.success_reset_backup);
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mBackupService.removeOnBackupAlbumListener(listener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mBackupService.setOnBackupAlbumListener(listener);
     }
 
     @Override
@@ -176,12 +238,12 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
         if (count > 0) {
             // mBgView.setVisibility(View.GONE);
             mCompleteLayout.setVisibility(View.GONE);
-            // mProgressBar.setVisibility(View.VISIBLE);
             mProgressLayout.setVisibility(View.VISIBLE);
+            mFileNameTxt.setVisibility(View.VISIBLE);
             mTitleLayout.setRightButtonVisible(View.GONE);
         } else {
-            // mProgressBar.setVisibility(View.GONE);
             mProgressLayout.setVisibility(View.GONE);
+            mFileNameTxt.setVisibility(View.INVISIBLE);
             if (mSwitchButton.isChecked()) {
                 mCompleteTipTxt.setText(R.string.backup_complete);
                 mTitleLayout.setRightButtonVisible(View.VISIBLE);
@@ -249,7 +311,7 @@ public class BackupPhotoActivity extends BaseActivity implements OnClickListener
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_REFRESH_UI:
-                    int count = mBackupService.getBackupFileCount();
+                    int count = mBackupService.getBackupAlbumCount();
                     if (count > 0) {
                         isBackup = true;
                     } else {
