@@ -431,11 +431,12 @@ public class LoginActivity extends BaseActivity {
                 dismissLoading();
                 mLoginSession = loginSession;
 
-                if (mLoginSession.isNew()) {
-                    showSSUDPTipsDialog();
-                } else {
-                    gotoMainActivity();
-                }
+                // TODO... do not open ssudp
+//                if (mLoginSession.isNew()) {
+//                    showSSUDPTipsDialog();
+//                } else {
+                gotoMainActivity();
+//                }
             }
 
             @Override

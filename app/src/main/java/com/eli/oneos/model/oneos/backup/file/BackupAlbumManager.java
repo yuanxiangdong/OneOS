@@ -2,6 +2,7 @@ package com.eli.oneos.model.oneos.backup.file;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.db.greendao.BackupFile;
@@ -11,7 +12,7 @@ import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.backup.BackupPriority;
 import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.backup.RecursiveFileObserver;
-import com.eli.oneos.model.oneos.transfer.OnTransferResultListener;
+import com.eli.oneos.model.oneos.transfer.OnTransferFileListener;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
@@ -34,6 +35,7 @@ public class BackupAlbumManager {
     private ScanningAlbumThread mBackupThread = null;
     private List<RecursiveFileObserver> mFileObserverList = new ArrayList<>();
     private HandlerQueueThread handlerQueueThread = null;
+    private OnTransferFileListener<UploadElement> progressListener = null;
 
     private LoginSession mLoginSession = null;
     private List<BackupFile> mBackupList = null;
@@ -184,15 +186,43 @@ public class BackupAlbumManager {
         return false;
     }
 
+    public void setOnBackupListener(OnTransferFileListener<UploadElement> listener) {
+        Log.e(TAG, "----------------------");
+        this.progressListener = listener;
+    }
+
+    public void removeOnBackupListener(OnTransferFileListener<UploadElement> listener) {
+        if (this.progressListener == listener) {
+            this.progressListener = null;
+        }
+    }
+
     private class HandlerQueueThread extends Thread {
         private final String TAG = HandlerQueueThread.class.getSimpleName();
         private List<BackupElement> mBackupList = Collections.synchronizedList(new ArrayList<BackupElement>());
         private UploadFileThread backupPhotoThread = null;
         private boolean isRunning = false;
         private boolean hasBackupTask = false;
-        private OnTransferResultListener<UploadElement> listener = new OnTransferResultListener<UploadElement>() {
+        private OnTransferFileListener<UploadElement> listener = new OnTransferFileListener<UploadElement>() {
             @Override
-            public void onResult(UploadElement element) {
+            public void onStart(String url, UploadElement element) {
+                if (null != progressListener) {
+                    progressListener.onStart(url, element);
+                }
+            }
+
+            @Override
+            public void onTransmission(String url, UploadElement element) {
+                if (null != progressListener) {
+                    progressListener.onTransmission(url, element);
+                }
+            }
+
+            @Override
+            public void onComplete(String url, UploadElement element) {
+                if (null != progressListener) {
+                    progressListener.onComplete(url, element);
+                }
                 BackupElement mElement = (BackupElement) element;
                 Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Backup Result: " + mElement.getFile().getName() + ", State: " + mElement.getState() + ", Time: " + System.currentTimeMillis());
 

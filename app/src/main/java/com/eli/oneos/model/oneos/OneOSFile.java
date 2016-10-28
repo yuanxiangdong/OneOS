@@ -53,12 +53,12 @@ public class OneOSFile implements Serializable {
     private String fmtSize = null;
 
     /**
-     * OneOS File actual path
+     * OneOS File absolute path
      *
      * @param user user name
      * @return private file: [/home/user/path], public file: [path]
      */
-    public String getActualPath(String user) {
+    public String getAbsolutePath(String user) {
         if (isPublicFile()) {
             return path;
         } else {

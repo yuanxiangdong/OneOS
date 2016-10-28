@@ -12,7 +12,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.oneos.transfer.TransferControlListener;
+import com.eli.oneos.model.oneos.transfer.OnTransferControlListener;
 import com.eli.oneos.model.oneos.transfer.TransferElement;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
@@ -29,7 +29,7 @@ public class TransmissionAdapter extends BaseAdapter {
     private List<TransferElement> mList = null;
     private boolean isDownload;
     private int rightWidth = 0;
-    private TransferControlListener mListener;
+    private OnTransferControlListener mListener;
 
     public TransmissionAdapter(Context context, int rightWidth) {
         this.mInflater = LayoutInflater.from(context);
@@ -225,7 +225,7 @@ public class TransmissionAdapter extends BaseAdapter {
         return failedInfo;
     }
 
-    public void setOnControlListener(TransferControlListener mListener) {
+    public void setOnControlListener(OnTransferControlListener mListener) {
         this.mListener = mListener;
     }
 }

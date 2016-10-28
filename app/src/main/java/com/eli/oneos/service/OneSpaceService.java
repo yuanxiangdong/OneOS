@@ -17,6 +17,7 @@ import com.eli.oneos.model.oneos.backup.file.BackupAlbumManager;
 import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
 import com.eli.oneos.model.oneos.transfer.DownloadElement;
 import com.eli.oneos.model.oneos.transfer.DownloadManager;
+import com.eli.oneos.model.oneos.transfer.OnTransferFileListener;
 import com.eli.oneos.model.oneos.transfer.TransferManager;
 import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.model.oneos.transfer.UploadManager;
@@ -187,11 +188,23 @@ public class OneSpaceService extends Service {
         startBackupAlbum();
     }
 
-    public int getBackupFileCount() {
+    public int getBackupAlbumCount() {
         if (mBackupAlbumManager == null) {
             return 0;
         }
         return mBackupAlbumManager.getBackupListSize();
+    }
+
+    public void setOnBackupAlbumListener(OnTransferFileListener<UploadElement> listener) {
+        if (mBackupAlbumManager != null) {
+            mBackupAlbumManager.setOnBackupListener(listener);
+        }
+    }
+
+    public void removeOnBackupAlbumListener(OnTransferFileListener<UploadElement> listener) {
+        if (mBackupAlbumManager != null) {
+            mBackupAlbumManager.removeOnBackupListener(listener);
+        }
     }
     // ==========================================Auto Backup Album==========================================
 
