@@ -4,7 +4,11 @@
     android:layout_height="fill_parent"
     android:background="@android:color/black">
 
-    <com.eli.oneos.widget.preview.GalleryViewPager
+    <!--<com.eli.oneos.widget.preview.GalleryViewPager
+        android:id="@+id/switch_viewer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />-->
+    <com.eli.oneos.widget.preview.HackyViewPager
         android:id="@+id/switch_viewer"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
