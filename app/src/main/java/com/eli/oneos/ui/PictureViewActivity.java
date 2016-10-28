@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -167,7 +168,9 @@ public class PictureViewActivity extends Activity {
 
         @Override
         public View instantiateItem(ViewGroup container, int position) {
+//            ImageView photoView = new ImageView(container.getContext());
             PhotoView photoView = new PhotoView(container.getContext());
+            photoView.setScaleType(ImageView.ScaleType.CENTER);
             photoView.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
                 @Override
                 public void onViewTap(View view, float x, float y) {
@@ -200,22 +203,22 @@ public class PictureViewActivity extends Activity {
             if (isLocalPic) {
                 File file = (File) mList.get(position);
                 if (FileUtils.isGifFile(file.getName())) {
-                    Glide.with(context).load(file).asGif().diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .placeholder(R.drawable.anim_progress).error(R.drawable.icon_file_pic_default).into(photoView);
+                    Glide.with(context).load(file).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                            /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().crossFade(250).error(R.drawable.icon_file_pic_default).into(photoView);
                 } else {
-                    Glide.with(context).load(file).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .placeholder(R.drawable.anim_progress).error(R.drawable.icon_file_pic_default).into(photoView);
+                    Glide.with(context).load(file).diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().crossFade(250).error(R.drawable.icon_file_pic_default).into(photoView);
                 }
             } else {
                 OneOSFile file = (OneOSFile) mList.get(position);
                 String url = OneOSAPIs.genDownloadUrl(mLoginSession, file);
                 Log.d(TAG, ">>>> Load url: " + url);
                 if (file.isGif()) {
-                    Glide.with(context).load(url).asGif().diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .placeholder(R.drawable.anim_progress).error(R.drawable.icon_file_pic_default).into(photoView);
+                    Glide.with(context).load(url).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                            /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().crossFade(250).error(R.drawable.icon_file_pic_default).into(photoView);
                 } else {
-                    Glide.with(context).load(url).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .placeholder(R.drawable.anim_progress).error(R.drawable.icon_file_pic_default).into(photoView);
+                    Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().crossFade(250).error(R.drawable.icon_file_pic_default).into(photoView);
                 }
             }
 
