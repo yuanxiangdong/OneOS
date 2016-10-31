@@ -36,8 +36,14 @@ import com.eli.oneos.ui.nav.tansfer.TransferNavFragment;
 import com.eli.oneos.ui.nav.tools.ToolsFragment;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;
+import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.BadgeView;
 import com.eli.oneos.widget.ImageCheckBox;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -242,6 +248,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        checkStoragePermission();
     }
 
     @Override
@@ -314,6 +321,35 @@ public class MainActivity extends BaseActivity {
         mFragmentList.add(toolsFragment);
 
         changFragmentByIndex(mCurPageIndex);
+    }
+
+    protected void checkStoragePermission() {
+        if (!Dexter.isRequestOngoing()) {
+            Dexter.checkPermissions(new MultiplePermissionsListener() {
+
+                @Override
+                public void onPermissionsChecked(MultiplePermissionsReport report) {
+                    if (!report.areAllPermissionsGranted()) {
+                        MagicDialog dialog = new MagicDialog(MainActivity.this);
+                        dialog.title(R.string.permission_denied).confirm().content(R.string.perm_denied_storage).positive(R.string.settings)
+                                .negative(R.string.cancel).bold(MagicDialog.MagicDialogButton.POSITIVE).right(MagicDialog.MagicDialogButton.POSITIVE)
+                                .listener(new OnMagicDialogClickCallback() {
+                                    @Override
+                                    public void onClick(View view, MagicDialog.MagicDialogButton button, boolean checked) {
+                                        if (button == MagicDialog.MagicDialogButton.POSITIVE) {
+                                            Utils.gotoAppDetailsSettings(MainActivity.this);
+                                        }
+                                    }
+                                }).show();
+                    }
+                }
+
+                @Override
+                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                    token.continuePermissionRequest();
+                }
+            }, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
     }
 
     private void handleUploadIntent(final Intent mIntent) {

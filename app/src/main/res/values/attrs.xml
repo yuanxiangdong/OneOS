@@ -18,7 +18,7 @@
         <attr name="secondaryStartAngle" format="reference|integer" />
 
         <!-- 宽度 -->
-        <attr name="borderWidth" format="reference|dimension" />
+        <attr name="bordWidth" format="reference|dimension" />
         <!-- 字体颜色 -->
         <attr name="textColor" format="reference|color" />
         <!-- 字体大小 -->

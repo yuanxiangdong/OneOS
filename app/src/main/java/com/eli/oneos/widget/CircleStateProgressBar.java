@@ -128,7 +128,7 @@ public class CircleStateProgressBar extends View {
         secondaryStartAngle = mTypedArray.getInteger(R.styleable.CircleStateProgressStyle_secondaryStartAngle, -90);
         textColor = mTypedArray.getColor(R.styleable.CircleStateProgressStyle_textColor, Color.BLACK);
         textSize = mTypedArray.getDimension(R.styleable.CircleStateProgressStyle_textSize, 15);
-        borderWidth = mTypedArray.getDimension(R.styleable.CircleStateProgressStyle_borderWidth, 5);
+        borderWidth = mTypedArray.getDimension(R.styleable.CircleStateProgressStyle_bordWidth, 5);
         maxProgress = mTypedArray.getInteger(R.styleable.CircleStateProgressStyle_MaxProgress, 100);
         isShowText = mTypedArray.getBoolean(R.styleable.CircleStateProgressStyle_textShow, false);
         progressStyle = mTypedArray.getInt(R.styleable.CircleStateProgressStyle_profressStyle, 0);

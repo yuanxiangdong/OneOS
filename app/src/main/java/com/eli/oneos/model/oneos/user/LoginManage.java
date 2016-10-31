@@ -9,7 +9,7 @@ import com.eli.oneos.db.greendao.UserInfo;
  * Created by gaoyun@eli-tech.com on 2016/1/11.
  */
 public class LoginManage {
-    private static LoginSession loginSession = null;
+    private LoginSession loginSession = null;
     /**
      * Singleton instance of {@link LoginManage}
      */
@@ -74,7 +74,7 @@ public class LoginManage {
      * @param loginSession {@link LoginSession}
      */
     public void setLoginSession(LoginSession loginSession) {
-        LoginManage.loginSession = loginSession;
+        this.loginSession = loginSession;
     }
 
     /**
@@ -83,7 +83,7 @@ public class LoginManage {
      * @return {@link LoginSession}
      */
     public LoginSession getLoginSession() {
-        return LoginManage.loginSession;
+        return this.loginSession;
     }
 
 

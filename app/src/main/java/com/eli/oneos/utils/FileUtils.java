@@ -61,6 +61,18 @@ public class FileUtils {
     }
 
     /**
+     * get video date
+     *
+     * @param file
+     * @return video date
+     */
+    public static String getVideoDate(File file) {
+        long time = file.lastModified();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+        return format.format(new Date(time));
+    }
+
+    /**
      * Compress Image
      *
      * @param imgPath
@@ -102,8 +114,7 @@ public class FileUtils {
     public static String getFileTime(File file) {
         long time = file.lastModified();
         SimpleDateFormat format = new SimpleDateFormat(DEFAULT_TIME_FMT);
-        String date = format.format(new Date(time));
-        return date;
+        return format.format(new Date(time));
     }
 
     public static String getCurFormatTime() {

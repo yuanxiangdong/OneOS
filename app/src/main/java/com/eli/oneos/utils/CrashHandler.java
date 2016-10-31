@@ -12,6 +12,12 @@ import android.widget.Toast;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -120,48 +126,61 @@ public class CrashHandler implements UncaughtExceptionHandler {
         }
     }
 
-    private String saveCrashInfo2File(Throwable ex) {
-        StringBuffer sb = new StringBuffer();
-        for (Map.Entry<String, String> entry : expInfo.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            sb.append(key + "=" + value + "\n");
-        }
+    private void saveCrashInfo2File(final Throwable ex) {
+        if (!Dexter.isRequestOngoing()) {
+            Dexter.checkPermissionOnSameThread(new PermissionListener() {
 
-        Writer writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
-        ex.printStackTrace(printWriter);
-        Throwable cause = ex.getCause();
-        while (cause != null) {
-            cause.printStackTrace(printWriter);
-            cause = cause.getCause();
-        }
-        printWriter.close();
+                @Override
+                public void onPermissionGranted(PermissionGrantedResponse response) {
+                    StringBuffer sb = new StringBuffer();
+                    for (Map.Entry<String, String> entry : expInfo.entrySet()) {
+                        String key = entry.getKey();
+                        String value = entry.getValue();
+                        sb.append(key + "=" + value + "\n");
+                    }
 
-        String result = writer.toString();
-        sb.append(result);
-        try {
-            String time = formatter.format(new Date());
-            String fileName = APP_NAME + "_crashed-" + time + ".log";
+                    Writer writer = new StringWriter();
+                    PrintWriter printWriter = new PrintWriter(writer);
+                    ex.printStackTrace(printWriter);
+                    Throwable cause = ex.getCause();
+                    while (cause != null) {
+                        cause.printStackTrace(printWriter);
+                        cause = cause.getCause();
+                    }
+                    printWriter.close();
 
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                // path: sdcard/app_name/log/app_name_crashed-time.log
-                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + APP_NAME + File.separator + "log";
-                File dir = new File(path);
-                if (!dir.exists()) {
-                    dir.mkdirs();
+                    String result = writer.toString();
+                    sb.append(result);
+                    try {
+                        String time = formatter.format(new Date());
+                        String fileName = APP_NAME + "_crashed-" + time + ".log";
+
+                        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                            // path: sdcard/app_name/log/app_name_crashed-time.log
+                            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + APP_NAME + File.separator + "log";
+                            File dir = new File(path);
+                            if (!dir.exists()) {
+                                dir.mkdirs();
+                            }
+                            FileOutputStream fos = new FileOutputStream(path + File.separator + fileName);
+                            fos.write((fileName + "\n").getBytes());
+                            fos.write(sb.toString().getBytes());
+                            fos.close();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "an error occurred while writing file...", e);
+                    }
                 }
-                FileOutputStream fos = new FileOutputStream(path + File.separator + fileName);
-                fos.write((fileName + "\n").getBytes());
-                fos.write(sb.toString().getBytes());
-                fos.close();
-            }
 
-            return fileName;
-        } catch (Exception e) {
-            Log.e(TAG, "an error occurred while writing file...", e);
+                @Override
+                public void onPermissionDenied(PermissionDeniedResponse response) {
+                }
+
+                @Override
+                public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                    token.cancelPermissionRequest();
+                }
+            }, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
-
-        return null;
     }
 }

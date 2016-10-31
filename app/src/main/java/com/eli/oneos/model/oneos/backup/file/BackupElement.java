@@ -25,7 +25,12 @@ public class BackupElement extends UploadElement {
         // 相对路径
         if (info.getType() == BackupType.ALBUM) {  // 相册备份
             String relativeDir = file.getParent().replaceFirst(backupDir.getAbsolutePath(), "");
-            String cameraDate = FileUtils.getPhotoDate(file);
+            String cameraDate;
+            if (FileUtils.isPictureFile(file.getName())) {
+                cameraDate = FileUtils.getPhotoDate(file);
+            } else {
+                cameraDate = FileUtils.getVideoDate(file);
+            }
             // 相册路径： /来自：MI4/Album/RelativeDir/2015-09/xxx.png
             String toPath = Constants.BACKUP_FILE_ONEOS_ROOT_DIR_NAME_ALBUM + relativeDir + File.separator + cameraDate + File.separator;
             setToPath(toPath);

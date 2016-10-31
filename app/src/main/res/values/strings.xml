@@ -38,6 +38,7 @@
     <string name="loading">正在加载&#8230;</string>
     <string name="all_loaded">已加载全部</string>
     <string name="failed_get_upload_file">获取上传文件路径失败</string>
+    <string name="perm_denied_storage">为保证App正常使用，请设置允许读、写手机存储</string>
 
     <!-- File Operation -->
     <string name="file_type_private">我的文件</string>
@@ -465,6 +466,8 @@
     <string name="no_contact_to_sync">未检测到可备份的联系人</string>
     <string name="sync_exception_download">备份失败，请重新尝试</string>
     <string name="recovery_exception_upload">恢复失败，请重新尝试</string>
+    <string name="permission_denied_backup_contact">备份通讯录需要读取、修改通讯录权限，请先前往设置页面打开此权限！</string>
+    <string name="permission_denied_backup_sms">备份通讯录需要读取、修改短信权限，请先前往设置页面打开此权限！</string>
 
     <!-- SetPath Activity-->
     <string name="set_dir_to_download_path">设为下载目录</string>

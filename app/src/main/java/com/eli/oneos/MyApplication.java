@@ -12,6 +12,7 @@ import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.CrashHandler;
+import com.karumi.dexter.Dexter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -56,6 +57,7 @@ public class MyApplication extends Application {
             crashHandler.init(context);
         }
         bindService();
+        Dexter.initialize(this);
     }
 
     @Override

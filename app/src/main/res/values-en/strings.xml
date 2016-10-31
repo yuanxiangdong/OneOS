@@ -38,6 +38,7 @@
     <string name="app_exception_to_exit">crashed, collecting information, exit after 3s...</string>
     <string name="press_again_to_exit">Press again to exit</string>
     <string name="failed_get_upload_file">Failed to get upload file path</string>
+    <string name="perm_denied_storage">Please grant permissions to access your external storage!</string>
 
     <!-- File Operation -->
     <string name="file_type_private">My Files</string>
@@ -457,6 +458,8 @@
     <string name="no_contact_to_sync">No Contact to backup</string>
     <string name="sync_exception_download">Backup failed, please try again</string>
     <string name="recovery_exception_upload">Recovery failed, please try again</string>
+    <string name="permission_denied_backup_contact">To backup your contacts, please grant permissions to access your contacts!</string>
+    <string name="permission_denied_backup_sms">To backup your sms, please grant permissions to access your sms!</string>
 
     <!-- SetPath Activity-->
     <string name="set_dir_to_download_path">Set to download directory</string>
