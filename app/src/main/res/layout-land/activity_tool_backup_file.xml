@@ -22,8 +22,6 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_above="@+id/layout_bottom"
-            android:layout_below="@+id/layout_title"
             android:layout_weight="3.0"
             android:gravity="center">
 
@@ -52,7 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="bottom"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="@string/remain"
                     android:textColor="@color/text_anim_progress"
                     android:textSize="@dimen/text_size_min" />
@@ -62,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_anim_progress" />
 
@@ -71,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="bottom"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="@string/counts"
                     android:textColor="@color/text_anim_progress"
                     android:textSize="@dimen/text_size_min" />
@@ -91,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="@string/backup_complete"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_max" />
@@ -99,7 +97,6 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/layout_bottom"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
@@ -188,7 +185,7 @@
                 android:drawableRight="@drawable/ic_arrow_right_small"
                 android:gravity="center_vertical"
                 android:padding="5dp"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:text="@string/backup_file_list"
                 android:textColor="@color/darker"
                 android:textSize="@dimen/text_size_mid" />
