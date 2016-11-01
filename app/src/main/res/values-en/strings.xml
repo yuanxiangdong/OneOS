@@ -37,6 +37,8 @@
     <string name="confirm_upload_not_wifi">Confirm upload by using non WiFi access!</string>
     <string name="app_exception_to_exit">crashed, collecting information, exit after 3s...</string>
     <string name="press_again_to_exit">Press again to exit</string>
+    <string name="tips_exit_if_has_task">You have unfinished upload/download tasks, all tasks will be interrupted if you continue to exit!</string>
+    <string name="exit">Exit</string>
     <string name="failed_get_upload_file">Failed to get upload file path</string>
     <string name="perm_denied_storage">Please grant permissions to access your external storage!</string>
 

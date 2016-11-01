@@ -35,6 +35,8 @@
     <string name="confirm_upload_not_wifi">当前非Wi-Fi网络环境，继续上传将产生数据流量!</string>
     <string name="app_exception_to_exit">异常，正在收集信息，3s后退出...</string>
     <string name="press_again_to_exit">再按一次退出程序</string>
+    <string name="tips_exit_if_has_task">您有尚未完成的上传/下载任务，继续退出将会中断所有任务！</string>
+    <string name="exit">退出</string>
     <string name="loading">正在加载&#8230;</string>
     <string name="all_loaded">已加载全部</string>
     <string name="failed_get_upload_file">获取上传文件路径失败</string>

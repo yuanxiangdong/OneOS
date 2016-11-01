@@ -139,6 +139,7 @@ public abstract class TransferManager<T> {
      */
     public boolean addTransferCountListener(OnTransferCountListener listener) {
         if (!countListeners.contains(listener)) {
+            listener.onChanged(isDownload, transferList.size());
             return countListeners.add(listener);
         }
 

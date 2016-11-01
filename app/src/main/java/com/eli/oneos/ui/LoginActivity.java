@@ -226,6 +226,13 @@ public class LoginActivity extends BaseActivity {
         mIPTxt = (EditText) findViewById(R.id.editext_ip);
         mMoreIpBtn = (ImageButton) findViewById(R.id.btn_more_ip);
         mMoreIpBtn.setOnClickListener(onMoreClickListener);
+        mMoreIpBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mScanManager.start();
+                return true;
+            }
+        });
         mLoginBtn = (Button) findViewById(R.id.btn_login);
         mLoginBtn.setOnClickListener(onLoginClickListener);
     }

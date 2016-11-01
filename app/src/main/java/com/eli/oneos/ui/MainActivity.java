@@ -275,6 +275,12 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
+        int total = uploadCount + downloadCount;
+        if (total > 0) {
+            showExitTipsDialog();
+            return;
+        }
+
         if ((System.currentTimeMillis() - mExitTime) > 2000) {
             ToastHelper.showToast(R.string.press_again_to_exit);
             mExitTime = System.currentTimeMillis();
@@ -321,6 +327,20 @@ public class MainActivity extends BaseActivity {
         mFragmentList.add(toolsFragment);
 
         changFragmentByIndex(mCurPageIndex);
+    }
+
+    private void showExitTipsDialog() {
+        MagicDialog dialog = new MagicDialog(MainActivity.this);
+        dialog.title(R.string.tips).confirm().content(R.string.tips_exit_if_has_task).positive(R.string.exit)
+                .negative(R.string.cancel).bold(MagicDialog.MagicDialogButton.NEGATIVE).right(MagicDialog.MagicDialogButton.NEGATIVE)
+                .listener(new OnMagicDialogClickCallback() {
+                    @Override
+                    public void onClick(View view, MagicDialog.MagicDialogButton button, boolean checked) {
+                        if (button == MagicDialog.MagicDialogButton.POSITIVE) {
+                            MainActivity.this.finish();
+                        }
+                    }
+                }).show();
     }
 
     protected void checkStoragePermission() {

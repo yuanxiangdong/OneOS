@@ -83,6 +83,7 @@ public class SystemBarManager {
      *
      * @param activity The host activity.
      */
+    @SuppressWarnings("ResourceType")
     @TargetApi(19)
     public SystemBarManager(Activity activity) {
 
