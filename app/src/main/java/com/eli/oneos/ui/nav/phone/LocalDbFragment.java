@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
@@ -91,10 +90,6 @@ public class LocalDbFragment extends BaseLocalFragment {
     private AdapterView.OnItemLongClickListener mFileItemLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            if (parent instanceof ListView) {
-                position -= 1; // for PullToRefreshView header
-            }
-
             LocalFileBaseAdapter mAdapter = getFileAdapter();
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (!isMultiMode) {

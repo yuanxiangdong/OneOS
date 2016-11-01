@@ -361,12 +361,14 @@ public class LocalFileManage {
                     return;
                 }
 
-                mDCIMDir = SDCardUtils.getExternalSDCard();
-                if (null != mDCIMDir) {
-                    File mExternalDCIM = new File(mDCIMDir, "DCIM");
-                    if (file.equals(mExternalDCIM)) {
-                        confirmBackupRepeat(service, uid, path, true);
-                        return;
+                ArrayList<File> sdcards = SDCardUtils.getSDCardList();
+                if (!EmptyUtils.isEmpty(sdcards)) {
+                    for (File dir : sdcards) {
+                        File mExternalDCIM = new File(dir, "DCIM");
+                        if (file.equals(mExternalDCIM)) {
+                            confirmBackupRepeat(service, uid, path, true);
+                            return;
+                        }
                     }
                 }
 

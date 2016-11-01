@@ -83,21 +83,40 @@ public class BackupAlbumManager {
 
     private boolean initBackupPhotoIfNeeds() {
         boolean isNewBackupPath = false;
-        File mExternalDCIMDir = SDCardUtils.getExternalSDCard();
-        if (null != mExternalDCIMDir) {
-            File mExternalDCIM = new File(mExternalDCIMDir, "DCIM");
-            if (null != mExternalDCIM && mExternalDCIM.exists()) {
-                BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(), BackupType.ALBUM);
-                if (null == info) {
-                    info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(),
-                            true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
-                    BackupFileKeeper.insertBackupAlbum(info);
-                    Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Add New Backup Album Dir: " + info.getPath());
-                    isNewBackupPath = true;
-                    mBackupList.add(info);
+        ArrayList<File> extSDCards = SDCardUtils.getSDCardList();
+        if (null != extSDCards && !extSDCards.isEmpty()) {
+            for (File dir : extSDCards) {
+                File extDCIM = new File(dir, "DCIM");
+                if (extDCIM.exists() && extDCIM.canRead()) {
+                    BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), extDCIM.getAbsolutePath(), BackupType.ALBUM);
+                    if (null == info) {
+                        info = new BackupFile(null, mLoginSession.getUserInfo().getId(), extDCIM.getAbsolutePath(),
+                                true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
+                        BackupFileKeeper.insertBackupAlbum(info);
+                        Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Add New Backup Album Dir: " + info.getPath());
+                        isNewBackupPath = true;
+                        mBackupList.add(info);
+                    }
                 }
             }
         }
+
+//        File mExternalDCIMDir = SDCardUtils.getExternalSDCard();
+//        if (null != mExternalDCIMDir) {
+//            File mExternalDCIM = new File(mExternalDCIMDir, "DCIM");
+//            if (null != mExternalDCIM && mExternalDCIM.exists()) {
+//                BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(), BackupType.ALBUM);
+//                if (null == info) {
+//                    info = new BackupFile(null, mLoginSession.getUserInfo().getId(), mExternalDCIM.getAbsolutePath(),
+//                            true, BackupType.ALBUM, BackupPriority.MAX, 0L, 0L);
+//                    BackupFileKeeper.insertBackupAlbum(info);
+//                    Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Add New Backup Album Dir: " + info.getPath());
+//                    isNewBackupPath = true;
+//                    mBackupList.add(info);
+//                }
+//            }
+//        }
+
         File mInternalDCIMDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         if (null != mInternalDCIMDir && mInternalDCIMDir.exists()) {
             BackupFile info = BackupFileKeeper.getBackupInfo(mLoginSession.getUserInfo().getId(), mInternalDCIMDir.getAbsolutePath(), BackupType.ALBUM);

@@ -1,16 +1,20 @@
 package com.eli.oneos.utils;
 
+import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.support.v4.os.EnvironmentCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.eli.oneos.MyApplication;
 import com.eli.oneos.constant.Constants;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -127,28 +131,114 @@ public class SDCardUtils {
         }
     }
 
-    public static File getExternalSDCard() {
-        ArrayList<File> sdcards = getSDCardList();
+//    public static File getExternalSDCard() {
+//        ArrayList<File> sdcards = getSDCardList();
+//
+//        if (null != sdcards && sdcards.size() > 0) {
+//
+//            String interSDPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+//            for (File sd : sdcards) {
+//                if (!sd.getAbsolutePath().equals(interSDPath)) {
+//                    return sd;
+//                }
+//            }
+//        }
+//
+//        return null;
+//    }
 
-        if (null != sdcards && sdcards.size() > 0) {
-
-            String interSDPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-            for (File sd : sdcards) {
-                if (!sd.getAbsolutePath().equals(interSDPath)) {
-                    return sd;
+    /**
+     * 获取SD卡路径列表
+     * <p>
+     * 兼容Android6.0以上版本
+     */
+    public static ArrayList<File> getSDCardList() {
+        Log.e(TAG, "==========================Android M +==============================");
+        List<String> sdcardPaths = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //Method 1 for KitKat & above
+            File[] externalDirs = MyApplication.getAppContext().getExternalFilesDirs(null);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                for (File file : externalDirs) {
+                    String path = file.getPath().split("/Android")[0];
+                    if (Environment.isExternalStorageRemovable(file)) {
+                        Log.e(TAG, ">>>>>1 Add path: " + path);
+                        sdcardPaths.add(path);
+                    }
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                for (File file : externalDirs) {
+                    String path = file.getPath().split("/Android")[0];
+                    if (Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(file))) {
+                        Log.e(TAG, ">>>>>2 Add path: " + path);
+                        sdcardPaths.add(path);
+                    }
                 }
             }
         }
 
-        return null;
+        if (sdcardPaths.isEmpty()) { //Method 2 for all versions
+            // better variation of: http://stackoverflow.com/a/40123073/5002496
+            String output = "";
+            try {
+                final Process process = new ProcessBuilder().command("mount | grep /dev/block/vold").redirectErrorStream(true).start();
+                process.waitFor();
+                final InputStream is = process.getInputStream();
+                final byte[] buffer = new byte[1024];
+                while (is.read(buffer) != -1) {
+                    output = output + new String(buffer);
+                }
+                is.close();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+            if (!output.trim().isEmpty()) {
+                String devicePoints[] = output.split("\n");
+                for (String point : devicePoints) {
+                    Log.e(TAG, ">>>>>3 Add path: " + point.split(" ")[2]);
+                    sdcardPaths.add(point.split(" ")[2]);
+                }
+            }
+        }
+
+        //Below few lines is to remove paths which may not be external memory card, like OTG (feel free to comment them out)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            for (int i = 0; i < sdcardPaths.size(); i++) {
+                if (!sdcardPaths.get(i).toLowerCase().matches(".*[0-9a-f]{4}[-][0-9a-f]{4}")) {
+                    Log.e(TAG, "<<<<<4" + sdcardPaths.get(i) + " might not be extSDcard, remove it!");
+                    sdcardPaths.remove(i--);
+                }
+            }
+        } else {
+            for (int i = 0; i < sdcardPaths.size(); i++) {
+                if (!sdcardPaths.get(i).toLowerCase().contains("ext") && !sdcardPaths.get(i).toLowerCase().contains("sdcard")) {
+                    Log.e(TAG, "<<<<<5" + sdcardPaths.get(i) + " might not be extSDcard, remove it!");
+                    sdcardPaths.remove(i--);
+                }
+            }
+        }
+
+        String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        if (!sdcardPaths.contains(externalPath)) {
+            Log.e(TAG, ">>>>>6 Add path: " + externalPath);
+            sdcardPaths.add(externalPath);
+        }
+
+        ArrayList<File> sdcardList = new ArrayList<>();
+        for (Iterator<String> iterator = sdcardPaths.iterator(); iterator.hasNext(); ) {
+            String path = iterator.next();
+            sdcardList.add(new File(path));
+        }
+        Log.e(TAG, "===================================================================");
+
+        return sdcardList;
     }
 
     /**
      * 获取SD卡路径列表
      *
-     * @return
+     * @deprecated 不兼容Android6.0以上版本
      */
-    public static ArrayList<File> getSDCardList() {
+    public static ArrayList<File> _getSDCardList() {
         ArrayList<String> sdcardPaths = new ArrayList<String>();
         String cmd = "cat /proc/mounts";
         Runtime run = Runtime.getRuntime();// 返回与当前 Java 应用程序相关的运行时对象
@@ -160,7 +250,7 @@ public class SDCardUtils {
             String lineStr;
             while ((lineStr = inBr.readLine()) != null) {
                 // 获得命令执行后在控制台的输出信息
-                // Log.e(TAG, "-->> " + lineStr);
+                Log.e(TAG, "-->> " + lineStr);
 
                 String[] temp = TextUtils.split(lineStr, " ");
                 // 得到的输出的第二个空格后面是路径

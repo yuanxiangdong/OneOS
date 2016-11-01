@@ -31,6 +31,7 @@ import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.DialogUtils;
+import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.SDCardUtils;
 
 import java.io.File;
@@ -214,12 +215,14 @@ public class AddBackupFileActivity extends BaseActivity implements OnClickListen
                 return;
             }
 
-            mDCIMDir = SDCardUtils.getExternalSDCard();
-            if (null != mDCIMDir) {
-                File mExternalDCIM = new File(mDCIMDir, "DCIM");
-                if (file.equals(mExternalDCIM)) {
-                    confirmBackupRepeat(selectPath, true);
-                    return;
+            ArrayList<File> sdcards = SDCardUtils.getSDCardList();
+            if (!EmptyUtils.isEmpty(sdcards)) {
+                for (File dir : sdcards) {
+                    File mExternalDCIM = new File(dir, "DCIM");
+                    if (file.equals(mExternalDCIM)) {
+                        confirmBackupRepeat(selectPath, true);
+                        return;
+                    }
                 }
             }
 
