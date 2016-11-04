@@ -67,12 +67,10 @@ public class AppUpgradeManager {
      * @param callback if callback is {@code null}, see {@link AppUpgradeManager#detectAppUpgrade()}, else callback.
      */
     public void detectAppUpgrade(final OnUpgradeListener callback) {
-        Log.d(TAG, "================1====================");
         HttpUtils httpUtils = new HttpUtils(10 * 1000);
         httpUtils.get(URL_VERSION, new OnHttpListener<String>() {
             @Override
             public void onSuccess(String result) {
-                Log.d(TAG, "================2====================");
                 // Log.d(TAG, "Version: " + result);
                 try {
                     JSONObject json = new JSONObject(result);
@@ -114,7 +112,6 @@ public class AppUpgradeManager {
 
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
-                Log.d(TAG, "================3====================");
                 Log.e(TAG, "ErrorNo: " + errorNo + ", ErrorMsg: " + strMsg + ", Throws: " + t.toString());
             }
         });
