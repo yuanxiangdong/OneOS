@@ -29,11 +29,15 @@ public class HttpUtils<T> {
     private FinalHttp finalHttp;
 
     public HttpUtils() {
-        this(false, TIMEOUT);
+        this(true, TIMEOUT);
     }
 
-    public HttpUtils(boolean isSSUDP) {
-        this(isSSUDP, TIMEOUT);
+    public HttpUtils(int timeout) {
+        this(true, timeout);
+    }
+
+    public HttpUtils(boolean isHttp) {
+        this(isHttp, TIMEOUT);
     }
 
     public HttpUtils(boolean isHttp, int timeout) {
@@ -46,6 +50,7 @@ public class HttpUtils<T> {
     }
 
     public void get(String url, OnHttpListener<T> callBack) {
+        Log.d(TAG, "Is HTTP: " + isHttp);
         if (isHttp) {
             log(TAG, url, null);
             finalHttp.get(url, callBack);

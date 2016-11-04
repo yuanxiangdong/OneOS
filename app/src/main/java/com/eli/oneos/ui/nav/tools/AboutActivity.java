@@ -10,12 +10,11 @@ import android.widget.TextView;
 import com.eli.oneos.R;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.upgrade.AppUpgradeManager;
+import com.eli.oneos.model.upgrade.AppVersionInfo;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.AppVersionUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.widget.TitleBackLayout;
-
-import java.util.ArrayList;
 
 public class AboutActivity extends BaseActivity {
     private static final String TAG = AboutActivity.class.getSimpleName();
@@ -67,9 +66,9 @@ public class AboutActivity extends BaseActivity {
         mAppUpgradeManager = new AppUpgradeManager(this);
         mAppUpgradeManager.detectAppUpgrade(new AppUpgradeManager.OnUpgradeListener() {
             @Override
-            public void onUpgrade(boolean hasUpgrade, String curVersion, String newVersion, String miniOneOS, String appUrl, ArrayList<String> logs) {
+            public void onUpgrade(boolean hasUpgrade, String curVersion, AppVersionInfo info) {
                 if (hasUpgrade) {
-                    mAppUpgradeManager.confirmUpgradeDialog(newVersion, miniOneOS, appUrl, logs);
+                    mAppUpgradeManager.confirmUpgradeDialog(info);
                 } else {
                     if (LoginManage.getInstance().isLogin() && LoginManage.getInstance().getLoginSession().getOneOSInfo().isNeedsUp()) {
                         DialogUtils.showNotifyDialog(AboutActivity.this, R.string.tips, R.string.tip_oneos_new_version_upgrade, R.string.ok, null);

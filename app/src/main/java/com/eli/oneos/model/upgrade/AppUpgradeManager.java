@@ -43,7 +43,9 @@ import java.util.ArrayList;
 public class AppUpgradeManager {
     private static final String TAG = AppUpgradeManager.class.getSimpleName();
 
-    private static final String URL_VERSION = "http://onespace.cc/download/oneos/ver.json";
+    private static final String WEBSITE = "http://www.onespace.cc/";
+    private static final String URL_VERSION = WEBSITE + "download/ver.json";
+    private static final String X5_VERSION_NAME = "x5";
     private static final String ANDROID_VERSION_NAME = "android";
 
     private Activity activity;
@@ -65,22 +67,25 @@ public class AppUpgradeManager {
      * @param callback if callback is {@code null}, see {@link AppUpgradeManager#detectAppUpgrade()}, else callback.
      */
     public void detectAppUpgrade(final OnUpgradeListener callback) {
-        HttpUtils httpUtils = new HttpUtils();
+        Log.d(TAG, "================1====================");
+        HttpUtils httpUtils = new HttpUtils(10 * 1000);
         httpUtils.get(URL_VERSION, new OnHttpListener<String>() {
             @Override
             public void onSuccess(String result) {
+                Log.d(TAG, "================2====================");
                 // Log.d(TAG, "Version: " + result);
                 try {
                     JSONObject json = new JSONObject(result);
-                    JSONObject verJson = json.getJSONObject(ANDROID_VERSION_NAME);
-                    String latestVersion = verJson.getString("str");
+                    JSONObject verJson = json.getJSONObject(X5_VERSION_NAME).getJSONObject(ANDROID_VERSION_NAME);
+                    String latestVersion = verJson.getString("ver");
                     Log.d(TAG, "Latest App Version: " + latestVersion);
                     String curVersion = AppVersionUtils.getAppVersion();
                     String ignoreVersion = SharedPreferencesHelper.get(SharedPrefersKeys.IGNORE_APP_VERSION_NO, null);
                     boolean ignored = (null != ignoreVersion) && ignoreVersion.equals(latestVersion);
 
                     if (!ignored && AppVersionUtils.checkUpgrade(curVersion, latestVersion)) {
-                        String appUrl = verJson.getString("file");
+                        String time = verJson.getString("time");
+                        String appUrl = WEBSITE + verJson.getString("dllink");
                         String oneos = verJson.has("server") ? verJson.getString("server") : null;
 
                         ArrayList<String> logs = new ArrayList<>();
@@ -91,14 +96,15 @@ public class AppUpgradeManager {
                             }
                         }
 
+                        AppVersionInfo info = new AppVersionInfo(X5_VERSION_NAME, latestVersion, appUrl, time, oneos, logs);
                         if (null != callback) {
-                            callback.onUpgrade(true, curVersion, latestVersion, oneos, appUrl, logs);
+                            callback.onUpgrade(true, curVersion, info);
                         } else {
-                            confirmUpgradeDialog(latestVersion, oneos, appUrl, logs);
+                            confirmUpgradeDialog(info);
                         }
                     } else {
                         if (null != callback) {
-                            callback.onUpgrade(false, null, null, null, null, null);
+                            callback.onUpgrade(false, null, null);
                         }
                     }
                 } catch (Exception e) {
@@ -108,14 +114,22 @@ public class AppUpgradeManager {
 
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
+                Log.d(TAG, "================3====================");
                 Log.e(TAG, "ErrorNo: " + errorNo + ", ErrorMsg: " + strMsg + ", Throws: " + t.toString());
             }
         });
     }
 
-    public void confirmUpgradeDialog(final String serverVersion, final String miniOneOS, final String url, final ArrayList<String> logs) {
+    public void confirmUpgradeDialog(AppVersionInfo info) {
+        final String serverVersion = info.getVersion();
+        final String miniOneOS = info.getOneOs();
+        final String url = info.getLink();
+        final ArrayList<String> logs = info.getLogs();
         Resources resources = activity.getResources();
         String title = activity.getResources().getString(R.string.have_new_version_app) + serverVersion;
+        if (!EmptyUtils.isEmpty(info.getTime())) {
+            title += "  ( " + info.getTime() + " )";
+        }
 
         if (EmptyUtils.isEmpty(logs)) {
             DialogUtils.showConfirmDialog(activity, resources.getString(R.string.tips), title, resources.getString(R.string.upgrade_app_now),
@@ -169,6 +183,8 @@ public class AppUpgradeManager {
                                 }
                             });
                 }
+            } else {
+                ToastHelper.showToast(R.string.oneos_version_check_failed);
             }
         } else {
             downloadApp(url);
@@ -335,10 +351,8 @@ public class AppUpgradeManager {
          *
          * @param hasUpgrade if has new version
          * @param curVersion current app version
-         * @param newVersion new app version
-         * @param miniOneOS  minimum oneos version
-         * @param logs       new app change logs
+         * @param info       new app info
          */
-        void onUpgrade(boolean hasUpgrade, String curVersion, String newVersion, String miniOneOS, String appUrl, ArrayList<String> logs);
+        void onUpgrade(boolean hasUpgrade, String curVersion, AppVersionInfo info);
     }
 }

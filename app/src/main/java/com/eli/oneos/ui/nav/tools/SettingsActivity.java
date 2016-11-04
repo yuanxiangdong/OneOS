@@ -17,6 +17,7 @@ import com.eli.oneos.db.UserSettingsKeeper;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.model.upgrade.AppUpgradeManager;
+import com.eli.oneos.model.upgrade.AppVersionInfo;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.SDCardUtils;
@@ -25,8 +26,6 @@ import com.eli.oneos.utils.Utils;
 import com.eli.oneos.widget.BadgeView;
 import com.eli.oneos.widget.SwitchButton;
 import com.eli.oneos.widget.TitleBackLayout;
-
-import java.util.ArrayList;
 
 public class SettingsActivity extends BaseActivity implements OnClickListener {
     private static final String TAG = "SettingsActivity";
@@ -123,7 +122,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
         mAppUpgradeManager = new AppUpgradeManager(this);
         mAppUpgradeManager.detectAppUpgrade(new AppUpgradeManager.OnUpgradeListener() {
             @Override
-            public void onUpgrade(boolean hasUpgrade, String curVersion, String newVersion, String miniOneOS, String appUrl, ArrayList<String> logs) {
+            public void onUpgrade(boolean hasUpgrade, String curVersion, AppVersionInfo info) {
                 if (hasUpgrade) {
                     mTransBadgeView.setVisibility(View.VISIBLE);
                 } else {
