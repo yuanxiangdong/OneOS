@@ -43,8 +43,8 @@ import java.util.ArrayList;
 public class AppUpgradeManager {
     private static final String TAG = AppUpgradeManager.class.getSimpleName();
 
-    private static final String WEBSITE = "http://www.onespace.cc/";
-    private static final String URL_VERSION = WEBSITE + "download/ver.json";
+    private static final String WEBSITE = "http://www.onespace.cc/download/";
+    private static final String URL_VERSION = WEBSITE + "vernew.json";
     private static final String X5_VERSION_NAME = "x5";
     private static final String ANDROID_VERSION_NAME = "android";
 
