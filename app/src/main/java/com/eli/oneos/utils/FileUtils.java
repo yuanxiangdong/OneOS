@@ -206,11 +206,11 @@ public class FileUtils {
         } else if (name.endsWith(".zip") || name.endsWith(".rar") || name.endsWith(".tar")
                 || name.endsWith(".jar") || name.endsWith(".tar.gz")) {
             icon = R.drawable.icon_file_zip;
-        } else if (name.endsWith(".xls")) {
+        } else if (name.endsWith(".xls") || name.endsWith(".xlsx")) {
             icon = R.drawable.icon_file_xls;
         } else if (name.endsWith(".ppt")) {
             icon = R.drawable.icon_file_ppt;
-        } else if (name.endsWith(".doc")) {
+        } else if (name.endsWith(".doc") || name.endsWith(".docx")) {
             icon = R.drawable.icon_file_word;
         } else if (name.endsWith(".pdf")) {
             icon = R.drawable.icon_file_pdf;
