@@ -159,18 +159,22 @@ public class SDCardUtils {
             File[] externalDirs = MyApplication.getAppContext().getExternalFilesDirs(null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 for (File file : externalDirs) {
-                    String path = file.getPath().split("/Android")[0];
-                    if (Environment.isExternalStorageRemovable(file)) {
-                        Log.e(TAG, ">>>>>1 Add path: " + path);
-                        sdcardPaths.add(path);
+                    if (null != file && file.exists()) {
+                        if (Environment.isExternalStorageRemovable(file)) {
+                            String path = file.getPath().split("/Android")[0];
+                            Log.e(TAG, ">>>>>1 Add path: " + path);
+                            sdcardPaths.add(path);
+                        }
                     }
                 }
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 for (File file : externalDirs) {
-                    String path = file.getPath().split("/Android")[0];
-                    if (Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(file))) {
-                        Log.e(TAG, ">>>>>2 Add path: " + path);
-                        sdcardPaths.add(path);
+                    if (null != file && file.exists()) {
+                        if (Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(file))) {
+                            String path = file.getPath().split("/Android")[0];
+                            Log.e(TAG, ">>>>>2 Add path: " + path);
+                            sdcardPaths.add(path);
+                        }
                     }
                 }
             }
