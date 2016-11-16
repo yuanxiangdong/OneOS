@@ -37,14 +37,14 @@ public class TransmissionAdapter extends BaseAdapter {
         this.rightWidth = rightWidth;
     }
 
-    public void setTransferList(List<TransferElement> loads, boolean isDownload) {
-        this.mList = loads;
+    public void setTransferList(List<TransferElement> list, boolean isDownload) {
+        this.mList = list;
         this.isDownload = isDownload;
     }
 
     @Override
     public int getCount() {
-        int length = 0;
+        int length;
         if (mList != null) {
             length = mList.size();
         } else {
@@ -102,79 +102,80 @@ public class TransmissionAdapter extends BaseAdapter {
         holder.rightLayout.setLayoutParams(rightLayout);
 
         final TransferElement mElement = mList.get(position);
+        if (null != mElement) { // 有三星手机在此处莫名的挂了(NullPointerException)
+            String name = mElement.getSrcName();
+            int ratio = getLoadRatio(mElement);
+            holder.fileName.setText(name);
+            holder.circleProgress.setProgress(ratio);
+            holder.fileIcon.setImageResource(FileUtils.fmtFileIcon(name));
+            holder.fileSize.setText(FileUtils.fmtFileSize(mElement.getSize()));
+            holder.fileRatio.setText(ratio + "%");
 
-        String name = mElement.getSrcName();
-        int ratio = getLoadRatio(mElement);
-        holder.fileName.setText(name);
-        holder.circleProgress.setProgress(ratio);
-        holder.fileIcon.setImageResource(FileUtils.fmtFileIcon(name));
-        holder.fileSize.setText(FileUtils.fmtFileSize(mElement.getSize()));
-        holder.fileRatio.setText(ratio + "%");
-
-        TransferState state = mElement.getState();
-        if (state == TransferState.PAUSE) {
-            holder.circleProgress.setState(CircleStateProgressBar.ProgressState.PAUSE);
-            if (isDownload) {
-                holder.fileRatio.setText(context.getResources().getString(R.string.download_pause));
-            } else {
-                holder.fileRatio.setText(context.getResources().getString(R.string.upload_pause));
+            TransferState state = mElement.getState();
+            if (state == TransferState.PAUSE) {
+                holder.circleProgress.setState(CircleStateProgressBar.ProgressState.PAUSE);
+                if (isDownload) {
+                    holder.fileRatio.setText(context.getResources().getString(R.string.download_pause));
+                } else {
+                    holder.fileRatio.setText(context.getResources().getString(R.string.upload_pause));
+                }
+            } else if (state == TransferState.START) {
+                holder.circleProgress.setState(CircleStateProgressBar.ProgressState.START);
+            } else if (state == TransferState.WAIT) {
+                holder.circleProgress.setState(CircleStateProgressBar.ProgressState.WAIT);
+                holder.fileRatio.setText(context.getResources().getString(R.string.waiting));
+            } else if (state == TransferState.FAILED) {
+                holder.circleProgress.setState(CircleStateProgressBar.ProgressState.FAILED);
+                holder.fileRatio.setText(getFailedInfo(mElement));
             }
-        } else if (state == TransferState.START) {
-            holder.circleProgress.setState(CircleStateProgressBar.ProgressState.START);
-        } else if (state == TransferState.WAIT) {
-            holder.circleProgress.setState(CircleStateProgressBar.ProgressState.WAIT);
-            holder.fileRatio.setText(context.getResources().getString(R.string.waiting));
-        } else if (state == TransferState.FAILED) {
-            holder.circleProgress.setState(CircleStateProgressBar.ProgressState.FAILED);
-            holder.fileRatio.setText(getFailedInfo(mElement));
+
+            holder.circleProgress.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TransferState state = mElement.getState();
+                    if (isDownload && state == TransferState.PAUSE) {
+                        if (mListener != null) {
+                            mListener.onContinue(mElement);
+                        }
+                        // continueTransfer(keyName, isDownload);
+                        // holder.pauseBtn.setBackgroundResource(R.drawable.button_transfer_pause);
+                        holder.circleProgress.setState(CircleStateProgressBar.ProgressState.PAUSE);
+                    } else if (isDownload && state == TransferState.START) {
+                        if (mListener != null) {
+                            mListener.onPause(mElement);
+                        }
+                        // pauseTransfer(keyName, isDownload);
+                        // holder.pauseBtn.setBackgroundResource(R.drawable.button_transfer_start);
+                        holder.circleProgress.setState(CircleStateProgressBar.ProgressState.START);
+                    } else if (state == TransferState.FAILED) {
+                        if (mListener != null) {
+                            mListener.onRestart(mElement);
+                        }
+                        // pauseTransfer(keyName, isDownload);
+                        // holder.pauseBtn.setBackgroundResource(R.drawable.button_transfer_pause);
+                        // continueTransfer(keyName, isDownload);
+                        holder.circleProgress.setState(CircleStateProgressBar.ProgressState.PAUSE);
+                    } else if (isDownload && state == TransferState.WAIT) {
+                        if (mListener != null) {
+                            mListener.onPause(mElement);
+                        }
+                        // pauseTransfer(keyName, isDownload);
+                        // holder.pauseBtn.setBackgroundResource(R.drawable.button_transfer_start);
+                        holder.circleProgress.setState(CircleStateProgressBar.ProgressState.WAIT);
+                    }
+                }
+            });
+
+            holder.deleteTxt.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onCancel(mElement);
+                    }
+                }
+            });
         }
-
-        holder.circleProgress.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TransferState state = mElement.getState();
-                if (isDownload && state == TransferState.PAUSE) {
-                    if (mListener != null) {
-                        mListener.onContinue(mElement);
-                    }
-                    // continueTransfer(keyName, isDownload);
-                    // holder.pauseBtn.setBackgroundResource(R.drawable.button_transfer_pause);
-                    holder.circleProgress.setState(CircleStateProgressBar.ProgressState.PAUSE);
-                } else if (isDownload && state == TransferState.START) {
-                    if (mListener != null) {
-                        mListener.onPause(mElement);
-                    }
-                    // pauseTransfer(keyName, isDownload);
-                    // holder.pauseBtn.setBackgroundResource(R.drawable.button_transfer_start);
-                    holder.circleProgress.setState(CircleStateProgressBar.ProgressState.START);
-                } else if (state == TransferState.FAILED) {
-                    if (mListener != null) {
-                        mListener.onRestart(mElement);
-                    }
-                    // pauseTransfer(keyName, isDownload);
-                    // holder.pauseBtn.setBackgroundResource(R.drawable.button_transfer_pause);
-                    // continueTransfer(keyName, isDownload);
-                    holder.circleProgress.setState(CircleStateProgressBar.ProgressState.PAUSE);
-                } else if (isDownload && state == TransferState.WAIT) {
-                    if (mListener != null) {
-                        mListener.onPause(mElement);
-                    }
-                    // pauseTransfer(keyName, isDownload);
-                    // holder.pauseBtn.setBackgroundResource(R.drawable.button_transfer_start);
-                    holder.circleProgress.setState(CircleStateProgressBar.ProgressState.WAIT);
-                }
-            }
-        });
-
-        holder.deleteTxt.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onCancel(mElement);
-                }
-            }
-        });
 
         return convertView;
     }

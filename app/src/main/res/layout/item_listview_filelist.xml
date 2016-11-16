@@ -33,7 +33,7 @@
             android:id="@+id/txt_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
+            android:ellipsize="middle"
             android:paddingBottom="2dp"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"

@@ -48,7 +48,7 @@
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@+id/layout_attr"
         android:layout_toRightOf="@+id/layout_icon"
-        android:ellipsize="end"
+        android:ellipsize="middle"
         android:paddingBottom="2dp"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"

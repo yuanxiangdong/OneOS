@@ -39,7 +39,7 @@
                     android:id="@+id/fileName"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
+                    android:ellipsize="middle"
                     android:singleLine="true"
                     android:textColor="@color/darker"
                     android:textSize="@dimen/text_size_mid" />
