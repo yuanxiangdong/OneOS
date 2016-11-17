@@ -12,8 +12,8 @@ android {
         applicationId 'com.eli.oneos'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 15
-        versionName "3.1.5.1 Beta"
+        versionCode 16
+        versionName "3.1.6 Beta"
     }
     buildTypes {
         release {
