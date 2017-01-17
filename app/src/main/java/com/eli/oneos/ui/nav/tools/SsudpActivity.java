@@ -12,7 +12,7 @@ import com.eli.lib.magicdialog.OnMagicDialogClickCallback;
 import com.eli.oneos.R;
 import com.eli.oneos.db.DeviceInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
-import com.eli.oneos.model.oneos.api.OneOSSSUDPClientIDAPI;
+import com.eli.oneos.model.oneos.api.OneOSSsudpClientIDAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.AnimUtils;
@@ -133,8 +133,8 @@ public class SsudpActivity extends BaseActivity {
     }
 
     private void getSSUDPClientID() {
-        OneOSSSUDPClientIDAPI ssudpClientIDAPI = new OneOSSSUDPClientIDAPI(LoginManage.getInstance().getLoginSession());
-        ssudpClientIDAPI.setOnClientIDListener(new OneOSSSUDPClientIDAPI.OnClientIDListener() {
+        OneOSSsudpClientIDAPI ssudpClientIDAPI = new OneOSSsudpClientIDAPI(LoginManage.getInstance().getLoginSession());
+        ssudpClientIDAPI.setOnClientIDListener(new OneOSSsudpClientIDAPI.OnClientIDListener() {
             @Override
             public void onStart(String url) {
                 showLoading(R.string.binding);

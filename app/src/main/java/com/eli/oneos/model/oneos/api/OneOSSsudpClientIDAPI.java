@@ -16,17 +16,17 @@ import org.json.JSONObject;
  * <p/>
  * Created by gaoyun@eli-tech.com on 2016/07/04.
  */
-public class OneOSSSUDPClientIDAPI extends OneOSBaseAPI {
-    private static final String TAG = OneOSSSUDPClientIDAPI.class.getSimpleName();
+public class OneOSSsudpClientIDAPI extends OneOSBaseAPI {
+    private static final String TAG = OneOSSsudpClientIDAPI.class.getSimpleName();
 
     private OnClientIDListener listener;
     private String dev, name;
 
-    public OneOSSSUDPClientIDAPI(LoginSession loginSession) {
+    public OneOSSsudpClientIDAPI(LoginSession loginSession) {
         super(loginSession);
     }
 
-    public OneOSSSUDPClientIDAPI(String ip, String port) {
+    public OneOSSsudpClientIDAPI(String ip, String port) {
         super(ip, port);
     }
 

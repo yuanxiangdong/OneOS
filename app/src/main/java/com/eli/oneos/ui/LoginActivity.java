@@ -26,7 +26,7 @@ import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
-import com.eli.oneos.model.oneos.api.OneOSSSUDPClientIDAPI;
+import com.eli.oneos.model.oneos.api.OneOSSsudpClientIDAPI;
 import com.eli.oneos.model.oneos.scan.OnScanDeviceListener;
 import com.eli.oneos.model.oneos.scan.ScanDeviceManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -512,8 +512,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void getSSUDPClientID() {
-        OneOSSSUDPClientIDAPI ssudpClientIDAPI = new OneOSSSUDPClientIDAPI(mLoginSession.getIp(), mLoginSession.getPort());
-        ssudpClientIDAPI.setOnClientIDListener(new OneOSSSUDPClientIDAPI.OnClientIDListener() {
+        OneOSSsudpClientIDAPI ssudpClientIDAPI = new OneOSSsudpClientIDAPI(mLoginSession.getIp(), mLoginSession.getPort());
+        ssudpClientIDAPI.setOnClientIDListener(new OneOSSsudpClientIDAPI.OnClientIDListener() {
             @Override
             public void onStart(String url) {
                 showLoading(R.string.binding);
