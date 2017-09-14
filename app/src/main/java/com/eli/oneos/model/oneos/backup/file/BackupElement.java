@@ -11,7 +11,11 @@ import java.io.File;
 public class BackupElement extends UploadElement {
     private BackupFile backupInfo;
 
-//    public BackupElement(BackupFile backupInfo, File file, String uploadPath, boolean overwrite) {
+    @Override
+    public String getUrl() {
+        return super.getUrl();
+    }
+    //    public BackupElement(BackupFile backupInfo, File file, String uploadPath, boolean overwrite) {
 //        super(file, uploadPath, overwrite);
 //        this.backupInfo = backupInfo;
 //    }
@@ -49,4 +53,6 @@ public class BackupElement extends UploadElement {
     public void setBackupInfo(BackupFile backupInfo) {
         this.backupInfo = backupInfo;
     }
+
+
 }

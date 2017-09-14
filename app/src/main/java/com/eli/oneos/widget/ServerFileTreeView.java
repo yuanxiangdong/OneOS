@@ -20,12 +20,14 @@ import android.widget.TextView;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.constant.OneSpaceAPIs;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileManage;
 import com.eli.oneos.model.oneos.OneOSFileType;
 import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
 import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.EmptyUtils;
@@ -206,7 +208,14 @@ public class ServerFileTreeView {
                 notifyRefreshComplete(true);
             }
         });
-        listDirAPI.list("dir");
+
+        String curOneOS = LoginManage.getInstance().getLoginSession().getOneOSInfo().getVersion();
+        Log.d(TAG,"tree curOneOS=" + curOneOS);
+        if (OneSpaceAPIs.ONESPACE_VER == curOneOS){
+            listDirAPI.dirList("dir");
+        }else {
+            listDirAPI.list("dir");
+        }
     }
 
     public void setOnPasteListener(OnPasteFileListener listener) {

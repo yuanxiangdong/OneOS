@@ -2,6 +2,7 @@ package com.eli.oneos.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
@@ -19,25 +20,29 @@ import com.eli.oneos.db.DeviceInfoKeeper;
 import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
+import com.eli.oneos.model.oneos.api.OneOSFormatAPI;
 import com.eli.oneos.model.oneos.api.OneOSLoginAPI;
 import com.eli.oneos.model.oneos.scan.OnScanDeviceListener;
 import com.eli.oneos.model.oneos.scan.ScanDeviceManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.service.OneSpaceService;
+import com.eli.oneos.ui.nav.HdManageActivity;
 import com.eli.oneos.utils.AppVersionUtils;
 import com.eli.oneos.utils.EmptyUtils;
 import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import java.util.Map;
 
-public class LauncherActivity extends BaseActivity {
 
+public class LauncherActivity extends BaseActivity {
+    private static final String TAG = LauncherActivity.class.getSimpleName();
     private CircleProgressBar mProgressBar;
     private UserInfo lastUserInfo;
     private Intent mSendIntent;
     private ScanDeviceManager mScanManager;
     private boolean isLastDeviceExist = false;
+    private LoginSession mLoginSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +51,12 @@ public class LauncherActivity extends BaseActivity {
         setContentView(R.layout.activity_launcher);
 
 //        UserInfoKeeper.logUserInfo(); // TODO.. for test
-
         Intent intent = getIntent();
         String action = intent.getAction();
         if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
             mSendIntent = intent;
         }
+
         if (mSendIntent != null) {
             LoginManage loginManager = LoginManage.getInstance();
             if (loginManager.isLogin()) {
@@ -223,7 +228,10 @@ public class LauncherActivity extends BaseActivity {
             @Override
             public void onSuccess(String url, LoginSession loginSession) {
                 LoginManage.getInstance().setLoginSession(loginSession);
-                gotoMainActivity();
+                mLoginSession = loginSession;
+                //gotoMainActivity();
+                gotoFormat();
+
             }
 
             @Override
@@ -234,4 +242,33 @@ public class LauncherActivity extends BaseActivity {
         loginAPI.login(domain);
     }
 
+    private void gotoFormat() {
+        OneOSFormatAPI formatAPI = new OneOSFormatAPI(mLoginSession);
+        formatAPI.setListener(new OneOSFormatAPI.OnHDInfoListener() {
+            @Override
+            public void onStart(String url) {
+                showLoading(R.string.logining, false);
+            }
+
+            @Override
+            public void onSuccess(String url, String errHdNum, String count) {
+                Log.d(TAG, "errHdNum = " + errHdNum);
+                Log.d(TAG, "mode = " + count);
+                if (errHdNum.equals("0")) {
+                    gotoMainActivity();
+                } else {
+                    Log.d(TAG, "count = " + count);
+                    Intent intent = new Intent(LauncherActivity.this, HdManageActivity.class);
+                    intent.putExtra("count", count);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onFailure(String url, int errorNo, String errorMsg) {
+            }
+        });
+        mLoginSession.getOneOSInfo().getVersion();
+        formatAPI.getHdInfo(mLoginSession.getOneOSInfo().getVersion());
+    }
 }

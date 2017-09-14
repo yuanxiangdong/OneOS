@@ -1,17 +1,31 @@
 package com.eli.oneos.ui;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.PopupWindow;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.service.OneSpaceService;
+import com.eli.oneos.utils.ActivityCollector;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.SystemBarManager;
 import com.eli.oneos.widget.LoadingView;
 import com.eli.oneos.widget.TipView;
+
+import net.cifernet.mobile.cmapi.CMInterface;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * Base Activity for OneSpace
@@ -24,6 +38,7 @@ public class BaseActivity extends FragmentActivity {
     private SystemBarManager mTintManager;
     private LoadingView mLoadingView;
     private TipView mTipView;
+    private final static String TAG = BaseActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +46,11 @@ public class BaseActivity extends FragmentActivity {
         MyApplication.getInstance().addActivity(this);
         mLoadingView = LoadingView.getInstance();
         mTipView = TipView.getInstance();
+
+        Log.d(TAG, getRunningActivityName() + "==============baseActivity onCreate");
+        mHandler.removeCallbacks(mTimerTask);
+        mHandler.post(mTimerTask);
+        ActivityCollector.addActivity(this);
     }
 
     @Override
@@ -38,6 +58,17 @@ public class BaseActivity extends FragmentActivity {
         super.onPause();
         DialogUtils.dismiss();
         dismissLoading();
+        Log.d(TAG, getRunningActivityName() + "==============baseActivity onPause");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
+        Log.d(TAG, getRunningActivityName() + "==============baseActivity onDestroy");
+        if (getRunningActivityName().indexOf("com.eli.oneos.ui") != -1) {
+            mHandler.removeCallbacks(mTimerTask);
+        }
     }
 
     /**
@@ -103,5 +134,66 @@ public class BaseActivity extends FragmentActivity {
 
     public boolean controlActivity(String action) {
         return false;
+    }
+
+
+    Handler mHandler = new Handler();
+    private Runnable mTimerTask = new Runnable() {
+        @Override
+        public void run() {
+            int statusCode = 10000;
+
+            try {
+                String status = CMInterface.getInstance().get_status();
+                Log.d(TAG, "status ======" + status);
+                JSONTokener parser;
+                JSONObject root;
+                parser = new JSONTokener(status);
+                root = (JSONObject) parser.nextValue();
+                statusCode = root.getInt("status");
+                if (statusCode != net.cifernet.mobile.cmapi.Constants.CS_CONNECTED) {
+                    backToLogin();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (statusCode == net.cifernet.mobile.cmapi.Constants.CS_CONNECTED) {
+                mHandler.postDelayed(this, 3000);
+
+            }
+        }
+
+    };
+
+    private void backToLogin() {
+        Log.d(TAG, "123456=======" + getRunningActivityName());
+
+        if (!getRunningActivityName().endsWith("LoginActivity") && !getRunningActivityName().endsWith("LauncherActivity") ) {
+            String ip = null ;
+            if (LoginManage.getInstance().isLogin()) {
+                ip = LoginManage.getInstance().getLoginSession().getIp();
+            }
+
+            if ( ip.endsWith("cifernet.net") || ip.endsWith("memenet.net")) {
+                DialogUtils.dismiss();
+                dismissLoading();
+
+                OneSpaceService mTransferService = MyApplication.getService();
+                mTransferService.notifyUserLogout();
+                LoginManage.getInstance().logout();
+                CMInterface.getInstance().disconnect();
+
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                ActivityCollector.finishAll();
+            }
+        }
+    }
+
+    private String getRunningActivityName() {
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        String runningActivity = activityManager.getRunningTasks(1).get(0).topActivity.getClassName();
+        return runningActivity;
     }
 }

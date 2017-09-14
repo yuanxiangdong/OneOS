@@ -1,11 +1,13 @@
 package com.eli.oneos.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.util.DisplayMetrics;
 
 import com.eli.oneos.MyApplication;
 
@@ -94,5 +96,15 @@ public class Utils {
             localIntent.putExtra("com.android.settings.ApplicationPkgName", context.getPackageName());
         }
         context.startActivity(localIntent);
+    }
+    public static int getWindowsSize(Activity activity, boolean isWidth) {
+        DisplayMetrics dm = new DisplayMetrics();
+        // 获取屏幕信息
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        if (isWidth) {
+            return dm.widthPixels;
+        } else {
+            return dm.heightPixels;
+        }
     }
 }

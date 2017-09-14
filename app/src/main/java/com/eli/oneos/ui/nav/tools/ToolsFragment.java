@@ -3,8 +3,11 @@ package com.eli.oneos.ui.nav.tools;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,24 +16,33 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.oneos.OneOSHardDisk;
 import com.eli.oneos.model.oneos.api.OneOSPowerAPI;
+import com.eli.oneos.model.oneos.api.OneOSSpaceAPI;
+import com.eli.oneos.model.oneos.transfer.TransferManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.LoginActivity;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
+import com.eli.oneos.ui.nav.tansfer.TransferActivity;
 import com.eli.oneos.ui.nav.tools.app.AppsActivity;
 import com.eli.oneos.ui.nav.tools.aria.AriaActivity;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.ToastHelper;
+import com.eli.oneos.widget.BadgeView;
 import com.eli.oneos.widget.PowerPopupView;
 import com.eli.oneos.widget.StickListView;
-import com.eli.oneos.widget.TitleBackLayout;
+
+import net.cifernet.mobile.cmapi.CMInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,62 +55,79 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
 
     private static final int TOOL_SETTING = R.string.tool_setting;
     private static final int TOOL_USER_MANAGEMENT = R.string.tool_user_management;
-    //    private static final int TOOL_BIND_SSUDP = R.string.tool_bind_ssudp;
     private static final int TOOL_HD_INFO = R.string.tool_hd_info;
     private static final int TOOL_APP = R.string.tool_app;
     private static final int TOOL_ARIA = R.string.tool_aria;
     private static final int TOOL_SYSTEM_MANAGEMENT = R.string.tool_system_management;
     private static final int TOOL_SYSTEM_STATUS = R.string.tool_system_status;
     private static final int TOOL_LOGOUT = R.string.tool_logout;
-    private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_USER_MANAGEMENT, /*TOOL_BIND_SSUDP, */TOOL_HD_INFO, TOOL_APP, TOOL_ARIA, TOOL_SYSTEM_MANAGEMENT, TOOL_SYSTEM_STATUS, TOOL_LOGOUT};
-    private static final int[] TOOL_ICON_M3X = new int[]{R.drawable.icon_tools_user_management, /*R.drawable.icon_tools_ssudp_bind,*/
-            R.drawable.icon_tools_hd_info, R.drawable.icon_tools_app, R.drawable.icon_tools_offline, R.drawable.icon_tools_power,
-            R.drawable.icon_tools_system_status, R.drawable.icon_tools_change_user};
+    private static final int TOOL_SYNC_CONTACT = R.string.tool_sync_contact;
+    private static final int TOOL_SYNC_SMS = R.string.tool_sync_sms;
+    private static final int TOOL_BACKUP_PHOTO = R.string.tool_backup_photo;
+    private static final int TOOL_BACKUP_FILE = R.string.tool_backup_file;
+    private static final int[] TOOL_TITLE_M3X = new int[]{TOOL_BACKUP_PHOTO, TOOL_BACKUP_FILE, TOOL_SYNC_CONTACT, TOOL_SYNC_SMS, TOOL_USER_MANAGEMENT, TOOL_APP, TOOL_ARIA, TOOL_SETTING};
+    private static final int[] TOOL_ICON_M3X = new int[]{ R.drawable.icon_tools_backup_photo, R.drawable.icon_tools_backup_file, R.drawable.icon_tools_contact, R.drawable.icon_tools_sms, R.drawable.icon_tools_user_management,
+            R.drawable.icon_tools_app, R.drawable.icon_tools_offline, R.drawable.icon_tools_setting};
     private static final int[] TOOL_TITLE_M3X_SSUDP = new int[]{TOOL_HD_INFO, TOOL_SYSTEM_MANAGEMENT, TOOL_LOGOUT};
     private static final int[] TOOL_ICON_M3X_SSUDP = new int[]{R.drawable.icon_tools_user_management, R.drawable.icon_tools_power, R.drawable.icon_tools_change_user};
 
     private StickListView mListView;
     private ToolAdapter mAdapter;
     private PowerPopupView mPopupView;
+    private TextView userNameText, domainText;
     private ArrayList<ToolBar> mToolList = new ArrayList<ToolBar>();
-    private OnClickListener backupListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (!isLogin()) {
-                ToastHelper.showToast(R.string.please_login_onespace);
-                return;
-            }
-            Intent intent = null;
-            switch (v.getId()) {
-                case R.id.layout_backup_album:
-                    intent = new Intent(getActivity(), BackupPhotoActivity.class);
-                    break;
-                case R.id.layout_backup_file:
-                    intent = new Intent(getActivity(), BackupFileActivity.class);
-                    break;
-                case R.id.layout_backup_sms:
-                    intent = new Intent(getActivity(), BackupInfoActivity.class);
-                    intent.putExtra(BackupInfoActivity.EXTRA_BACKUP_INFO_TYPE, false);
-                    break;
-                case R.id.layout_backup_contacts:
-                    intent = new Intent(getActivity(), BackupInfoActivity.class);
-                    intent.putExtra(BackupInfoActivity.EXTRA_BACKUP_INFO_TYPE, true);
-                    break;
-            }
+    private TextView spaceText;
+    private ProgressBar progressBar;
+    private BadgeView mTransferBadgeView;
+    private RelativeLayout transLayout;
 
-            if (null != intent) {
-                startActivity(intent);
-            }
+
+    //检测上传下载的任务数并显示
+    private int uploadCount = 0, downloadCount = 0;
+    public TransferManager.OnTransferCountListener transferCountListener = new TransferManager.OnTransferCountListener() {
+        @Override
+        public void onChanged(final boolean isDownload, final int count) {
+
+            if (getActivity() == null)
+                return;
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (isDownload) {
+                        downloadCount = count;
+                    } else {
+                        uploadCount = count;
+                    }
+
+                    int total = uploadCount + downloadCount;
+                    if (total > 0) {
+                        if (total > 99) {
+                            mTransferBadgeView.setText("99+");
+                        } else {
+                            mTransferBadgeView.setText(String.valueOf(total));
+                        }
+                        mTransferBadgeView.setVisibility(View.VISIBLE);
+                    } else {
+                        mTransferBadgeView.setVisibility(View.GONE);
+                    }
+                }
+            });
         }
     };
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "On Create");
         mMainActivity = (MainActivity) getActivity();
         View view = inflater.inflate(R.layout.fragment_nav_tools, container, false);
-
         initViews(view);
+
+        OneSpaceService service = MyApplication.getService();
+        if (null != service) {
+            service.setOnTransferCountListener(transferCountListener);
+        }
 
         return view;
     }
@@ -122,47 +151,77 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             ToolBar toolBar = new ToolBar();
             toolBar.toolTitle = title[i];
             toolBar.toolIcon = icon[i];
+            if (OneOSAPIs.isOneSpaceX1() && title[i] == TOOL_SYSTEM_STATUS) {
+                continue;
+            }
             mToolList.add(toolBar);
         }
         mAdapter.setToolList(mToolList);
         mAdapter.notifyDataSetChanged();
     }
 
-    private void initViews(View view) {
-        TitleBackLayout mTitleLayout = (TitleBackLayout) view.findViewById(R.id.layout_title);
-        mTitleLayout.setBackVisible(false);
-        mTitleLayout.setTitle(R.string.nav_title_tool);
-        mTitleLayout.setRightButtonVisible(View.VISIBLE);
-        mTitleLayout.setRightButton(R.drawable.ic_title_settings);
-        mTitleLayout.setOnRightClickListener(new OnClickListener() {
+    private void initViews(final View view) {
+
+        spaceText = (TextView) view.findViewById(R.id.space_text);
+        progressBar = (ProgressBar) view.findViewById(R.id.space_progress);
+        getUserSpace();
+        RelativeLayout powerLayout = (RelativeLayout) view.findViewById(R.id.power_manage);
+        powerLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SettingsActivity.class);
-                startActivity(intent);
+                if (isLogin() && LoginManage.getInstance().getLoginSession().isAdmin()) {
+                    showPowerView(view);
+                } else {
+                    DialogUtils.showNotifyDialog(getActivity(), R.string.tips, R.string.please_login_onespace_with_admin, R.string.ok, null);
+                }
             }
         });
 
-        LinearLayout mLayout = (LinearLayout) view.findViewById(R.id.layout_backup);
-        if (!LoginManage.getInstance().isHttp()) { // SSUDP时不显示备份功能
-            mLayout.setVisibility(View.GONE);
-        } else {
-            mLayout.setVisibility(View.VISIBLE);
-            mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_album);
-            mLayout.setOnClickListener(backupListener);
-            mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_file);
-            mLayout.setOnClickListener(backupListener);
-            mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_contacts);
-            mLayout.setOnClickListener(backupListener);
-            mLayout = (LinearLayout) view.findViewById(R.id.layout_backup_sms);
-            mLayout.setOnClickListener(backupListener);
-        }
+        RelativeLayout changeUserLayout = (RelativeLayout) view.findViewById(R.id.change_user);
+        changeUserLayout.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLogin()) {
+                    loginOutDialog();
+                } else {
+                    doLoginOut();
+                }
+            }
+        });
 
+        transLayout = (RelativeLayout) view.findViewById(R.id.transfer_lyout);
+        transLayout.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLogin()) {
+                    Intent intent = new Intent(getActivity(), TransferActivity.class);
+                    startActivity(intent);
+                } else {
+                    ToastHelper.showToast(R.string.please_login_onespace);
+                }
+            }
+        });
+
+        userNameText = (TextView) view.findViewById(R.id.user_name);
+        LoginSession loginSession = LoginManage.getInstance().getLoginSession();
+        userNameText.setText(loginSession.getUserInfo().getName());
+        domainText = (TextView) view.findViewById(R.id.login_domain);
+        domainText.setText(loginSession.getIp());
         mListView = (StickListView) view.findViewById(R.id.listview_tools);
         mAdapter = new ToolAdapter(getActivity());
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
         mAdapter.setToolList(mToolList);
         mAdapter.notifyDataSetChanged();
+
+        mTransferBadgeView = new BadgeView(getActivity());
+        mTransferBadgeView.setText("0");
+        mTransferBadgeView.setBadgeGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        mTransferBadgeView.setBadgeMargin(15,2,15,0);
+        mTransferBadgeView.setTargetView(transLayout);
+        mTransferBadgeView.setTypeface(Typeface.DEFAULT);
+        mTransferBadgeView.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -171,12 +230,12 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         int tool = mToolList.get(arg2).toolTitle;
         Intent intent = null;
         Log.d(TAG, "On item click: tool = " + tool);
+
         if (tool == TOOL_APP) {
             intent = new Intent(getActivity(), AppsActivity.class);
         } else if (tool == TOOL_SETTING) {
             intent = new Intent(getActivity(), SettingsActivity.class);
-        }
-        /*else if (tool == TOOL_SYNC_CONTACT || tool == TOOL_SYNC_SMS) {
+        } else if (tool == TOOL_SYNC_CONTACT || tool == TOOL_SYNC_SMS) {
             if (isLogin()) {
                 intent = new Intent(getActivity(), BackupInfoActivity.class);
                 intent.putExtra(BackupInfoActivity.EXTRA_BACKUP_INFO_TYPE, tool == TOOL_SYNC_CONTACT);
@@ -195,8 +254,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             } else {
                 ToastHelper.showToast(R.string.please_login_onespace);
             }
-        } */
-        else if (tool == TOOL_ARIA) {
+        } else if (tool == TOOL_ARIA) {
             if (isLogin()) {
                 intent = new Intent(getActivity(), AriaActivity.class);
             } else {
@@ -214,12 +272,6 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             } else {
                 ToastHelper.showToast(R.string.please_login_onespace);
             }
-//        } else if (tool == TOOL_BIND_SSUDP) {
-//            if (isLogin()) {
-//                intent = new Intent(getActivity(), SsudpActivity.class);
-//            } else {
-//                ToastHelper.showToast(R.string.please_login_onespace);
-//            }
         } else if (tool == TOOL_SYSTEM_STATUS) {
             if (isLogin()) {
                 intent = new Intent(getActivity(), SystemStatusActivity.class);
@@ -339,6 +391,7 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
         OneSpaceService mTransferService = MyApplication.getService();
         mTransferService.notifyUserLogout();
         LoginManage.getInstance().logout();
+        CMInterface.getInstance().disconnect();
 
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
@@ -452,6 +505,45 @@ public class ToolsFragment extends BaseNavFragment implements OnItemClickListene
             // }
 
             return convertView;
+        }
+    }
+
+    public void getUserSpace() {
+        OneOSSpaceAPI spaceAPI = new OneOSSpaceAPI(LoginManage.getInstance().getLoginSession());
+        spaceAPI.setOnSpaceListener(new OneOSSpaceAPI.OnSpaceListener() {
+            @Override
+            public void onStart(String url) {
+
+            }
+
+            @Override
+            public void onSuccess(String url, boolean isOneOSSpace, OneOSHardDisk hd1, OneOSHardDisk hd2) {
+                String totalInfo;
+                long total = hd1.getTotal();
+                long used = hd1.getUsed();
+                int progress = 0;
+
+                if (total == 0) {
+                    totalInfo = getString(R.string.unlimited);
+                } else {
+                    totalInfo = Formatter.formatFileSize(getActivity(), total);
+                    progress = (int) (used * 100 / total);
+                }
+                String usedInfo = Formatter.formatFileSize(getActivity(), used);
+                spaceText.setText(usedInfo + " / " + totalInfo);
+                progressBar.setProgress(progress);
+            }
+
+            @Override
+            public void onFailure(String url, int errorNo, String errorMsg) {
+
+            }
+        });
+
+        if (OneOSAPIs.isOneSpaceX1()) {
+            spaceAPI.querys(false);
+        } else {
+            spaceAPI.query(false);
         }
     }
 }

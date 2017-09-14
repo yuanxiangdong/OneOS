@@ -6,19 +6,25 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+
+
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.constant.OneSpaceAPIs;
 import com.eli.oneos.model.FileManageAction;
+
 import com.eli.oneos.model.oneos.api.OneOSFileManageAPI;
+import com.eli.oneos.model.oneos.api.OneOSListUserAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.BaseActivity;
-import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.utils.AnimUtils;
 import com.eli.oneos.utils.DialogUtils;
 import com.eli.oneos.utils.EmptyUtils;
@@ -26,13 +32,19 @@ import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.InputMethodUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.utils.Utils;
+
 import com.eli.oneos.widget.ServerFileTreeView;
+
+import com.eli.oneos.widget.SharePopupView;
 import com.eli.oneos.widget.undobar.UndoBar;
 
 import org.json.JSONObject;
-
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 
 /**
  * Class for management OneSpace File
@@ -49,6 +61,9 @@ public class OneOSFileManage {
     private OnManageCallback callback;
     private List<OneOSFile> fileList;
     private OneOSFileManageAPI fileManageAPI;
+    private ArrayList<OneOSUser> mUserList = new ArrayList<>();
+
+
     private OneOSFileManageAPI.OnFileManageListener mListener = new OneOSFileManageAPI.OnFileManageListener() {
         @Override
         public void onStart(String url, FileManageAction action) {
@@ -63,9 +78,9 @@ public class OneOSFileManage {
             } else if (action == FileManageAction.MKDIR) {
                 mActivity.showLoading(R.string.making_folder);
             } else if (action == FileManageAction.ENCRYPT) {
-                mActivity.showLoading(R.string.encrypting_file);
+                mActivity.showLoading(R.string.encrypting_file,true);
             } else if (action == FileManageAction.DECRYPT) {
-                mActivity.showLoading(R.string.decrypting_file);
+                mActivity.showLoading(R.string.decrypting_file,true);
             } else if (action == FileManageAction.COPY) {
                 mActivity.showLoading(R.string.copying_file);
             } else if (action == FileManageAction.MOVE) {
@@ -83,30 +98,55 @@ public class OneOSFileManage {
             if (action == FileManageAction.ATTR) {
                 mActivity.dismissLoading();
                 // {"result":true, "path":"/PS-AI-CDR","dirs":1,"files":10,"size":3476576309,"uid":1001,"gid":0}
+
                 try {
                     OneOSFile file = fileList.get(0);
                     Resources resources = mActivity.getResources();
                     List<String> titleList = new ArrayList<>();
                     List<String> contentList = new ArrayList<>();
                     JSONObject json = new JSONObject(response);
-                    titleList.add(resources.getString(R.string.file_attr_path));
-                    contentList.add(json.getString("path"));
-                    titleList.add(resources.getString(R.string.file_attr_size));
-                    long size = json.getLong("size");
-                    contentList.add(FileUtils.fmtFileSize(size) + " (" + size + resources.getString(R.string.tail_file_attr_size_bytes) + ")");
-                    if (file.isDirectory()) {
-                        titleList.add(resources.getString(R.string.file_attr_folders));
-                        contentList.add(json.getString("dirs") + resources.getString(R.string.tail_file_attr_folders));
-                        titleList.add(resources.getString(R.string.file_attr_files));
-                        contentList.add(json.getString("files") + resources.getString(R.string.tail_file_attr_files));
+
+                    String curOneOS = LoginManage.getInstance().getLoginSession().getOneOSInfo().getVersion();
+                    if (curOneOS == OneSpaceAPIs.ONESPACE_VER){
+                        titleList.add(resources.getString(R.string.file_attr_path));
+                        contentList.add(json.getString("path"));
+                        titleList.add(resources.getString(R.string.file_attr_size));
+                        long size = json.getLong("size");
+                        contentList.add(FileUtils.fmtFileSize(size) + " (" + size + resources.getString(R.string.tail_file_attr_size_bytes) + ")");
+                        if (file.isDirectory()) {
+                            titleList.add(resources.getString(R.string.file_attr_folders));
+                            System.out.println("file ======"+ json);
+                            contentList.add(json.getString("dirs") + resources.getString(R.string.tail_file_attr_folders));
+                            titleList.add(resources.getString(R.string.file_attr_files));
+                            System.out.println("file ======"+ json);
+                            contentList.add(json.getString("files") + resources.getString(R.string.tail_file_attr_files));
+                        }
+                        DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, 0, 0, R.string.ok, null);
+                    }else{
+                        JSONObject datajson = json.getJSONObject("data");
+                        titleList.add(resources.getString(R.string.file_attr_path));
+                        contentList.add(datajson.getString("path"));
+                        titleList.add(resources.getString(R.string.file_attr_size));
+                        long size = datajson.getLong("size");
+                        contentList.add(FileUtils.fmtFileSize(size) + " (" + size + resources.getString(R.string.tail_file_attr_size_bytes) + ")");
+                        if (file.isDirectory()) {
+                            titleList.add(resources.getString(R.string.file_attr_folders));
+                            System.out.println("file ======"+ datajson);
+                            contentList.add(datajson.getString("dirs") + resources.getString(R.string.tail_file_attr_folders));
+                            titleList.add(resources.getString(R.string.file_attr_files));
+                            System.out.println("file ======"+ datajson);
+                            contentList.add(datajson.getString("files") + resources.getString(R.string.tail_file_attr_files));
+                        }
+                        titleList.add(resources.getString(R.string.file_attr_permission));
+                        contentList.add(file.getPerm());
+                        titleList.add(resources.getString(R.string.file_attr_uid));
+                        contentList.add(datajson.getString("uid"));
+                        titleList.add(resources.getString(R.string.file_attr_gid));
+                        contentList.add(datajson.getString("gid"));
+                        DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, 0, 0, R.string.ok, null);
                     }
-                    titleList.add(resources.getString(R.string.file_attr_permission));
-                    contentList.add(file.getPerm());
-                    titleList.add(resources.getString(R.string.file_attr_uid));
-                    contentList.add(json.getString("uid"));
-                    titleList.add(resources.getString(R.string.file_attr_gid));
-                    contentList.add(json.getString("gid"));
-                    DialogUtils.showListDialog(mActivity, titleList, contentList, R.string.tip_attr_file, 0, 0, R.string.ok, null);
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     ToastHelper.showToast(R.string.error_json_exception);
@@ -141,7 +181,11 @@ public class OneOSFileManage {
         @Override
         public void onFailure(String url, FileManageAction action, int errorNo, String errorMsg) {
             if (action == FileManageAction.ENCRYPT || action == FileManageAction.DECRYPT) {
-                mActivity.showTipView(R.string.error_manage_perm_deny, false);
+                if (-42001 == errorNo){
+                    mActivity.showTipView("密码错误", false);
+                }else {
+                    mActivity.showTipView(R.string.error_manage_perm_deny, false);
+                }
             } else {
                 mActivity.showTipView(errorMsg, false);
             }
@@ -254,6 +298,17 @@ public class OneOSFileManage {
                     fileManageAPI.move(selectedList, tarPath);
                 }
             });
+
+        } else if (action == FileManageAction.EXTRACT) {
+            final OneOSFile file = selectedList.get(0);
+            ServerFileTreeView fileTreeView = new ServerFileTreeView(mActivity, loginSession, R.string.tip_extract_file, R.string.confirm);
+            fileTreeView.showPopupCenter(mRootView);
+            fileTreeView.setOnPasteListener(new ServerFileTreeView.OnPasteFileListener() {
+                @Override
+                public void onPaste(String tarPath) {
+                    fileManageAPI.extract(file, tarPath);
+                }
+            });
         } else if (action == FileManageAction.CLEAN_RECYCLE) {
             DialogUtils.showConfirmDialog(mActivity, R.string.title_clean_recycle_file, R.string.tip_clean_recycle_file, R.string.clean_now, R.string.cancel, new DialogUtils.OnDialogClickListener() {
                 @Override
@@ -265,6 +320,9 @@ public class OneOSFileManage {
             });
         } else if (action == FileManageAction.CHMOD) {
             chmodFile(selectedList.get(0));
+        } else if (action == FileManageAction.SHARE){
+            shareToUserDialog(mActivity, selectedList, loginSession);
+            //getUserList(mActivity, loginSession, R.string.tip_copy_file, R.string.share_file);
         } else if (action == FileManageAction.DOWNLOAD) {
             if (!Utils.isWifiAvailable(mActivity) && loginSession.getUserSettings().getIsTipTransferNotWifi()) {
                 DialogUtils.showConfirmDialog(mActivity, R.string.tips, R.string.confirm_download_not_wifi, R.string.confirm, R.string.cancel, new DialogUtils.OnDialogClickListener() {
@@ -280,6 +338,8 @@ public class OneOSFileManage {
             }
         }
     }
+
+
 
     public void manage(FileManageAction action, final String path) {
         this.action = action;
@@ -327,7 +387,7 @@ public class OneOSFileManage {
 
                     @Override
                     public void onClick() {
-                        mActivity.controlActivity(MainActivity.ACTION_SHOW_TRANSFER_DOWNLOAD);
+                       // mActivity.controlActivity(MainActivity.ACTION_SHOW_TRANSFER_DOWNLOAD);
                     }
 
                     @Override
@@ -384,6 +444,105 @@ public class OneOSFileManage {
         mDialog.setCancelable(false);
         mDialog.show();
     }
+
+    public void shareToUserDialog(final BaseActivity context, final ArrayList<OneOSFile> fileList, final LoginSession loginSession) {
+
+        final String loginname = loginSession.getUserInfo().getName();
+        final OneOSListUserAPI listUserAPI = new OneOSListUserAPI(loginSession);
+        listUserAPI.setOnListUserListener(new OneOSListUserAPI.OnListUserListener() {
+            @Override
+            public void onStart(String url) {
+                //showLoading(R.string.getting_user_list);
+            }
+
+            @Override
+            public void onSuccess(String url, List<OneOSUser> users) {
+                mUserList.clear();
+                if (null != users) {
+                    mUserList.addAll(users);
+                }
+
+                Iterator<OneOSUser> iterator = mUserList.iterator();
+                while (iterator.hasNext()) {
+                    OneOSUser oneOSUser = iterator.next();
+                    if ((oneOSUser.getName()).equals(loginname)) {
+                        iterator.remove();
+                    }
+                }
+
+                final String[] osusers = new String[mUserList.size()];
+                final long[] usersId = new long[mUserList.size()];
+                final Map<Long, String> userMap = new HashMap<Long, String>();
+                for (int i = 0; i < osusers.length; i++) {
+                    osusers[i] = mUserList.get(i).getName();
+                    usersId[i] = mUserList.get(i).getUid();
+                    userMap.put(usersId[i],osusers[i]);
+                }
+
+                final SharePopupView mShareMenu = new SharePopupView(mActivity);
+                mShareMenu.addUsers(osusers);
+                mShareMenu.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        // TODO Auto-generated method stub
+                        final ArrayList<Long> mOperateUsers = new ArrayList<>();
+                        HashMap<Integer, Boolean> select = mShareMenu.getIsSelected();
+                        for (HashMap.Entry<Integer, Boolean> entry : select.entrySet()) {
+                            if (entry.getValue() == true) {
+                                mOperateUsers.add(usersId[entry.getKey()]);
+                            }
+                        }
+
+                        if (mOperateUsers.size() == 0) {
+                            ToastHelper.showToast(R.string.tip_please_check_user);
+                        } else {
+                            ArrayList<String> shareUser = new ArrayList<String>();
+                            ArrayList<String> shareUserId = new ArrayList<String>();
+                            for (long userid : mOperateUsers) {
+                                shareUser.add(userMap.get(userid));
+                                shareUserId.add(String.valueOf(userid));
+                            }
+                            Log.d(TAG,"value="+shareUser);
+                            Log.d(TAG,"filelist="+fileList);
+                            if (OneOSAPIs.isOneSpaceX1()){
+                                fileManageAPI.share(fileList, shareUserId);
+                            } else {
+                                fileManageAPI.share(fileList, shareUser);
+                            }
+                            mShareMenu.dismiss();
+                        }
+                    }
+
+                });
+
+                mShareMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+                        // TODO Auto-generated method stub
+                        CheckBox check = (CheckBox) view.findViewById(R.id.select_user);
+                        check.toggle();
+                        boolean isSelect = check.isChecked();
+                        mShareMenu.getIsSelected().put(position, isSelect);
+                        mShareMenu.mAdapter.notifyDataSetChanged();
+                    }
+                });
+
+        }
+
+            @Override
+            public void onFailure(String url, int errorNo, String errorMsg) {
+                Log.d(TAG,"get user failure");
+//                dismissLoading();
+//                showTipView(errorMsg, false);
+            }
+
+        });
+        listUserAPI.list();
+    }
+
+
 
     public interface OnManageCallback {
         void onComplete(boolean isSuccess);

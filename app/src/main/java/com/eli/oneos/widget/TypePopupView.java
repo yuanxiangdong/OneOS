@@ -64,6 +64,7 @@ public class TypePopupView {
     }
 
     public void showPopupTop(View parent) {
+        mPopupMenu.setAnimationStyle(R.style.popup_window_anim);
         mPopupMenu.showAsDropDown(parent);
         mPopupMenu.setFocusable(true);
         mPopupMenu.setOutsideTouchable(true);

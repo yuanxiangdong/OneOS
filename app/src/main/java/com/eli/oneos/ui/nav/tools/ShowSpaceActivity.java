@@ -13,6 +13,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSHardDisk;
 import com.eli.oneos.model.oneos.api.OneOSHardDiskInfoAPI;
 import com.eli.oneos.model.oneos.api.OneOSSpaceAPI;
@@ -248,6 +249,7 @@ public class ShowSpaceActivity extends BaseActivity {
 
                     int ratio;
                     String totalInfo;
+
                     String freeInfo = Formatter.formatFileSize(ShowSpaceActivity.this, free);
                     if (total == 0) {
                         ratio = 0;
@@ -271,7 +273,11 @@ public class ShowSpaceActivity extends BaseActivity {
                 Log.e(TAG, "Query Server Disk Size Failure");
             }
         });
-        spaceAPI.query(isOneOSSpace);
+        if (OneOSAPIs.isOneSpaceX1()){
+            spaceAPI.querys(isOneOSSpace);
+        } else {
+            spaceAPI.query(isOneOSSpace);
+        }
     }
 
     private void queryHDInfo(OneOSHardDisk hardDisk1, OneOSHardDisk hardDisk2) {
@@ -297,6 +303,7 @@ public class ShowSpaceActivity extends BaseActivity {
             }
         });
         hdInfoAPI.query(hardDisk1, hardDisk2);
+
     }
 
     private void showDeviceSpace(long total, long free) {

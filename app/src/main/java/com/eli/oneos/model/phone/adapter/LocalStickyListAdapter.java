@@ -83,7 +83,7 @@ public class LocalStickyListAdapter extends LocalFileBaseAdapter implements Stic
         LocalFile file = mFileList.get(position);
         holder.mNameTxt.setText(file.getName());
         holder.mIconView.setTag(file.getName());
-        holder.mTimeTxt.setText(FileUtils.fmtTimeByZone(file.getTime()));
+        holder.mTimeTxt.setText(FileUtils.fmtTimeByZone(file.getTime()/1000));
         holder.mSizeTxt.setText(FileUtils.fmtFileSize(file.length()));
 
         showFileIcon(holder.mIconView, file);

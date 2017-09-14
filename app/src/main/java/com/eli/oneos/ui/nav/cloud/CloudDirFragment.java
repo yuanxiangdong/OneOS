@@ -1,8 +1,13 @@
 package com.eli.oneos.ui.nav.cloud;
 
+
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +19,22 @@ import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import android.widget.PopupWindow;
 import android.widget.RadioGroup;
+import android.widget.TextView;
+
+import com.eli.oneos.MyApplication;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.constant.OneSpaceAPIs;
 import com.eli.oneos.db.UserSettingsKeeper;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.FileViewerType;
+import com.eli.oneos.model.oneos.EventMsgManager;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileManage;
 import com.eli.oneos.model.oneos.OneOSFileType;
@@ -33,6 +45,9 @@ import com.eli.oneos.model.oneos.api.OneOSListDirAPI;
 import com.eli.oneos.model.oneos.api.OneOSSearchAPI;
 import com.eli.oneos.model.oneos.comp.OneOSFileNameComparator;
 import com.eli.oneos.model.oneos.comp.OneOSFileTimeComparator;
+import com.eli.oneos.model.oneos.user.LoginManage;
+import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFileFragment;
 import com.eli.oneos.utils.AnimUtils;
@@ -49,9 +64,13 @@ import com.eli.oneos.widget.pullrefresh.PullToRefreshBase;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshGridView;
 import com.eli.oneos.widget.pullrefresh.PullToRefreshListView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+
 
 /**
  * Created by gaoyun@eli-tech.com on 2016/1/13.
@@ -66,7 +85,8 @@ public class CloudDirFragment extends BaseCloudFragment {
     private PullToRefreshGridView mPullRefreshGridView;
     private OneOSFileListAdapter mListAdapter;
     private OneOSFileGridAdapter mGridAdapter;
-    private MenuPopupView mAddPopView, mOrderPopView;
+    private MenuPopupView mAddPopView, mOrderPopView, mMorePopView;
+    private OneSpaceService oneSpaceService;
 
     private AdapterView.OnItemClickListener mFileItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -91,7 +111,7 @@ public class CloudDirFragment extends BaseCloudFragment {
                 mClickedCheckBox.toggle();
 
                 mAdapter.notifyDataSetChanged();
-                updateSelectAndManagePanel();
+                updateSelectAndManagePanel(false);
             } else {
                 OneOSFile file = mFileList.get(position);
                 if (file.isDirectory()) {
@@ -115,7 +135,7 @@ public class CloudDirFragment extends BaseCloudFragment {
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (!isMultiMode) {
                 setMultiModel(true, position);
-                updateSelectAndManagePanel();
+                updateSelectAndManagePanel(false);
             } else {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
                 OneOSFile file = mFileList.get(position);
@@ -128,7 +148,7 @@ public class CloudDirFragment extends BaseCloudFragment {
                 mClickedCheckBox.toggle();
 
                 mAdapter.notifyDataSetChanged();
-                updateSelectAndManagePanel();
+                updateSelectAndManagePanel(false);
             }
 
             return true;
@@ -139,7 +159,7 @@ public class CloudDirFragment extends BaseCloudFragment {
         public void onSelect(boolean isSelectAll) {
             getFileAdapter().selectAllItem(isSelectAll);
             getFileAdapter().notifyDataSetChanged();
-            updateSelectAndManagePanel();
+            updateSelectAndManagePanel(false);
         }
 
         @Override
@@ -148,8 +168,10 @@ public class CloudDirFragment extends BaseCloudFragment {
         }
     };
     private FileManagePanel.OnFileManageListener mFileManageListener = new FileManagePanel.OnFileManageListener() {
+
         @Override
         public void onClick(View view, ArrayList<?> selectedList, FileManageAction action) {
+
             if (EmptyUtils.isEmpty(selectedList)) {
                 ToastHelper.showToast(R.string.tip_select_file);
             } else {
@@ -160,14 +182,26 @@ public class CloudDirFragment extends BaseCloudFragment {
                         autoPullToRefresh();
                     }
                 });
-                fileManage.manage(mFileType, action, (ArrayList<OneOSFile>) selectedList);
+
+
+                if (action.equals(FileManageAction.MORE)) {
+                    Log.d(TAG, "Manage More======");
+                    updateSelectAndManagePanel(true);
+                    //showPopupWindow(selectedList);
+                }else if (action.equals(FileManageAction.BACK)){
+                    updateSelectAndManagePanel(false);
+                } else {
+                    fileManage.manage(mFileType, action, (ArrayList<OneOSFile>) selectedList);
+                }
             }
         }
+
 
         @Override
         public void onDismiss() {
         }
     };
+
     private String mSearchFilter = null;
     private SearchPanel.OnSearchActionListener mSearchListener = new SearchPanel.OnSearchActionListener() {
         @Override
@@ -189,6 +223,64 @@ public class CloudDirFragment extends BaseCloudFragment {
         }
     };
 
+    private EventMsgManager.OnEventMsgListener eventMsgListener = new EventMsgManager.OnEventMsgListener() {
+        private LoginSession loginSession;
+
+        @Override
+        public void onEventMsg(JSONObject json) {
+            Log.d(TAG, "Msg: " + json.toString());
+            Log.d(TAG, "Receive mFileList: " + mFileList);
+
+            loginSession = LoginManage.getInstance().getLoginSession();
+            String loginname = loginSession.getUserInfo().getName();
+            try {
+                String channel = json.getString("channel");
+                Log.d(TAG, "Receive channel: " + channel);
+                if (channel.toString().equals("file")) {
+                    String action = json.getString("action");
+                    String user = json.getString("user");
+                    Log.d(TAG, "Receive action: " + action);
+                    if (action.equals("share") && user.equals(loginname)) {
+                        JSONObject content = json.getJSONObject("content");
+                        String path = content.getString("path");
+                        String from = content.getString("from");
+                        String fname = path.substring(path.lastIndexOf("/") + 1);
+                        final String tips = String.format("%s shared a file to you: %s", from, fname);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastHelper.showToast(tips);
+                            }
+                        });
+
+                    } else if ((action.equals("extract") || action.equals("encrypt") || action.equals("decrypt")) && user.equals(loginname)) {
+                        JSONObject content = json.getJSONObject("content");
+                        String path = content.getString("path").replaceAll("\\s*|\t|\r|\n", "");
+                        int progress = content.getInt("progress");
+                        for (int i = 0; i < mFileList.size(); i++) {
+                            String filepath = mFileList.get(i).getPath().toString().replaceAll("\\s*|\t|\r|\n", "");
+                            if (filepath.equals(path)) {
+                                if (progress == 100) progress = 0;
+                                mFileList.get(i).setProgress(progress);
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        getFileAdapter().notifyDataSetChanged();
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(TAG, "On Create View");
@@ -198,6 +290,7 @@ public class CloudDirFragment extends BaseCloudFragment {
         initLoginSession();
 
         mMainActivity = (MainActivity) getActivity();
+        oneSpaceService = MyApplication.getService();
         mParentFragment = (BaseNavFileFragment) getParentFragment();
         curPath = OneOSAPIs.ONE_OS_PRIVATE_ROOT_DIR;
         mFileType = OneOSFileType.PRIVATE;
@@ -206,12 +299,14 @@ public class CloudDirFragment extends BaseCloudFragment {
         initAddMenu(view);
         initView(view);
 
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        oneSpaceService.addOnEventMsgListener(eventMsgListener);
         if (null != mParentFragment) {
             mParentFragment.addSearchListener(mSearchListener);
         }
@@ -221,6 +316,7 @@ public class CloudDirFragment extends BaseCloudFragment {
     @Override
     public void onPause() {
         super.onPause();
+        oneSpaceService.removeOnEventMsgListener(eventMsgListener);
         setMultiModel(false, 0);
     }
 
@@ -297,7 +393,7 @@ public class CloudDirFragment extends BaseCloudFragment {
             public void onClick(View view) {
                 AnimUtils.shortVibrator();
                 setMultiModel(true, (Integer) view.getTag());
-                updateSelectAndManagePanel();
+                updateSelectAndManagePanel(false);
             }
         }, mLoginSession);
         mListView.setOnItemClickListener(mFileItemClickListener);
@@ -377,6 +473,7 @@ public class CloudDirFragment extends BaseCloudFragment {
             }
         });
     }
+
 
     private void switchViewer(boolean isListShown) {
         if (isListShown) {
@@ -542,9 +639,9 @@ public class CloudDirFragment extends BaseCloudFragment {
         mParentFragment.showManageBar(isShown);
     }
 
-    private void updateSelectAndManagePanel() {
+    private void updateSelectAndManagePanel(boolean isMore) {
         mParentFragment.updateSelectBar(mFileList.size(), mSelectedList.size(), mFileSelectListener);
-        mParentFragment.updateManageBar(mFileType, mSelectedList, mFileManageListener);
+        mParentFragment.updateManageBar(mFileType, mSelectedList, isMore, mFileManageListener);
     }
 
     private boolean setMultiModel(boolean isSetMultiModel, int position) {
@@ -554,7 +651,7 @@ public class CloudDirFragment extends BaseCloudFragment {
         }
 
         if (isSetMultiModel) {
-            updateSelectAndManagePanel();
+            updateSelectAndManagePanel(false);
             showSelectAndOperatePanel(true);
             mListAdapter.setIsMultiModel(true);
             mGridAdapter.setIsMultiModel(true);
@@ -635,4 +732,6 @@ public class CloudDirFragment extends BaseCloudFragment {
             }
         }
     }
+
+
 }

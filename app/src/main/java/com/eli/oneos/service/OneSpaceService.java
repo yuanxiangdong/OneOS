@@ -12,6 +12,7 @@ import android.util.Log;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.db.greendao.BackupFile;
+import com.eli.oneos.model.oneos.EventMsgManager;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.backup.file.BackupAlbumManager;
 import com.eli.oneos.model.oneos.backup.file.BackupFileManager;
@@ -23,6 +24,7 @@ import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.model.oneos.transfer.UploadManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.ui.nav.cloud.CloudDirFragment;
 import com.eli.oneos.utils.MediaScanner;
 
 import java.io.File;
@@ -37,20 +39,25 @@ public class OneSpaceService extends Service {
     private UploadManager mUploadManager;
     private BackupAlbumManager mBackupAlbumManager;
     private BackupFileManager mBackupFileManager;
+    private EventMsgManager mEventMsgManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(ACTIVITY_SERVICE, "OneSpaceService create.");
         context = MyApplication.getAppContext();
 
         mDownloadManager = DownloadManager.getInstance();
         mUploadManager = UploadManager.getInstance();
+        mEventMsgManager = EventMsgManager.getInstance();
+        //mEventMsgManager.startReceive();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(ACTIVITY_SERVICE, "OneSpaceService destroy.");
+        mEventMsgManager.onDestory();
         MediaScanner.getInstance().stop();
         mDownloadManager.onDestroy();
         mUploadManager.onDestroy();
@@ -79,6 +86,7 @@ public class OneSpaceService extends Service {
     public void notifyUserLogin() {
         startBackupAlbum();
         startBackupFile();
+        mEventMsgManager.startReceive();
     }
 
     public void notifyUserLogout() {
@@ -86,6 +94,19 @@ public class OneSpaceService extends Service {
         cancelUpload();
         stopBackupAlbum();
         stopBackupFile();
+    }
+
+    // ====================================建立长连接线程==========================================
+    public void addOnEventMsgListener(EventMsgManager.OnEventMsgListener listener) {
+        if (null != mEventMsgManager) {
+            mEventMsgManager.setOnEventMsgListener(listener);
+        }
+    }
+
+    public void removeOnEventMsgListener(EventMsgManager.OnEventMsgListener listener) {
+        if (null != mEventMsgManager) {
+            mEventMsgManager.removeOnEventMsgListener(listener);
+        }
     }
 
     // ==========================================Auto Backup File==========================================

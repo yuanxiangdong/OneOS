@@ -9,8 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.widget.sticky.listview.StickyListHeadersAdapter;
 
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ import java.util.List;
 
 public class OneOSStickyListAdapter extends OneOSFileBaseAdapter implements StickyListHeadersAdapter/*, SectionIndexer*/ {
 
-    private String[] mSectionLetters;
+    private String[] mSectionLetters = new String[]{};
 
     public OneOSStickyListAdapter(Context context, List<OneOSFile> fileList, ArrayList<OneOSFile> selectedList, OnMultiChooseClickListener listener, LoginSession mLoginSession) {
         super(context, fileList, selectedList, listener, mLoginSession);
@@ -89,7 +91,9 @@ public class OneOSStickyListAdapter extends OneOSFileBaseAdapter implements Stic
         if (file.isEncrypt()) {
             holder.mIconView.setImageResource(R.drawable.icon_file_encrypt);
         } else {
-            if (file.isPicture()) {
+            if (FileUtils.isPictureFile(file.getName())) {
+                showPicturePreview(holder.mIconView, file);
+            } else if(file.isVideo() && !OneOSAPIs.isOneSpaceX1()){
                 showPicturePreview(holder.mIconView, file);
             } else {
                 holder.mIconView.setImageResource(file.getIcon());

@@ -3,13 +3,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:addStatesFromChildren="true"
-    android:background="@drawable/selector_list_trans_to_gray"
-    android:padding="4dp">
+    android:padding="8dp">
 
     <ImageView
         android:id="@+id/tool_icon"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
         android:scaleType="centerInside" />
@@ -23,6 +22,6 @@
         android:layout_toRightOf="@+id/tool_icon"
         android:singleLine="true"
         android:textColor="@color/darker"
-        android:textSize="@dimen/text_size_mid" />
+        android:textSize="@dimen/text_size_tool" />
 
 </RelativeLayout>

@@ -38,7 +38,16 @@ public class OneOSFile implements Serializable {
     private long time = 0;
     private long size = 0;
     private long month = 0;
+    private int actProgress = 0;
+    private int encrypt = 0;
+    private long phototime = 0;
+    private long udtime = 0;
+    private long cttime = 0;
+    private String fullpath = null;
 
+
+    private String fmtUDTime = null;
+    private String fmtCTTime = null;
     /**
      * file shown icon
      */
@@ -103,6 +112,9 @@ public class OneOSFile implements Serializable {
     }
 
     public String getPath() {
+        if (OneOSAPIs.isOneSpaceX1() && isEncrypt()){
+            return path+".TEA";
+        }
         return path;
     }
 
@@ -182,24 +194,79 @@ public class OneOSFile implements Serializable {
         this.fmtSize = fmtSize;
     }
 
+    public int getProgress(){return actProgress; }
+    public void setProgress(int progress){
+        this.actProgress = progress;
+    }
+
+    public void setEncrypt(int encr) {this.encrypt = encr;}
+    public boolean isEncr() { return this.encrypt == 1;}
+
+    public void setUdtime(long udtime){
+        this.udtime = udtime;
+    }
+    public long getUdtime(){
+        return udtime;
+    }
+
+    public void setCttime(long cttime){
+        this.cttime = cttime;
+    }
+    public long getCttime(){
+        return cttime;
+    }
+
     public String getFmtTime() {
         return fmtTime;
     }
-
     public void setFmtTime(String fmtTime) {
         this.fmtTime = fmtTime;
     }
 
+    public String getFmtUDTime() {
+        return fmtUDTime;
+    }
+    public void setFmtUDTime(String fmtUDTime) {
+        this.fmtUDTime = fmtUDTime;
+    }
+
+    public String getFmtCTTime() {
+        return fmtCTTime;
+    }
+
+    public void setFmtCTTime(String fmtCTTime) {
+        this.fmtCTTime = fmtCTTime;
+    }
+
+
+
+
     public boolean isPicture() {
         return null != this.type && this.type.equalsIgnoreCase("pic");
+    }
+
+    public boolean isVideo(){
+        return null != this.type && this.type.equalsIgnoreCase("video");
     }
 
     public boolean isGif() {
         return null != this.name && this.name.toLowerCase().endsWith(".gif");
     }
 
+    public boolean isDocument() { return null != this.type && this.type.equalsIgnoreCase("doc"); }
+
+    public  boolean isExtract() { return null != this.name && (this.name.toLowerCase().endsWith(".zip")
+            || this.name.toLowerCase().endsWith(".rar") || this.name.toLowerCase().endsWith(".tgz")
+            || this.name.toLowerCase().endsWith(".nz2") || this.name.toLowerCase().endsWith(".bz")
+            || this.name.toLowerCase().endsWith(".gz") || this.name.toLowerCase().endsWith(".7z")
+            || this.name.toLowerCase().endsWith(".jar"));}
+
     public boolean isEncrypt() {
-        return null != this.type && this.type.equalsIgnoreCase("enc");
+        if (OneOSAPIs.isOneSpaceX1()){
+            return this.encrypt == 1;
+        }else {
+            return null != this.type && this.type.equalsIgnoreCase("enc");
+        }
     }
 
     public boolean isDirectory() {
@@ -226,6 +293,11 @@ public class OneOSFile implements Serializable {
         this.month = month;
     }
 
+    public void setPhototime (long phototime){ this.phototime = phototime; }
+    public long getPhototime (){
+        return phototime;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -240,9 +312,22 @@ public class OneOSFile implements Serializable {
         return false;
     }
 
+    public void setFullpath(String fullpath){ this.fullpath = fullpath; }
+
+    public String  getFullpath(){
+        return fullpath;
+    }
+
     @Override
     public String toString() {
-        return "OneOSFile:{name:\"" + name + "\", path:\"" + path + "\", uid:\"" + uid + "\", type:\"" + type
-                + "\", size:\"" + fmtSize + "\", time:\"" + fmtSize + "\", perm:\"" + perm + "\", gid:\"" + gid + "\"}";
+        if (OneOSAPIs.isOneSpaceX1()){
+            return "OneOSFile:{name:\"" + name + "\", path:\"" + path + "\", uid:\"" + uid + "\", type:\"" + type
+                    + "\", size:\"" + fmtSize + "\", time:\"" + time + "\", perm:\"" + perm + "\", gid:\"" + gid
+                    + "\", enc:\"" + encrypt + "\", phototime:\"" + phototime + "\",fullpath:\""+ fullpath + "\"}";
+        } else {
+            return "OneOSFile:{name:\"" + name + "\", path:\"" + path + "\", uid:\"" + uid + "\", type:\"" + type
+                    + "\", size:\"" + fmtSize + "\", time:\"" + fmtTime + "\", perm:\"" + perm + "\", gid:\"" + gid +
+                    "\", month:\"" + month +"\", cttime:\"" + cttime +"\", udtime:\"" + udtime + "\"}";
+        }
     }
 }

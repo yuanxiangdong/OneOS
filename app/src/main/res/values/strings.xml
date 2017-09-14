@@ -20,7 +20,7 @@
     <string name="permission_denied">权限拒绝</string>
     <string name="connection_refused">无法连接到您的设备，请检查设备和网络状态！</string>
     <string name="network_not_available">当前网络不可用，请检查网络状态！</string>
-    <string name="oneos_version_mismatch">您的OneSpace系统版本过低，请升级到 OneOS v3.x 版本！</string>
+    <string name="oneos_version_mismatch">您的OneSpace系统版本过低，请升级到 OneOS v4.x 版本！</string>
     <string name="fmt_oneos_version_upgrade" formatte="false">您的OneSpace系统版本过低，请升级到 OneOS v%s 以上版本！</string>
     <string name="oneos_version_check_failed">检测系统版本失败，请重新尝试！</string>
     <string name="tips_title_version_mismatch">系统版本不匹配</string>
@@ -28,6 +28,7 @@
     <string name="goto_settings">设置</string>
     <string name="error_json_exception">协议解析失败</string>
     <string name="operate_failed">操作失败</string>
+    <string name="operate">操作</string>
     <string name="app_exception">程序异常</string>
     <string name="please_login_onespace">请先登录OneSpace</string>
     <string name="please_login_onespace_with_admin">请使用管理员用户登录OneSpace</string>
@@ -63,9 +64,11 @@
     <string name="upload_file">上传</string>
     <string name="encrypt_file">加密</string>
     <string name="decrypt_file">解密</string>
+    <string name="extract_file">解压</string>
     <string name="chmod_file">权限</string>
     <string name="attr_file">详情</string>
     <string name="share_file">分享</string>
+    <string name="more">更多</string>
     <string name="clean_recycle_file">清空回收站</string>
     <string name="tip_select_file">请先选择需要操作的文件</string>
     <string name="tip_attr_file">属性</string>
@@ -117,6 +120,7 @@
     <string name="decrypt_file_success">文件解密成功</string>
     <string name="decrypt_file_failed">文件解密失败</string>
     <string name="tip_move_file">移动到&#8230;</string>
+    <string name="tip_extract_file">解压到&#8230;</string>
     <string name="moving_file">正在移动&#8230;</string>
     <string name="chmod_ing_file">正在修改&#8230;</string>
     <string name="tip_upload_file">上传到&#8230;</string>
@@ -132,14 +136,19 @@
     <string name="chmod_file_success">修改权限成功</string>
     <string name="clean_recycle_success">清空回收站成功</string>
     <string name="clean_recycle_failed">清空回收站失败</string>
-    <string name="share_file_success">分享成功</string>
     <string name="clean_now">清空</string>
+    <string name="tip_share_file">分享给&#8230;</string>
+    <string name="empty_user_list">用户列表为空</string>
+    <string name="share_file_success">分享成功</string>
+    <string name="tip_please_check_user">请选择用户</string>
+
 
     <!-- Navigation Bar Title -->
     <string name="nav_title_local">本地</string>
     <string name="nav_title_cloud">云盘</string>
     <string name="nav_title_transfer">传输</string>
     <string name="nav_title_tool">工具包</string>
+    <string name="nav_title_recent">最近</string>
 
     <!-- Login Activity -->
     <string name="title_login">OneSpace登录</string>
@@ -154,6 +163,8 @@
     <string name="hint_enter_port">请输入端口号</string>
     <string name="tip_invalid_port">请输入有效端口号</string>
     <string name="logining">正在登录&#8230;</string>
+    <string name="formating">正在格式化&#8230;</string>
+    <string name="memeneting">正在开启服务&#8230;</string>>
     <string name="scanning_device">搜索OneSpace&#8230;</string>
     <string name="tip_title_research">搜索设备</string>
     <string name="tip_search_again">未搜索到可用OneSpace，重新搜索？</string>
@@ -209,6 +220,7 @@
     <string name="error_manage_perm_deny">没有权限</string>
     <string name="error_get_file_list">获取文件列表失败</string>
     <string name="fmt_time_line">yyyy年MM月</string>
+    <string name="fmt_recent_time_line">yyyy年MM月dd日</string>
     <string name="error_open_encrypt_file">很抱歉，无法查看加密文件</string>
     <string name="error_open_encrypt_pic">很抱歉，无法查看加密图片</string>
     <string name="error_app_not_found_to_open_file">未找到打开此文件的应用程序</string>
@@ -526,4 +538,16 @@
     <string name="hd_info_capacity">硬盘容量：</string>
     <string name="fmt_hd_info_tmp" formatted="false">%d&#160;℃</string>
     <string name="fmt_oneos_mode" formatted="false">当前正在使用模式：%s</string>
+
+    <!-- HardDisk Manage Activity-->
+    <string name = "hd_one_title">格式化硬盘</string>
+    <string name = "hd_format">格式化硬盘</string>
+    <string name = "hd_more_title">选择硬盘模式</string>
+    <string name = "hd_raid1">RAID1模式</string>
+    <string name="hd_raid1_info">两个硬盘自动镜像同步，任何一块硬盘损坏，只需要更换一块全新的硬盘即可，是数据安全的最佳模式</string>
+    <string name="hd_raid0">RAID0模式</string>
+    <string name="hd_raid0_info">两个硬盘虚拟合并为一块硬盘，容量为双盘容量之和，访问速度快，但任何一块硬盘出现损坏，另一块硬盘的数据也丢失</string>
+    <string name="hd_lvm">LVM模式</string>
+    <string name="hd_lvm_info">所有硬盘合并为一块虚拟硬盘，容量为双盘容量之和，有利于不改变目录结构增加新盘</string>
+
 </resources>

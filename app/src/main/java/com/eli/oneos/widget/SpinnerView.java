@@ -145,6 +145,7 @@ public class SpinnerView<T> {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(offset, 0, 0, 0);
                 holder.mTitleTxt.setLayoutParams(layoutParams);
+
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
@@ -155,7 +156,8 @@ public class SpinnerView<T> {
             } else if (item.group == 1) {
                 holder.mTitleTxt.setTextColor(context.getResources().getColor(R.color.primary));
             } else {
-                holder.mTitleTxt.setTextColor(context.getResources().getColor(R.color.darker));
+                holder.mTitleTxt.setTextColor(context.getResources().getColor(R.color.white));
+                //holder.mTitleTxt.setTextColor(context.getResources().getColor(R.color.darker));
             }
             holder.mTitleTxt.setText(item.title);
 

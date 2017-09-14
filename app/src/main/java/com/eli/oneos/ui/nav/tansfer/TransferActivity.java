@@ -1,16 +1,20 @@
 package com.eli.oneos.ui.nav.tansfer;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.utils.Utils;
@@ -22,8 +26,8 @@ import java.util.List;
 /**
  * Created by gaoyun@eli-tech.com on 2016/02/19.
  */
-public class TransferNavFragment extends BaseNavFragment implements RadioGroup.OnCheckedChangeListener {
-    private static final String TAG = TransferNavFragment.class.getSimpleName();
+public class TransferActivity extends BaseActivity  implements RadioGroup.OnCheckedChangeListener {
+    private static final String TAG = TransferActivity.class.getSimpleName();
 
     private static final int[] TRANS_CONTROL_TITLE = new int[]{R.string.start_all, R.string.pause_all, R.string.delete_all};
 
@@ -40,40 +44,48 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
     private boolean isDownload = true;
     private boolean isTransfer = true;
     private BaseTransferFragment mCurFragment;
+    private FragmentManager fragmentManager;
     private List<BaseTransferFragment> mFragmentList = new ArrayList<>();
+    private LinearLayout mBackLayout;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "On Create View");
+        super.onCreate(savedInstanceState);
 
-        mMainActivity = (MainActivity) getActivity();
-
-        View view = inflater.inflate(R.layout.fragment_nav_transfer, container, false);
-
-        initView(view);
+        setContentView(R.layout.fragment_nav_transfer);
+        initView();
         initFragment();
+        initSystemBarStyle();
 
-        return view;
     }
 
-    private void initView(View view) {
-        mUploadOrDownloadGroup = (RadioGroup) view.findViewById(R.id.segmented_radiogroup);
+    private void initView() {
+        mUploadOrDownloadGroup = (RadioGroup) findViewById(R.id.segmented_radiogroup);
         mUploadOrDownloadGroup.setOnCheckedChangeListener(this);
-        mDownloadBtn = (RadioButton) view.findViewById(R.id.segmented_download);
-        mUploadBtn = (RadioButton) view.findViewById(R.id.segmented_upload);
+        mDownloadBtn = (RadioButton) findViewById(R.id.segmented_download);
+        mUploadBtn = (RadioButton) findViewById(R.id.segmented_upload);
 
-        mTransOrCompleteGroup = (RadioGroup) view.findViewById(R.id.radiogroup);
+        mTransOrCompleteGroup = (RadioGroup) findViewById(R.id.radiogroup);
         mTransOrCompleteGroup.setOnCheckedChangeListener(this);
 
-        mTransferBtn = (RadioButton) view.findViewById(R.id.radio_transfer);
-        mCompleteBtn = (RadioButton) view.findViewById(R.id.radio_complete);
+        mTransferBtn = (RadioButton) findViewById(R.id.radio_transfer);
+        mCompleteBtn = (RadioButton) findViewById(R.id.radio_complete);
 
-        ImageButton mControlBtn = (ImageButton) view.findViewById(R.id.btn_control);
+        mBackLayout = (LinearLayout) findViewById(R.id.layout_title_left);
+        mBackLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        TextView mControlBtn = (TextView) findViewById(R.id.btn_control);
         mControlBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(final View v) {
-                mMenuView = new MenuPopupView(getActivity(), Utils.dipToPx(130));
+                mMenuView = new MenuPopupView(TransferActivity.this, Utils.dipToPx(130));
                 if (mCurFragment instanceof TransmissionFragment) {
                     mMenuView.setMenuItems(TRANS_CONTROL_TITLE, TRANS_CONTROL_ICON);
                 } else if (mCurFragment instanceof RecordsFragment) {
@@ -88,9 +100,13 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
                 mMenuView.showPopupDown(v, -1, true);
             }
         });
+
+
+
     }
 
     private void initFragment() {
+        fragmentManager = getSupportFragmentManager();
         TransmissionFragment mDownloadingFragment = new TransmissionFragment(true);
         mFragmentList.add(mDownloadingFragment);
         RecordsFragment mDownloadedFragment = new RecordsFragment(true);
@@ -174,7 +190,7 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
 
         BaseTransferFragment mFragment = mFragmentList.get(getFragmentIndex(isDownload, isTransfer));
 
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (mCurFragment != null) {
             mCurFragment.onPause();
             transaction.hide(mCurFragment);
@@ -206,24 +222,5 @@ public class TransferNavFragment extends BaseNavFragment implements RadioGroup.O
         }
     }
 
-    /**
-     * Use to handle parent Activity back action
-     *
-     * @return If consumed returns true, otherwise returns false.
-     */
-    @Override
-    public boolean onBackPressed() {
-        return false;
-    }
 
-    /**
-     * Network State Changed
-     *
-     * @param isAvailable
-     * @param isWifiAvailable
-     */
-    @Override
-    public void onNetworkChanged(boolean isAvailable, boolean isWifiAvailable) {
-
-    }
 }

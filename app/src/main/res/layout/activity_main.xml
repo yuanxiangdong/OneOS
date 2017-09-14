@@ -1,119 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_root"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:clipToPadding="false"
-    android:fitsSystemWindows="true">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <View
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/line_nav_weight"
-        android:layout_above="@+id/layout_nav"
-        android:background="@color/line_nav_bar" />
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:id="@+id/layout_nav"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/layout_nav_radio_height"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:background="@color/bg_nav_bar"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="visible">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_nav_weight"
+            android:layout_above="@+id/layout_nav"
+            android:background="@color/line_nav_bar" />
 
-        <com.eli.oneos.widget.ImageCheckBox
-            android:id="@+id/ib_local"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/layout_nav_bar_height"
-            android:layout_weight="1.0"
-            android:background="@null"
-            android:scaleType="centerInside"
-            app:checked="false"
-            app:checkedResId="@mipmap/ic_nav_local_pressed"
-            app:uncheckedResId="@mipmap/ic_nav_local" />
-
-        <com.eli.oneos.widget.ImageCheckBox
-            android:id="@+id/ib_cloud"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/layout_nav_bar_height"
-            android:layout_weight="1.0"
-            android:background="@null"
-            android:scaleType="centerInside"
-            app:checked="true"
-            app:checkedResId="@mipmap/ic_nav_cloud_pressed"
-            app:uncheckedResId="@mipmap/ic_nav_cloud" />
-
-        <com.eli.oneos.widget.ImageCheckBox
-            android:id="@+id/ib_transfer"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/layout_nav_bar_height"
-            android:layout_weight="1.0"
-            android:background="@null"
-            android:scaleType="centerInside"
-            app:checked="false"
-            app:checkedResId="@mipmap/ic_nav_transfer_pressed"
-            app:uncheckedResId="@mipmap/ic_nav_transfer" />
-
-        <com.eli.oneos.widget.ImageCheckBox
-            android:id="@+id/ib_tools"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/layout_nav_bar_height"
-            android:layout_weight="1.0"
-            android:background="@null"
-            android:scaleType="centerInside"
-            app:checked="false"
-            app:checkedResId="@mipmap/ic_nav_tools_pressed"
-            app:uncheckedResId="@mipmap/ic_nav_tools" />
-    </LinearLayout>
-
-    <!--<RadioGroup
-        android:id="@+id/radiogroup"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/layout_nav_radio_height"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:background="@color/bg_nav_bar"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <RadioButton
-            android:id="@+id/radio_local"
-            style="@style/NavBarRadioButtonTheme"
-            android:drawableTop="@drawable/selector_nav_button_local"
+        <LinearLayout
+            android:id="@+id/layout_nav"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/layout_nav_radio_height"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:background="@color/bg_nav_bar"
             android:gravity="center"
-            android:text="@string/nav_title_local" />
+            android:orientation="horizontal"
+            android:visibility="visible">
 
-        <RadioButton
-            android:id="@+id/radio_cloud"
-            style="@style/NavBarRadioButtonTheme"
-            android:checked="true"
-            android:drawableTop="@drawable/selector_nav_button_cloud"
-            android:gravity="center"
-            android:text="@string/nav_title_cloud" />
+            <com.eli.oneos.widget.ImageCheckBox
+                android:id="@+id/ib_recent"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/layout_nav_pic_height"
+                android:layout_weight="1.0"
+                android:background="@null"
+                android:scaleType="centerInside"
+                app:checked="false"
+                app:checkedResId="@mipmap/ic_nav_recent_pressed"
+                app:uncheckedResId="@mipmap/ic_nav_recent" />
 
-        <RadioButton
-            android:id="@+id/radio_transfer"
-            style="@style/NavBarRadioButtonTheme"
-            android:drawableTop="@drawable/selector_nav_button_transfer"
-            android:gravity="center"
-            android:text="@string/nav_title_transfer" />
+            <com.eli.oneos.widget.ImageCheckBox
+                android:id="@+id/ib_cloud"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/layout_nav_pic_height"
+                android:layout_weight="1.0"
+                android:background="@null"
+                android:scaleType="centerInside"
+                app:checked="true"
+                app:checkedResId="@mipmap/ic_nav_cloud_pressed"
+                app:uncheckedResId="@mipmap/ic_nav_cloud" />
 
-        <RadioButton
-            android:id="@+id/radio_tool"
-            style="@style/NavBarRadioButtonTheme"
-            android:drawableTop="@drawable/selector_nav_button_tool"
-            android:gravity="center"
-            android:text="@string/nav_title_tool" />
-    </RadioGroup>-->
+            <com.eli.oneos.widget.ImageCheckBox
+                android:id="@+id/ib_image"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/layout_nav_pic_height"
+                android:layout_weight="1.0"
+                android:background="@null"
+                android:scaleType="centerInside"
+                app:checked="false"
+                app:checkedResId="@mipmap/ic_nav_image_pressed"
+                app:uncheckedResId="@mipmap/ic_nav_image" />
 
-    <FrameLayout
-        android:id="@+id/content"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center" />
-</RelativeLayout>
+
+            <com.eli.oneos.widget.ImageCheckBox
+                android:id="@+id/ib_local"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/layout_nav_pic_height"
+                android:layout_weight="1.0"
+                android:background="@null"
+                android:scaleType="centerInside"
+                app:checked="false"
+                app:checkedResId="@mipmap/ic_nav_local_pressed"
+                app:uncheckedResId="@mipmap/ic_nav_local" />
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center" />
+
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/id_left_menu"
+        android:name="com.eli.oneos.ui.nav.tools.ToolsFragment"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="false"
+        android:tag="LEFT" />
+
+</android.support.v4.widget.DrawerLayout>

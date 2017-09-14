@@ -526,4 +526,15 @@
     <string name="tool_bind_ssudp">SSUDP Bind</string>
     <string name="unbind">Unbind</string>
     <string name="unbind_succeed">Unbind success</string>
+    <string name="more">More</string>
+    <string name="extract_file">Unzip</string>
+    <string name="formating">Formatting&#8230;</string>
+    <string name="hd_lvm">LVM Mode</string>
+    <string name="hd_raid0">RAID0 Mode</string>
+    <string name="hd_raid1">RAID1 Mode</string>
+    <string name="hd_format">Format Hard Disk</string>
+    <string name="hd_more_title">Select Hard Disk Mode</string>
+    <string name="hd_one_title">Format Hard Disk</string>
+    <string name="hd_raid0_info"></string>
+    <string name="operate">Operation</string>
 </resources>

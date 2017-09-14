@@ -29,6 +29,7 @@
     <color name="edittext_border_disabled">@color/gray_disabled</color>
 
     <!-- System Status Bar color-->
+    <color name="colorPrimary">@color/primary</color>
     <color name="status_bar">@color/primary</color>
     <color name="bg_title">@color/status_bar</color>
     <color name="bg_page">@color/white</color>

@@ -6,11 +6,15 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.http.OnHttpListener;
+import com.eli.oneos.model.http.RequestBody;
 import com.eli.oneos.model.oneos.OneOSInfo;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OneSpace OS Get OneSpace OneOS version API
@@ -35,9 +39,10 @@ public class OneOSVersionAPI extends OneOSBaseAPI {
     }
 
     public void query() {
-        url = genOneOSAPIUrl(OneOSAPIs.SYSTEM_VERSION);
-
-        httpUtils.post(url, new OnHttpListener<String>() {
+        url = genOneOSAPIUrl(OneOSAPIs.SYSTEM_SYS);
+        Map<String, Object> params = new HashMap<>();
+        //params.put("method", "getversion");
+        httpUtils.postJson(url, new RequestBody("getversion", "", params), new OnHttpListener<String>() {
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
                 // super.onFailure(t, errorNo, strMsg);
@@ -57,13 +62,15 @@ public class OneOSVersionAPI extends OneOSBaseAPI {
                         boolean ret = json.getBoolean("result");
                         if (ret) {
                             // {result, model, version, needup}
-                            String model = json.getString("model");
-                            String product = json.getString("product");
-                            String version = json.getString("version");
-                            String build = json.getString("build");
-                            boolean needsUp = json.getBoolean("needup");
-                            OneOSInfo info = new OneOSInfo(version, model, needsUp, product, build);
-
+                            //{"data": {"build": "20161223", "model": "one2017", "needup": false, "product": "h2n2", "version": "4.0.0"}, "error": {"code": -40004, "msg": "not found"}, "result": true}
+                            JSONObject datajson =json.getJSONObject("data");
+                            String model = datajson.getString("model");
+                            String product = datajson.getString("product");
+                            String version = datajson.getString("version");
+                            String build = datajson.getString("build");
+                            //boolean needsUp = datajson.getBoolean("needup");
+                            //OneOSInfo info = new OneOSInfo(version, model, needsUp, product, build);
+                            OneOSInfo info = new OneOSInfo(version, model, false, product, build);
                             listener.onSuccess(url, info);
                         } else {
                             Log.e(TAG, "Get OneOS Version Failed");

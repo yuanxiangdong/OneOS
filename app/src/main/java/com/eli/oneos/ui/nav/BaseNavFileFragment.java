@@ -44,7 +44,8 @@ public abstract class BaseNavFileFragment<T, F> extends BaseNavFragment {
      * @param selectedList Selected file list
      * @param mListener    On file operate listener
      */
-    public abstract void updateManageBar(T fileType, ArrayList<F> selectedList, FileManagePanel.OnFileManageListener mListener);
+//    public abstract void updateManageBar(T fileType, ArrayList<F> selectedList, FileManagePanel.OnFileManageListener mListener);
+    public abstract void updateManageBar(T fileType, ArrayList<F> selectedList, Boolean isMore, FileManagePanel.OnFileManageListener mListener);
 
     /**
      * Add search file listener

@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.widget.sticky.gridview.StickyGridHeadersSimpleAdapter;
 
 import java.util.ArrayList;
@@ -71,7 +73,9 @@ public class OneOSStickyGridAdapter extends OneOSFileBaseAdapter implements Stic
         if (file.isEncrypt()) {
             holder.mIconView.setImageResource(R.drawable.icon_file_encrypt);
         } else {
-            if (file.isPicture()) {
+            if (FileUtils.isPictureFile(file.getName())) {
+                showPicturePreview(holder.mIconView, file);
+            } else if(file.isVideo() && !OneOSAPIs.isOneSpaceX1()){
                 showPicturePreview(holder.mIconView, file);
             } else {
                 holder.mIconView.setImageResource(file.getIcon());

@@ -1,7 +1,11 @@
 package com.eli.oneos.model.oneos.backup.file;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.eli.oneos.constant.Constants;
+import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.constant.OneSpaceAPIs;
 import com.eli.oneos.db.BackupFileKeeper;
 import com.eli.oneos.db.greendao.BackupFile;
 import com.eli.oneos.model.log.LogLevel;
@@ -10,16 +14,32 @@ import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.api.OneOSUploadFileAPI;
 import com.eli.oneos.model.oneos.backup.BackupType;
 import com.eli.oneos.model.oneos.backup.RecursiveFileObserver;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.Utils;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class BackupFileManager {
     private static final String TAG = BackupFileManager.class.getSimpleName();
@@ -180,6 +200,7 @@ public class BackupFileManager {
                 notifyAddNewBackupItem(element);
             }
         };
+        private List<TmpElemet> mServerList;
 
         public BackupFileThread(BackupFile file, OnBackupFileListener listener) {
             if (null == file) {
@@ -242,16 +263,49 @@ public class BackupFileManager {
                         scanningAndBackupFiles(file);
                     }
                 } else {
-                    BackupElement element = new BackupElement(backupFile, dir, true);
-                    if (!doUploadFile(element)) {
-                        mAdditionalList.add(element);
-                        Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Add to Additional List");
-                    }
-                    if (!isInterrupted()) {
-                        try {
-                            sleep(20); // sleep 20ms
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+
+                    if (OneOSAPIs.isOneSpaceX1()){
+
+                        BackupElement element = new BackupElement(backupFile, dir, true);
+                        boolean doUpload = true;
+
+                        String localPath = OneOSAPIs.getOneSpaceUid()+element.getToPath() + element.getSrcName();
+                        long localSize = element.getSize();
+                        for (TmpElemet tmp : mServerList){
+                            String serverPath = tmp.getFullName();
+                            long serverSize = tmp.getLength();
+                            if (serverPath.equals(localPath) && serverSize == localSize){
+                                doUpload = false;
+                                break;
+                            }
+                        }
+
+                        if (doUpload) {
+                            if (!doUploadFile(element)) {
+                                mAdditionalList.add(element);
+                                Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Add to Additional List");
+                            }
+                            if (!isInterrupted()) {
+                                try {
+                                    sleep(20); // sleep 20ms
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+
+                    }else {
+                        BackupElement element = new BackupElement(backupFile, dir, true);
+                        if (!doUploadFile(element)) {
+                            mAdditionalList.add(element);
+                            Logger.p(LogLevel.ERROR, IS_LOG, TAG, "Add to Additional List");
+                        }
+                        if (!isInterrupted()) {
+                            try {
+                                sleep(20); // sleep 20ms
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -263,6 +317,20 @@ public class BackupFileManager {
             hasBackupTask = true;
             backupFile.setCount(backupFile.getCount() + 1);
             Logger.p(LogLevel.DEBUG, IS_LOG, TAG, "Start scanning and upload file: " + backupFile.getPath());
+
+            LoginSession loginSession = LoginManage.getInstance().getLoginSession();
+            String url = loginSession.getUrl()+ OneSpaceAPIs.FILE_API;
+            String ffpath = OneOSAPIs.getOneSpaceUid()+ Constants.BACKUP_FILE_ONEOS_ROOT_DIR_NAME_FILES+backupFile.getPath().substring(backupFile.getPath().lastIndexOf("/"));
+            if (OneOSAPIs.isOneSpaceX1()) {
+                List<TmpElemet> mServerList = new ArrayList<TmpElemet>();
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("path", ffpath);
+                map.put("session", loginSession.getSession());
+                getServerPhotoList(url, map, mServerList);
+                this.mServerList = mServerList;
+            }
+
+
             scanningAndBackupFiles(new File(backupFile.getPath()));
             mFileObserver = new RecursiveFileObserver(backupFile, backupFile.getPath(),
                     RecursiveFileObserver.EVENTS_BACKUP_PHOTOS, mObserverListener);
@@ -352,6 +420,99 @@ public class BackupFileManager {
             return hasBackupTask;
         }
     }
+
+
+
+    private void getServerPhotoList(String url, Map<String, String> map, List<TmpElemet> mServerList) {
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        Set<String> keys = map.keySet();
+        for (String key : keys) {
+            params.add(new BasicNameValuePair(key, map.get(key)));
+        }
+
+        try {
+
+
+            HttpPost httpRequest = new HttpPost(url);
+            Log.d(TAG, "Url: " + url);
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+
+            httpClient.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT, 5000);
+            httpClient.getParams().setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, 5000);
+
+            httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+            HttpResponse httpResponse = httpClient.execute(httpRequest);
+            Log.d(TAG, "Response Code: " + httpResponse.getStatusLine().getStatusCode());
+            if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                String resultStr = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+                httpRequest.abort();
+
+                JSONObject jsonObj = new JSONObject(resultStr);
+                JSONArray jsonArray = null;
+                boolean isRequested = jsonObj.getBoolean("result");
+                if (isRequested) {
+                    String fileStr = jsonObj.getString("files");
+                    if (!fileStr.equals("{}")) {
+                        jsonArray = (JSONArray) jsonObj.get("files");
+                        for (int i = 0; i < jsonArray.length(); ++i) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            TmpElemet mElemet = new TmpElemet();
+                            mElemet.setFullName(jsonObject.getString("fullname"));
+                            mElemet.setLength(jsonObject.getLong("size"));
+                            boolean isDir = jsonObject.getString("type").equals("dir");
+                            if (isDir) {
+                                Map<String, String> tmpMap = new HashMap<String, String>();
+                                tmpMap.put("path", mElemet.getFullName());
+                                LoginSession loginSession = LoginManage.getInstance().getLoginSession();
+                                tmpMap.put("session", loginSession.getSession());
+                                Log.d(TAG, "List Path: " + mElemet.getFullName());
+                                getServerPhotoList(url, tmpMap, mServerList);
+                            } else {
+                                mServerList.add(mElemet);
+                            }
+                        }
+                    } else {
+                        Log.e(TAG, "====>> " + map.get("path") + " isEmpty");
+                    }
+                } else {
+                    Log.e(TAG, "====>> " + map.get("path") + " Requestresult: " + isRequested);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static class TmpElemet {
+        private String fullName;
+        private long length;
+
+        public TmpElemet() {
+            this.fullName = null;
+            this.length = 0;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public void setFullName(String fullName) {
+            this.fullName = fullName;
+        }
+
+        public long getLength() {
+            return length;
+        }
+
+        public void setLength(long length) {
+            this.length = length;
+        }
+
+    }
+
 
     public interface OnBackupFileListener {
         void onBackup(BackupFile backupFile, File file);

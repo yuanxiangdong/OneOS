@@ -8,13 +8,18 @@ import com.eli.oneos.model.log.Logged;
 import net.tsz.afinal.FinalHttp;
 import net.tsz.afinal.http.AjaxParams;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import www.glinkwin.com.glink.ssudp.SSUDPConst;
 import www.glinkwin.com.glink.ssudp.SSUDPManager;
@@ -78,7 +83,38 @@ public class HttpUtils<T> {
         }
     }
 
-    public Object postSync(String url, Map<String, String> params) {
+
+    public void postJson(String url, RequestBody requestBody, OnHttpListener<T> callBack) {
+        if (isHttp) {
+            Log.d(TAG, "ID:" + (COUNTER++) + " {Url: " + url + ", Params: " + requestBody.jsonString() + "}");
+            StringEntity entity = null;
+            try {
+                entity = new StringEntity(requestBody.jsonString(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            finalHttp.post(url, entity, "application/json", callBack);
+        } else {
+            // sendSSUDP(url, params, callBack);
+        }
+    }
+
+    public Object postSync(String url, RequestBody requestBody){
+        if (isHttp) {
+            Log.d(TAG, "ID:" + (COUNTER++) + " {Url: " + url + ", Params: " + requestBody.jsonString() + "}");
+            StringEntity entity = null;
+            try {
+                entity = new StringEntity(requestBody.jsonString(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return finalHttp.postSync(url, entity, "application/json");
+        }
+        return  null;
+    }
+
+
+    public Object postSync(String url, Map<String, Object> params) {
         if (isHttp) {
             AjaxParams ajaxParams = new AjaxParams(params);
             log(TAG, url, ajaxParams);

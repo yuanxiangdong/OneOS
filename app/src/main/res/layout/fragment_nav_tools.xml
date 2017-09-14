@@ -1,187 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:paddingTop="20dp">
 
-    <com.eli.oneos.widget.TitleBackLayout
-        android:id="@+id/layout_title"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/layout_title_height"
-        android:background="@color/bg_title" />
+        android:layout_height="68dp"
+        android:background="@color/white"
+        android:padding="10dp"
+        android:paddingLeft="20dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/user_photo"
+            android:paddingLeft="10dp">
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/login_domain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/user_photo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/gou"
+            app:riv_oval="true"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+        >
+
+    </RelativeLayout>
 
     <com.eli.oneos.widget.ReboundScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/layout_nav_bar_height"
         android:background="@color/white"
         android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:weightSum="1">
 
-            <LinearLayout
-                android:id="@+id/layout_backup"
+            <RelativeLayout
+                android:id="@+id/transfer_lyout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:addStatesFromChildren="true"
+                android:paddingLeft="28dp"
+                android:layout_marginBottom="4dp">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/line_list_divider_height"
-                    android:layout_marginTop="25dp"
-                    android:background="@color/line_list_view" />
+                <ImageView
+                    android:id="@+id/img_trans"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/icon_tool_trans" />
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/img_trans"
+                    android:text="@string/nav_title_transfer"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_tool" />
 
-                    <LinearLayout
-                        android:id="@+id/layout_backup_album"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.0"
-                        android:background="@drawable/selector_list_trans_to_gray"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
-
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/icon_tools_backup_photo" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:lines="1"
-                            android:text="@string/tool_backup_photo"
-                            android:textColor="@color/darker"
-                            android:textSize="@dimen/text_size_min" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_backup_file"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.0"
-                        android:background="@drawable/selector_list_trans_to_gray"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
-
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/icon_tools_backup_file" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:lines="1"
-                            android:text="@string/tool_backup_file"
-                            android:textColor="@color/darker"
-                            android:textSize="@dimen/text_size_min" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_backup_contacts"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.0"
-                        android:background="@drawable/selector_list_trans_to_gray"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
-
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/icon_tools_contact" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:lines="1"
-                            android:text="@string/tool_sync_contact"
-                            android:textColor="@color/darker"
-                            android:textSize="@dimen/text_size_min" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_backup_sms"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.0"
-                        android:background="@drawable/selector_list_trans_to_gray"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
-
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/icon_tools_sms" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:lines="1"
-                            android:text="@string/tool_sync_sms"
-                            android:textColor="@color/darker"
-                            android:textSize="@dimen/text_size_min" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/line_list_divider_height"
-                    android:background="@color/line_list_view" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/line_list_divider_height"
-                android:layout_marginTop="@dimen/layout_transfer_radio_group_height"
-                android:background="@color/line_list_view" />
+            </RelativeLayout>
 
             <com.eli.oneos.widget.StickListView
                 android:id="@+id/listview_tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="@color/line_list_view"
-                android:dividerHeight="@dimen/line_list_divider_height"
+                android:divider="#00000000"
                 android:gravity="center"
                 android:listSelector="@android:color/transparent"
                 android:overScrollMode="never"
                 android:paddingLeft="20dp"
                 android:scrollbars="none" />
 
-            <View
+            <RelativeLayout
+                android:id="@+id/power_manage"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/line_list_divider_height"
-                android:layout_marginBottom="@dimen/layout_transfer_radio_group_height"
-                android:background="@color/line_list_view" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+
+                android:addStatesFromChildren="true"
+                android:paddingLeft="28dp">
+
+                <ImageView
+                    android:id="@+id/img_view"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/icon_tools_power" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/img_view"
+                    android:text="@string/tool_system_management"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_tool" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/change_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:addStatesFromChildren="true"
+                android:paddingLeft="28dp">
+
+                <ImageView
+                    android:id="@+id/img_views"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/icon_tools_change_user" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/img_views"
+                    android:text="@string/tool_logout"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_tool" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/text_user_space"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="用户空间"
+                    android:textSize="@dimen/text_size_minmin" />
+
+                <ProgressBar
+                    android:id="@+id/space_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="156dp"
+                    android:layout_height="15dp"
+                    android:layout_marginTop="20dp"
+                    android:max="100"
+                    android:progressDrawable="@drawable/progressbar" />
+
+                <TextView
+                    android:id="@+id/space_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/space_progress"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/space_progress"
+                    android:textColor="@color/darker"
+                    android:textSize="@dimen/text_size_minmin" />
+
+            </RelativeLayout>
         </LinearLayout>
+
     </com.eli.oneos.widget.ReboundScrollView>
 
 </LinearLayout>

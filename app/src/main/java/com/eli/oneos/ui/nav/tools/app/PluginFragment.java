@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSPluginInfo;
 import com.eli.oneos.model.oneos.adapter.PluginAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListAppAPI;
@@ -179,7 +180,9 @@ public class PluginFragment extends Fragment {
                     mAdapter.notifyDataSetChanged();
                 }
             });
-            manageAPI.state(info.getPack());
+            if (!OneOSAPIs.isOneSpaceX1()){
+                manageAPI.state(info.getPack());
+            }
         }
     }
 
@@ -213,7 +216,11 @@ public class PluginFragment extends Fragment {
                 activity.dismissLoading();
             }
         });
-        listAppAPI.list();
+        if (OneOSAPIs.isOneSpaceX1()){
+            listAppAPI.listApp();
+        }else {
+            listAppAPI.list();
+        }
     }
 
     private int loading = 0;

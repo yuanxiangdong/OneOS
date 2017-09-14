@@ -77,4 +77,19 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        >
+        <TextView
+            android:id="@+id/progress_textView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/anim_progress_circle"
+            android:gravity="center"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
+
 </RelativeLayout>

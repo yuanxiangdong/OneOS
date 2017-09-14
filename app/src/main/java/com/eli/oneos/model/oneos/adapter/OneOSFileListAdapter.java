@@ -7,11 +7,14 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,7 @@ public class OneOSFileListAdapter extends OneOSFileBaseAdapter {
         TextView mSizeTxt;
         CheckBox mSelectCb;
         ImageButton mSelectIBtn;
+        ProgressBar mProgressBar;
     }
 
     @Override
@@ -58,6 +62,7 @@ public class OneOSFileListAdapter extends OneOSFileBaseAdapter {
             holder.mSelectCb = (CheckBox) convertView.findViewById(R.id.cb_select);
             holder.mSizeTxt = (TextView) convertView.findViewById(R.id.txt_size);
             holder.mTimeTxt = (TextView) convertView.findViewById(R.id.txt_time);
+            holder.mProgressBar = (ProgressBar) convertView.findViewById(R.id.progressbar);
             holder.mSelectIBtn = (ImageButton) convertView.findViewById(R.id.ibtn_select);
             holder.mSelectIBtn.setOnClickListener(new OnClickListener() {
                 @Override
@@ -79,11 +84,14 @@ public class OneOSFileListAdapter extends OneOSFileBaseAdapter {
         holder.mIconView.setTag(file.getName());
         holder.mTimeTxt.setText(file.getFmtTime());
         holder.mSizeTxt.setText(file.getFmtSize());
+        holder.mProgressBar.setProgress(file.getProgress());
 
         if (file.isEncrypt()) {
             holder.mIconView.setImageResource(R.drawable.icon_file_encrypt);
         } else {
-            if (file.isPicture()) {
+            if (FileUtils.isPictureFile(file.getName())) {
+                showPicturePreview(holder.mIconView, file);
+            } else if(file.isVideo() && !OneOSAPIs.isOneSpaceX1()){
                 showPicturePreview(holder.mIconView, file);
             } else {
                 holder.mIconView.setImageResource(file.getIcon());

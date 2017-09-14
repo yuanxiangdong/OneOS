@@ -15,13 +15,14 @@ import de.greenrobot.dao.query.QueryBuilder;
  * Created by gaoyun@eli-tech.com on 2016/1/7.
  */
 public class UserInfoKeeper {
+    private static final String TAG = UserInfoKeeper.class.getSimpleName();
 
-    public static void logUserInfo() {
+    public static void logUserInfo(String tag) {
         UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
         QueryBuilder queryBuilder = dao.queryBuilder();
         List<UserInfo> list = queryBuilder.list();
         for (UserInfo info : list) {
-            Log.e("UserInfoKeeper", ">>>>>UserInfo {name=" + info.getName() + ", mac=" + info.getMac() + "}");
+            Log.e(tag, ">>>>>UserInfo {name=" + info.getName() + ", mac=" + info.getMac() + "}");
         }
     }
 
@@ -65,7 +66,6 @@ public class UserInfoKeeper {
         QueryBuilder queryBuilder = dao.queryBuilder();
         queryBuilder.where(UserInfoDao.Properties.Name.eq(user));
         queryBuilder.where(UserInfoDao.Properties.Mac.eq(mac));
-
         return (UserInfo) queryBuilder.unique();
     }
 
@@ -77,7 +77,7 @@ public class UserInfoKeeper {
      */
     public static long insert(UserInfo info) {
         if (info != null) {
-            Logger.p(LogLevel.ERROR, true, "UserInfoKeeper", "Insert New User: name=" + info.getName() + ", mac=" + info.getMac());
+            Logger.p(LogLevel.ERROR, true, TAG, "Insert New User: " + info.toString());
             UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
             return dao.insert(info);
         }
@@ -96,6 +96,7 @@ public class UserInfoKeeper {
             return false;
         }
 
+        Log.d(TAG, "Update user: " + user.toString());
         UserInfoDao dao = DBHelper.getDaoSession().getUserInfoDao();
         dao.update(user);
         return true;

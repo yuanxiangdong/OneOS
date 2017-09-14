@@ -9,11 +9,11 @@ android {
         }
     }
     defaultConfig {
-        applicationId 'com.eli.oneos'
+        applicationId 'com.eli.oneosnew'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 16
-        versionName "3.1.6 Beta"
+        versionCode 17
+        versionName "4.0.0 Beta"
     }
     buildTypes {
         release {
@@ -57,4 +57,7 @@ dependencies {
     compile files('libs/libundobar.jar')
     compile files('libs/nineoldandroids-2.4.0.jar')
     compile files('libs/hellocharts-library-1.5.8.jar')
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
+    compile(name: 'cmapi_3.01', ext: 'aar')
+    compile 'com.makeramen:roundedimageview:2.2.1'
 }

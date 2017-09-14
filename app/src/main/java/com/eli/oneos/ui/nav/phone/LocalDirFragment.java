@@ -553,7 +553,7 @@ public class LocalDirFragment extends BaseLocalFragment {
 
     private void updateSelectAndManagePanel() {
         mParentFragment.updateSelectBar(mFileList.size(), mSelectedList.size(), mFileSelectListener);
-        mParentFragment.updateManageBar(mFileType, mSelectedList, mFileManageListener);
+        mParentFragment.updateManageBar(mFileType, mSelectedList, false, mFileManageListener);
     }
 
     private boolean setMultiModel(boolean isSetMultiModel, int position) {

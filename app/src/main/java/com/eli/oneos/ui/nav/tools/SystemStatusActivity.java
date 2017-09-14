@@ -1,12 +1,16 @@
 package com.eli.oneos.ui.nav.tools;
 
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
-import com.eli.oneos.model.oneos.api.OneOSSystemInfoAPI;
+import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.model.oneos.OneOSInfo;
+import com.eli.oneos.model.oneos.api.        OneOSSystemInfoAPI;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.ui.BaseActivity;
@@ -45,14 +49,20 @@ public class SystemStatusActivity extends BaseActivity {
 
     private LoginSession mLoginSession;
     private Timer mUpdateTimer = new Timer();
+    private String product =LoginManage.getInstance().getLoginSession().getOneOSInfo().getProduct();
+
     private TimerTask task = new TimerTask() {
 
         @Override
         public void run() {
             getSystemInfo("cpu", null);
             getSystemInfo("mem", null);
-            getSystemInfo("net", "eth1");
-            getSystemInfo("net", "eth2");
+            if (product.equals("h1n1") || product.equals("h2n1")){
+                getSystemInfo("net","eth0");
+            }else {
+                getSystemInfo("net", "eth1");
+                getSystemInfo("net", "eth2");
+            }
         }
     };
 
@@ -96,6 +106,10 @@ public class SystemStatusActivity extends BaseActivity {
         mEth2LabelTxt = (TextView) findViewById(R.id.txt_eth2_label);
         mEth2ChartView = (LineChartView) findViewById(R.id.chart_eth2);
 
+        if (product.equals("h1n1") || product.equals("h2n1")){
+            mEth2ChartView.setVisibility(View.GONE);
+            mEth2LabelTxt.setVisibility(View.GONE);
+        }
         initDefaultData();
 
         initChartView(mCPUChartView, 1, "%");
@@ -255,9 +269,10 @@ public class SystemStatusActivity extends BaseActivity {
             public void onSuccess(String url, String dev, String name, String result) {
                 try {
                     JSONObject json = new JSONObject(result);
-                    if (json.has("cpu")) {
+                    JSONObject datajson = json.getJSONObject("data");
+                    if (datajson.has("cpu")) {
                         // {"result":true,"cpu":{"used":570775,"total":72466388}}
-                        json = json.getJSONObject("cpu");
+                        json = datajson.getJSONObject("cpu");
                         long used = json.getLong("used");
                         long total = json.getLong("total");
                         if (lastCpuUsed != -1 || lastCpuTotal != -1) {
@@ -271,11 +286,11 @@ public class SystemStatusActivity extends BaseActivity {
                         }
                         lastCpuUsed = used;
                         lastCpuTotal = total;
-                    } else if (json.has("mem")) {
+                    } else if (datajson.has("mem")) {
                         // Response Data:{"result":true,"mem":{"free":923784,"total":1031572}}
-                        json = json.getJSONObject("mem");
-                        long free = json.getLong("free") * 1024;
-                        long total = json.getLong("total") * 1024;
+                        json = datajson.getJSONObject("mem");
+                        long free = json.getLong("free") ;
+                        long total = json.getLong("total") ;
                         int load = 100 - (int) (free * 100 / total);
                         load = load > 0 ? load : 0;
                         mMemoryQueue.remove(MAX_SHOW_COUNT - 1);
@@ -284,9 +299,9 @@ public class SystemStatusActivity extends BaseActivity {
                                 Formatter.formatShortFileSize(SystemStatusActivity.this, total), (load + "%"),
                                 Formatter.formatShortFileSize(SystemStatusActivity.this, free)));
                         updateMemoryChartData();
-                    } else if (json.has("net")) {
-                        json = json.getJSONObject("net");
-                        if (name.equals("eth1")) {
+                    } else if (datajson.has("net")) {
+                        json = datajson.getJSONObject("net");
+                        if (name.equals("eth1") || name.equals("eth0")) {
                             long rx = json.getLong("rx");
                             long tx = json.getLong("tx");
                             if (lastEth1Rx != -1 || lastEth1Tx != -1) {

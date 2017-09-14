@@ -10,16 +10,19 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.eli.lib.magicdialog.MagicDialog;
 import com.eli.lib.magicdialog.OnMagicDialogClickCallback;
 import com.eli.oneos.MyApplication;
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.oneos.transfer.TransferManager;
 import com.eli.oneos.model.oneos.user.LoginManage;
@@ -32,8 +35,7 @@ import com.eli.oneos.service.OneSpaceService;
 import com.eli.oneos.ui.nav.BaseNavFragment;
 import com.eli.oneos.ui.nav.cloud.CloudNavFragment;
 import com.eli.oneos.ui.nav.phone.LocalNavFragment;
-import com.eli.oneos.ui.nav.tansfer.TransferNavFragment;
-import com.eli.oneos.ui.nav.tools.ToolsFragment;
+import com.eli.oneos.ui.nav.recent.RecentNavFragment;
 import com.eli.oneos.utils.EmptyUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.utils.Utils;
@@ -44,6 +46,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.nineoldandroids.view.ViewHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,13 +61,14 @@ public class MainActivity extends BaseActivity {
 
     private List<BaseNavFragment> mFragmentList = new ArrayList<>();
     private BaseNavFragment mCurNavFragment;
-    private TransferNavFragment mTransferFragment;
     // private RadioGroup radioGroup;
     private LinearLayout mNavLayout;
     private BadgeView mTransferBadgeView;
-    private ImageCheckBox mLocalBox, mCloudBox, mTransferBox, mToolsBox;
+    private ImageCheckBox mLocalBox, mCloudBox, mTransferBox, mToolsBox, mImageBox, mRecentBox;
     private FragmentManager fragmentManager;
-    private int mCurPageIndex = 1;
+    private int mCurPageIndex = 0;
+
+    private DrawerLayout mDrawerLayout;
 
     private NetworkStateManager.OnNetworkStateChangedListener mNetworkListener = new NetworkStateManager.OnNetworkStateChangedListener() {
         @Override
@@ -126,26 +130,44 @@ public class MainActivity extends BaseActivity {
             updateImageCheckBoxGroup(imageView);
 
             int index = 0;
-            switch (imageView.getId()) {
-                case R.id.ib_local:
-                    index = 0;
-                    break;
-                case R.id.ib_cloud:
-                    index = 1;
-                    break;
-                case R.id.ib_transfer:
-                    index = 2;
-                    break;
-                case R.id.ib_tools:
-                    index = 3;
-                    break;
-                default:
-                    break;
+            if (OneOSAPIs.isOneSpaceX1()) {
+                switch (imageView.getId()) {
+                    case R.id.ib_cloud:
+                        index = 0;
+                        break;
+                    case R.id.ib_image:
+                        index = 1;
+                        break;
+                    case R.id.ib_local:
+                        index = 2;
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                switch (imageView.getId()) {
+                    case R.id.ib_recent:
+                        index = 0;
+                        break;
+                    case R.id.ib_cloud:
+                        index = 1;
+                        break;
+                    case R.id.ib_image:
+                        index = 2;
+                        break;
+                    case R.id.ib_local:
+                        index = 3;
+                        break;
+                    default:
+                        break;
+                }
             }
             Log.d(TAG, "onCheckedChanged: " + index);
             changFragmentByIndex(index);
         }
     };
+
+    //检测上传下载的任务数并显示
     private int uploadCount = 0, downloadCount = 0;
     public TransferManager.OnTransferCountListener transferCountListener = new TransferManager.OnTransferCountListener() {
         @Override
@@ -160,16 +182,16 @@ public class MainActivity extends BaseActivity {
                     }
 
                     int total = uploadCount + downloadCount;
-                    if (total > 0) {
-                        if (total > 99) {
-                            mTransferBadgeView.setText("99+");
-                        } else {
-                            mTransferBadgeView.setText(String.valueOf(total));
-                        }
-                        mTransferBadgeView.setVisibility(View.VISIBLE);
-                    } else {
-                        mTransferBadgeView.setVisibility(View.GONE);
-                    }
+//                    if (total > 0) {
+//                        if (total > 99) {
+//                            mTransferBadgeView.setText("99+");
+//                        } else {
+//                            mTransferBadgeView.setText(String.valueOf(total));
+//                        }
+//                        mTransferBadgeView.setVisibility(View.VISIBLE);
+//                    } else {
+//                        mTransferBadgeView.setVisibility(View.GONE);
+//                    }
                 }
             });
         }
@@ -180,9 +202,16 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         initSystemBarStyle();
 
+//        drawer_content = (LinearLayout) getActivity().findViewById(R.id.id_left_menu);
+//        mDrawerLayout.closeDrawer(drawer_content);
+
         initViews();
+        initEvents();
 
         Intent intent = getUploadIntent();
         if (LoginManage.getInstance().isLogin()) {
@@ -204,6 +233,7 @@ public class MainActivity extends BaseActivity {
 
         AppUpgradeManager upgradeManager = new AppUpgradeManager(this);
         upgradeManager.detectAppUpgrade();
+
     }
 
     private Intent getUploadIntent() {
@@ -260,6 +290,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        CloseLeftMenu();
     }
 
     @Override
@@ -269,8 +300,10 @@ public class MainActivity extends BaseActivity {
 
     private long mExitTime;
 
+
     @Override
     public void onBackPressed() {
+        CloseLeftMenu();
         if (mCurNavFragment != null && mCurNavFragment.onBackPressed()) {
             return;
         }
@@ -300,10 +333,18 @@ public class MainActivity extends BaseActivity {
         mLocalBox.setOnImageCheckedChangedListener(listener);
         mCloudBox = (ImageCheckBox) findViewById(R.id.ib_cloud);
         mCloudBox.setOnImageCheckedChangedListener(listener);
-        mTransferBox = (ImageCheckBox) findViewById(R.id.ib_transfer);
-        mTransferBox.setOnImageCheckedChangedListener(listener);
-        mToolsBox = (ImageCheckBox) findViewById(R.id.ib_tools);
-        mToolsBox.setOnImageCheckedChangedListener(listener);
+//        mTransferBox = (ImageCheckBox) findViewById(R.id.ib_transfer);
+//        mTransferBox.setOnImageCheckedChangedListener(listener);
+//        mToolsBox = (ImageCheckBox) findViewById(R.id.ib_tools);
+//        mToolsBox.setOnImageCheckedChangedListener(listener);
+        mImageBox = (ImageCheckBox) findViewById(R.id.ib_image);
+        mImageBox.setOnImageCheckedChangedListener(listener);
+
+        mRecentBox = (ImageCheckBox) findViewById(R.id.ib_recent);
+        mRecentBox.setOnImageCheckedChangedListener(listener);
+        if (OneOSAPIs.isOneSpaceX1()) {
+            mRecentBox.setVisibility(View.GONE);
+        }
 
         mTransferBadgeView = new BadgeView(this);
         mTransferBadgeView.setText("0");
@@ -312,19 +353,76 @@ public class MainActivity extends BaseActivity {
         mTransferBadgeView.setTargetView(mTransferBox);
         mTransferBadgeView.setTypeface(Typeface.DEFAULT);
         mTransferBadgeView.setVisibility(View.GONE);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_root);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
+                Gravity.RIGHT);
+        // setDrawerLeftEdgeSize(this, mDrawerLayout, 0.6f);
+    }
+
+
+    /******
+     * Init Menu Event
+     ******/
+
+
+    private void initEvents() {
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                View mContent = mDrawerLayout.getChildAt(0);
+                View mMenu = drawerView;
+                float scale = 1 - slideOffset;
+
+                if (drawerView.getTag().equals("LEFT")) {
+                    ViewHelper.setTranslationX(mContent, mMenu.getMeasuredWidth() * (1 - scale));
+                    mContent.invalidate();
+                }
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                mDrawerLayout.setDrawerLockMode(
+                        DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+            }
+        });
     }
 
     private void initFragment() {
         fragmentManager = getSupportFragmentManager();
 
-        LocalNavFragment localFragment = new LocalNavFragment();
-        mFragmentList.add(localFragment);
+//        LocalNavFragment localFragment = new LocalNavFragment();
+//        mFragmentList.add(localFragment);
+//        CloudNavFragment cloudFragment = new CloudNavFragment();
+//        mFragmentList.add(cloudFragment);
+//        mTransferFragment = new TransferNavFragment();
+//        mFragmentList.add(mTransferFragment);
+//        ToolsFragment toolsFragment = new ToolsFragment();
+//        mFragmentList.add(toolsFragment);
+
+
+        RecentNavFragment recentFragment = new RecentNavFragment();
+        if (!OneOSAPIs.isOneSpaceX1()) {
+            mFragmentList.add(recentFragment);
+            mCurPageIndex = 1;
+        }
+
         CloudNavFragment cloudFragment = new CloudNavFragment();
         mFragmentList.add(cloudFragment);
-        mTransferFragment = new TransferNavFragment();
-        mFragmentList.add(mTransferFragment);
-        ToolsFragment toolsFragment = new ToolsFragment();
-        mFragmentList.add(toolsFragment);
+
+        LocalNavFragment localFragment = new LocalNavFragment();
+        mFragmentList.add(localFragment);
+
+        mFragmentList.add(localFragment);
 
         changFragmentByIndex(mCurPageIndex);
     }
@@ -416,8 +514,10 @@ public class MainActivity extends BaseActivity {
     private void updateImageCheckBoxGroup(ImageCheckBox imageView) {
         mLocalBox.setChecked(false);
         mCloudBox.setChecked(false);
-        mTransferBox.setChecked(false);
-        mToolsBox.setChecked(false);
+//        mTransferBox.setChecked(false);
+//        mToolsBox.setChecked(false);
+        mImageBox.setChecked(false);
+        mRecentBox.setChecked(false);
         imageView.setChecked(true);
     }
 
@@ -464,13 +564,13 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean controlActivity(String action) {
         if (action.equals(ACTION_SHOW_TRANSFER_DOWNLOAD)) {
-            mTransferFragment.setTransferUI(true, true);
+            // mTransferFragment.setTransferUI(true, true);
 //            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_transfer);
 //            radioButton.setChecked(true);
             listener.onChecked(mTransferBox, true);
             return true;
         } else if (action.equals(ACTION_SHOW_TRANSFER_UPLOAD)) {
-            mTransferFragment.setTransferUI(false, true);
+            // mTransferFragment.setTransferUI(false, true);
 //            RadioButton radioButton = (RadioButton) findViewById(R.id.radio_transfer);
 //            radioButton.setChecked(true);
             listener.onChecked(mTransferBox, true);
@@ -530,4 +630,51 @@ public class MainActivity extends BaseActivity {
 
         return file;
     }
+
+
+    public void OpenLeftMenu(View view) {
+        mDrawerLayout.openDrawer(Gravity.LEFT);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED,
+                Gravity.LEFT);
+
+    }
+
+    public void CloseLeftMenu() {
+        mDrawerLayout.closeDrawer(Gravity.LEFT);
+        //mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
+        //        Gravity.RIGHT);
+    }
+
+    /**
+     * 抽屉滑动范围控制
+     *
+     * @param activity
+     * @param drawerLayout
+     * @param displayWidthPercentage 占全屏的份额0~1
+     */
+//    private void setDrawerLeftEdgeSize(Activity activity, DrawerLayout drawerLayout, float displayWidthPercentage) {
+//        if (activity == null || drawerLayout == null)
+//            return;
+//        try {
+//            // find ViewDragHelper and set it accessible
+//            Field leftDraggerField = drawerLayout.getClass().getDeclaredField("mLeftDragger");
+//            leftDraggerField.setAccessible(true);
+//            ViewDragHelper leftDragger = (ViewDragHelper) leftDraggerField.get(drawerLayout);
+//            // find edgesize and set is accessible
+//            Field edgeSizeField = leftDragger.getClass().getDeclaredField("mEdgeSize");
+//            edgeSizeField.setAccessible(true);
+//            int edgeSize = edgeSizeField.getInt(leftDragger);
+//            // set new edgesize
+//            // Point displaySize = new Point();
+//            DisplayMetrics dm = new DisplayMetrics();
+//            activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+//            edgeSizeField.setInt(leftDragger, Math.max(edgeSize, (int) (dm.widthPixels * displayWidthPercentage)));
+//        } catch (NoSuchFieldException e) {
+//            Log.e("NoSuchFieldException", e.getMessage().toString());
+//        } catch (IllegalArgumentException e) {
+//            Log.e("IllegalArgumentException", e.getMessage().toString());
+//        } catch (IllegalAccessException e) {
+//            Log.e("IllegalAccessException", e.getMessage().toString());
+//        }
+//    }
 }

@@ -1,9 +1,14 @@
 package com.eli.oneos.model.upgrade;
 
+import android.util.Log;
+
 import com.eli.oneos.utils.EmptyUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
+import static com.eli.oneos.utils.CrashHandler.TAG;
 
 /**
  * Created by gaoyun@eli-tech.com on 2016/4/6.
@@ -11,7 +16,7 @@ import java.util.regex.Pattern;
 public class OneOSVersionManager {
     // Android OneSpace V3.0.9 beta 需要 OneOS 最低版本为3.0.12，适配情况：
     // 1、备份文件时需要使用新的重命名接口；
-    public static final String MIN_ONEOS_VERSION = "3.0.10";
+    public static final String MIN_ONEOS_VERSION = "4.0.0";
 
     /**
      * check version string, version must be format in xx.xx.xx
@@ -24,6 +29,7 @@ public class OneOSVersionManager {
     }
 
     public static boolean compare(String version, String minVersion) {
+        Log.d(TAG,"version:  "+ version);
         if (!EmptyUtils.isEmpty(version)) {
             if (version.equalsIgnoreCase(minVersion)) {
                 return true;
@@ -35,6 +41,8 @@ public class OneOSVersionManager {
 
             String cur[] = version.split("\\.");
             String min[] = minVersion.split("\\.");
+            Log.d(TAG,"version:  "+ version);
+            Log.d(TAG,"version:  "+ minVersion);
             for (int i = 0; i < 3; i++) {
                 int c;
                 int m;

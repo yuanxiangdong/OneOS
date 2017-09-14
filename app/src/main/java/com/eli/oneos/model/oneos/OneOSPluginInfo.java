@@ -1,7 +1,12 @@
 package com.eli.oneos.model.oneos;
 
+
+import com.eli.oneos.constant.OneOSAPIs;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+
 
 /**
  * OneSpace plugin information
@@ -27,9 +32,6 @@ public class OneOSPluginInfo {
     private String logo = null;
     private String url = null;
 
-    public OneOSPluginInfo() {
-    }
-
     public OneOSPluginInfo(JSONObject jsonObj) {
         if (null != jsonObj) {
             try {
@@ -40,7 +42,10 @@ public class OneOSPluginInfo {
                 this.logo = jsonObj.getString("logo");
                 this.canStat = jsonObj.getBoolean("canstat");
                 this.canOff = jsonObj.getBoolean("canoff");
-//				this.stat = jsonObj.getString("stat");
+                if (OneOSAPIs.isOneSpaceX1()) {
+                    this.stat = jsonObj.getString("stat").equalsIgnoreCase("on") ? State.ON : State.OFF;
+                    //this.stat = jsonObj.getString("stat");
+                }
                 this.url = jsonObj.getString("url");
             } catch (JSONException e) {
                 e.printStackTrace();

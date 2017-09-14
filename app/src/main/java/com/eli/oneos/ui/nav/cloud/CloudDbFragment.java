@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 
 import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.FileManageAction;
 import com.eli.oneos.model.FileOrderType;
 import com.eli.oneos.model.FileViewerType;
@@ -28,6 +29,7 @@ import com.eli.oneos.model.oneos.adapter.OneOSStickyGridAdapter;
 import com.eli.oneos.model.oneos.adapter.OneOSStickyListAdapter;
 import com.eli.oneos.model.oneos.api.OneOSListDBAPI;
 import com.eli.oneos.model.oneos.api.OneOSSearchAPI;
+import com.eli.oneos.model.oneos.comp.OneOSFileCTTimeComparator;
 import com.eli.oneos.ui.MainActivity;
 import com.eli.oneos.ui.nav.BaseNavFileFragment;
 import com.eli.oneos.utils.AnimUtils;
@@ -42,6 +44,7 @@ import com.eli.oneos.widget.sticky.gridview.StickyGridHeadersView;
 import com.eli.oneos.widget.sticky.listview.StickyListHeadersView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by gaoyun@eli-tech.com on 2016/02/03.
@@ -80,7 +83,7 @@ public class CloudDbFragment extends BaseCloudFragment {
                 mClickedCheckBox.toggle();
 
                 mAdapter.notifyDataSetChanged();
-                updateSelectAndManagePanel();
+                updateSelectAndManagePanel(false);
             } else {
                 isSelectionLastPosition = true;
                 FileUtils.openOneOSFile(mLoginSession, mMainActivity, position, mFileList);
@@ -94,7 +97,7 @@ public class CloudDbFragment extends BaseCloudFragment {
             boolean isMultiMode = mAdapter.isMultiChooseModel();
             if (!isMultiMode) {
                 setMultiModel(true, position);
-                updateSelectAndManagePanel();
+                updateSelectAndManagePanel(false);
             } else {
                 CheckBox mClickedCheckBox = (CheckBox) view.findViewById(R.id.cb_select);
                 OneOSFile file = mFileList.get(position);
@@ -107,7 +110,7 @@ public class CloudDbFragment extends BaseCloudFragment {
                 mClickedCheckBox.toggle();
 
                 mAdapter.notifyDataSetChanged();
-                updateSelectAndManagePanel();
+                updateSelectAndManagePanel(false);
             }
 
             return true;
@@ -118,7 +121,7 @@ public class CloudDbFragment extends BaseCloudFragment {
         public void onSelect(boolean isSelectAll) {
             getFileAdapter().selectAllItem(isSelectAll);
             getFileAdapter().notifyDataSetChanged();
-            updateSelectAndManagePanel();
+            updateSelectAndManagePanel(false);
         }
 
         @Override
@@ -126,6 +129,7 @@ public class CloudDbFragment extends BaseCloudFragment {
             setMultiModel(false, 0);
         }
     };
+
     private FileManagePanel.OnFileManageListener mFileManageListener = new FileManagePanel.OnFileManageListener() {
         @Override
         public void onClick(View view, ArrayList<?> selectedList, FileManageAction action) {
@@ -139,9 +143,17 @@ public class CloudDbFragment extends BaseCloudFragment {
                         autoPullToRefresh();
                     }
                 });
-                fileManage.manage(mFileType, action, (ArrayList<OneOSFile>) selectedList);
+                if (action.equals(FileManageAction.MORE)) {
+                    Log.d(TAG,"Manage More======");
+                    updateSelectAndManagePanel(true);
+                }else if (action.equals(FileManageAction.BACK)){
+                    updateSelectAndManagePanel(false);
+                } else {
+                    fileManage.manage(mFileType, action, (ArrayList<OneOSFile>) selectedList);
+                }
             }
         }
+
 
         @Override
         public void onDismiss() {
@@ -267,7 +279,7 @@ public class CloudDbFragment extends BaseCloudFragment {
             public void onClick(View view) {
                 AnimUtils.shortVibrator();
                 setMultiModel(true, (Integer) view.getTag());
-                updateSelectAndManagePanel();
+                updateSelectAndManagePanel(false);
             }
         }, mLoginSession);
         mListView.setOnItemClickListener(mFileItemClickListener);
@@ -286,7 +298,7 @@ public class CloudDbFragment extends BaseCloudFragment {
             public void onClick(View view) {
                 AnimUtils.shortVibrator();
                 setMultiModel(true, (Integer) view.getTag());
-                updateSelectAndManagePanel();
+                updateSelectAndManagePanel(false);
             }
         }, mLoginSession);
         mGridView.setOnItemClickListener(mFileItemClickListener);
@@ -361,6 +373,12 @@ public class CloudDbFragment extends BaseCloudFragment {
     }
 
     private void notifyRefreshComplete(boolean isItemChanged) {
+
+        if (mFileType == OneOSFileType.PICTURE){
+            Collections.sort(mFileList, new OneOSFileCTTimeComparator());
+        }
+
+
         isListShown = FileViewerType.isList(mUserSettings.getFileViewerType());
 //        if (mOrderType == FileOrderType.NAME) {
 //            Collections.sort(mFileList, new OneOSFileNameComparator());
@@ -368,19 +386,34 @@ public class CloudDbFragment extends BaseCloudFragment {
 //            Collections.sort(mFileList, new OneOSFileTimeComparator());
 //        }
 
+
+
         ArrayList<String> mSectionLetters = new ArrayList<>();
         int index = 0;
         String fmt = mMainActivity.getResources().getString(R.string.fmt_time_line);
         for (OneOSFile file : mFileList) {
-            String letter = FileUtils.formatTime(file.getMonth() * 1000, fmt);
+
+            String letter = FileUtils.formatTime(file.getTime()*1000, fmt);
+            if (mFileType == OneOSFileType.PICTURE){
+                letter = FileUtils.formatTime(file.getCttime()*1000, fmt);
+            }
+
+            if (OneOSAPIs.isOneSpaceX1()){
+                if (mFileType == OneOSFileType.PICTURE){
+                    letter = FileUtils.formatTime(file.getPhototime()*1000, fmt);
+                }else{
+                    letter = FileUtils.formatTime(file.getTime()*1000, fmt);
+                }
+            }
+
             if (!mSectionLetters.contains(letter)) {
                 mSectionLetters.add(letter);
                 file.setSection(index);
-                Log.d(TAG, "Add section index = " + index + ", value = " + letter);
                 index++;
             } else {
                 file.setSection(mSectionLetters.indexOf(letter));
             }
+
         }
 
         int sec = mSectionLetters.size();
@@ -388,8 +421,10 @@ public class CloudDbFragment extends BaseCloudFragment {
         for (int i = 0; i < sec; i++) {
             sections[i] = mSectionLetters.get(i);
         }
+
         mListAdapter.updateSections(sections);
         mGridAdapter.updateSections(sections);
+
 
         if (isListShown) {
             mGridLayout.setVisibility(View.GONE);
@@ -452,9 +487,10 @@ public class CloudDbFragment extends BaseCloudFragment {
         mParentFragment.showManageBar(isShown);
     }
 
-    private void updateSelectAndManagePanel() {
+    private void updateSelectAndManagePanel(boolean isMore) {
+
         mParentFragment.updateSelectBar(mFileList.size(), mSelectedList.size(), mFileSelectListener);
-        mParentFragment.updateManageBar(mFileType, mSelectedList, mFileManageListener);
+        mParentFragment.updateManageBar(mFileType, mSelectedList, isMore, mFileManageListener);
     }
 
     private boolean setMultiModel(boolean isSetMultiModel, int position) {
@@ -464,7 +500,7 @@ public class CloudDbFragment extends BaseCloudFragment {
         }
 
         if (isSetMultiModel) {
-            updateSelectAndManagePanel();
+            updateSelectAndManagePanel(false);
             showSelectAndOperatePanel(true);
             mListAdapter.setIsMultiModel(true);
             mGridAdapter.setIsMultiModel(true);

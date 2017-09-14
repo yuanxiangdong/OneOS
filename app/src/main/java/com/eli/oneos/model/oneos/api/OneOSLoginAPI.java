@@ -6,6 +6,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.Constants;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.constant.OneSpaceAPIs;
 import com.eli.oneos.db.DeviceInfoKeeper;
 import com.eli.oneos.db.UserInfoKeeper;
 import com.eli.oneos.db.UserSettingsKeeper;
@@ -13,9 +14,11 @@ import com.eli.oneos.db.greendao.DeviceInfo;
 import com.eli.oneos.db.greendao.UserInfo;
 import com.eli.oneos.db.greendao.UserSettings;
 import com.eli.oneos.model.http.OnHttpListener;
+import com.eli.oneos.model.http.RequestBody;
 import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logger;
 import com.eli.oneos.model.oneos.OneOSInfo;
+import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.model.upgrade.OneOSVersionManager;
 import com.eli.oneos.utils.EmptyUtils;
@@ -39,13 +42,21 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
     private String pwd = null;
     private String mac = null;
     private int domain = Constants.DOMAIN_DEVICE_LAN;
+    private int trys = 0;
     private OnHttpListener httpListener = new OnHttpListener<String>() {
 
         @Override
         public void onFailure(Throwable th, int errorNo, String strMsg) {
             // super.onFailure(th, errorNo, strMsg);
             errorNo = parseFailure(th, errorNo);
-            if (listener != null) {
+            if (1 == trys) {
+                trys = 0;
+                Map<String, Object> params = new HashMap<>();
+                params.put("user", user);
+                params.put("pass", pwd);
+                url = genOneOSAPIUrl(OneSpaceAPIs.LOGIN);
+                httpUtils.post(url, params, httpListener);
+            } else if (listener != null) {
                 if (errorNo == HttpErrorNo.ERR_ONEOS_VERSION) {
                     strMsg = context.getResources().getString(R.string.oneos_version_mismatch);
                 }
@@ -61,14 +72,33 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
                 try {
                     JSONObject json = new JSONObject(result);
                     boolean ret = json.getBoolean("result");
+                    // Response Data:{"result":true, "model":"a20", "id":1,"username":"admin","email":"admin@eli-tech.com","admin":1,"phone":"-", "remark":"-", "session":"bu4p1h9armlc4kqpe6i2l75p0fm8lljvta54fe74n8899piu62f0===="}
+                    //
                     if (ret) {
-                        // {"username":"admin","uid":1001,"admin":1,"gid":0,"result":true,"session":"c5i6qqbe78oj0c1h78o0===="}
-                        final int uid = json.getInt("uid");
-                        final int gid = json.getInt("gid");
-                        final int admin = json.getInt("admin");
-                        final String session = json.getString("session");
-                        final long time = System.currentTimeMillis();
+                        //{
+                        //      "result":true,"data":{"session":"57a33197283ada5e8ca6e868051585b3",
+                        //      "user":{"username":"admin","nickname":"OneSpace","email":"admin@onespace.com","phone":"18805518888","role":0,"avatar":"","remark":"Admin user created default","uid":1006,"gid":0,"admin":1,"space":1024,"used":0,"isdelete":0,"create":0}}
+                        // }
 
+
+                        final int uid, gid, admin;
+                        final String session;
+                        final long time;
+                        if (trys == 0) {
+                            uid = json.getInt("id");
+                            gid = 0;
+                            admin = json.getInt("admin");
+                            session = json.getString("session");
+                            time = System.currentTimeMillis();
+                        } else {
+                            JSONObject datajson = json.getJSONObject("data");
+                            JSONObject userjson = datajson.getJSONObject("user");
+                            uid = userjson.getInt("uid");
+                            gid = userjson.getInt("gid");
+                            admin = userjson.getInt("admin");
+                            session = datajson.getString("session");
+                            time = System.currentTimeMillis();
+                        }
                         if (!EmptyUtils.isEmpty(mac)) {
                             genLoginSession(mac, uid, gid, admin, session, time, domain);
                         } else {
@@ -90,13 +120,20 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
                                     listener.onFailure(url, errorNo, msg);
                                 }
                             });
-                            getMacAPI.getMac();
+
+                            if (trys == 0) {
+                                getMacAPI.getOneSpaceMac();
+                            } else {
+                                getMacAPI.getMac();
+                            }
                         }
                     } else {
+
                         // {"errno":-1,"msg":"list error","result":false}
-                        int errorNo = json.getInt("errno");
+                        JSONObject errorNo = json.getJSONObject("error");
                         String msg = context.getResources().getString(R.string.error_login_user_or_pwd);
-                        listener.onFailure(url, errorNo, msg);
+                        Log.d(TAG, "Response Data false:  " + errorNo);
+                        listener.onFailure(url, errorNo.getInt("code"), msg);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -119,22 +156,25 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
 
     public void login(int domain) {
         this.domain = domain;
-        url = genOneOSAPIUrl(OneOSAPIs.LOGIN);
+        url = genOneOSAPIUrl(OneOSAPIs.USER);
         Log.d(TAG, "Login: " + url);
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("username", user);
         params.put("password", pwd);
+        trys = 1;
 
         if (domain == Constants.DOMAIN_DEVICE_SSUDP) {
-            httpUtils.sendSSUDP(url, params, httpListener);
+            // httpUtils.sendSSUDP(url, params, httpListener);
         } else {
-            httpUtils.post(url, params, httpListener);
+//            httpUtils.post(url, params, httpListener);
+            httpUtils.postJson(url, new RequestBody("login", "", params), httpListener);
         }
 
         if (listener != null) {
             listener.onStart(url);
         }
     }
+
 
     private void checkOneOSVersion(final LoginSession loginSession) {
         OneOSVersionAPI versionAPI = new OneOSVersionAPI(loginSession.getIp(), loginSession.getPort(), domain != Constants.DOMAIN_DEVICE_SSUDP);
@@ -156,6 +196,7 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
 
             @Override
             public void onFailure(String url, int errorNo, String errorMsg) {
+                Log.e(TAG, "Get oneos version error: " + errorMsg);
                 String msg = context.getResources().getString(R.string.oneos_version_check_failed);
                 listener.onFailure(url, HttpErrorNo.ERR_ONEOS_VERSION, msg);
             }
@@ -164,10 +205,13 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
     }
 
     private void genLoginSession(String mac, int uid, int gid, int admin, String session, long time, int domain) {
+
         long id; // user id
         UserSettings userSettings;
         UserInfo userInfo = UserInfoKeeper.getUserInfo(user, mac);
+
         if (null == userInfo) {
+            Log.e(TAG, "UserInfo is null");
             userInfo = new UserInfo(null, user, mac, pwd, admin, uid, gid, domain, time, false, true);
             id = UserInfoKeeper.insert(userInfo);
 //            if (id == -1) {
@@ -178,6 +222,7 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
             userSettings = UserSettingsKeeper.insertDefault(id, user);
 //            }
         } else {
+            Log.e(TAG, ">>>> UserInfo: " + userInfo);
             userInfo.setPwd(pwd);
             userInfo.setAdmin(admin);
             userInfo.setUid(uid);
@@ -214,10 +259,17 @@ public class OneOSLoginAPI extends OneOSBaseAPI {
         } else {
             DeviceInfoKeeper.update(deviceInfo);
         }
-
+        Log.d(TAG, String.format("userinfo=%s, deviceInfo=%s, userStting=%s, session=%s, isNew=%s", userInfo, deviceInfo, userSettings, session, isNewDevice));
         LoginSession loginSession = new LoginSession(userInfo, deviceInfo, userSettings, session, isNewDevice, time);
 
-        checkOneOSVersion(loginSession);
+        if (1 == trys) {
+            checkOneOSVersion(loginSession);
+        } else {
+            OneOSInfo info = new OneOSInfo("x1x3", "onespace", false, "x1x3", "201506");
+            loginSession.setOneOSInfo(info);
+            listener.onSuccess(url, loginSession);
+        }
+
     }
 
     public interface OnLoginListener {

@@ -8,6 +8,8 @@
     <dimen name="text_size_mid">15sp</dimen>
     <dimen name="text_size_sm">14sp</dimen>
     <dimen name="text_size_min">12sp</dimen>
+    <dimen name="text_size_tool">13sp</dimen>>
+    <dimen name="text_size_minmin">10sp</dimen>
 
     <dimen name="text_size_nav_bar">11sp</dimen>
     <dimen name="text_size_anim_progress">48sp</dimen>

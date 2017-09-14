@@ -151,6 +151,7 @@ public class CloudNavFragment extends BaseNavFileFragment<OneOSFileType, OneOSFi
         if (!mCurFragment.isAdded()) {
             transaction.add(R.id.fragment_content, mCurFragment);
         } else {
+            mCurFragment.curPath = path;
             mCurFragment.onResume();
         }
         transaction.show(mCurFragment);
@@ -224,9 +225,13 @@ public class CloudNavFragment extends BaseNavFileFragment<OneOSFileType, OneOSFi
      * @param mListener    On file operate listener
      */
     @Override
-    public void updateManageBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, FileManagePanel.OnFileManageListener mListener) {
+    public void updateManageBar(OneOSFileType fileType, ArrayList<OneOSFile> selectedList, Boolean isMore, FileManagePanel.OnFileManageListener mListener) {
         mManagePanel.setOnOperateListener(mListener);
-        mManagePanel.updatePanelItems(fileType, selectedList);
+        if (isMore){
+            mManagePanel.updatePanelItemsMore(fileType, selectedList);
+        } else {
+            mManagePanel.updatePanelItems(fileType, selectedList);
+        }
     }
 
     /**

@@ -189,7 +189,7 @@ public class LocalNavFragment extends BaseNavFileFragment<LocalFileType, LocalFi
      * @param mListener    On file operate listener
      */
     @Override
-    public void updateManageBar(LocalFileType fileType, ArrayList<LocalFile> selectedList, FileManagePanel.OnFileManageListener mListener) {
+    public void updateManageBar(LocalFileType fileType, ArrayList<LocalFile> selectedList, Boolean isMore, FileManagePanel.OnFileManageListener mListener) {
         mManagePanel.setOnOperateListener(mListener);
         mManagePanel.updatePanelItems(fileType, selectedList);
     }

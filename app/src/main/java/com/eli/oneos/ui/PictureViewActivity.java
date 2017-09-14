@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -19,18 +22,24 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
+import com.eli.oneos.ui.nav.progress.ProgressModelLoader;
 import com.eli.oneos.utils.FileUtils;
 import com.eli.oneos.utils.ToastHelper;
 import com.eli.oneos.widget.preview.HackyViewPager;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +58,7 @@ public class PictureViewActivity extends Activity {
     protected Animation mSlideInAnim, mSlideOutAnim;
 
     private int startIndex = 0;
+    private int curPositon;
     private boolean isLocalPicture = false;
     private OnClickListener onBackListener = new OnClickListener() {
 
@@ -169,8 +179,11 @@ public class PictureViewActivity extends Activity {
         @Override
         public View instantiateItem(ViewGroup container, int position) {
 //            ImageView photoView = new ImageView(container.getContext());
-            PhotoView photoView = new PhotoView(container.getContext());
+            RelativeLayout rootView = new RelativeLayout(container.getContext());
+            final PhotoView photoView = new PhotoView(rootView.getContext());
             photoView.setScaleType(ImageView.ScaleType.CENTER);
+
+
             photoView.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
                 @Override
                 public void onViewTap(View view, float x, float y) {
@@ -210,15 +223,43 @@ public class PictureViewActivity extends Activity {
                     /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().crossFade(250).error(R.drawable.icon_file_pic_default).into(photoView);
                 }
             } else {
-                OneOSFile file = (OneOSFile) mList.get(position);
-                String url = OneOSAPIs.genDownloadUrl(mLoginSession, file);
-                Log.d(TAG, ">>>> Load url: " + url);
+                final OneOSFile file = (OneOSFile) mList.get(position);
+                final String url = OneOSAPIs.genDownloadUrl(mLoginSession, file);
+                final String thumburl = OneOSAPIs.genThumbnailUrl(mLoginSession, file);
                 if (file.isGif()) {
                     Glide.with(context).load(url).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().crossFade(250).error(R.drawable.icon_file_pic_default).into(photoView);
+                            /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().crossFade(250).error(R.drawable.icon_file_pic_default)
+                            .thumbnail(1f).into(photoView);
+
                 } else {
-                    Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.RESULT)
+
+
+
+//                    Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.RESULT)
+//                    /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().crossFade(250).error(R.drawable.icon_file_pic_default).into(photoView);
+
+                    if (OneOSAPIs.isOneSpaceX1()) {
+                        Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.RESULT)
                     /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().crossFade(250).error(R.drawable.icon_file_pic_default).into(photoView);
+                    } else {
+                        Glide.with(context).load(thumburl).listener(new RequestListener<String, GlideDrawable>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                // Log.e("onException", e.toString() + "  model:" + model + " isFirstResource: " + isFirstResource);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                Glide.with(context).using(new ProgressModelLoader(new ProgressHandler(context))).load(url).diskCacheStrategy(DiskCacheStrategy.RESULT).skipMemoryCache(true)
+                                        .fitCenter().error(R.drawable.icon_file_pic_default).into(photoView);
+                                return false;
+                            }
+                        }).diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    /*.placeholder(R.drawable.ic_circle_progress_sm)*/.fitCenter().error(R.drawable.icon_file_pic_default).into(photoView);
+                    }
+
+
                 }
             }
 
@@ -232,6 +273,9 @@ public class PictureViewActivity extends Activity {
         public void setPrimaryItem(ViewGroup container, final int position, Object object) {
             super.setPrimaryItem(container, position, object);
             if (listener != null) {
+                curPositon = position;
+                TextView textView = (TextView) findViewById(R.id.progress_textView);
+                textView.setVisibility(View.GONE);
                 listener.onItemChanged(position);
             }
         }
@@ -249,7 +293,54 @@ public class PictureViewActivity extends Activity {
         public void setOnItemChangedListener(OnItemChangedListener listener) {
             this.listener = listener;
         }
+
+        //add picture progress
+        private class ProgressHandler extends Handler {
+
+            private WeakReference<Context> mContext;
+
+            public ProgressHandler(Context context) {
+                super(Looper.getMainLooper());
+                mContext = new WeakReference<>(context);
+            }
+
+
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                final Context context = mContext.get();
+
+                if (context != null) {
+                    switch (msg.what) {
+                        case 1:
+                            int percent = msg.arg1;
+                            String downloadUrl = (String) msg.obj;
+                            OneOSFile file = (OneOSFile) mList.get(curPositon);
+                            String url = OneOSAPIs.genDownloadUrl(mLoginSession, file);
+                            TextView textView = (TextView) findViewById(R.id.progress_textView);
+
+//                            Log.d(TAG, "percent======" + percent);
+//                            Log.d(TAG, "position===" + curPositon);
+
+
+                            if (downloadUrl.equals(url)) {
+                                textView.setVisibility(View.VISIBLE);
+                                textView.setText(String.valueOf(percent) + "%");
+                                if (percent ==100  || percent < 0) {
+                                    textView.setText("100%");
+                                    textView.setVisibility(View.GONE);
+                                }
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }
+
 
     public interface OnItemChangedListener {
         void onItemChanged(int currentPosition);

@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.oneos.OneOSHardDisk;
 import com.eli.oneos.model.oneos.OneOSUser;
 import com.eli.oneos.model.oneos.adapter.UserAdapter;
@@ -144,7 +145,11 @@ public class UserManageActivity extends BaseActivity {
                                     showTipView(R.string.reset_failed, false);
                                 }
                             });
-                            manageAPI.chpwd(user.getName(), "123456");
+                            if (OneOSAPIs.isOneSpaceX1()){
+                                manageAPI.chpwd(String.valueOf(user.getUid()), "123456");
+                            }else {
+                                manageAPI.chpwd(user.getName(), "123456");
+                            }
                         }
                     }
                 });
@@ -175,7 +180,11 @@ public class UserManageActivity extends BaseActivity {
                                     showTipView(R.string.reset_failed, false);
                                 }
                             });
-                            manageAPI.chpwd(user.getName(), newPwd);
+                            if (OneOSAPIs.isOneSpaceX1()){
+                                manageAPI.chopwd(String.valueOf(user.getUid()), newPwd);
+                            }else {
+                                manageAPI.chpwd(user.getName(), newPwd);
+                            }
                             DialogUtils.dismiss();
                         }
                     }
@@ -227,7 +236,11 @@ public class UserManageActivity extends BaseActivity {
                                 showTipView(R.string.modify_failed, false);
                             }
                         });
-                        manageAPI.chspace(user.getName(), s);
+                        if (OneOSAPIs.isOneSpaceX1()){
+                            manageAPI.chspace(String.valueOf(user.getUid()),s);
+                        }else {
+                            manageAPI.chspace(user.getName(), s);
+                        }
                         mDialog.dismiss();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -257,7 +270,7 @@ public class UserManageActivity extends BaseActivity {
                     public void onClick(boolean isPositiveBtn, EditText mUserEditText, EditText mPwdEditText) {
                         if (isPositiveBtn) {
                             String user = mUserEditText.getText().toString();
-                            String pwd = mUserEditText.getText().toString();
+                            String pwd = mPwdEditText.getText().toString();
                             if (user.length() < 3) {
                                 ToastHelper.showToast(R.string.error_user_name_length);
                             } else {
@@ -312,7 +325,11 @@ public class UserManageActivity extends BaseActivity {
                                     showTipView(R.string.delete_user_failed, false);
                                 }
                             });
-                            manageAPI.delete(user.getName());
+                            if (OneOSAPIs.isOneSpaceX1()){
+                                manageAPI.delete(String.valueOf(user.getUid()));
+                            }else {
+                                manageAPI.delete(user.getName());
+                            }
                         }
                     }
                 });
@@ -370,6 +387,10 @@ public class UserManageActivity extends BaseActivity {
                 mAdapter.notifyDataSetChanged();
             }
         });
-        spaceAPI.query(user.getName());
+        if (OneOSAPIs.isOneSpaceX1()){
+            spaceAPI.querys(user.getUid());
+        }else{
+            spaceAPI.query(user.getName());
+        }
     }
 }

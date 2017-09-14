@@ -1,5 +1,6 @@
 package com.eli.oneos.utils;
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.format.Formatter;
 import android.util.Base64;
 import android.util.Log;
@@ -21,12 +24,17 @@ import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.ui.BaseActivity;
+import com.eli.oneos.ui.DocumentViewActivity;
 import com.eli.oneos.ui.PictureViewActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +44,15 @@ import java.util.TimeZone;
 public class FileUtils {
     private static final String TAG = FileUtils.class.getSimpleName();
     public static final String DEFAULT_TIME_FMT = "yyyy-MM-dd HH:mm:ss";
+
+    public ProgressDialog mProgressDialog;
+    // 下载失败
+    public static final int DOWNLOAD_ERROR = 2;
+    // 下载成功
+    public static final int DOWNLOAD_SUCCESS = 1;
+    //private  File file1;
+    public String savePath,fileName;
+
 
     /**
      * get photo date
@@ -266,12 +283,23 @@ public class FileUtils {
             String url = OneOSAPIs.genOpenUrl(loginSession, file);
             try {
                 Intent intent = new Intent();
-                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setAction(android.content.Intent.ACTION_VIEW);
+
                 String type = MIMETypeUtils.getMIMEType(file.getName());
                 Log.d(TAG, "Open OneOS file: " + url + "; type: " + type);
-                intent.setDataAndType(Uri.parse(url), type);
-                activity.startActivity(intent);
+                if (file.isDocument()){
+                    Intent intents = new Intent(activity, DocumentViewActivity.class);
+                    url = OneOSAPIs.genDownloadUrl(loginSession, file);
+                    FileUtils fileUtils = new FileUtils();
+                    fileUtils.gotoDownload(loginSession, activity, url, file.getName());
+                    //intents.putExtra("url",url);
+                    //intents.putExtra("fileName",file.getName());
+                    //activity.startActivity(intents);
+                }else {
+                    intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse(url), type);
+                    activity.startActivity(intent);
+                }
             } catch (ActivityNotFoundException e) {
                 e.printStackTrace();
                 activity.showTipView(R.string.error_app_not_found_to_open_file, false);
@@ -432,4 +460,133 @@ public class FileUtils {
     public static boolean isPictureOrVideo(File file) {
         return isPictureFile(file.getName()) || isVideoFile(file.getName());
     }
+
+
+
+//--------------------------------在线打开文档，先下载到本地--------------------------------
+
+
+    public void gotoDownload(LoginSession loginSession, BaseActivity activity, final String url, final String fileName){
+
+        mProgressDialog = new ProgressDialog(activity);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
+        this.fileName = fileName;
+        savePath = loginSession.getDownloadPath() + "/" + fileName;
+        Log.d(TAG,"savePath == " + savePath);
+
+        new Thread() {
+            public void run() {
+
+                File docFile = new File(savePath);
+                if (docFile.exists()) {
+                    Message msg = Message.obtain();
+                    msg.obj = docFile;
+                    msg.what = DOWNLOAD_SUCCESS;
+                    handler.sendMessage(msg);
+                    mProgressDialog.dismiss();
+                    return;
+                }
+                File downloadfile = downLoad(url, savePath, mProgressDialog);
+                Log.d(TAG,"========" + savePath);
+                Message msg = Message.obtain();
+                if (downloadfile != null) {
+                    msg.obj = downloadfile;
+                    msg.what = DOWNLOAD_SUCCESS;
+                } else {
+                    msg.what = DOWNLOAD_ERROR;
+                }
+                handler.sendMessage(msg);
+                mProgressDialog.dismiss();
+            }
+        }.start();
+    }
+
+
+    /**
+     * 传入文件 url  文件路径  和 弹出的dialog  进行 下载文档
+     */
+    public static File downLoad(String serverpath, String savePath, ProgressDialog pd) {
+        try {
+            URL url = new URL(serverpath);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            if (conn.getResponseCode() == 200) {
+                int max = conn.getContentLength();
+                Log.d(TAG,"max size = " + max);
+                FileUtils.fmtFileSize(max);
+                pd.setProgressNumberFormat("%1d kb/%2d kb");
+                pd.setMax(max/1024);
+                InputStream is = conn.getInputStream();
+                File file = new File(savePath);
+                FileOutputStream fos = new FileOutputStream(file);
+                int len = 0;
+                byte[] buffer = new byte[1024];
+                int total = 0;
+                int progress = 0;
+                while ((len = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                    total += len;
+                    Log.d(TAG,"progress == " + (total*100/max));
+                    if ((total*100/max) > progress) {
+                        progress = total*100/max;
+                        pd.setProgress(total / 1024);
+                        Log.d(TAG, "progress size = " + total);
+                    }
+                }
+                fos.flush();
+                fos.close();
+                is.close();
+                return file;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+
+    /**
+     * 下载完成后  直接打开文件
+     */
+    Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case DOWNLOAD_SUCCESS:
+
+                   /* File file = (File) msg.obj;
+                    Intent intent = new Intent("android.intent.action.VIEW");
+                    String type = MIMETypeUtils.getMIMEType(fileName);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(file), type);
+                    startActivity(intent);
+                    finish();*/
+
+
+                    File file = (File) msg.obj;
+                    Intent intent = new Intent("android.intent.action.VIEW");
+                    intent.addCategory("android.intent.category.DEFAULT");
+                    intent.addFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
+                    String type = MIMETypeUtils.getMIMEType(fileName);
+                    intent.setDataAndType (Uri.fromFile(file), type);
+                    MyApplication.getAppContext().startActivity(intent);
+                    //MyApplication.getAppContext().startActivity(Intent.createChooser(intent, "标题"));
+                    mProgressDialog.dismiss();
+                    /**
+                     * 弹出选择框   把本activity销毁
+                     */
+                    break;
+                case DOWNLOAD_ERROR:
+                    //Util.showToast(act,"文件加载失败");
+                    break;
+            }
+        }
+    };
+
+
 }

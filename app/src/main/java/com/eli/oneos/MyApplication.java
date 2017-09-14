@@ -14,6 +14,8 @@ import com.eli.oneos.ui.BaseActivity;
 import com.eli.oneos.utils.CrashHandler;
 import com.karumi.dexter.Dexter;
 
+import net.cifernet.mobile.cmapi.CMInterface;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +58,7 @@ public class MyApplication extends Application {
             CrashHandler crashHandler = CrashHandler.getInstance();
             crashHandler.init(context);
         }
+        CMInterface.getInstance().init(context); // Init memenet
         bindService();
         Dexter.initialize(this);
     }

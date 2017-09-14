@@ -6,12 +6,16 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.http.OnHttpListener;
+import com.eli.oneos.model.http.RequestBody;
 import com.eli.oneos.model.oneos.OneOSHardDisk;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OneSpace OS Get Hard Disk information
@@ -43,9 +47,10 @@ public class OneOSHardDiskInfoAPI extends OneOSBaseAPI {
         }
         this.hardDisk1 = hd1;
         this.hardDisk2 = hd2;
-        url = genOneOSAPIUrl(OneOSAPIs.SYSTEM_HD_INFO);
+        url = genOneOSAPIUrl(OneOSAPIs.SYSTEM_SYS);
+        Map<String, Object> params = new HashMap<>();
 
-        httpUtils.post(url, new OnHttpListener<String>() {
+        httpUtils.postJson(url,new RequestBody("hdinfo", session, params), new OnHttpListener<String>() {
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
                 // super.onFailure(t, errorNo, strMsg);

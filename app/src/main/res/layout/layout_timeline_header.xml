@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@color/bg_timeline_header"
     android:gravity="center"
+    android:id="@+id/timeline_header"
     android:orientation="horizontal">
 
     <View

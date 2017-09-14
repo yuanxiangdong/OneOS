@@ -1,8 +1,14 @@
 package com.eli.oneos.model;
 
+
+import android.util.Log;
+
 import com.eli.oneos.R;
+import com.eli.oneos.constant.OneOSAPIs;
+
 import com.eli.oneos.model.oneos.OneOSFile;
 import com.eli.oneos.model.oneos.OneOSFileType;
+
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.phone.LocalFile;
 import com.eli.oneos.model.phone.LocalFileType;
@@ -15,6 +21,7 @@ import java.util.ArrayList;
  */
 public class FileManageItemGenerator {
     private static int OPT_BASE_ID = 0x10000000;
+    private static final String TAG = FileManageItemGenerator.class.getSimpleName();
 
     private static FileManageItem OPT_COPY = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_copy, R.drawable.btn_opt_copy_pressed, R.string.copy_file, FileManageAction.COPY);
     private static FileManageItem OPT_MOVE = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_move, R.drawable.btn_opt_move_pressed, R.string.move_file, FileManageAction.MOVE);
@@ -28,6 +35,9 @@ public class FileManageItemGenerator {
     private static FileManageItem OPT_CLEAN = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_delete, R.drawable.btn_opt_delete_pressed, R.string.clean_recycle_file, FileManageAction.CLEAN_RECYCLE);
     private static FileManageItem OPT_SHARE = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_share, R.drawable.btn_opt_share_pressed, R.string.share_file, FileManageAction.SHARE);
     private static FileManageItem OPT_CHMOD = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_chmod, R.drawable.btn_opt_chmod_pressed, R.string.chmod_file, FileManageAction.CHMOD);
+    private static FileManageItem OPT_MORE = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_more, R.drawable.btn_opt_more_pressed, R.string.more, FileManageAction.MORE);
+    private static FileManageItem OPT_EXTRACT = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_extract, R.drawable.btn_opt_extract_pressed,R.string.extract_file,FileManageAction.EXTRACT);
+    private static FileManageItem OPT_BACK = new FileManageItem(OPT_BASE_ID++, R.drawable.btn_opt_back, R.drawable.btn_opt_back_pressed,R.string.title_back,FileManageAction.BACK);
 
 
     public static ArrayList<FileManageItem> generate(OneOSFileType fileType, ArrayList<OneOSFile> selectedList) {
@@ -39,8 +49,16 @@ public class FileManageItemGenerator {
         if (fileType == OneOSFileType.RECYCLE) {
             mOptItems.add(OPT_MOVE);
             mOptItems.add(OPT_DELETE);
-            mOptItems.add(OPT_ATTR);
             mOptItems.add(OPT_CLEAN);
+            int count = selectedList.size();
+            if (count == 1) {
+                OneOSFile file = selectedList.get(0);
+                mOptItems.add(OPT_ATTR);
+                if (OneOSAPIs.isOneSpaceX1() && !file.isDirectory()) {
+                    mOptItems.remove(OPT_ATTR);
+                }
+            }
+
         } else {
             mOptItems.add(OPT_COPY);
             mOptItems.add(OPT_MOVE);
@@ -49,8 +67,14 @@ public class FileManageItemGenerator {
 
             int count = selectedList.size();
             if (count == 1) {
-                mOptItems.add(OPT_RENAME);
                 OneOSFile file = selectedList.get(0);
+                if (file.isDirectory()) {
+                    mOptItems.add(OPT_RENAME);
+                    mOptItems.add(OPT_ATTR);
+                } else {
+                    mOptItems.add(OPT_MORE);
+                /*
+
                 int uid = LoginManage.getInstance().getLoginSession().getUserInfo().getUid();
                 if (!file.isDirectory() && file.isOwner(uid)) {
                     if (file.isEncrypt()) {
@@ -62,12 +86,23 @@ public class FileManageItemGenerator {
                 if (fileType == OneOSFileType.PUBLIC && file.isOwner(uid)) {
                     mOptItems.add(OPT_CHMOD);
                 }
+
+                if (!file.isDirectory() && file.isExtract()){
+                    mOptItems.add(OPT_EXTRACT);
+                }
                 mOptItems.add(OPT_ATTR);
+                */
+                }
+            }
+            else if(fileType != OneOSFileType.PUBLIC && count > 1 ){
+                mOptItems.add(OPT_SHARE);
+                Log.d(TAG,"mOptItems=" + mOptItems);
             }
 
             for (OneOSFile file : selectedList) {
                 if (file.isDirectory()) {
                     mOptItems.remove(OPT_DOWNLOAD);
+                    mOptItems.remove(OPT_SHARE);
                     break;
                 }
             }
@@ -75,6 +110,44 @@ public class FileManageItemGenerator {
 
         return mOptItems;
     }
+
+    public static ArrayList<FileManageItem> generateMore(OneOSFileType fileType, ArrayList<OneOSFile> selectedList) {
+        if (EmptyUtils.isEmpty(selectedList)) {
+            return null;
+        }
+
+        ArrayList<FileManageItem> mOptItems = new ArrayList<>();
+        OneOSFile file = selectedList.get(0);
+        int uid = LoginManage.getInstance().getLoginSession().getUserInfo().getUid();
+
+        if (!file.isDirectory() && file.isOwner(uid) && fileType != OneOSFileType.PUBLIC) {    //加密解密
+            if (file.isEncrypt()) {
+                mOptItems.add(OPT_DECRYPT);
+            } else {
+                mOptItems.add(OPT_ENCRYPT);
+            }
+        }
+
+        if (!file.isDirectory() && file.isExtract() && !OneOSAPIs.isOneSpaceX1()){
+            mOptItems.add(OPT_EXTRACT);
+        }
+
+        if (!file.isDirectory()){
+            mOptItems.add(OPT_RENAME);
+        }
+
+        if (!file.isDirectory() && fileType != OneOSFileType.PUBLIC){
+            mOptItems.add(OPT_SHARE);
+        }
+
+        if (!OneOSAPIs.isOneSpaceX1()){
+            mOptItems.add(OPT_ATTR);
+        }
+
+        mOptItems.add(OPT_BACK);
+        return mOptItems;
+    }
+
 
     public static ArrayList<FileManageItem> generate(LocalFileType fileType, ArrayList<LocalFile> selectedList) {
         if (EmptyUtils.isEmpty(selectedList)) {

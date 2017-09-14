@@ -6,6 +6,7 @@ import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
 import com.eli.oneos.model.http.OnHttpListener;
+import com.eli.oneos.model.http.RequestBody;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
 import org.json.JSONException;
@@ -33,10 +34,10 @@ public class OneOSSystemInfoAPI extends OneOSBaseAPI {
         this.listener = listener;
     }
 
-    private void info(Map<String, String> params) {
-        url = genOneOSAPIUrl(OneOSAPIs.SYSTEM_INFO);
+    private void info(Map<String, Object> params) {
+        url = genOneOSAPIUrl(OneOSAPIs.SYSTEM_SYS);
 
-        httpUtils.post(url, params, new OnHttpListener<String>() {
+        httpUtils.postJson(url, new RequestBody("getinfo","",params), new OnHttpListener<String>() {
             @Override
             public void onFailure(Throwable t, int errorNo, String strMsg) {
                 // super.onFailure(t, errorNo, strMsg);
@@ -58,7 +59,8 @@ public class OneOSSystemInfoAPI extends OneOSBaseAPI {
                             listener.onSuccess(url, dev, name, result);
                         } else {
                             // {"errno":-1,"msg":"list error","result":false}
-                            int errorNo = json.getInt("errno");
+                            json = json.getJSONObject("error");
+                            int errorNo = json.getInt("code");
                             String msg = json.has("msg") ? json.getString("msg") : null;
                             listener.onFailure(url, dev, name, errorNo, msg);
                         }
@@ -78,7 +80,7 @@ public class OneOSSystemInfoAPI extends OneOSBaseAPI {
     public void query(String dev, String name) {
         this.dev = dev;
         this.name = name;
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("dev", dev);
         if (null != name) {
             params.put("name", name);

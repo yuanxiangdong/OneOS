@@ -16,7 +16,10 @@ public enum FileManageAction {
     UPLOAD,
     ENCRYPT,
     DECRYPT,
+    EXTRACT,
     CLEAN_RECYCLE,
     SHARE,
-    CHMOD
+    CHMOD,
+    MORE,
+    BACK
 }

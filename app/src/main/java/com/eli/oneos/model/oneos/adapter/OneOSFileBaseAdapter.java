@@ -131,6 +131,7 @@ public class OneOSFileBaseAdapter extends BaseAdapter {
     }
 
     public void showPicturePreview(ImageView imageView, OneOSFile file) {
+
         if (LoginManage.getInstance().isHttp() && (!mLoginSession.getUserSettings().getIsPreviewPicOnlyWifi() || isWifiAvailable)) {
             if (Constants.DISPLAY_IMAGE_WITH_GLIDE) {
                 imageView.setTag(null);

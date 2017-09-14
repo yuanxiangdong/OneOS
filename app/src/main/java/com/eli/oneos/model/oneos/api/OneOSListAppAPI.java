@@ -5,7 +5,9 @@ import android.util.Log;
 import com.eli.oneos.R;
 import com.eli.oneos.constant.HttpErrorNo;
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.constant.OneSpaceAPIs;
 import com.eli.oneos.model.http.OnHttpListener;
+import com.eli.oneos.model.http.RequestBody;
 import com.eli.oneos.model.oneos.OneOSPluginInfo;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
@@ -36,8 +38,66 @@ public class OneOSListAppAPI extends OneOSBaseAPI {
     }
 
     public void list() {
-        url = genOneOSAPIUrl(OneOSAPIs.APP_LIST);
-        Map<String, String> params = new HashMap<>();
+        url = genOneOSAPIUrl(OneOSAPIs.APP_API);
+        Map<String, Object> params = new HashMap<>();
+        httpUtils.postJson(url, new RequestBody("list","",params), new OnHttpListener<String>() {
+
+            @Override
+            public void onFailure(Throwable t, int errorNo, String strMsg) {
+                // super.onFailure(t, errorNo, strMsg);
+                Log.e(TAG, "Response Data: ErrorNo=" + errorNo + " ; ErrorMsg=" + strMsg);
+                if (listener != null) {
+                    listener.onFailure(url, errorNo, strMsg);
+                }
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                // super.onSuccess(result);
+                Log.d(TAG, "Response Data:" + result);
+                if (listener != null) {
+                    try {
+                        JSONObject json = new JSONObject(result);
+                        boolean ret = json.getBoolean("result");
+                        if (ret) {
+                            ArrayList<OneOSPluginInfo> mPlugList = new ArrayList<>();
+                            JSONArray jsonArray = json.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                if(jsonArray.getJSONObject(i).getString("local")== "true") {
+                                    OneOSPluginInfo info = new OneOSPluginInfo(jsonArray.getJSONObject(i));
+                                    mPlugList.add(info);
+                                }
+                            }
+                            /*
+                            for (int i = 0; i < mPlugList.size(); i++) {
+                                if (mPlugList.get(i).getPack().equalsIgnoreCase("todo")) {
+                                    mPlugList.remove(i);
+                                    break;
+                                }
+                            }
+                            */
+                            Log.e(TAG, "Count: " + mPlugList.size());
+                            listener.onSuccess(url, mPlugList);
+                        } else {
+                            int errorNo = json.getInt("errno");
+                            String msg = json.has("msg") ? json.getString("msg") : null;
+                            listener.onFailure(url, errorNo, msg);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        listener.onFailure(url, HttpErrorNo.ERR_JSON_EXCEPTION, context.getResources().getString(R.string.error_json_exception));
+                    }
+                }
+            }
+        });
+
+        if (listener != null) {
+            listener.onStart(url);
+        }
+    }
+    public void listApp() {
+        url = genOneOSAPIUrl(OneSpaceAPIs.APP_LIST);
+        Map<String, Object> params = new HashMap<>();
         httpUtils.post(url, params, new OnHttpListener<String>() {
 
             @Override
@@ -63,13 +123,9 @@ public class OneOSListAppAPI extends OneOSBaseAPI {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 OneOSPluginInfo info = new OneOSPluginInfo(jsonArray.getJSONObject(i));
                                 mPlugList.add(info);
+
                             }
-                            for (int i = 0; i < mPlugList.size(); i++) {
-                                if (mPlugList.get(i).getPack().equalsIgnoreCase("todo")) {
-                                    mPlugList.remove(i);
-                                    break;
-                                }
-                            }
+
                             Log.e(TAG, "Count: " + mPlugList.size());
                             listener.onSuccess(url, mPlugList);
                         } else {

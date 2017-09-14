@@ -11,19 +11,25 @@
         android:layout_height="@dimen/layout_title_height"
         android:layout_alignParentTop="true" />
 
+    <ImageButton
+        android:id="@+id/btn_control"
+        android:layout_width="@dimen/layout_title_button_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:background="@android:color/transparent"
+        android:focusable="false"
+        android:gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/selector_button_title_menu"
+        android:layout_above="@+id/fragment_content"
+        android:onClick="OpenLeftMenu"/>
+
     <com.eli.oneos.widget.SearchPanel
         android:id="@+id/layout_search_panel"
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout_title_height"
         android:layout_alignParentTop="true"
         android:visibility="gone" />
-
-    <com.eli.oneos.widget.FileSelectPanel
-        android:id="@+id/layout_select_top_panel"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/layout_title_height"
-        android:layout_alignParentTop="true"
-        android:visibility="invisible" />
 
     <FrameLayout
         android:id="@+id/fragment_content"
@@ -39,5 +45,15 @@
         android:layout_height="@dimen/layout_nav_bar_height"
         android:layout_alignParentBottom="true"
         android:visibility="invisible" />
+
+
+    <com.eli.oneos.widget.FileSelectPanel
+        android:id="@+id/layout_select_top_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/layout_title_height"
+        android:visibility="invisible"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/layout_search_panel"
+        android:layout_toEndOf="@+id/layout_search_panel" />
 
 </RelativeLayout>

@@ -21,6 +21,14 @@
         <item name="android:activityCloseExitAnimation">@anim/slide_nav_out_to_right</item>
     </style>
 
+
+    <style name="myTransparent">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+    </style>
+
     <style name="FullBleedTheme" parent="android:Theme.Holo.Light.NoActionBar">
         <!-- API 14 theme customizations can go here. -->
         <item name="android:windowAnimationStyle">@style/ActivitySlideAnim</item>
@@ -115,6 +123,12 @@
     </style>
 
     <style name="AnimationAlphaEnterAndExit">
+        <item name="android:windowEnterAnimation">@anim/alpha_appear</item>
+        <item name="android:windowExitAnimation">@anim/alpha_disappear</item>
+    </style>
+
+
+    <style name="popup_window_anim">
         <item name="android:windowEnterAnimation">@anim/alpha_appear</item>
         <item name="android:windowExitAnimation">@anim/alpha_disappear</item>
     </style>

@@ -3,10 +3,13 @@ package com.eli.oneos.model.oneos.api;
 import android.util.Log;
 
 import com.eli.oneos.constant.OneOSAPIs;
+import com.eli.oneos.constant.OneSpaceAPIs;
 import com.eli.oneos.model.http.HttpUtils;
+import com.eli.oneos.model.http.RequestBody;
 import com.eli.oneos.model.log.LogLevel;
 import com.eli.oneos.model.log.Logged;
 import com.eli.oneos.model.log.Logger;
+import com.eli.oneos.model.oneos.backup.file.ScanningAlbumThread;
 import com.eli.oneos.model.oneos.transfer.OnTransferFileListener;
 import com.eli.oneos.model.oneos.transfer.TransferException;
 import com.eli.oneos.model.oneos.transfer.TransferState;
@@ -14,7 +17,16 @@ import com.eli.oneos.model.oneos.transfer.UploadElement;
 import com.eli.oneos.model.oneos.user.LoginManage;
 import com.eli.oneos.model.oneos.user.LoginSession;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
@@ -25,8 +37,11 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import www.glinkwin.com.glink.ssudp.SSUDPFileChunk;
@@ -53,6 +68,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
     private UploadElement uploadElement;
     private boolean isInterrupt = false;
     private LoginSession loginSession;
+    private String pathPosition = null;
 
     public OneOSUploadFileAPI(LoginSession loginSession, UploadElement element) {
         super(loginSession);
@@ -102,13 +118,13 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
     private void duplicateRename(final String path, final String srcName) {
         // String newName = genDuplicateName(srcName, index);
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("session", session);
         params.put("cmd", "rename");
         params.put("path", path);
         // params.put("newname", "");
 
-        String url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
+        String url = genOneOSAPIUrl(OneOSAPIs.FILE_API);
         try {
             String result = (String) httpUtils.postSync(url, params);
             Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "File Attr: " + result);
@@ -161,18 +177,28 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
      * @return 1: exist and do not needs to upload; -1: needs rename old file then upload; 0: file do not exist
      */
     private int checkExist(String path, long srcSize) {
-        String url = genOneOSAPIUrl(OneOSAPIs.FILE_MANAGE);
-        Map<String, String> params = new HashMap<>();
-        params.put("session", session);
+        //String url = genOneOSAPIUrl(OneOSAPIs.FILE_API);
+        Map<String, Object> params = new HashMap<>();
+        //params.put("session", session);
         params.put("cmd", "attributes");
         params.put("path", path);
         try {
-            String result = (String) httpUtils.postSync(url, params);
+            String result;
+            if (OneOSAPIs.isOneSpaceX1()) {
+                String url = genOneOSAPIUrl(OneSpaceAPIs.FILE_ATTR);
+                params.put("session", session);
+                params.put("path", OneOSAPIs.getOneSpaceUid() + path);
+                result = (String) httpUtils.postSync(url, params);
+            } else {
+                String url = genOneOSAPIUrl(OneOSAPIs.FILE_API);
+                params.put("path", path);
+                result = (String) httpUtils.postSync(url, new RequestBody("manage", session, params));
+            }
             Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "File Attr: " + result);
             JSONObject json = new JSONObject(result);
             boolean ret = json.getBoolean("result");
             if (ret) {
-                long size = json.getLong("size");
+                long size = json.getJSONObject("data").getLong("size");
                 if (size == srcSize) {
                     Logger.p(LogLevel.DEBUG, Logged.UPLOAD, TAG, "****Upload file exist on server: " + path);
                     return 1; // exist and do not needs to upload
@@ -188,8 +214,15 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         return 0; // file do not exist
     }
 
+
+
+
     private void doHttpUpload() {
-        url = genOneOSAPIUrl(OneOSAPIs.FILE_UPLOAD);
+        if (OneOSAPIs.isOneSpaceX1()) {
+            url = genOneOSAPIUrl(OneSpaceAPIs.FILE_UPLOAD);
+        } else {
+            url = genOneOSAPIUrl(OneOSAPIs.FILE_UPLOAD);
+        }
         HttpUtils.log(TAG, url, null);
 
         uploadElement.setState(TransferState.START);
@@ -250,9 +283,21 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
 
                 sb = new StringBuffer();
                 sb.append(PREFIX).append(BOUNDARY).append(LINE_END);
-                sb.append("Content-Disposition: form-data; name=\"savepath\"" + LINE_END);
+                if (OneOSAPIs.isOneSpaceX1()) {
+                    sb.append("Content-Disposition: form-data; name=\"savepath\"" + LINE_END);
+                } else {
+                    sb.append("Content-Disposition: form-data; name=\"todir\"" + LINE_END);
+                }
                 sb.append(LINE_END);
+                if (OneOSAPIs.isOneSpaceX1() && targetPath.indexOf("storage") == -1) {
+                    if (targetPath.indexOf("uid") == -1) {
+                        targetPath = OneOSAPIs.getOneSpaceUid() + targetPath;
+                    } else {
+                        targetPath = "storage/" + targetPath;
+                    }
+                }
                 sb.append(targetPath);
+                Log.d(TAG, "topath=" + targetPath);
                 sb.append(LINE_END);
                 outStream.write(sb.toString().getBytes());
                 outStream.flush();
@@ -392,6 +437,7 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         String session = loginSession.getSession();
         String srcPath = uploadElement.getSrcPath();
         String targetPath = new File(uploadElement.getToPath(), uploadElement.getSrcName()).getPath();
+        Log.d(TAG, "targetpath" + targetPath);
 
         File uploadFile = new File(srcPath);
         if (!uploadFile.exists()) {
@@ -474,4 +520,64 @@ public class OneOSUploadFileAPI extends OneOSBaseAPI {
         }
 
     }
+
+
+    private void getServerPhotoList(String url, Map<String, String> map, List<ScanningAlbumThread.TmpElemet> photoList) {
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        Set<String> keys = map.keySet();
+        for (String key : keys) {
+            params.add(new BasicNameValuePair(key, map.get(key)));
+        }
+
+        try {
+            HttpPost httpRequest = new HttpPost(url);
+            Log.d(TAG, "Url: " + url);
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+
+            httpClient.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT, 5000);
+            httpClient.getParams().setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, 5000);
+
+            httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+            HttpResponse httpResponse = httpClient.execute(httpRequest);
+            // Log.d(TAG, "Response Code: " +
+            // httpResponse.getStatusLine().getStatusCode());
+            if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                String resultStr = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+                httpRequest.abort();
+
+                // Log.d(TAG, "Response: " + resultStr);
+                JSONObject jsonObj = new JSONObject(resultStr);
+                JSONArray jsonArray = null;
+                boolean isRequested = jsonObj.getBoolean("result");
+                if (isRequested) {
+                    String fileStr = jsonObj.getString("files");
+                    if (!fileStr.equals("{}")) {
+                        jsonArray = (JSONArray) jsonObj.get("files");
+                        for (int i = 0; i < jsonArray.length(); ++i) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            ScanningAlbumThread.TmpElemet mElemet = new ScanningAlbumThread.TmpElemet();
+                            mElemet.setFullName(jsonObject.getString("fullname"));
+                            mElemet.setLength(jsonObject.getLong("size"));
+                            boolean isDir = jsonObject.getString("type").equals("dir");
+                            if (isDir) {
+                                Map<String, String> tmpMap = new HashMap<String, String>();
+                                tmpMap.put("path", mElemet.getFullName());
+                                LoginSession loginSession = LoginManage.getInstance().getLoginSession();
+                                tmpMap.put("session", loginSession.toString());
+                                Log.d(TAG, "List Path: " + mElemet.getFullName());
+                                getServerPhotoList(url, tmpMap, photoList);
+                            } else {
+                                photoList.add(mElemet);
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
